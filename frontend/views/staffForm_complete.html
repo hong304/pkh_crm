@@ -1,0 +1,159 @@
+<div class="row" ng-init="loadStaffProfile();">
+	<div class="col-md-12">
+		<form class="form-horizontal form-row-seperated" action="javascript:;">
+			<div class="portlet light">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="icon-basket font-green-sharp"></i>
+						<span class="caption-subject font-green-sharp bold uppercase">
+						用戶管理</span>
+						<span class="caption-helper">&nbsp;</span>
+					</div>
+					<div class="actions btn-set">
+						<button class="btn green-haze btn-circle" data-ng-click="saveProfile();"><i class="fa fa-check"></i>儲存</button>
+						
+					</div>
+				</div>
+				<div class="portlet-body">
+					<div class="tabbable">
+						<ul class="nav nav-tabs">
+							<li class="active">
+								<a data-target="#tab_general" data-toggle="tab">
+								用戶資料 </a>
+							</li>
+							<li>
+								<a data-target="#tab_zone" data-toggle="tab">
+								車號管理 </a>
+							</li>
+							<li>
+								<a data-target="#tab_loginrecord" data-toggle="tab">
+								登入記錄 </a>
+							</li>
+						</ul>
+						<div class="tab-content no-space">
+							<div class="tab-pane active" id="tab_general">
+								<div class="form-body">
+									<div class="form-group">
+										<label class="col-md-2 control-label">登入名稱: <span class="required">
+										* </span>
+										</label>
+										<div class="col-md-10">
+											<input type="text" class="form-control" data-ng-model="user.username" placeholder="">
+											<span class="help-block">用戶將使用本名稱作登入用途 , 由5位以上英文及數字 組成 </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">使用者名稱: <span class="required">
+										* </span>
+										</label>
+										<div class="col-md-10">
+											<input type="text" class="form-control" data-ng-model="user.name" placeholder="">
+											<span class="help-block">此使用者名稱將會列印於發票上 </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">密碼: <span class="required">
+										(*) </span>
+										</label>
+										<div class="col-md-10">
+											<input type="text" class="form-control" data-ng-model="user.password" placeholder="">
+											<span class="help-block">用戶將使用此密碼作登入用途, 留空為不更改預設密碼 , 由8位以上英文及數字 組成</span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">電郵:
+										</label>
+										<div class="col-md-10">
+											<input type="text" class="form-control" data-ng-model="user.email" placeholder="">
+											<span class="help-block">可留空  </span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">用戶組別: <span class="required">
+										* </span>
+										</label>
+										<div class="col-md-10">
+										<select class="form-control" 
+												ng-model="user.roles" 
+												data-ng-options="x.name for x in availableroles track by x.id" >											
+										</select>
+											<span class="help-block">用戶將使用此密碼作登入用途, 留空為不更改預設密碼  </span>
+										</div>
+									</div>
+									
+									
+								</div>
+							</div>
+							<div class="tab-pane" id="tab_zone">
+								<div class="form-body">
+									<div class="form-group">
+										<div class="col-md-12">
+											<label data-ng-repeat="z in zones" class="col-md-2">											  
+												  <input type="checkbox" value="{{z.zoneId}}" ng-model="z.assigned"> {{z.zoneName}}<br/>											 
+											</label>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+							<div class="tab-pane" id="tab_loginrecord">
+
+
+								<div class="row">
+									<div id="tab_images_uploader_filelist" class="col-md-6 col-sm-12">
+									</div>
+								</div>
+								<table class="table table-bordered table-hover">
+								<thead>
+								<tr role="row" class="heading">
+									<th width="5%">
+									#
+									</th>
+									<th width="25%">
+										 登入時間
+									</th>
+									<th width="25%">
+										 登出時間
+									</th>
+									<th width="25%">
+										 登出模式
+									</th>
+									<th width="10%">
+										 操作
+									</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr data-ng-repeat="lr in loginrecords">
+									<td>
+										{{lr.id}}
+									</td>
+									<td>
+										{{lr.time_in * 1000 | date: 'yyyy.MM.dd hh:mm:ss'}}
+									</td>
+									<td>
+										<span data-ng-if="lr.time_out > 1">{{lr.time_out * 1000 | date: 'yyyy.MM.dd hh:mm:ss'}}</span>
+										<span data-ng-if="lr.time_out == false">NA</span>
+										
+									</td>
+									<td>
+										{{lr.mode}}
+									</td>
+									<td>
+										<button id="forcebtn_{{lr.hash}}" data-ng-click="logout(lr.hash);" data-ng-if="lr.time_out == false" class="btn btn-xs default btn-editable"><i class="fa fa-sign-out"></i> 登出及解鎖</button>
+									</td>
+									
+								</tr>
+								
+								</tbody>
+								</table>
+							</div>
+							
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

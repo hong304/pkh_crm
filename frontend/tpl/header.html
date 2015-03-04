@@ -1,0 +1,299 @@
+<!-- BEGIN HEADER TOP -->
+<div class="page-header-top">
+	<div class="container-fluid">
+		<!-- BEGIN LOGO -->
+		<div class="page-logo">
+			<!-- <a href="#"><img src="/assets/admin/layout3/img/logo-default.png" alt="logo" class="logo-default"></a> -->
+			<img src="/assets/admin/layout3/img/logo-default.png" alt="logo" class="logo-default">
+			<span style="font-size:25px;">炳記行貿易有限公司</span>
+		</div>
+		<!-- END LOGO -->
+		<!-- BEGIN RESPONSIVE MENU TOGGLER -->
+		<a href="javascript:;" class="menu-toggler"></a>
+		<!-- END RESPONSIVE MENU TOGGLER -->
+		
+		<!-- BEGIN TOP NAVIGATION MENU -->
+		<div class="top-menu">
+			<ul class="nav navbar-nav pull-right">
+			
+				
+				<!-- BEGIN NOTIFICATION DROPDOWN FOR APPROVAL -->
+					<li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="approval_notification" data-ng-if="notification.1.countInDataMart > 0">
+						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" id="approval_notification_btn" data-hover="dropdown" data-close-others="true">
+						<i class="fa glyphicon glyphicon-send"></i>
+						<span class="badge badge-default">{{notification.1.countInDataMart}}</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="external">
+								<h3>共有<strong>{{notification.1.countInDataMart}} 張</strong> 訂單需要批核</h3>
+								<a href="/#/queryInvoice?scope=pendingOrder">檢視待批核的訂單</a> 
+							</li>
+							<li>
+								<ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
+									<li data-ng-repeat="c in notification.1.breakdown">
+										<a href="/#/queryInvoice?scope=pendingOrder&zone={{c.zoneId}}">
+										<!-- <span class="time">{{c.lastload}}</span> -->
+										<span class="details">
+											<span class="label label-sm label-icon label-success">
+											<i class="fa fa-location-arrow"></i>
+										</span>
+										<strong>{{c.zoneId}}</strong> 號 <strong>{{c.zoneText}}</strong> 車: <strong>{{c.counts}}</strong> 張 </span>
+										</a>
+									</li>									
+								</ul>
+							</li>
+						</ul>
+					</li>
+					
+					
+					<li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="rejected_notification" data-ng-if="notification.3.countInDataMart > 0">
+						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" id="rejected_notification_btn" data-hover="dropdown" data-close-others="true">
+						<i class="fa glyphicon glyphicon-remove"></i>
+						<span class="badge badge-default">{{notification.3.countInDataMart}}</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="external">
+								<h3>你有<strong>{{notification.3.countInDataMart}} 張</strong> 訂單被拒絕</h3>
+								<a href="/#/queryInvoice?scope=rejectedOrders">檢視被拒絕的訂單</a>
+							</li>
+							<li>
+								<ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
+										<li data-ng-repeat="i in notification.3.breakdown">
+											<a href="/#/queryInvoice?scope=rejectedOrders&zone={{i.zoneId}}">
+											<!-- <span class="time">{{i.lastload}}</span> -->
+											<span class="details">
+												<span class="label label-sm label-icon label-success">
+												<i class="fa glyphicon glyphicon-remove"></i>
+											</span>
+											<strong>{{i.zoneId}}</strong> 號 <strong>{{i.zoneText}}</strong> 車: <strong>{{i.counts}}</strong> 張 </span>
+											</a>
+										</li>
+									
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<!-- END NOTIFICATION DROPDOWN -->
+					<!-- BEGIN Zone DROPDOWN -->
+					<li class="dropdown dropdown-language dropdown-dark" style="margin-left:5px;margin-right:15px;display:none;">
+						<a href="javascript:;" data-ng-click="switchZone();" class="dropdown-toggle" style="font-size:14px;" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+							<span class="langname">現時區域: {{systemInfo.currentzone}}</span>
+						</a>
+					</li>
+					<!-- END Zone DROPDOWN -->
+					
+					
+				<!-- BEGIN USER LOGIN DROPDOWN -->
+				<li class="dropdown dropdown-user dropdown-dark">
+					<a href="javascript:;" class="dropdown-toggle" dropdown-menu-hover data-toggle="dropdown" data-close-others="true">
+					<!-- <img alt="" class="img-circle" src="/assets/admin/layout3/img/avatar9.jpg"> -->
+					<span class="username username-hide-mobile">{{systemInfo.username}}</span>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-default">
+						<li>
+							<a href="{{endpoint}}/changePassword">
+							<i class="icon-user"></i> 更改密碼 </a>
+						</li>
+
+						<li>
+							<a href="{{endpoint}}/logout?mode=manual">
+							<i class="icon-key"></i> 登出 </a>
+						</li>
+					</ul>
+				</li>
+				<!-- END USER LOGIN DROPDOWN -->
+			</ul>
+		</div>
+		<!-- END TOP NAVIGATION MENU -->
+	</div>
+</div>
+<!-- END HEADER TOP -->
+<!-- BEGIN HEADER MENU -->
+<div class="page-header-menu">
+	<div class="container-fluid">
+		<!-- BEGIN HEADER SEARCH BOX -->
+		<form class="search-form" action="extra_search.html" method="GET">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Search" name="query">
+				<span class="input-group-btn">
+				<a href="javascript:;" class="btn submit"><i class="icon-magnifier"></i></a>
+				</span>
+			</div>
+		</form>
+		<!-- END HEADER SEARCH BOX -->
+		<!-- BEGIN MEGA MENU -->
+		<!-- DOC: Apply "hor-menu-light" class after the "hor-menu" class below to have a horizontal menu with white background -->
+		<!-- DOC: Remove dropdown-menu-hover and data-close-others="true" attributes below to disable the dropdown opening on mouse hover -->
+		<div class="hor-menu">
+			<ul class="nav navbar-nav">
+				<li class="active">
+					<a href="#/salesPanel"><i class="fa fa-home"></i>主控台</a>
+				</li>
+				
+				<!-- 
+				<li class="menu-dropdown">
+					<a href="/#/newOrder" ng-click="$state.go('newOrder', {}, {reload: true});">新訂單</a>
+				</li>
+								
+				<li class="menu-dropdown">
+					<a href="/#/queryInvoice" ng-click="$state.go('queryInvoice', {}, {reload: true});">搜尋訂單</a>
+				</li>
+				
+				<li class="menu-dropdown">
+					<a href="/#/reportSelection" ng-click="$state.go('reportSelection', {}, {reload: true});">報告系統</a>
+				</li>
+				
+				<li class="menu-dropdown" data-ng-if="systemInfo.permission.customer_maintenance == true">
+					<a href="/#/customerMaintenance" ng-click="$state.go('customerMaintenance', {}, {reload: true});">客戶設定</a>
+				</li>
+				
+				<li class="menu-dropdown" data-ng-if="systemInfo.permission.product_maintenance == true">
+					<a href="/#/productMaintenance" ng-click="$state.go('productMaintenance', {}, {reload: true});">產品設定</a>
+				</li>
+				
+				<li class="menu-dropdown" data-ng-if="systemInfo.permission.staff_maintenance == true">
+					<a href="/#/user-maintenance/listing" ng-click="$state.go('userListing', {}, {reload: true});">用戶設定</a>
+				</li>
+				
+				<li class="menu-dropdown" data-ng-if="systemInfo.permission.invoice_maintenance == true">
+					<a href="/#/invoicePrintMaintenance" ng-click="$state.go('invoicePrintMaintenance', {}, {reload: true});">訂單設定</a>
+				</li>
+				 -->
+				
+				<li class="menu-dropdown">
+					<a href="/#/newOrder" ng-click="$state.go('newOrder', {}, {reload: true});"><i class="fa fa-plus"></i>新訂單 (F4)</a>
+				</li>
+				
+				<li class="menu-dropdown">
+					<a href="/#/queryInvoice"><i class="fa fa-search"></i>搜尋訂單 </a>	
+				</li>
+				
+				<li class="menu-dropdown">
+					<a data-ng-click="updateStatusFindReport(11);" href=""><i class="fa fa-code-fork"></i>訂單流程</a>	
+				</li>
+				
+				
+				
+				<li class="menu-dropdown">
+					<a href="/#/reportSelection" ><i class="fa fa-star-half-o"></i>報告系統</a>
+				</li>
+				
+				<li class="menu-dropdown mega-menu-dropdown ">
+					<a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
+					<i class="fa fa-cogs"></i>
+					系統維護 <i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="dropdown-menu" style="min-width: 710px">
+						<li>
+							<div class="mega-menu-content">
+								<div class="row">
+									<div class="col-md-3"  data-ng-if="systemInfo.permission.customer_maintenance == true">
+										<ul class="mega-menu-submenu">
+											<li>
+												<h3>客戶相關</h3>
+											</li>
+											<li>
+												<a href="/#/customerMaintenance" class="iconify">
+												<i class="icon-home"></i>
+												管理客戶 </a>
+											</li>
+										</ul>
+									</div>
+									<div class="col-md-3" data-ng-if="systemInfo.permission.product_maintenance == true">
+										<ul class="mega-menu-submenu">
+											<li>
+												<h3>產品相關</h3>
+											</li>
+											<li>
+												<a href="/#/productMaintenance" class="iconify">
+												<i class="icon-cursor-move"></i>
+												產品設定 </a>
+											</li>
+											<li>
+												<a href="/#/productDepartmentMaintenance" class="iconify">
+												<i class="icon-pin"></i>
+												類別設定 </a>
+											</li>
+											
+										</ul>
+									</div>
+									<div class="col-md-3"  data-ng-if="systemInfo.permission.staff_maintenance == true">
+										<ul class="mega-menu-submenu">
+											<li>
+												<h3>用戶相關</h3>
+											</li>
+											<li>
+												<a href="/#/user-maintenance/listing" class="iconify">
+												<i class="icon-speech"></i>
+												用戶設定 </a>
+											</li>
+										</ul>
+									</div>
+									<div class="col-md-3"  data-ng-if="systemInfo.permission.invoice_maintenance == true">
+										<ul class="mega-menu-submenu">
+											<li>
+												<h3>訂單相關</h3>
+											</li>
+											<li>
+												<a href="/#/invoicePrintMaintenance" class="iconify">
+												<i class="icon-speech"></i>
+												收據及廣告設定 </a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</li>
+				
+				
+				
+				<!-- 
+				<li class="menu-dropdown">
+					<a href="">價目表</a>
+				</li>
+				
+				<li class="menu-dropdown">
+					<a href="">鎖售分析</a>
+				</li>
+				
+				<li class="menu-dropdown">
+					<a href="">送貨情況</a>
+				</li> -->
+				
+			</ul>
+		</div>
+		<!-- END MEGA MENU -->
+	</div>
+</div>
+<!-- END HEADER MENU -->
+
+
+<div class="modal fade bs-modal-lg" id="switchZoneModal" tabindex="999999999" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+				<h4 class="modal-title">切換區域</h4>
+			</div>
+			<div class="modal-body">
+				 <div class="row"> 
+				 	<h4 class="col-md-3"  data-ng-repeat="z in systemInfo.availableZone" style="height:50px;font-size:18px;color:black;cursor: pointer;" data-ng-click="switchToZone(z.zoneId, z.zoneName)">
+				 		<span aria-hidden="true" class="icon-pointer" data-ng-if="z.zoneName == systemInfo.currentzone"></span>
+				 		<span aria-hidden="true" class="icon-paper-plane" data-ng-if="z.zoneName != systemInfo.currentzone"></span>
+				 		{{z.zoneId}} - {{z.zoneName}}	
+				 	</h4>
+				 </div>
+			</div>
+			<div class="modal-footer" data-ng-if="previewItem.invoiceStatus == 1">
+				<button type="button" class="btn default" data-dismiss="modal">取消</button>
+
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+<div data-ng-include="'views/model_updateStatusFindReport.html'">  </div>

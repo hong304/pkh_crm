@@ -1,0 +1,9 @@
+cron:
+- description: update db product_search_customer_map
+  url: /batch/pscmc-0000-daily.bat
+  schedule: every day 00:00
+  timezone: Asia/Hong_Kong
+- description: batch send invoices to printer
+  url: /batch/bistp-5min.bat
+  schedule: every 5 minutes
+  timezone: Asia/Hong_Kong

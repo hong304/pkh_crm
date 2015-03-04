@@ -1,0 +1,26 @@
+application:    cedar-gearbox-811
+version:        production-v1
+runtime:        php
+api_version:    1
+inbound_services:
+- warmup
+automatic_scaling:
+  min_idle_instances: 0
+  max_pending_latency: 250ms
+
+handlers:
+        - url: /favicon\.ico
+          static_files: public/favicon.ico
+          upload: public/favicon\.ico
+
+        - url: /.*
+          script: public/index.php
+
+skip_files:
+        - ^(.*/)?#.*#$
+        - ^(.*/)?.*~$
+        - ^(.*/)?.*\.py[co]$
+        - ^(.*/)?.*/RCS/.*$
+        - ^(.*/)?\.(?!env\.php).*$
+        - ^(.*/)?node_modules.*$
+        - ^(.*/)?_ide_helper\.php$

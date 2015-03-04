@@ -1,0 +1,410 @@
+<form class="form-horizontal" role="form" id="orderinfo">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="portlet light bordered">
+				<div class="portlet-title">
+					<div class="caption font-green-sharp">
+						<i class="icon-speech font-green-sharp"></i> <span
+							class="caption-subject bold uppercase">訂單資料</span> <span
+							class="caption-helper"></span>
+					</div>
+				</div> 
+				<div class="portlet-body form">
+					<div class="form-body">				
+						<div class="row">
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-4 control-label" style="text-align:left;">
+										發票編號
+									</label>
+									<div class="col-md-8">
+										<input type="text" class="form-control" ng-model="order.invoiceNumber" placeholder="自動填上" disabled required>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-4 control-label" style="text-align:left;">
+										發票日期
+									</label>
+									<div class="col-md-5">
+										<div class="input-group input-medium date " data-date-format="yyyy-mm-dd" data-date-start-date="+1d">
+											<input type="text" class="form-control" readonly ng-model="order.deliveryDate">
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-5 control-label" style="text-align:left;">
+										狀態
+									</label>
+									<div class="col-md-6">
+										<select class="form-control" ng-model="order.status" >
+											<option value="1" selected="selected">1. 正常(Open)</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-5 control-label" style="text-align:left;">
+									員工
+									</label>
+									<div class="col-md-6">
+										<input type="text" ng-model="order.staff" class="form-control" value="{{systemInfo.realusername}} ({{systemInfo.username}})" disabled>
+									</div>
+								</div>
+							</div>							
+						</div>
+						
+						<div class="row">
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-4 control-label" style="text-align:left;">
+										客戶 (c)
+									</label>
+									<div class="col-md-8">
+										<div class="input-group">
+											<input id="client" class="form-control" type="text" disabled name="client" placeholder="自動填上, 請按鍵選擇" data-ng-model="displayName")/>
+											<span class="input-group-btn">
+												<a href="#" accesskey="c" data-target="#selectclientmodel" data-toggle="modal"  id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-4 control-label" style="text-align:left;">
+										送貨日期
+									</label>
+									<div class="col-md-5">
+										<div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="-5d">
+											<input type="text" class="form-control" data-ng-change="updateDeliveryDate();" ng-model="order.deliveryDate"  readonly>
+											<span class="input-group-btn">
+												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-5 control-label" style="text-align:left;">
+										參考編號
+									</label>
+									<div class="col-md-6">
+										<input type="text" ng-model="order.referenceNumber" class="form-control" placeholder="">
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-5 control-label" style="text-align:left;">
+										貨幣
+									</label>
+									<div class="col-md-6">
+										<select class="form-control" disabled>
+											<option ng-model="order.invoiceCurrency" data-ng-repeat="currencyvalue in systemInfo.currencylist">{{currencyvalue}}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-4 control-label" style="text-align:left;">
+										付款方式
+									</label>
+									<div class="col-md-8">   
+										<select class="form-control" ng-model="order.paymentTerms" data-ng-change="updatePaymentTerms()" disabled id="paymentTerms">
+											<option value="1">現金單</option>
+											<option value="2">月結</option>
+										</select>
+									</div>
+								</div>
+							</div>	
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-4 control-label" style="text-align:left;">
+										付款日期
+									</label>
+									<div class="col-md-5">
+										<div class="input-group input-medium date " data-date-format="yyyy-mm-dd" data-date-start-date="+0d">
+											<input type="text" class="form-control" readonly ng-model="order.dueDate">
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-5 control-label" style="text-align:left;">
+										車線 / 路線
+									</label>
+									<div class="col-md-6">
+											<input type="text" class="form-control" value="{{order.zoneName}} / {{order.route}}" placeholder="自動填上" disabled required>
+									</div>
+								</div>
+							</div>	
+							
+							<div class="col-md-3">
+								<div class="form-group">
+									<label class="col-md-5 control-label" style="text-align:left;">
+										訂單折扣
+									</label>
+									<div class="col-md-6">
+										<div class="input-group">
+											<input type="text" id="clientdiscount" ng-model="order.discount" class="form-control" disabled>
+											<span class="input-group-addon">% OFF</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+	
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-1 control-label" style="text-align:left;">
+										送貨地址
+									</label>
+									<div class="col-md-11">
+										<input type="text" class="form-control" placeholder=""  ng-model="order.address">
+									</div>
+								</div>
+							</div>	
+						</div>			
+					</div>				
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="portlet light bordered">
+				<div class="portlet-title">
+					<div class="caption font-green-sharp">
+						<i class="icon-speech font-green-sharp"></i> <span
+							class="caption-subject bold uppercase">訂單貨品</span> <span
+							class="caption-helper"></span>
+					</div>
+					<div class="actions">
+						<a href="#" ng-click="showRecentPurchases();" class="btn btn-lg btn-circle btn-default"><i class="fa fa-question"> </i><span class="hidden-480"> 最近下單貨品 </span></a>
+						<a href="#" ng-click="addRows();" class="btn btn-lg btn-circle btn-default"><i class="fa fa-plus"> </i><span class="hidden-480"> 增加項數 </span></a>
+						<a href="#" id="productsFullScreen" class="btn btn-circle btn-default btn-icon-only fullscreen"></a>
+					</div>
+				</div>
+				<div class="portlet-body" id="orderportletbody">
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr role="row" class="heading">
+								<th width="5%">貨品</th>
+								<th width="15%">編號</th>
+								<th width="15%">貨品名稱</th>
+								<th width="2%">數量</th>
+								<th width="8%">單位</th>
+								<th width="8%">單價</th>
+								<th width="8%">折扣</th>
+								<th width="10%">金額 (HK${{totalAmount}})</th>
+								<th width="10%"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-ng-repeat="i in itemlist" data-ng-if="product[i]['deleted'] == 0">
+								<td style="line-height:35px;font-size:15px;">{{i}}</td>
+								<td>
+									<div class="input-group">
+										<input id="productCode_{{i}}" ng-mouseover="addMaskToProductField();" name="productCode_{{i}}" class="form-control productCodeField"  ng-model="productCode[i]" type="text" placeholder="" ng-change="searchProduct(i, productCode[i])"/>
+										<span class="input-group-btn">
+											<a href="#" data-ng-click="selectProduct(i);" id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 選擇</a>
+										</span>
+									</div>
+								</td>
+								<td style="line-height:35px;font-size:15px;">
+									{{product[i]['name']}} {{product[i]['spec']}}
+								</td>
+								<td>
+									<label>
+										<div id="spinner_{{i}}">
+											<div class="input-group" style="width:100px;">
+												 <input type="tel" onClick="this.select();" id="qty_{{i}}" class="spinner-input form-control" maxlength="5" 
+												 ng-model="product[i]['qty']" ng-change="updateQty(i);"
+												 ng-blur="checkQtyInterval(i);"> 
+												
+											</div>
+										</div>
+									</label>
+								</td>
+								<td>
+									<label>
+									
+										 <select class="form-control" 
+												id="unit_{{i}}" 
+												ng-model="product[i]['unit']" 
+												data-ng-options="x.label for x in product[i]['availableunit'] track by x.value" 
+												data-ng-change="updateUnit(i);">
+											
+										</select>
+									</label>
+								</td>
+								<td>
+									<div class="">
+										<div class="input-icon right" id="unitpricediv_{{i}}">
+											<input type="tel" onClick="this.select();" id="unitprice_{{i}}" ng-model="product[i]['unitprice']" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['unitprice']" value="{{product[i]['unitprice']}}" disabled>
+										</div>
+									</div>
+								</td>
+								<td>
+									<div class=" ">
+										<div class="input-group">
+											<input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['itemdiscount']" value="{{product[i]['itemdiscount']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['discount']">
+											<span class="input-group-addon">% OFF</span>
+										</div>
+									</div>
+								</td>
+								<td style="line-height:35px;font-size:15px;">
+									HK${{product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['itemdiscount'])/100 | number:0}}
+								</td>
+								<td style="line-height:35px;font-size:15px;">
+									<button type="button" class="btn btn-primary" id="remarkbtn_{{i}}" style="display:none;" data-ng-click="openRemarkPanel(i);">備註</button>
+									<button type="button" class="btn btn-danger" id="deletebtn_{{i}}" style="display:none;" data-ng-click="deleteRow(i);">刪除</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<div class="form-actions text-right" ng-if="allowSubmission == true">
+						<button type="button" ng-click="submitOrder();" id="submitbutton" class="btn {{submitButtonColor}}">{{submitButtonText}}</button>
+						<!-- <button type="button" ng-click="" class="btn default">取消</button> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<!-- Select Client Modal -->
+<div ng-include="'/views/model_selectclient.html'"></div>
+
+<!-- Select Product Grid or List Modal -->
+<div ng-include="'/views/model_selectproduct.html'"></div>
+
+<!-- Recent Product Modal -->
+<div class="modal fade bs-modal-lg" id="recentProductModal" tabindex="-1" role="basic" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+				<h4 class="modal-title">最近下單貨品</h4>
+			</div>
+			<div class="modal-body">
+			
+				<form class="form-horizontal" role="form">
+					<div class="form-body">
+						<div class="">
+							<div class="md-col-9">
+								<div class="table-responsive">
+									<table class="table table-striped table-bordered table-advance table-hover">
+										<thead>
+											<tr>
+												<th style="width:10%;">#</th>
+												<th style="width:45%;">貨品</th>
+												<th style="width:15%;">送貨日期</th>
+												<th style="width:10%;">數量</th>
+												<th style="width:10%;">單價</th>
+												<th style="width:10%;">折扣</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr data-ng-repeat="r in recentProduct" ng-click="selectRecentProduct(r.productId)" style="cursor: pointer;">
+												<td>{{r.productId}}</td>
+												<td>{{r.product_detail.productName_chi}}</td>
+												<td>{{r.deliveryDate * 1000 | date: 'yyyy.MM.dd'}}</td>
+												<td>{{r.productQty}} {{r.UnitName}}</td>
+												<td>{{r.productPrice | currency}}</td>
+												<td>
+													<span data-ng-if="r.productDiscount > 0">{{r.productDiscount}}% OFF</span>
+													<span data-ng-if="r.productDiscount == 0">N/A</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>		
+				
+			</div>
+			<div class="modal-footer">
+					<button type="button" class="btn default" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>
+
+<!-- Remark Modal -->
+<div class="modal fade" id="remarkModal" tabindex="-1" role="basic" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+				<h4 class="modal-title">備注:</h4>
+			</div>
+			<div class="modal-body">
+				 <input type="text" ng-model="editable_remark" class="form-control" maxlength="50" name="defaultconfig" id="maxlength_defaultconfig">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn blue" data-ng-click="saveRemark(editable_remark);">儲存</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+<!-- SUccess Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="basic" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+				<h4 class="modal-title">提交訂單</h4>
+			</div>
+			<div class="modal-body text-center">
+				<br/><br/><br/>
+				<div class="row">
+					<div class="col-md-4">
+						<i class="fa fa-check blue" style="font-size:130px;margin: 30px 0 0 30px;"></i><br/>
+					</div>
+					<div class="col-md-8" style="text-align:left;">
+						<span style="font-size:30px;">訂單編號: {{order.invoiceNumber}}</span><br/>
+						<span style="font-size:30px;">訂單狀態: {{statustext}}</span>
+					</div>
+				</div>
+				 
+				 
+			</div>
+			<div class="modal-footer">
+				<!-- <button type="button" class="btn green-haze" data-ng-click="sm_goto('myinvoice');">檢視我的訂單</button>
+				<button type="button" class="btn yellow-casablanca" data-ng-click="sm_goto('editinvoice');">修改本訂單</button> -->
+				<button type="button" class="btn blue" data-ng-click="sm_goto('newinvoice');">新訂單 ({{countdown}} 秒)</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>

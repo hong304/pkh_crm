@@ -1,0 +1,344 @@
+<?php
+
+use google\appengine\api\taskqueue\PushTask;
+
+class InvoiceManipulation {
+
+    public $invoiceId = "";
+    public $status = true;
+    public $message = "";
+    public $action = "";
+    public $im = "";
+    public $approval = false;
+    
+    public function __construct($invoiceId = false, $timer = false)
+    {
+        $this->action = $invoiceId ? 'update' : 'create';
+                
+        if($this->action == 'create')
+        {
+            $this->generateInvoiceId();
+            $this->im = new Invoice();
+            
+        }
+        elseif($this->action == 'update')
+        {
+            // check if this invoice exists
+            $this->im = Invoice::where('invoiceId', $invoiceId)->firstOrFail();
+            
+            if($this->im->invoiceStatus > 3)
+            {
+                
+                $this->status = false;
+                $this->message = "This invoice has been suspended and logically forbid to edit. This request has been recorded in audit log.";
+            }
+            
+            $this->invoiceId = $invoiceId;
+        }
+    }
+    
+    public function generateInvoiceId()
+	{
+	    $invoiceLength = 6;
+	    
+	    $prefix = date("\Iym-");
+	    $lastInvoice = Invoice::withTrashed()->where('invoiceId', 'like', $prefix.'%')->limit(1)->orderBy('invoiceId', 'Desc')->first();
+	    	    
+	    if(count($lastInvoice) > 0)
+	    {
+	        // extract latter part
+	        $i = explode('-', $lastInvoice->invoiceId);
+	        $nextId = (int) $i[1] + 1;
+	        $nextInvoiceDate = $prefix . str_pad($nextId, $invoiceLength, '0', STR_PAD_LEFT);
+	    }
+	    else
+	    {
+	        $nextInvoiceDate = $prefix.str_pad('1', $invoiceLength, '0', STR_PAD_LEFT);
+	    }
+	    
+	    $this->invoiceId = $nextInvoiceDate;
+	    
+	    return $this;	    
+	}
+	
+	private function __standardizeDateYmdTOUnix($date)
+	{
+	    $date = explode('-', $date);
+	    $date = strtotime($date[2].'-'.$date[1].'-'.$date[0]);
+	    return $date;
+	}
+	
+	public function setInvoice($e)
+	{
+	    # First to validate all fields
+//	    $orderrules_idd_date_override = Auth::user()->can('allow_create_sameday_invoice') ? 'after:yesterday' : 'after:today';
+	    $orderrules = [
+	        'clientId' => ['required', 'alpha_num', 'exists:Customer,customerId'],
+	        'invoiceDate' => ['required', 'after:yesterday'],
+	        'deliveryDate' => ['required', 'after:yesterday'],
+	        'dueDate' => ['required', 'after:yesterday'],
+	        'status' => [''],
+	        'referenceNumber' => [''],
+	        'zoneId' => ['numeric'],
+	        'route' => ['numeric'],
+	        'address' => ['required'],
+	    ];
+	    
+	    $orderValidation = Validator::make($e, $orderrules);
+	    if($orderValidation->fails())
+	    {
+	        // if invoice is problematic, kill the user
+	        $this->status = false;
+	        $this->message = $orderValidation->messages()->first();
+	    }
+	    
+	    $this->temp_invoice_information = $e;
+	    
+	    return $this;
+	}
+	
+	public function setItem($dbid = false, $productId, $productPrice, $productQtyUnit, $productQty, $productDiscount = false, $productRemark = false, $deleted)
+	{
+	    $this->items[] = [
+	        'dbid' => $dbid,
+	        'productId' => $productId,
+	        'productPrice' => $productPrice,
+	        'productQtyUnit' => $productQtyUnit,
+	        'productQty' => $productQty,
+	        'productDiscount' => $productDiscount,
+	        'productRemark' => $productRemark,
+	        'deleted' => $deleted,
+	    ];
+	    
+	    return $this;
+	}
+	
+	private function __prepareItems()
+	{
+	    // prepare product information
+	    $itemcodes = array_pluck($this->items, 'productId');
+	    $raw = Product::wherein('productId', $itemcodes)->get();
+	    $products = [];
+	    foreach($raw as $p)
+	    {
+	        $products[$p->productId] = $p;
+	    }
+	    
+	    // prepare existing items information
+	    $dbids = array_pluck($this->items, 'dbid');
+	    $raw = InvoiceItem::wherein('invoiceItemId', $dbids)->get();
+	    $invitem = [];
+	    foreach($raw as $e)
+	    {
+	        $invitem[$e->invoiceItemId] = $e->toArray();
+	    }
+	    
+	    // check every single item
+	    foreach($this->items as $key=>$i)
+	    {
+	        if($i['productId'] != "")
+	        {
+    	        $product = $products[$i['productId']];
+    	        $selling_price = $i['sellingPrice'] = ceil($i['productPrice'] * (100-$i['productDiscount'])/100);
+    	        $standard_price = $i['productStandardPrice'] = $product['productStdPrice_' . strtolower($i['productQtyUnit']['value'])];
+    	        $unit_name = $i['productUnitName'] = $product['productPackingName_' . strtolower($i['productQtyUnit']['value'])];
+    	        
+    	        // check if this dbid really exists
+    	        if($i['dbid'] > 0 && !@$invitem[$i['dbid']])
+    	        {
+    	            $i['dbid'] = false;
+    	        }
+    	        
+    	        // check product price
+    	        
+    	        // we might need approval. check if this item has been approved before
+    	        // system (id = 27) approved indicate it is an automatic approve.
+    	        // in any circumstance we need to validate it again    	        
+    	        if((!Auth::user()->can('allow_by_pass_invoice_approval')) AND ($selling_price < $standard_price) AND  $i['deleted'] == '0')
+    	        {
+    	            
+    	            // approved before?
+    	            if(isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 0)
+    	            {
+    	                // has change?
+    	                if($selling_price != $invitem[$i['dbid']]['productPrice'])
+    	                {
+    	                    $this->approval = true;
+    	                    $i['approvedSupervisorId'] = 0;
+    	                }
+    	                else
+    	                {
+    	                    $i['approvedSupervisorId'] = $invitem[$i['dbid']]['approvedSupervisorId'];
+    	                }
+    	            }
+    	            else
+    	            {
+    	                $this->approval = true;
+    	                $i['approvedSupervisorId'] = 0;
+    	            }
+    	        }
+    	        else
+    	        {
+    	            $i['approvedSupervisorId'] = 27;
+    	        }
+    	        
+    	       
+    	        // update master
+    	        
+    	        $this->items[$key] = $i;
+	        }
+	        else
+	        {
+	            unset($this->items[$key]);
+	        }
+	    }
+	   
+	    return $this;
+	}
+	
+	private function __prepareInvoices()
+	{
+	    if($this->action == 'create')
+	    {
+	        $this->im->invoiceId = $this->invoiceId;
+	        $this->im->invoiceType = 'Salesman';
+	        $this->im->zoneId = $this->temp_invoice_information['zoneId'];
+	        $this->im->customerId = $this->temp_invoice_information['clientId'];
+	        $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
+	        $this->im->deliveryTruckId = 0;
+	        $this->im->invoiceCurrency = 'HKD';
+	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
+	        $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
+	        $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
+	        $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
+	        $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
+	        $this->im->created_by = Auth::user()->id;
+	        $this->im->invoiceStatus = $this->approval ? '1' : '2';
+	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount']; 
+	        $this->im->created_at = time();
+	        $this->im->updated_at = time();
+	    }
+	    elseif($this->action == 'update')
+	    {
+	        
+	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
+	        $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
+	        $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
+	        $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
+	        $this->im->invoiceStatus = $this->approval ? '1' : '2';
+	    }
+	}
+	
+	
+	public function save()
+	{
+	    // first validate and prepare items
+	    $this->__prepareItems();
+	    
+	    // second prepare invoices
+	    $this->__prepareInvoices();
+	    
+	    // if this requests has item, save all
+	    if(count($this->items) > 0 && $this->status == true)
+	    {
+	        //dd($this->im->deliveryDate, strtotime("today 00:00"), strtotime("today 23:59"));
+    	    // ok, save invoice first
+    	    $this->im->save();
+    	    
+    	    // save the client
+    	    $client = Customer::where('customerId', $this->im->customerId)->first();
+	        if($this->im->deliveryDate > strtotime("today 23:59"))
+    	    {
+    	        $client->tomorrow = '1';
+    	    }
+    	    elseif($this->im->deliveryDate >= strtotime("today 00:00"))
+    	    {
+    	        $client->today = '1';
+    	    }
+    	    
+    	    $client->save();
+    	    
+    	    
+    	    // then, save all items one by one
+    	    foreach($this->items as $i)
+    	    {
+    	        if($i['dbid'])
+    	        {
+    	            $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
+    	            $item->updated_at = time();
+    	        }
+    	        else
+    	        {
+    	            $item = new InvoiceItem();
+    	            $item->created_at = $item->updated_at = time();
+    	        }
+    	        
+    	        $item->invoiceId = $this->invoiceId;
+    	        $item->productId = $i['productId'];
+    	        $item->productQtyUnit = $i['productQtyUnit']['value'];
+    	        $item->productQty = $i['productQty'];
+    	        $item->productPrice = $i['productPrice'];
+    	        $item->productDiscount = $i['productDiscount'];
+    	        $item->productRemark = $i['productRemark'];
+    	        $item->productStandardPrice = $i['productStandardPrice'];
+    	        $item->productUnitName = $i['productUnitName'];
+    	        $item->approvedSupervisorId = $i['approvedSupervisorId'];
+    	       
+    	        if($i['dbid'] && $i['deleted'] == '1')
+    	        {
+    	            $item->delete();
+    	        }
+    	        elseif($i['deleted'] == '0')
+    	        {
+    	            $item->save();
+    	        }
+    	    }
+    	    
+    	    // prepare invoice image
+    	    $this->__queueInvoiceImage();
+
+    	    return [
+    	        'result' => $this->status,
+    	        'status' => $this->im->invoiceStatus,
+    	        'invoiceNumber' => $this->invoiceId,
+    	        'message' => ($this->message == "" ? '' : $this->message),
+    	    ];
+	    }
+	    
+	    return [
+	        'result' => false,
+	        'status' => 0,
+	        'invoiceNumber' => 0,
+	        'invoiceItemIds' => 0,
+	        'message' => ($this->message == "" ? '未有下單貨品' : $this->message),
+	    ];
+	    
+	}
+	
+	private function __queueInvoiceImage()	
+	{
+	    if($_SERVER['env'] == 'production')
+	    {
+	        syslog(LOG_DEBUG, "New Push Queue to Print Invoice");
+	        syslog(LOG_DEBUG, print_r(['user'=>Auth::user(), 'server'=> $_SERVER, 'get'=>$_GET, 'post'=>$_POST], true));
+	        
+	        $task = new PushTask('/queue/generate-print-invoice-image.queue', ['invoiceId' => $this->invoiceId]);
+	        $task_name = $task->add('generate-invoice-image');
+	        
+	        /*
+	        $task = new PushTask('/queue/generate-preview-invoice-image.queue', ['invoiceId' => $this->invoiceId]);
+	        $task_name = $task->add('generate-invoice-image');
+	        */
+
+	        $task = new PushTask('/queue/generate-invoice-pdf.queue', 
+	            [
+	                'invoiceId' => $this->invoiceId, 
+	                'printInstant' => $this->im->deliveryDate < strtotime("today 23.59"), 
+	                'printBatch' => $this->im->deliveryDate > strtotime("today 23:59"),
+	                'instructor' => Auth::user()->id,	                
+	            ]);
+	        $task_name = $task->add('invoice-printing-factory');
+	    }
+	}
+	
+}

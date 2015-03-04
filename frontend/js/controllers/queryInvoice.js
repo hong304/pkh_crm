@@ -1,0 +1,357 @@
+'use strict';
+
+// due to datatable limitation, call scope function from outside javascript function
+// ref: http://jsfiddle.net/austinnoronha/nukRe/light/
+function viewInvoice(invoiceId)
+{
+	var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+    	scope.viewInvoice(invoiceId);
+    });
+}
+
+app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
+	
+	var fetchDataDelay = 1000;   // milliseconds
+    var fetchDataTimer;
+    var querytarget = endpoint + '/queryInvoice.json';
+	
+	$scope.firstload = true;
+	
+	
+	
+	$scope.filterData = {
+		'displayName'	:	'',
+		'clientId'		:	'0',
+		'status'		:	'0',
+		'zone'			:	'',
+		'deliverydate'	:	'coming-7-days',
+		'created_by'	:	'0',
+		'invoiceNumber' :	'',
+	};
+	
+    $scope.$on('$viewContentLoaded', function() {   
+        Metronic.initAjax();        
+        $scope.systeminfo = $rootScope.systeminfo;              
+        
+        
+    });
+    
+    $scope.clearCustomerSearch = function()
+    {
+    	$scope.filterData.displayName = "";
+    	$scope.filterData.clientId = "";
+    	$scope.updateDataSet();
+    }
+    
+    $scope.checkParm = function()
+    {
+    	if($location.search().scope)
+        {
+    		
+        	var scope = $location.search().scope;
+        	if(scope == "pendingOrder")
+        	{
+        		$scope.filterData.status = 1;
+        		$scope.filterData.deliverydate = 'extensible-180-180';
+        		$scope.filterData.zone = '';
+        	}
+        	else if(scope == "rejectedOrders")
+        	{
+        		$scope.filterData.status = 3;
+        		$scope.filterData.deliverydate = 'extensible-180-180';
+        		$scope.filterData.zone = '';
+        	}
+        }
+    	
+    	if($location.search().zone)
+	    {
+    		
+	    	var pos = $scope.systeminfo.availableZone.map(function(e) { 
+				return e.zoneId; 
+			  }).indexOf($location.search().zone);
+	    	 
+	    	$scope.filterData.zone = $scope.systeminfo.availableZone[pos];
+	    	console.log("LOG ZONE" + $scope.filterData.zone);
+	    }
+    }
+    
+    $scope.$watch(function() {
+    	return $rootScope.systeminfo;
+  	}, function() {
+  		$scope.systeminfo = $rootScope.systeminfo;
+  		$scope.checkParm();
+  		$scope.updateDataSet();
+  		
+  		
+  	}, true);
+    
+    $rootScope.$on('$locationChangeSuccess', function(){
+    	$scope.checkParm();
+    	$scope.updateDataSet();
+    	
+	});
+    /*
+    $interval(function(){
+    	$scope.updateDataSet();
+    }, 60000)
+    */
+    
+    /*
+    $scope.$watch(function() {
+    	return $scope.filterData;
+	}, function() {
+		$scope.updateDataSet();
+	}, true);
+    */
+    
+    $scope.$on('handleCustomerUpdate', function(){
+    	
+		$scope.filterData.clientId = SharedService.clientId;
+		$scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")"; 
+		$scope.updateDataSet();
+	});
+    
+    
+    $scope.updateZone = function()
+    {
+    	$scope.updateDataSet();
+    }
+    
+    $scope.updateDelvieryDate = function()
+    {
+    	$scope.updateDataSet();
+    }
+    
+    $scope.updateStatus = function()
+    {
+    	$scope.updateDataSet();
+    }
+    
+    $scope.updateInvoiceNumber = function()
+    {
+    	$timeout.cancel(fetchDataTimer);
+    	fetchDataTimer = $timeout(function () {
+    		$scope.updateDataSet();
+    	}, fetchDataDelay);
+    }
+    
+    
+ // --------------------- for approval modal
+    $scope.toggle = function(index)
+    {
+    	jQuery("#cost_" + index).toggle();
+    	jQuery("#controlcost_" + index).css('display', 'none');
+    }
+    
+    $scope.manipulate = function(action, invoiceId)
+    {
+    	var approvalJson = $scope.endpoint + "/manipulateInvoiceStatus.json";
+    	
+    	$http.post(approvalJson, {
+    		action: "approval",
+    		status:	action,
+    		target:	invoiceId
+    	}).success(function(data) {
+    		$("#invoiceNumber_" + invoiceId).remove();
+    		$scope.updateDataSet();
+        });
+    	
+    	$("#productDetails").modal('toggle');
+    }
+    
+    $scope.goEdit = function(invoiceId)
+    {
+    	$location.url("/editOrder?invoiceId=" + invoiceId);
+    }
+    
+    $scope.voidInvoice = function(invoiceId)
+    {
+    	bootbox.dialog({
+            message: "刪除訂單後將不能復原，確定要刪除訂單嗎？",
+            title: "刪除訂單",
+            buttons: {
+            	success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+                      
+                    }
+                  },
+                danger: {
+	                label: "確定刪除",
+	                className: "red",
+	                callback: function() {
+	                	$http.post($scope.endpoint + "/voidInvoice.json", {
+	                		invoiceId	:	invoiceId,
+	                	}).success(function(data) {
+	                		$scope.updateDataSet();
+	                	});
+	                	
+	                	$("#productDetails").modal('hide');
+	                }
+              }
+            }
+        });   	
+    }
+    
+    $scope.instantPrint = function(jobid)
+    {
+    	$http.get($scope.endpoint + "/instantPrint.json?jobId=" + jobid).success(function(data){
+    		alert('已改為即時列印');
+    	});
+    }
+    
+    $scope.viewInvoice = function(invoiceId)
+    {
+    	Metronic.blockUI();
+    	$http.post(querytarget, {mode: "single", invoiceId: invoiceId})
+    	.success(function(res, status, headers, config){    
+    		$scope.nowUnixTime = Math.round(+new Date()/1000);
+    		
+    		$scope.invoiceinfo = res;
+    		Metronic.unblockUI();
+    		$("#productDetails").modal({backdrop: 'static'});
+    		
+    	});
+    	
+    	
+    }
+    
+    // -- unload invoice modal
+    $scope.unloadInvoice = function(invoiceId)
+    {
+    	Metronic.blockUI();
+    	$http.post(querytarget, {mode: "single", invoiceId: invoiceId})
+    	.success(function(res, status, headers, config){    
+    		$scope.unloadinvoice = {
+    			action	:	"",
+    		};
+    		Metronic.unblockUI();
+    		$("#unloadInvoice").modal({backdrop: 'static'});
+    		
+    	});
+    }
+    // -- submit unload invoice modal
+    $scope.SubmitUnloadInvoice = function(invoiceId)
+    {
+    	$http.post(endpoint + "/unloadInvoice.json", {detail: $scope.unloadinvoice, invoiceId: invoiceId})
+    	.success(function(res, status, headers, config){    
+    		alert('已更改資料');
+    		$scope.viewInvoice(invoiceId);
+    		$("#unloadInvoice").modal('hide');
+    		
+    	});
+    }
+    
+    // -- track the action in unload invoice modal
+    $scope.unloadinvoice_trackaction = function()
+    {
+    	var action = $scope.unloadinvoice.action;
+    	if(action == "cancel")
+    	{
+    		$("#unloadinvoice_date").css('display', 'none');
+    	}
+    	else if(action == "change-deliverydate")
+    	{
+    		$("#unloadinvoice_date").css('display', '');
+			$(".date").datepicker({
+	            rtl: Metronic.isRTL(),
+	            orientation: "left",
+	            autoclose: true
+	        });
+    	}
+    }
+    
+    
+    $scope.rePrintInvoice = function(invoiceId)
+    {
+    	alert('已排序到列印隊伍上');
+    }
+
+    
+    $scope.updateDataSet = function()
+    {
+    	Metronic.blockUI();
+    	var grid = new Datatable();
+    	
+    	
+    	//var info = grid.page.info();
+    	if(!$scope.firstload)
+		{
+    		$("#datatable_ajax").dataTable().fnDestroy(); 
+		}
+    	else
+		{
+    		$scope.firstload = false;
+		}
+        grid.init({
+            src: $("#datatable_ajax"),
+            onSuccess: function (grid) {
+                // execute some code after table records loaded
+            	Metronic.unblockUI();
+            },
+            onError: function (grid) {
+                // execute some code on network or other general error  
+            	Metronic.unblockUI();
+            },
+            loadingMessage: 'Loading...',
+            dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options 
+
+                
+                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
+
+                "lengthMenu": [
+                    [10, 20, 50],
+                    [10, 20, 50] // change per page values here
+                ],
+                "pageLength": 20, // default record count per page
+                "ajax": {
+                    "url": querytarget, // ajax source
+                    "type": 'POST',
+                    "data": {filterData: $scope.filterData, mode: "collection"},
+            		"xhrFields": {withCredentials: true},
+                },
+                "language": {
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有匹配結果",
+                    "sEmptyTable":     "沒有匹配結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(filtered from _MAX_ total records)",
+                    "Processing":   "處理中...",
+                    "Paginate": {
+                        "First":    "首頁",
+                        "Previous": "上頁",
+                        "Next":     "下頁",
+                        "Last":     "尾頁"
+                    }
+                },
+                "columns": [
+                            { "data": "invoiceId" },
+                            { "data": "deliveryDate_date" },
+                            { "data": "zoneId" },
+                            { "data": "client.routePlanningPriority" },
+                            { "data": "client.customerName_chi" },
+                            { "data": "invoiceTotalAmount" },
+                            { "data": "invoiceStatusText" },
+                            { "data": "staff.name" },
+                            { "data": "createdat_full" },
+                            { "data": "link" },
+                            
+                ],           
+                
+                "order": [
+                    [1, "asc"]
+                ] // set first column as a default sort by asc
+            }
+        });
+
+    }
+    
+    
+    
+    
+    
+    
+});

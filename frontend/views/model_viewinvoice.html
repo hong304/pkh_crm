@@ -1,0 +1,256 @@
+<div class="modal fade bs-modal-lg" id="productDetails" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+				<h4 class="modal-title">訂單資料</h4>
+			</div>
+			<div class="modal-body">
+				<!-- h4>{{invoiceinfo.client.customerName_chi}} @ {{invoiceinfo.deliveryDate  * 1000 | date: 'yyyy.MM.dd'}}</h4> -->
+				 
+				 <div class="col-md-12">
+					
+							<div class="portlet light bordered">
+									<div class="portlet-title">
+										<div class="caption font-green-sharp">
+											<i class="icon-speech font-green-sharp"></i>
+											<span class="caption-subject bold uppercase">訂單資料</span>
+											<span class="caption-helper"><span>
+										</div>
+									</div>
+									<div class="portlet-body">
+										<div class="row">
+									<div class="col-md-2">
+										<label>訂單編號</label>
+									</div>
+									<div class="col-md-4">
+										<label>{{invoiceinfo.invoiceId}}</label>
+									</div>
+									<div class="col-md-2">
+										<label>送貨日期</label>
+									</div>
+									<div class="col-md-4">
+										<label>{{invoiceinfo.deliveryDate  * 1000 | date: 'yyyy.MM.dd'}}</label>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-2">
+										<label>客戶</label>
+									</div>
+									<div class="col-md-4">
+										<label>{{invoiceinfo.client.customerName_chi}} ({{invoiceinfo.customerId}})</label>
+									</div>
+									<div class="col-md-2">
+										<label>客戶備註</label>
+									</div>
+									<div class="col-md-4">
+										<label>{{invoiceinfo.customerRef}}</label>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-2">
+										<label>車號／車站</label>
+									</div>
+									<div class="col-md-4">
+										<label>{{invoiceinfo.zoneId}} / {{invoiceinfo.routePlanningPriority}}</label>
+									</div>
+									<div class="col-md-2">
+										<label>下單員工</label>
+									</div>
+									<div class="col-md-4">
+										<label>{{invoiceinfo.staff.name}}</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					
+						
+					</div>
+				 
+				 <div class="col-md-12 ">
+							<!-- BEGIN Portlet PORTLET-->
+							<div class="portlet light bordered">
+								<div class="portlet-title tabbable-line">
+									<div class="caption">
+										<i class="icon-pin font-yellow-lemon"></i>
+										<span class="caption-subject bold font-yellow-lemon uppercase">
+										其他資料 </span>
+										<span class="caption-helper"></span>
+									</div>
+									<ul class="nav nav-tabs">
+										<li>
+											<a data-target="#portlet_tab3" data-toggle="tab">
+											修改記錄</a>
+										</li>
+										<li>
+											<a data-target="#portlet_tab2" data-toggle="tab">
+											列印記錄 </a>
+										</li>
+										<li class="active">
+											<a data-target="#portlet_tab1" data-toggle="tab">
+											下單貨品 </a>
+										</li>
+									</ul>
+								</div>
+								<div class="portlet-body">
+									<div class="tab-content">
+										<div class="tab-pane active" id="portlet_tab1">
+											<div>
+												<h4>下單貨品</h4>
+												<table class="table table-bordered table-hover">
+													<thead>
+														<tr role="row" class="heading">
+															<th width="5%">#</th>
+															<th width="10%">編號</th>
+															<th width="20%">貨品名稱</th>
+															<th width="5%">數量</th>
+															<th width="5%">單位</th>
+															<th width="7%">單價</th>
+															<th width="7%">原價</th>
+															<th width="7%" ng-if="systeminfo.permission.view_product_cost == true">成本</th>
+															<th width="5%">折扣</th>
+															<th width="10%">金額 </th>
+															
+														</tr>
+													</thead>
+													<tbody>
+														<tr data-ng-repeat="i in invoiceinfo.invoice_item" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+															<td >
+																{{$index+1}}
+															</td>
+															<td>
+																{{i.productId}}
+															</td>
+															<td >
+																{{invoiceinfo.products[i.productId].productName_chi}}
+															</td>
+															<td>
+																{{i.productQty}}
+															</td>
+															<td>
+																<span>{{invoiceinfo.products[i.productId].productPackingName[i.productQtyUnit]}}</span>
+															</td>
+															<td>
+																${{i.productPrice}}
+															</td>
+															<td>
+																<span>${{invoiceinfo.products[i.productId].productStdPrice[i.productQtyUnit]}}</span>
+															</td>
+															<td ng-if="systeminfo.permission.view_product_cost == true"> 
+																<span style="display:none;" id="cost_{{$index}}">${{invoiceinfo.products[i.productId].productCost_unit}}</span>
+																<a href="#" ng-click="toggle($index)" id="controlcost_{{$index}}">[顯示]</a>
+															</td>
+															<td>
+																<span data-ng-if="i.productDiscount > 0">{{i.productDiscount}}%</span>
+																<span data-ng-if="i.productDiscount == 0">-</span>
+															</td>
+															<td>
+																${{i.productQty * i.productPrice * (100-i.productDiscount)/100}}
+															</td>
+														</tr>
+														<tr>
+															<td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">總額: HK${{invoiceinfo.invoiceTotalAmount}}</td>
+														</tr>
+													</tbody>
+												</table>
+												<br/>
+												<div style="clear:both;"></div>
+											</div>
+										</div>
+										<div class="tab-pane" id="portlet_tab2">
+											<div>
+												<h4>列印記錄</h4>
+												<table class="table table-bordered table-hover">
+													<thead>
+														<tr role="row" class="heading">
+															<th width="5%">#</th>
+															<th width="">建立時間</th>
+															<th width="">預計時間</th>
+															<th width="">狀態</th>
+															<th width="">用戶</th>
+															<th width="">操作</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr data-ng-repeat="p in invoiceinfo.printqueue" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+															<td >{{p.job_id}}</td>
+															<td >{{p.insert_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss'}}</td>
+															<td >{{p.target_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss'}}</td>
+															<td >{{p.status}}</td>
+															<td >{{p.created_by}}</td>
+															<td >
+																<button data-ng-click="instantPrint(p.job_id);" data-ng-if="p.target_time > nowUnixTime" class="btn btn-xs default btn-editable"><i class="fa fa-sign-out"></i> 立即列印</button>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+												<br/>
+												<div style="clear:both;"></div>
+											</div>
+										</div>
+										<div class="tab-pane" id="portlet_tab3">
+											<div>
+												<h4>修改記錄</h4>
+												<table class="table table-bordered table-hover">
+													<thead>
+														<tr role="row" class="heading">
+															<th width="5%">Attribute</th>
+															<th width="">From</th>
+															<th width="">To</th>
+															<th width="">Timestamp</th>
+															<th width="">By</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr data-ng-repeat="a in invoiceinfo.audit" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+															<td >{{a.attribute}}</td>
+															<td >{{a.data_from}}</td>
+															<td >{{a.data_to}}</td>
+															<td >{{a.created_at  * 1000 | date: 'yyyy.MM.dd hh:mm:ss'}}</td>
+															<td >{{a.user.name}}</td>
+														</tr>
+													</tbody>
+												</table>
+												<br/>
+												<div style="clear:both;"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					<div style="clear:both;"></div>
+			</div>
+			<div class="modal-footer" >
+				<button type="button" class="btn default" data-dismiss="modal">取消</button>
+
+				<!-- Approve Invoice -->
+				<!-- Condition: Invoice Status = {1}  && Permission = approve_invoice && approver != creator-->
+				<button data-ng-if="systemInfo.permission.approve_invoice == true && invoiceinfo.invoiceStatus == 1 && systemInfo.user.id != invoiceinfo.created_by" type="button" class="btn blue" data-ng-click="manipulate('Approve', invoiceinfo.invoiceId);">批核</button>
+				
+				<!-- Disapprove Invoice -->
+				<!-- Condition: Inovice Status = {2} && Permission = approve_invoice && disapprover != creator -->
+				<button data-ng-if="systemInfo.permission.approve_invoice == true && invoiceinfo.invoiceStatus == 1 && systemInfo.user.id != invoiceinfo.created_by" type="button" class="btn yellow" data-ng-click="manipulate('Reject', invoiceinfo.invoiceId);">拒絕</button>
+				
+				<!-- Edit Invoice -->
+				<!-- Condition: Invoice Status = {1, 2, 3} -->
+				<button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus < 4" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
+				
+				<!-- Void Invoice -->
+				<!-- Condition: Invoice Status = {1, 2, 3} && Permission = void_invoice-->
+				<button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus < 4 && systemInfo.permission.void_invoice" data-ng-click="voidInvoice(invoiceinfo.invoiceId);">刪除</button>
+				
+				<!-- Unload Invoice -->
+				<!-- Condition: Invoice Status = {4} -->
+				<button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4 && systemInfo.permission.unload_invoice" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>
+				
+				<!-- Reprint Invoice -->
+				<!-- Condition: Invoice Status = |{99} Permission = reprint_invoice -->
+				<button type="button" class="btn grey-cascade" data-ng-if="invoiceinfo.invoiceStatus != 99 && systemInfo.permission.reprint_invoice" data-ng-click="rePrintInvoice(invoiceinfo.invoiceId);">重印單據</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>

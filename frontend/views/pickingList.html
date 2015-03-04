@@ -1,0 +1,175 @@
+<form class="form-horizontal" role="form" id="orderinfo" data-ng-init="updateData();">
+	<div class="col-md-2">
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">資料選項</span>
+				</div>
+				
+			</div>
+			<div class="portlet-body">
+				送貨日期
+				<div class="input-group input-medium date date-picker" data-date-format="dd-mm-yyyy">
+					<input type="text" class="form-control" data-ng-change="updateData();" ng-model="deliveryDate"  readonly>
+					<span class="input-group-btn">
+						<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+					</span>
+				</div>
+				
+				<br/>
+				車號
+				<select class="form-control" 
+						 
+						ng-model="selected_zone" 
+						data-ng-options="x.zoneName for x in availablezone track by x.zoneId" 
+						data-ng-change="updateData();">
+					
+				</select>
+			</div>
+		</div>
+			
+						
+	</div>
+	<div class="col-md-10">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">提貨單 (一樓貨品)</span>
+						</div>
+						
+					</div>
+					<div class="portlet-body">
+						
+						<table class="table table-striped table-bordered table-hover" id="datatable">
+						<thead>
+							<tr>
+								<th style="width:8%;">編號</th>
+								<th style="width:60%;">貨品</th>
+								<th style="width:5%;">數量</th>
+							</tr> 
+						</thead>
+						<tbody>
+								<tr class="odd gradeX" data-ng-repeat="i in data.firstF" style="cursor: pointer;" data-ng-click="showBreakdown(i.productDetail.productId);">
+									<td><span style="line-height:40px;font-size:16px;">{{i.productDetail.productId}}</span></td>
+									<td><span style="line-height:40px;font-size:16px;">{{i.productDetail.productName_chi}}</span></td>
+									<td>
+										<span style="line-height:40px;font-size:16px;" data-ng-repeat="qtyD in i.qty">
+											{{qtyD.qty}} 
+											<span data-ng-if="qtyD.unit == 'carton'">{{i.productDetail.productPackingName_carton}}</span>
+											<span data-ng-if="qtyD.unit == 'inner'">{{i.productDetail.productPackingName_inner}}</span>
+											<span data-ng-if="qtyD.unit == 'unit'">{{i.productDetail.productPackingName_unit}}</span>
+											<br/>
+										</span>
+									</td>
+								</tr>				
+						</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- END EXAMPLE TABLE PORTLET-->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">提貨單 (九樓貨品)</span>
+						</div>
+						
+					</div>
+					<div class="portlet-body">
+						<div id="{{$index}}" data-ng-repeat="i in data.nineF">
+							<div class="note note-info">
+								<p style="font-size:18px;">
+									 {{i.client.customerName_chi}} ({{i.client.customerId}})
+								</p>
+							</div>
+							
+							<table class="table table-striped table-bordered table-hover" id="datatable">
+							<tbody>
+									<tr class="odd gradeX" data-ng-repeat="j in i.invoice_item" data-ng-click="" style="cursor: pointer;">
+										<td style="width:3%;">
+											<span style="line-height:40px;font-size:16px;">{{$index+1}}</span>
+										</td>
+										<td style="width:50%;"">
+											<span style="line-height:40px;font-size:16px;">
+												{{j.detail.productName_chi}}
+											</span>
+										</td>
+										<td style="width:10%;">
+											<span style="line-height:40px;font-size:16px;">
+												{{j.productQty}} 
+												<span data-ng-if="j.productQtyUnit == 'carton'">{{j.detail.productPackingName_carton}}</span>
+												<span data-ng-if="j.productQtyUnit == 'inner'">{{j.detail.productPackingName_inner}}</span>
+												<span data-ng-if="j.productQtyUnit == 'unit'">{{j.detail.productPackingName_unit}}</span>
+											</span>
+										</td>
+										<td style="width:10%;"">
+											<span style="line-height:40px;font-size:16px;">
+												${{j.productPrice * j.productQty * (100-j.productDiscount)/100}}
+											</span>
+										</td>
+									</tr>				
+							</tbody>
+							</table>
+							
+							<br/>
+						</div>
+					</div>
+				</div>
+				<!-- END EXAMPLE TABLE PORTLET-->
+			</div>
+		</div>
+	</form>
+	
+	<div class="modal fade bs-modal-lg" id="pickingListBreakdown" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h4 class="modal-title">數量明細 - {{preview.productDetail.productName_chi}} ({{preview.productDetail.productId}})</h4>
+				</div>
+				<div class="modal-body">
+					 <table class="table table-bordered table-hover">
+							<thead>
+								<tr role="row" class="heading">
+									<th width="20%">訂單編號 </th>
+									<th width="70%">客戶</th> 
+									<th width="10%">數量</th> 
+									
+								</tr>
+							</thead>
+							<tbody data-ng-repeat="u in preview.breakdown">
+								<tr data-ng-repeat="i in u" style="line-height:35px;font-size:15px;">
+									<td>{{i.invoiceId}}</td>
+									<td>{{i.customerName}} ({{i.customerId}})</td>
+									<td>
+										<span data-ng-if="i.unit == 'carton'">{{i.qty}} {{preview.productDetail.productPackingName_carton}}</span>
+										<span data-ng-if="i.unit == 'inner'">{{i.qty}} {{preview.productDetail.productPackingName_inner}}</span>
+										<span data-ng-if="i.unit == 'unit'">{{i.qty}} {{preview.productDetail.productPackingName_unit}}</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+				</div>
+				<div class="modal-footer" data-ng-if="previewItem.invoiceStatus == 1">
+					<button type="button" class="btn default" data-dismiss="modal">取消</button>
+	
+					<button data-ng-if="systemInfo.permission.approve_invoice == true" type="button" class="btn blue" data-ng-click="manipulate('Approve', previewItem.invoiceId);">批核</button>
+					<button data-ng-if="systemInfo.permission.approve_invoice == true" type="button" class="btn red" data-ng-click="manipulate('Reject', previewItem.invoiceId);">拒絕</button>
+					
+					<button type="button" class="btn green" data-ng-click="goEdit(previewItem.invoiceId);">修改</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	
+</div>

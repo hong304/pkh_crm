@@ -1,0 +1,73 @@
+<form class="form-horizontal" role="form" id="queryInfo">
+	<div class="col-md-2">
+		<div class="portlet light" data-ng-if="setting.downloadOptions != false">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-red-sunglo bold uppercase">列印/下載</span>
+				</div>
+			</div>
+			<div class="portlet-body">				
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<button class="btn  blue-steel btn-block" data-ng-click="sendFile(d);" data-ng-repeat="d in setting.downloadOptions">{{d.name}}</button>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="portlet light" data-ng-repeat="f in setting.filterOptions">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">{{f.label}}</span>
+				</div>
+			</div>
+			<!--  single-dropdown -->
+			<div class="portlet-body" data-ng-if="f.type == 'single-dropdown'">				
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<div class="input-group">
+						<select class="form-control"
+							ng-model="filterData[f.model]" 
+							data-ng-options="x.label for x in f.optionList track by x.value" >								
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			<!-- date-picker -->
+			<div class="portlet-body" data-ng-if="f.type == 'date-picker'">				
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<div class="input-group input-medium date " id="{{f.id}}" data-date-format="yyyy-mm-dd" data-date-start-date="+0d">
+						<input type="text" class="form-control" readonly ng-model="filterData[f.model]">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-10">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">{{setting.title}}</span>
+						</div>
+
+					</div>
+					<div class="portlet-body" ng-bind-html="report">
+					</div>
+				</div>
+				<!-- END EXAMPLE TABLE PORTLET-->
+			</div>
+		</div>
+		
+	</form>
+	
+</div>
+
+<!-- Customer Maintenance Form -->
+<div ng-include="'/views/ipfForm.html'"></div>

@@ -1,0 +1,86 @@
+<form class="form-horizontal" role="form" id="queryInfo" ng-init="init()">
+	<div class="col-md-2">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">狀態流程</span>
+						</div>
+
+					</div>
+					<div class="portlet-body">
+							
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-10">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">更新狀態</span>
+						</div>
+
+					</div>
+					<div class="portlet-body">
+						<form role="form">
+							<div class="row">
+								<div class="col-md-12">
+									<table class="table table-bordered table-hover" style="font-size:15px;">
+									    <thead>
+									        <tr role="row" class="heading">
+									            <th width="8%">訂單編號</th>
+									            <th width="8%">送貨日期</th>
+									            <th width="5%">車線</th>
+									            <th width="10%">客戶</th>
+									            <th width="10%">付款方式</th>
+									            <th width="10%">現時狀態</th>
+									            <th width="40%">更新狀態</th>
+									        </tr>
+									    </thead>
+									    <tbody>									            
+								            <tr data-ng-repeat="i in retrieval.invoices">
+								                <td>{{i.invoiceId}}</td>
+								                <td>{{i.deliveryDate_date}}</td>
+								                <td>{{i.zone.zoneId}} ({{i.zone.zoneName}})</td>
+								                <td>{{i.client.customerName_chi}}</td>
+								                <td>{{i.paymentTermId}}</td>
+								                <td>{{i.invoiceStatusText}}</td>
+								                <td>
+													<div class="input-group">
+														<div class="icheck-inline">
+															<label data-ng-repeat="n in i.nextStatus.steps">
+																<input type="radio" name="nextStep[{{i.invoiceId}}]" data-ng-model="nextStep[i.invoiceId]" value="{{n.invoiceStatus}}" class="icheck" data-radio="iradio_square-grey"> 
+																{{n.invoiceStatusText}}
+															</label>															
+														</div>
+													</div>
+								                </td>
+								            <tr>
+								             
+									    </tbody>
+									</table>
+								</div>
+							</div>
+							<div class="form-actions" style="text-align:right;">
+								<button type="submit" class="btn green-haze" data-ng-click="updateStatus(nextStep);">確定</button>
+							</div>
+						</form>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</form>
+	
+</div>
+
+<!-- Customer Maintenance Form -->
+<div ng-include="'/views/ipfForm.html'"></div>

@@ -1,0 +1,68 @@
+<div class="modal fade bs-modal-lg" id="selectclientmodel" data-ng-init="searchClient('');" data-ng-controller="selectClientCtrl" tabindex="-1" role="basic" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+				<h4 class="modal-title">查找客戶</h4>
+			</div>
+			<div class="modal-body">
+			
+				<form class="form-horizontal" role="form">
+					<div class="form-body">
+						<div class="">
+							<div class="form-group ">
+								<div class="col-md-12 alert alert-success alert-borderless">
+									<div class="input-icon right">
+										<i class="icon-exclamation-sign"></i> 
+										<input autocomplete="off" ng-model="keyword" debounce="500" immediate="true" 
+										type="text" placeholder="客戶編號 或 名稱 或 電話號碼 " class="form-control" ng-change="searchClient(keyword)"
+										
+										>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="">
+							<div class="md-col-9">
+								<h4>{{clientHeader}}</h4>
+								<div class="table-responsive">
+									<table class="table table-striped table-bordered table-advance table-hover">
+										<thead>
+											<tr>
+												<th style="width:10%;">#</th>
+												<th style="width:40%;">客戶</th>
+												<th style="width:10%;">車線</th>
+												<th style="width:40%;">地址</th>
+											</tr>
+										</thead>
+										<tbody data-ng-if="!clientSuggestion">	
+											<tr>
+												<td>未有找到客戶資料</td>
+											</tr>
+										</tbody>
+										<tbody>
+											<tr data-ng-repeat="client in clientSuggestion" ng-click="selectClient(client)" style="cursor: pointer;">
+												<td>{{client.customerId}}</td>
+												<td>{{client.customerName_chi}} ({{client.phone_1}})</td>
+												<td>{{client.zone.zoneId}} - {{client.zone.zoneName}}</td>
+												<td>{{client.address_chi}}</td>
+											</tr>
+										</tbody> 
+									</table>
+								</div>
+							</div>
+						</div> 
+					</div>
+				</form>		
+				
+			</div>
+			<div class="modal-footer">
+					<button type="button" class="btn default" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>

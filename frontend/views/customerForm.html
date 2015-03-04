@@ -1,0 +1,119 @@
+<div class="modal fade bs-modal-lg " id="customerFormModal" data-ng-init="" tabindex="-1" role="basic" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+				<h4 class="modal-title">客戶管理</h4>
+			</div>
+			<div class="modal-body">
+				<form action="javascript:;" class="form-horizontal">
+					<div class="form-body">
+						<div class="form-group">
+							<label class="col-md-2 control-label">名稱 (中) *</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.customerName_chi" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">名稱 (英)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.customerName_eng" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">地址 (中) *</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.address_chi" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">地址 (英)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.address_eng" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">區域 *</label>
+							<div class="col-md-10">
+								<select class="form-control" 
+									ng-model="customerInfo.deliveryZone" 
+									data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId" >								
+								</select>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">車站 *</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.routePlanningPriority" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">聯絡人 (1) *</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.contactPerson_1" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">聯絡人 (2)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.contactPerson_2" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">電話 (1) *</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.phone_1" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">電話 (2)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo.phone_2" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">狀態*</label>
+							<div class="col-md-10">
+								<select class="form-control" 
+									ng-model="customerInfo.status" 
+									data-ng-options="x.label for x in statuscat track by x.value" >								
+								</select>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">付款方式* </label>
+							<div class="col-md-10">
+								<select ng-model="customerInfo.paymentTermId" class="form-control" >
+									<option value="1">Cash</option>
+									<option value="2">Credit</option>
+								</select>
+							</div>
+						</div>
+						
+					</div>
+				</form>
+				
+			</div>
+						<div class="modal-footer">
+					<h2>{{newId}}</h2>
+					<button type="button" class="btn blue" data-ng-if="submitbtn == true" data-ng-click="submitCustomerForm();">提交</button>
+					<button type="button" class="btn default" data-ng-if="submitbtn == true" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>

@@ -1,0 +1,154 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-speech font-green-sharp"></i> <span
+						class="caption-subject bold uppercase"> 主控台</span> <span
+						class="caption-helper"></span>
+				</div>
+			</div>
+			<div class="portlet-body">				
+				<div class="row"> 
+					<div class="col-md-12">
+						<a href="/#/newOrder" class="icon-btn"><i class="fa fa-plus" style="font-size:30px;"></i><div>新訂單</div></a>
+					
+						<a href="/#/queryInvoice" class="icon-btn" style="margin-left:25px;"><i class="fa fa-search" style="font-size:30px;"></i><div>搜尋訂單</div></a>
+						
+						<a href="/#/reportFactory?id=pickinglist" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>備貨單</div></a>
+						
+					
+					
+						<!-- <a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-tags" style="font-size:30px;"></i><div>產品</div></a>
+						
+						<a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-users" style="font-size:30px;"></i><div>客戶</div></a>
+						
+						<a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list" style="font-size:30px;"></i><div>價目表</div></a>
+
+					
+					
+						<a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-line-chart" style="font-size:30px;"></i><div>銷售分析</div></a>
+						
+						<a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-truck" style="font-size:30px;"></i><div>送貨情況</div></a>
+						
+						<a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-slack" style="font-size:30px;"></i><div>現金單</div></a> -->
+					</div>
+				</div>	
+			</div>
+	</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 25px;">
+	<!-- BEGIN TOP 10 CUSTOMER -->
+	<div class="col-md-4">
+		<!-- BEGIN Portlet PORTLET-->
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-speech font-green-sharp"></i> <span
+						class="caption-subject bold uppercase"> 最近客戶記錄</span> <span
+						class="caption-helper"></span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div class="scroller" style="height: 430px" data-rail-visible="1"
+					data-rail-color="blue" data-handle-color="#a1b2bd">
+					<div class="table-responsive">
+						<table class="table table-striped table-hover table-bordered">
+							<thead> 
+								<tr>
+									<th style="width: 2%;">#</th>
+									<th style="width: 50%;">客戶</th>
+									<th style="width: 10%;" >今天</th>
+									<th style="width: 15%;">下一個工作天</th>
+									
+								</tr>
+							</thead>
+							<tbody>
+								<tr data-ng-repeat="client in highFrequencyClient" data-ng-click="createCustomerInvoice(client.customerId)" style="font-size:15px;cursor: pointer;">
+									<td>{{$index+1}}</td>
+									<td>{{client.customerName_chi}} ({{client.phone_1}})</td>
+									<td>
+										<span data-ng-if="client.today == true" class="glyphicon glyphicon-ok" style="color:green;text-align:center;"></span>
+										<span data-ng-if="client.today == false" class="glyphicon glyphicon-remove"  style="color:red;text-align:center;"></span>
+									</td>
+									<td>
+										<span data-ng-if="client.tomorrow == true" class="glyphicon glyphicon-ok" style="color:green;text-align:center;"></span>
+										<span data-ng-if="client.tomorrow == false" class="glyphicon glyphicon-remove" style="color:red;text-align:center;"></span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-8">
+		<!-- BEGIN Portlet PORTLET-->
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-speech font-green-sharp"></i> <span
+						class="caption-subject bold uppercase"> 熱賣產品</span> <span
+						class="caption-helper"></span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div class="scroller" style="height: 430px" data-rail-visible="1" data-rail-color="blue" data-handle-color="#a1b2bd">
+					<div class="row">
+						<div class="col-sm-6 col-md-3" data-ng-repeat="product in promotionProducts">
+							<a href="javascript:;" class="thumbnail">
+							<img src="{{product.image}}" alt="100%x180" style="height: 180px; width: 100%; display: block;">
+							</a>
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-4">
+		<!-- BEGIN Portlet PORTLET-->
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-speech font-green-sharp"></i> <span
+						class="caption-subject bold uppercase"> 車線</span> <span
+						class="caption-helper"></span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div>
+					<div class="row" > 
+						<div class="col-md-4" style="margin-bottom:5px;" ng-repeat="z in availableZones">
+							<a href="//endpoint.pingkee.hk/setZone?id={{z.id}}" class="btn btn-lg default">{{z.name}} <i class="fa fa-location-arrow"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>  
+	</div>
+	<div class="col-md-8"> 
+		<!-- BEGIN Portlet PORTLET-->
+		<div class="portlet light bordered tasks-widget">
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-speech font-green-sharp"></i> <span
+						class="caption-subject bold uppercase"> 跟進事項</span> <span
+						class="caption-helper"></span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div class="task-content">
+					<div class="scroller" style="height: 80px;" data-always-visible="1" data-rail-visible1="1">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>  
