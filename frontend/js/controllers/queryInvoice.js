@@ -15,6 +15,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 	var fetchDataDelay = 1000;   // milliseconds
     var fetchDataTimer;
     var querytarget = endpoint + '/queryInvoice.json';
+    var reprint = endpoint + '/rePrint.json';
 	
 	$scope.firstload = true;
 	
@@ -266,7 +267,12 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     
     $scope.rePrintInvoice = function(invoiceId)
     {
-    	alert('已排序到列印隊伍上');
+    	//alert('已排序到列印隊伍上');
+        $http.post(reprint, {
+            invoiceId	:	invoiceId
+        }).success(function(data) {
+
+        });
     }
 
     
