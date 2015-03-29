@@ -1,3 +1,35 @@
+<script>
+    var limit = 2; // <---max no of lines you want in textarea
+    var textarea = document.getElementById("remark");
+    var spaces = textarea.getAttribute("cols");
+
+    textarea.onkeyup = function() {
+    var lines = textarea.value.split("\n");
+
+    for (var i = 0; i < lines.length; i++)
+    {
+    if (lines[i].length <= spaces) continue;
+    var j = 0;
+
+    var space = spaces;
+
+    while (j++ <= spaces)
+    {
+    if (lines[i].charAt(j) === " ") space = j;
+    }
+    lines[i + 1] = lines[i].substring(space + 1) + (lines[i + 1] || "");
+    lines[i] = lines[i].substring(0, space);
+    }
+    if(lines.length>limit)
+    {
+    textarea.style.color = 'red';
+    setTimeout(function(){
+    textarea.style.color = '';
+    },500);
+    }
+    textarea.value = lines.slice(0, limit).join("\n");
+    };
+</script>
 <form class="form-horizontal" role="form" id="orderinfo">
 	<div class="row">
 		<div class="col-md-12">
@@ -183,8 +215,23 @@
 									</div>
 								</div>
 							</div>	
-						</div>			
-					</div>				
+						</div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-1 control-label" style="text-align:left;">
+                                        發票備註
+                                    </label>
+                                    <div class="col-md-11">
+                                        <textarea class="form-control" placeholder="" id="remark" cols="50"  ng-model="order.invoiceRemark">{{order.invoiceRemark}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -195,8 +242,8 @@
 				<div class="portlet-title">
 					<div class="caption font-green-sharp">
 						<i class="icon-speech font-green-sharp"></i> <span
-							class="caption-subject bold uppercase">訂單貨品</span> <span
-							class="caption-helper"></span>
+							class="caption-subject bold uppercase">訂單貨品</span>
+                            <span class="caption-helper"></span>
 					</div>
 					<div class="actions">
 						<a href="#" ng-click="showRecentPurchases();" class="btn btn-lg btn-circle btn-default"><i class="fa fa-question"> </i><span class="hidden-480"> 最近下單貨品 </span></a>
@@ -205,6 +252,9 @@
 					</div>
 				</div>
 				<div class="portlet-body" id="orderportletbody">
+                    <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.productQty > 0" >訂單日期:{{lastitem.created_at}} 數量:{{lastitem.productQty}} 售價:{{lastitem.productPrice}}</p>
+                    <br />
+
 					<table class="table table-bordered table-hover">
 						<thead>
 							<tr role="row" class="heading">
@@ -273,7 +323,8 @@
 									</div>
 								</td>
 								<td style="line-height:35px;font-size:15px;">
-									HK${{product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['itemdiscount'])/100 | number:0}}
+									HK${{product[i]['qty'] * product[i]['unitprice']}}
+                                    <!--HK${{product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['itemdiscount'])/100 | number:0}}-->
 								</td>
 								<td style="line-height:35px;font-size:15px;">
 									<button type="button" class="btn btn-primary" id="remarkbtn_{{i}}" style="display:none;" data-ng-click="openRemarkPanel(i);">備註</button>

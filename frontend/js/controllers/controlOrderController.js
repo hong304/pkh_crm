@@ -40,6 +40,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	$scope.recentProduct = [];
 	$scope.editable_row = "";
 	$scope.lastinvoice = [];
+    $scope.lastitem = [];
 	$scope.order = {
 		deliveryDate:	year + '-' + month + '-' + day,
 		dueDate		:	year + '-' + month + '-' + day,
@@ -49,6 +50,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		zoneName	:	'',
 		route		:	'',
 		address		:	'',
+        invoiceRemark : '',
 		clientId	:	'',
 		paymentTerms:	'',
 		discount	:	'0',
@@ -121,7 +123,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	        });
 		}
 		
-		$(".productCodeField").inputmask("*-99-999");
+		//$(".productCodeField").inputmask("*");
 		$('#maxlength_defaultconfig').maxlength({
             limitReachedClass: "label label-danger",
         })
@@ -153,6 +155,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		
 		// load last time invoice
 		$scope.getClientLastInvoice($scope.order.clientId);
+
 		
 	});
 	
@@ -165,6 +168,16 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     		$scope.lastinvoice = res;
     	});
 	}
+
+    $scope.getLastItem = function(productId,clientId){
+
+            var target = endpoint + '/getLastItem.json';
+            $http.post(target, {productId: productId, customerId: clientId})
+                .success(function (res, status, headers, config) {
+                    $scope.lastitem = res;
+                });
+
+    }
 	
 	$scope.reCalculateTotalAmount = function() {
 		
@@ -179,7 +192,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		
 		$scope.totalAmount = $scope.totalAmount * (100-$scope.order.discount)/100;
 		
-		$scope.totalAmount = Math.round($scope.totalAmount);
+		$scope.totalAmount = $scope.totalAmount;
 	}
 	
 	$scope.itemlist.forEach(function(key){	
@@ -230,8 +243,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         		// set client information
         		$scope.order.clientId = res.customerId;
         		$scope.order.clientName = res.customerName_chi;
-        		$scope.order.address = res.address_chi; 
-        		$scope.order.zoneId = res.deliveryZone;
+        		$scope.order.address = res.address_chi;
+
+                    $scope.order.zoneId = res.deliveryZone;
         		$scope.order.zoneName = data.entrieinfo;
         		$scope.order.route = res.routePlanningPriority;
         		$scope.order.discount = inf.invoiceDiscount;
@@ -240,6 +254,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         		$scope.order.update = true;
         		$scope.order.invoiceNumber = inf.invoiceId;
         		$scope.order.invoiceId = inf.invoiceId;
+                    $scope.order.invoiceRemark = inf.invoiceRemark;
         		$scope.order.referenceNumber = inf.customerRef;
         		
         		$scope.updatePaymentTerms();
@@ -261,7 +276,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         		
         		
         		$timeout(function(){
-        			$(".productCodeField").inputmask("*-99-999");
+        			//$(".productCodeField").inputmask("*");
     			}, 2000);
         	}); 
         	
@@ -443,8 +458,14 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 			$scope.product[i].availableunit = availableunit.reverse();
 			$scope.product[i].unit = $scope.product[i].availableunit[0];
 			$scope.updateStandardPrice(i);
-			
-			console.log($scope.lastinvoice);
+
+           // console.log(code);
+            $scope.getLastItem(code,$scope.order.clientId);
+
+           // console.log($scope.lastitem);
+
+           // $scope.lastItemUnit = '5';
+
 			//--  check if last time invoice
 			if($scope.lastinvoice[code.toUpperCase()])
 			{
@@ -511,17 +532,18 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 			
 			$("#remarkbtn_" + i).css('display', 'none');
 		}
-		
-		$scope.timer.product[(i-1 < 1 ? 1 : i-1)]['completedRow'] = Date.now(); 
+
+		$scope.timer.product[(i-1 < 1 ? 1 : i-1)]['completedRow'] = Date.now();
     };
     
     $scope.$on('updateProductSelected', function(){
     	
     	$scope.timer.product[$scope.currentSelectProductRow]['closePanel'] = Date.now();
     	$scope.selectedProduct = SharedService.selectedProductId;
+
     	$scope.searchProduct($scope.currentSelectProductRow, $scope.selectedProduct);
-    	
-    	$("#selectProduct").modal('toggle');
+
+         $("#selectProduct").modal('toggle');
     });
 
     
@@ -712,11 +734,13 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             }).
             success(function(res, status, headers, config) {
             	
+            	$scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
+            	
             	if(res.result == true)
             	{
             		if(res.status == 2)
             		{
-            			$scope.statustext = "正常";
+            			
             			Metronic.alert({
                     	    container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
                     	    place: 'prepend', // append or prepent in container 
@@ -731,7 +755,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             		}
             		else if(res.status == 1)
             		{
-            			$scope.statustext = "需要批核";
+            			
             			Metronic.alert({
                     	    container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
                     	    place: 'prepend', // append or prepent in container 
@@ -852,14 +876,14 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     		$("#productsFullScreen").trigger('click');
 		}
     	$timeout(function(){
-    		$(".productCodeField").inputmask("*-99-999");
+    		//$(".productCodeField").inputmask("*");
         }, 1000);
     	
     }
     
     $scope.addMaskToProductField = function()
     {
-    	$(".productCodeField").inputmask("*-99-999");
+    	//$(".productCodeField").inputmask("*");
     }
     
     $scope.deleteRow = function(i)

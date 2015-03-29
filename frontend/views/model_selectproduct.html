@@ -1,12 +1,46 @@
 <div class="modal fade" id="selectProduct" data-ng-init="initProductData();" data-ng-controller="selectProductCtrl" style="z-index:999999" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-full">
 		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-				<h4 class="modal-title">選擇貨品</h4>
-			</div>
 			<div class="modal-body">
 				<div class="row">
+
+                    <div class="col-md-2">
+                        <!-- BEGIN Portlet PORTLET-->
+                        <div class="portlet light">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="icon-speech"></i>
+                                    <span class="caption-subject bold uppercase"> 搜索 / 建議貨品</span>
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-body">
+                                        <div class="">
+                                            <div class="form-group ">
+                                                <div class="col-md-12 alert alert-success alert-borderless">
+                                                    <div class="input-icon right">
+                                                        <i class="icon-exclamation-sign"></i>
+                                                        <input autofocus="autofocus" autocomplete="off" name="productSearchField" id="productSearchField" ng-model="keyword" type="text" placeholder="產品編號或產品名稱 " class="form-control" ng-change="searchProductByField(keyword)"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="scroller" data-rail-visible="1" data-rail-color="yellow" data-handle-color="#a1b2bd">
+                                    <ul data-ng-if="productDisplay == 'list'" class="nav nav-pills nav-stacked" style="max-width: 350px;;">
+                                        <li class="" ng-repeat="sr in productSearchResult">
+                                            <a href="#" ng-click="selectProductToMain(sr.productId);" id="suggestion_row_{{$index}}" style="font-size:14px;color:#3C688C;">{{sr.productName_chi}} </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END Portlet PORTLET-->
+                    </div>
+
+
 					<div class="col-md-2">
 						<!-- BEGIN Portlet PORTLET-->
 						<div class="portlet light">
@@ -101,41 +135,7 @@
 						<!-- END Portlet PORTLET-->
 					</div>
 					
-					<div class="col-md-2">
-						<!-- BEGIN Portlet PORTLET-->
-						<div class="portlet light">
-							<div class="portlet-title">
-								<div class="caption">
-									<i class="icon-speech"></i>
-									<span class="caption-subject bold uppercase"> 搜索 / 建議貨品</span>
-								</div>
-							</div>
-							<div class="portlet-body">
-								<form class="form-horizontal" role="form">
-									<div class="form-body">
-										<div class="">
-											<div class="form-group ">
-												<div class="col-md-12 alert alert-success alert-borderless">
-													<div class="input-icon right">
-														<i class="icon-exclamation-sign"></i> 
-														<input autofocus="autofocus" autocomplete="off" name="productSearchField" id="productSearchField" ng-model="keyword" type="text" placeholder="產品編號或產品名稱 " class="form-control" ng-change="searchProductByField(keyword)"/>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</form>
-								<div class="scroller" style="height:" data-rail-visible="1" data-rail-color="yellow" data-handle-color="#a1b2bd"> 
-									<ul data-ng-if="productDisplay == 'list'" class="nav nav-pills nav-stacked" style="max-width: 350px;;">
-										<li class="" ng-repeat="sr in productSearchResult">
-											<a href="#" ng-click="selectProductToMain(sr.productId);" id="suggestion_row_{{$index}}" style="font-size:16px;color:#3C688C;">{{sr.productName_chi}} </a>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-						<!-- END Portlet PORTLET-->
-					</div>
+
 				</div>
 			</div>
 			<div class="modal-footer">

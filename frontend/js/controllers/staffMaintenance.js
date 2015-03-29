@@ -1,5 +1,6 @@
 'use strict';
 
+
 function editStaff(StaffId, RoleId)
 {
 	var scope = angular.element(document.getElementById("queryInfo")).scope();
@@ -119,7 +120,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     
     $scope.addStaff = function()
     {
-    	
+
     	$scope.submitbtn = true;
     	$scope.info = $.extend(true, {}, $scope.info_def);
     	

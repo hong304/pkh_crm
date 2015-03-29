@@ -12,6 +12,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $scope.highFrequencyClient = data.client;
         $scope.promotionProducts = data.products;
         $scope.availableZones = data.zones;
+        $scope.currentZone = data.current_zone;
         Metronic.unblockUI();
     });
     

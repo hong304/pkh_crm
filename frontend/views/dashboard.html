@@ -15,8 +15,13 @@
 					
 						<a href="/#/queryInvoice" class="icon-btn" style="margin-left:25px;"><i class="fa fa-search" style="font-size:30px;"></i><div>搜尋訂單</div></a>
 						
-						<a href="/#/reportFactory?id=pickinglist" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>備貨單</div></a>
-						
+						<a href="/#/reportFactory?id=pickinglist" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>1樓備貨單</div></a>
+
+                        <a href="/#/reportFactory?id=pickinglist9f" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>9樓備貨單</div></a>
+
+                        <a href="/#/reportFactory?id=customerReport" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>客戶報告</div></a>
+
+                        <a href="/#/reportFactory?id=productReport" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>產品報告</div></a>
 					
 					
 						<!-- <a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-tags" style="font-size:30px;"></i><div>產品</div></a>
@@ -46,7 +51,7 @@
 			<div class="portlet-title">
 				<div class="caption font-green-sharp">
 					<i class="icon-speech font-green-sharp"></i> <span
-						class="caption-subject bold uppercase"> 最近客戶記錄</span> <span
+						class="caption-subject bold uppercase"> 最近客戶記錄</span>({{currentZone}}) <span
 						class="caption-helper"></span>
 				</div>
 			</div>
@@ -125,7 +130,7 @@
 				<div>
 					<div class="row" > 
 						<div class="col-md-4" style="margin-bottom:5px;" ng-repeat="z in availableZones">
-							<a href="//endpoint.pingkee.hk/setZone?id={{z.id}}" class="btn btn-lg default">{{z.name}} <i class="fa fa-location-arrow"></i></a>
+							<a href="{{endpoint}}/setZone?id={{z.id}}" class="btn btn-lg default">{{z.name}} <i class="fa fa-location-arrow"></i></a>
 						</div>
 					</div>
 				</div>

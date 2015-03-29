@@ -1,13 +1,13 @@
 /* Define the environment according to the windows setting */
-if(window.location.hostname == "yatfai-f.cyrustc.net")
+if(window.location.hostname != "frontend.sylam.net")
 {
 	var endpoint = '//yatfai.cyrustc.net';
 	var assets = '//yatfai-f.cyrustc.net/assets';
 }
 else
 {
-	var endpoint = '//endpoint.pingkee.hk/';
-	var assets = '//portal.pingkee.hk/assets';
+	var endpoint = '//backend.sylam.net/';
+	var assets = '//frontend.sylam.net/assets';
 }
 
 var appname = 'Web Application';
@@ -57,7 +57,6 @@ app.factory('settings', ['$rootScope', function($rootScope) {
 
 app.factory('httpPreConfig', ['$http', '$rootScope', function($http, $rootScope) {
     $http.defaults.transformRequest.push(function (data) {
-        console.log('start');
         return data;
     });
     $http.defaults.transformResponse.push(function(data){ 
@@ -72,18 +71,22 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
 	
 	// get system configuration from cloud
 	$http.get($scope.endpoint + '/system.json').success(function(data) {
-        $scope.systemInfo = data;
-        if(!data.user)
+
+          $scope.systemInfo = data;
+       /* if(!data.user)
         {
         	window.location.href = $scope.endpoint + '/credential/auth';
-        }
+        }*/
         $rootScope.systeminfo = data;
         $timeout(function(){
         	SharedService.setValue('SystemInfo', $scope.systemInfo, 'UpdateSystemInfo');
         	
         }, 500);
         
-    });    	
+    }).error(function(data, status, headers, config) {
+            window.location.href = $scope.endpoint + '/credential/auth';
+        });
+
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initComponents(); // init core components
         //Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive 
@@ -124,7 +127,7 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
 		$scope.endpoint = endpoint;
 		
         $scope.getNotification();
-        $interval($scope.getNotification, 15000);
+       $interval($scope.getNotification, 15000);
         $interval($scope.broadCastNotification, 500);
         
 	});
@@ -164,12 +167,14 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
     
     $scope.getNotification = function() {
     	var notificationJson = $scope.endpoint + "/getNotification.json";
-    	
+    	//console.log('getNotification');
     	$http.get(notificationJson).success(function(data) {
     		
     		// --------------------- handle pending approval order
     		$scope.notification = data;
-            
+            $timeout(function(){
+            	$(".slimScrollDiv").css('height', '');
+            });
         });
     }
     
@@ -502,6 +507,26 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
         }
     })
     
+    // -- push to print function
+    .state('pushToPrint', {
+        url: "/push-to-print",
+        templateUrl: "views/pushToPrint.html",            
+        data: {pageTitle: '訂單列印', pageSubTitle: ''},
+        controller: "pushToPrintCtrl",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'app',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                    files: [
+                        assets + '/global/plugins/bootbox/bootbox.min.js',
+                        'js/controllers/pushToPrintCtrl.js',
+                    ] 
+                });
+            }]
+        }
+    })
+    
     
     .state('customerMaintenance', {
         url: "/customerMaintenance",
@@ -636,6 +661,105 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }]
         }
     })
+
+        // Finance:
+        .state('newCheque', {
+            url: "/finance-newCheque",
+            templateUrl: "views/cheque_form.html",
+            data: {pageTitle: '支票入帳', pageSubTitle: ''},
+            controller: "financeController",
+
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                            assets + '/global/plugins/fuelux/js/spinner.min.js',
+                            assets + '/dependencies/jquery.cookie.min.js',
+                            assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
+                            assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+                            'js/controllers/financeController.js',
+                            'js/controllers/selectClientCtrl.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
+        .state('clientClearance', {
+            url: "/finance-clientClearance",
+            templateUrl: "views/payment_clientClearance.html",
+            data: {pageTitle: '財務相關', pageSubTitle: ''},
+            controller: "financeController",
+
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+
+                            'js/controllers/financeController.js',
+
+                        ]
+                    });
+                }]
+            }
+        })
+
+        .state('chequeListing', {
+            url: "/chequeListing",
+            templateUrl: "views/chequeListing.html",
+            data: {pageTitle: '支票列表', pageSubTitle: ''},
+            controller: "financeController",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+                            'js/controllers/financeController.js',
+                            'js/controllers/selectClientCtrl.js',
+                        ]
+                    });
+                }],
+               }
+        })
+
+        .state('customerCashListing', {
+            url: "/customerCashListing",
+            templateUrl: "views/customerCashListing.html",
+            data: {pageTitle: '現金客列表', pageSubTitle: ''},
+            controller: "financeCashController",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+                            'js/controllers/financeCashController.js',
+                            'js/controllers/selectClientCtrl.js',
+                        ]
+                    });
+                }],
+            }
+        })
     
       
 

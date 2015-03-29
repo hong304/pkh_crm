@@ -60,7 +60,7 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
     
     $scope.$on('doneCustomerUpdate', function(){
     	$scope.customerId = SharedService.clientId;
-    	$scope.searchProductByField("");
+    	$scope.searchProductByField();
     	
     });
     

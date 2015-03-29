@@ -7,6 +7,7 @@ app.directive('ngSpinnerBar', ['$rootScope',
     function($rootScope) {
         return {
             link: function(scope, element, attrs) {
+
                 // by defult hide the spinner bar
                 element.addClass('hide'); // hide spinner bar by default
 

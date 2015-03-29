@@ -1,5 +1,11 @@
 <form class="form-horizontal" role="form" id="queryInfo">
+
+
+
+
+
 	<div class="col-md-2">
+
 		<div class="portlet light" data-ng-if="setting.downloadOptions != false">
 			<div class="portlet-title">
 				<div class="caption">
@@ -21,7 +27,76 @@
 					<i class="fa fa-cogs font-green-sharp"></i>
 					<span class="caption-subject font-green-sharp bold uppercase">{{f.label}}</span>
 				</div>
+                <div class="pull-right" data-ng-if="f.type == 'search_product'">
+
+                    <a href="javascript:;" ng-click="selectProduct(null,'normal');" class="btn btn-primary" data-ng-if="action == 'yearend'">
+                        <span> 銷售報告 </span> </a>
+
+                    <a href="javascript:;" ng-click="selectProduct(null,'yearend');" class="btn btn-primary" data-ng-if="action != 'yearend'">
+                    <span> 年初至今 </span> </a>
+
+                </div>
+
+                <div class="pull-right" data-ng-if="f.type == 'search_client'">
+
+                    <a href="javascript:;" ng-click="selectClient(null,'normal');" class="btn btn-primary" data-ng-if="action == 'yearend'">
+                        <span>銷售報告 </span> </a>
+
+                    <a href="javascript:;" ng-click="selectClient(null,'yearend');" class="btn btn-primary" data-ng-if="action != 'yearend'">
+                        <span> 年初至今 </span> </a>
+
+                </div>
+
 			</div>
+
+            <div class="portlet-body"  data-ng-if="f.type == 'search_product'">
+
+                <div class="form-body">
+                    <div class="">
+                        <div class="form-group ">
+                            <div class="col-md-12 alert alert-success alert-borderless">
+                                <div class="input-icon right">
+                                    <i class="icon-exclamation-sign"></i>
+                                    <input autofocus="autofocus" autocomplete="off" name="productSearchField" id="productSearchField" ng-model="keyword" type="text" placeholder="產品編號或產品名稱 " class="form-control" ng-change="searchProductByField(keyword)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scroller" data-rail-visible="1" data-rail-color="yellow" data-handle-color="#a1b2bd">
+                    <ul class="nav nav-pills nav-stacked" style="max-width: 350px;;">
+                        <li class="" ng-repeat="sr in productSearchResult">
+                            <a href="#" ng-click="selectProduct(sr.id)" id="suggestion_row_{{$index}}" style="font-size:14px;color:#3C688C;">{{sr.productName_chi}} </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="portlet-body"  data-ng-if="f.type == 'search_client'">
+
+                <div class="form-body">
+                    <div class="">
+                        <div class="form-group ">
+                            <div class="col-md-12 alert alert-success alert-borderless">
+                                <div class="input-icon right">
+                                    <i class="icon-exclamation-sign"></i>
+                                    <input autofocus="autofocus" autocomplete="off" name="searchClientField" id="searchClientField" ng-model="keyword" type="text" placeholder="客戶編號或客戶名稱 " class="form-control" ng-change="searchClient(keyword)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scroller" data-rail-visible="1" data-rail-color="yellow" data-handle-color="#a1b2bd">
+                    <ul class="nav nav-pills nav-stacked" style="max-width: 350px;;">
+                        <li class="" ng-repeat="sr in clientSuggestion">
+                            <a href="#" ng-click="selectClient(sr.customerId)" id="suggestion_row_{{$index}}" style="font-size:14px;color:#3C688C;">{{sr.customerName_chi}} </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
 			<!--  single-dropdown -->
 			<div class="portlet-body" data-ng-if="f.type == 'single-dropdown'">				
 				<div class="md-col-12" style="margin-bottom:15px;">
@@ -47,8 +122,12 @@
 			</div>
 		</div>
 	</div>
+
+
+
 	<div class="col-md-10">
 		<div class="row">
+
 			<div class="col-md-12">
 				<div class="portlet light">
 					<div class="portlet-title">
@@ -58,11 +137,16 @@
 						</div>
 
 					</div>
-					<div class="portlet-body" ng-bind-html="report">
-					</div>
+
+                                <div class="portlet-body" ng-bind-html="report">
+                                </div>
+
+
 				</div>
 				<!-- END EXAMPLE TABLE PORTLET-->
 			</div>
+
+
 		</div>
 		
 	</form>
