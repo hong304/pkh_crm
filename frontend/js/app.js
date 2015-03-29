@@ -1,4 +1,5 @@
 /* Define the environment according to the windows setting */
+//hi test
 if(window.location.hostname != "frontend.sylam.net")
 {
 	var endpoint = '//yatfai.cyrustc.net';
