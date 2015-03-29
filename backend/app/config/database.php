@@ -55,9 +55,9 @@ return array(
 		'mysql_local' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'yatfai',
+			'database'  => 'pkh',
 			'username'  => 'root',
-			'password'  => 'Brehep3f',
+			'password'  => '',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

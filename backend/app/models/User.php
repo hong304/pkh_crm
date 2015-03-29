@@ -65,6 +65,8 @@ class User extends VerifyUser implements UserInterface, RemindableInterface {
 	{
 	    return 'remember_token';
 	}
-	
-	
+
+    public function role(){
+        return $this->belongsToMany('role')->withTimestamps();
+    }
 }

@@ -35,6 +35,9 @@ class SystemController extends BaseController {
             
             // zone
             $z = Zone::wherein('zoneId', explode(',', Auth::user()->temp_zone))->get()->toArray();
+
+
+
             $currentzone = '';
             foreach($z as $cz)
             {
@@ -55,7 +58,8 @@ class SystemController extends BaseController {
             }
             
         }
-        
+
+
         
         $systeminfo = [
           'status' => 'on',

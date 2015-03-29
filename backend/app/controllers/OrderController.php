@@ -75,7 +75,7 @@ class OrderController extends BaseController {
     
     public function jsonGetNotification()
     {
-        $return = array('pendingapproval'=>'', 'myrejectedinvoices'=>'');
+        $return = array('pendingapproval'=>'', 'myrejectedinvoices'=>'', 'pendingpring'=>0);
         
         $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
                             ->wherein('invoiceStatus', ['1', '3'])
@@ -98,7 +98,8 @@ class OrderController extends BaseController {
             $summary['countInDataMart'] += $invoice->counts;
         }
         
-        
+        $jobscount = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->where('status', 'queued')->count();
+        $summary['printjobs'] = $jobscount;
         
         
         return Response::json($summary);
@@ -235,6 +236,8 @@ class OrderController extends BaseController {
 
         }
         //dd(DB::getQueryLog());
+
+       // pd($invoices);
         return Response::json($invoices);
         
         
@@ -274,6 +277,18 @@ class OrderController extends BaseController {
         }
 
         return Response::json($lastinv);
+    }
+
+    public function jsonGetLastItem()
+    {
+        $items = '';
+        $customerId = Input::get('customerId');
+        $productId = Input::get('productId');
+        $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE customerId = '".$customerId."' AND ii.productId = '".$productId."' order by ii.invoiceItemId desc";
+        $items =  DB::select(DB::raw($sql));
+if($items == null)
+    return Response::json($items);
+        return Response::json($items[0]);
     }
     
     public function jsonUnloadInvoice()

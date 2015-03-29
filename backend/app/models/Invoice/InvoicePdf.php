@@ -6,13 +6,15 @@ class InvoicePdf {
     public $pdf = "";
     public $invoiceId = "";
     public $zoneId = "";
+    public $route = "";
     
     public function generate($invoiceId)
     {
         $this->invoiceId = $invoiceId;
-        
-        $invoiceImage = Invoice::select('invoicePrintImage', 'zoneId')->where('invoiceId', $invoiceId)->first();
+
+        $invoiceImage = Invoice::select('invoicePrintImage', 'zoneId','routePlanningPriority')->where('invoiceId', $invoiceId)->first();
         $this->zoneId = $invoiceImage['zoneId'];
+        $this->route = $invoiceImage['routePlanningPriority'];
         $image = unserialize($invoiceImage->invoicePrintImage);
         
         $pagesize = "A5";
@@ -68,9 +70,17 @@ class InvoicePdf {
         $this->pdf = $pdf;
         
         $k = explode('-', $this->invoiceId);
-        $filename = 'pdf/' . $this->invoiceId . '.pdf';
-        $path = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
-        
+
+        $temp_filename = $k[0].'-'.str_pad($this->route, 2, "0", STR_PAD_LEFT).'-'.$k[1];
+
+        $filename = 'pdf/' . $temp_filename . '.pdf';
+
+        //$path = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
+
+        $path = public_path($filename);
+
+
+
         $this->pdf->Output($path, "F");
         
         return ['path'=>$path, 'zoneId'=>$this->zoneId];
@@ -92,7 +102,9 @@ class InvoicePdf {
         $k = explode('-', $this->invoiceId);
         $filename = 'pdf/' . $this->invoiceId . '.pdf';
         $path = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
-        
+
+
+
         $this->pdf->Output($path, "F");
         
         return ['path'=>$path, 'zoneId'=>$this->zoneId];

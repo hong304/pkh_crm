@@ -28,6 +28,7 @@ class HomeController extends BaseController {
         */
         $clients = Customer::where('deliveryZone', Session::get('zone'))->with('Zone')->limit(15)->get();
         $zoneDetail = UserZone::select('zoneId')->where('userId', Auth::user()->id)->with('zoneDetail')->get();
+        $current_zone = Zone::where('zoneId',Session::get('zone'))->first();
         foreach($zoneDetail as $z)
         {
             $zones[] = ['id'=>$z->zoneId, 'name'=>$z->zoneDetail->zoneName];
@@ -37,6 +38,7 @@ class HomeController extends BaseController {
             'products' => $products,
             'client' => $clients->toArray(),
             'zones' => $zones,
+            'current_zone' => $current_zone->zoneName,
         ];
         return Response::json($returnInfo);
     }

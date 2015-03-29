@@ -5,13 +5,21 @@ class InvoiceStatusController extends BaseController {
     public function jsonRetrieveAssociation()
     {
         $reportId = Input::get('reportId');
-        
+
+
+
         $association = ReportArchive::where('id', $reportId)->first();
 
-        $invoiceIds = json_decode(json_decode($association->associates, true, true));
+
+
+       $invoiceIds = json_decode(json_decode($association->associates, true, true));
+
+     //   $invoiceIds = json_decode($association->associates);
 
         $invoices = Invoice::wherein('invoiceId', $invoiceIds)->with('client')->get();
-        
+
+
+
         foreach($invoices as $invoice)
         {
             $invoice->nextStatus = InvoiceStatusManager::determinateNextStatus($invoice);

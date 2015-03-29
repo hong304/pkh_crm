@@ -10,7 +10,20 @@ class Customer extends Eloquent  {
 	protected $table = 'Customer';
 	
 	protected $primaryKey = 'customerId';
-	
+
+    public static function boot()
+    {
+        parent::boot();
+
+        Customer::saving(function ($model) {
+
+            unset($model->zoneText);
+            unset($model->paymentTermText);
+            unset($model->created_atText);
+
+        });
+    }
+
 	public function scopeCustomerInMyZone()
 	{
 	    // get my zone info
@@ -25,4 +38,30 @@ class Customer extends Eloquent  {
 	{
 	    return $this->hasOne('Zone', 'zoneId', 'deliveryZone');
 	}
+
+    public function data_invoice(){
+        return $this->hasMany('data_invoice','customer_id','customerId');
+    }
+
+    public function newCollection(array $models = array())
+    {
+
+        foreach($models as $model)
+        {
+
+           if($model->paymentTermId == 1)
+                $model->paymentTermText = 'COD';
+            else if ($model->paymentTermId == 2)
+                $model->paymentTermText = 'Credit';
+
+            $model->zoneText = Config::get('zoneName.'.$model->zoneId);
+
+            $model->created_atText = date("Y-m-d H:i:s", $model->created_at);
+
+        }
+
+
+        return new Collection($models);
+    }
+
 }

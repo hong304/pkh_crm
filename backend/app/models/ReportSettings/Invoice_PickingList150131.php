@@ -11,7 +11,7 @@ class Invoice_PickingList150131 {
     
     public function __construct($indata)
     {
-        
+
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
         

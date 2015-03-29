@@ -33,7 +33,9 @@ class InvoiceImage {
         
         $item_counter = 1;
         $items_chunk = array_chunk($i['invoice_item'], $max_item_per_section, false);
-        
+
+        //pd($items_chunk);
+
         # Now Process with each section
         foreach($items_chunk as $p => $sections_items)
         {
@@ -170,9 +172,14 @@ class InvoiceImage {
                 $font->color('#000000');
             });
             
-            if($adv->advertisement)
+           if($adv != null)
             {
-                $this->image[$p]->text($adv->advertisement, 400, 930, function($font) use($font_file) {
+                $max_length = 30;
+                $adv_splits = str_split_unicode($adv->advertisement, $max_length);
+                $adv1 = implode("\n", $adv_splits);
+
+
+                $this->image[$p]->text($adv1, 400, 930, function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(35);
                     $font->color('#000000');
@@ -234,7 +241,7 @@ class InvoiceImage {
                 /*
                  * Add Product Price
                 */
-                $price = '$ ' . number_format($item['productPrice'], 0);
+                $price = '$ ' . number_format($item['productPrice'], 2);
                 $this->image[$p]->text($price, 1210, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
@@ -244,7 +251,7 @@ class InvoiceImage {
                 /*
                  * Add Item Price
                 */
-                $item_price = '$ ' . ceil($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100);
+                $item_price = '$ ' . $item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100;
                 $this->image[$p]->text($item_price, 1390, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
@@ -260,11 +267,11 @@ class InvoiceImage {
             $this->image[$p]->text($i['invoiceRemark'], 300, 800, function($font) use($font_file) {
                 $font->file($font_file);
                 $font->size(30);
-                $font->color('#6E6E6E');
+                $font->color('#000000');
             });
         }
         
-        $total_amount = "合計  HKD " . $english_format_number = number_format($i['totalAmount'], 0, '.', ',');;
+        $total_amount = "合計  HKD " . $english_format_number = number_format($i['totalAmount'], 2, '.', ',');;
         $this->image[$p]->text($total_amount, 1560, 900, function($font) use($font_file) {
             $font->file($font_file);
             $font->size(40);
@@ -294,10 +301,14 @@ class InvoiceImage {
             
             $numericpagenumber = (string) $page + 1;
             $k = explode('-', $this->invoiceId);
-            $filename = ($this->print ? 'print/print_' : 'preview/preview_') . $this->invoiceId . '-' . $numericpagenumber . ".png";
-            $fullpath = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
+            $filename = ($this->print ? 'print_' : 'preview/preview_') . $this->invoiceId . '-' . $numericpagenumber . ".png";
+           // $fullpath = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
+
+            $fullpath = public_path($filename);
+
             $filenames[$page]['filename'] = $filename;
             $filenames[$page]['fullpath'] = $fullpath;
+           // pd($fullpath);
             $i->save($fullpath);
             $i->destroy();
         }

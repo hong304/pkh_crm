@@ -202,26 +202,16 @@ class Invoice_CustomerBreakdown {
         
         // handle all 1F, 9F goods
         $ninef = $this->data['1F9F'];
-        
-        $j = $sum = $consec = 0;
-        $ninefproducts = [];
-        $number_of_box = count($ninef);
-        
-        foreach($ninef as $nf){
-            $sum += count($nf['items']);
-        }
-        $half = explode('.', round($sum / 2));
-        $half = (int)$half[0];
-        
+        $consec = $j = 0;                
         foreach($ninef as $c=>$nf)
         {
-            
+        
             $consec += count($nf['items']);
             $nf['consec'] = $ninef[$c]['consec'] = $consec;
-
+        
             // we can have 20 items as most per section
             $ninefproducts[$j][] = $nf;
-            if($consec > 15 OR $consec > $half)
+            if($consec > 20)
             {
                 $j++;
                 $consec = 0;

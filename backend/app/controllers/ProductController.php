@@ -41,10 +41,11 @@ class ProductController extends BaseController {
         $departmentid = Input::get('departmentid');
         $groupid = Input::get('groupid');
         $productcode_prefix = $departmentid . '-' . $groupid;
-        $products = Cache::remember('Products_' . $productcode_prefix, 5, function() use($productcode_prefix)
+        $products = Cache::remember('Products_' . $productcode_prefix, 5, function() use($departmentid,$groupid)
         {
             $products = Product::select('productId', 'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPacking_size', 'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit', 'productName_chi')
-                                ->where('productId', 'LIKE', $productcode_prefix.'%')
+                                ->where('department', $departmentid)
+                                 ->where('group',$groupid)
                                 ->where('productStatus', 'o')
                                 ->get();
             $products = $products->toArray();
@@ -120,12 +121,11 @@ class ProductController extends BaseController {
             $productData = "";
             if($productId != 'na')
             {
-                $iicm = ProductSearchCustomerMap::where('customerId', $productId)->with('productDetail')->limit(10)->orderBy('sumation', 'desc')->get();
+                $iicm = ProductSearchCustomerMap::where('customerId', $productId)->with('productDetail')->limit(20)->orderBy('sumation', 'desc')->get();
                 if($iicm->count() > 0)
                 {
                     foreach($iicm as $i)
                     {
-                        
                         $productData[] = $i->product_detail->toArray();
                     }
                     
@@ -144,6 +144,8 @@ class ProductController extends BaseController {
         
         return Response::json($productData);
     }
+
+
     
     public function jsonManiulateProduct()
     {

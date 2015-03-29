@@ -39,6 +39,11 @@ class PrintQueue extends Eloquent  {
 	    });
 	}
 	
+	public function staff()
+	{
+	    return $this->hasOne('User', 'id', 'created_by');
+	}
+	
 	
 	
 }

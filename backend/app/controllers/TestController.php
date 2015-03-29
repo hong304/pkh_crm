@@ -6,7 +6,11 @@ use Toddish\Verify\Models\Role;
 class TestController extends BaseController {
 
     public function testMethod()
-    {/*
+    {
+
+    pd($_SERVER);
+
+    /*
         function get_numerics ($str) {
             preg_match_all('/\d+/', $str, $matches);
             return @$matches[0][0];

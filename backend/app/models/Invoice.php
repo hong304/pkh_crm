@@ -22,6 +22,7 @@ class Invoice extends Eloquent  {
             unset($invoice->deliveryDate_date);
             unset($invoice->createdat_full);
             unset($invoice->invoiceStatusText);
+            unset($invoice->zoneText);
             unset($invoice->invoiceTotalAmount);
             unset($invoice->backgroundcode);
         });
@@ -194,7 +195,9 @@ class Invoice extends Eloquent  {
 	        
 	        // status text
 	        $model->invoiceStatusText = Config::get('invoiceStatus.' . $model->invoiceStatus . '.descriptionChinese');
-	        
+
+            //zone text
+            $model->zoneText = Config::get('zoneName.'.$model->zoneId);
 	        // calculate invoice total
 	        
 	        if(isset($model['invoiceItem']))
@@ -202,7 +205,7 @@ class Invoice extends Eloquent  {
 	            $model->invoiceTotalAmount = 0;
 	            foreach($model['invoiceItem'] as $item)
 	            {
-	                $model->invoiceTotalAmount += ceil($item->productQty * $item->productPrice * (100-$item->productDiscount)/100);
+	                $model->invoiceTotalAmount += $item->productQty * $item->productPrice * (100-$item->productDiscount)/100;
 	            }
 	        }
 	        

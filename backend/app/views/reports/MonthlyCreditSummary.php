@@ -7,6 +7,7 @@
             <th width="20%">訂單日期</th>
             <th width="20%">訂單編號</th>
             <th width="20%">借方</th>
+            <th with="20%">已付</th>
             <th width="20%">累計未清付金額</th>
         </tr>
     </thead>
@@ -20,16 +21,22 @@
                         <?php echo $b['invoice']; ?>
                     </td>
                     <td>
-                        HK$<?php echo number_format($b['invoiceAmount']); ?> 
+                        HK$<?php echo number_format($b['invoiceAmount']); ?>
                     </td>
+                    <td>
+                        HK$<?php echo number_format($b['paid']); ?>
+                    </td>
+
                     <td>
                         HK$<?php echo number_format($b['accumulator']); ?> 
                     </td>
                 </tr>  
             <?php endforeach; ?> 
             <tr>
-                <td colspan="4" style="text-align:right;">
-                    <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo ''; ?></span>
+                <td colspan="5" style="text-align:right;">
+                    <span style="font-weight:bold;font-size:15px;">總計: HK$<?php
+                       $count = sizeof($client['breakdown']);
+                        echo $client['breakdown'][$count-1]['accumulator']; ?></span>
                 </td>
             <tr>
     </tbody>

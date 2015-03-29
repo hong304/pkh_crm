@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 
-use google\appengine\api\taskqueue\PushTask;
+//use google\appengine\api\taskqueue\PushTask;
 
 class InvoiceManipulation {
 
@@ -72,11 +72,14 @@ class InvoiceManipulation {
 	{
 	    # First to validate all fields
 //	    $orderrules_idd_date_override = Auth::user()->can('allow_create_sameday_invoice') ? 'after:yesterday' : 'after:today';
+        
+        // updated on 2015.03.11 by Cyrus ref PKHC-18 to branch PKHC-18-allow-back-day-order
+        
 	    $orderrules = [
 	        'clientId' => ['required', 'alpha_num', 'exists:Customer,customerId'],
-	        'invoiceDate' => ['required', 'after:yesterday'],
-	        'deliveryDate' => ['required', 'after:yesterday'],
-	        'dueDate' => ['required', 'after:yesterday'],
+	        'invoiceDate' => ['required'],
+	        'deliveryDate' => ['required'],
+	        'dueDate' => ['required'],
 	        'status' => [''],
 	        'referenceNumber' => [''],
 	        'zoneId' => ['numeric'],
@@ -139,7 +142,7 @@ class InvoiceManipulation {
 	        if($i['productId'] != "")
 	        {
     	        $product = $products[$i['productId']];
-    	        $selling_price = $i['sellingPrice'] = ceil($i['productPrice'] * (100-$i['productDiscount'])/100);
+    	        $selling_price = $i['sellingPrice'] = $i['productPrice'] * (100-$i['productDiscount'])/100;
     	        $standard_price = $i['productStandardPrice'] = $product['productStdPrice_' . strtolower($i['productQtyUnit']['value'])];
     	        $unit_name = $i['productUnitName'] = $product['productPackingName_' . strtolower($i['productQtyUnit']['value'])];
     	        
@@ -204,6 +207,7 @@ class InvoiceManipulation {
 	        $this->im->invoiceType = 'Salesman';
 	        $this->im->zoneId = $this->temp_invoice_information['zoneId'];
 	        $this->im->customerId = $this->temp_invoice_information['clientId'];
+            $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
 	        $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
 	        $this->im->deliveryTruckId = 0;
 	        $this->im->invoiceCurrency = 'HKD';
@@ -213,22 +217,47 @@ class InvoiceManipulation {
 	        $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
 	        $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
 	        $this->im->created_by = Auth::user()->id;
-	        $this->im->invoiceStatus = $this->approval ? '1' : '2';
+	        $this->im->invoiceStatus = $this->determineStatus();
 	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount']; 
 	        $this->im->created_at = time();
 	        $this->im->updated_at = time();
 	    }
 	    elseif($this->action == 'update')
 	    {
-	        
+            $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
 	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
 	        $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
 	        $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
 	        $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
-	        $this->im->invoiceStatus = $this->approval ? '1' : '2';
+	        $this->im->invoiceStatus = $this->determineStatus();
 	    }
 	}
 	
+	public function determineStatus()
+	{ 
+	    $isBackdayOrder = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']) <= strtotime("today 00:00")-1;
+	    
+	    if($isBackdayOrder)
+	    {
+	        switch($this->temp_invoice_information['paymentTerms'])
+	        {
+	            case '1':
+	                return '30';
+	                break;
+	            case '2':
+	                return '20';
+	                break;
+	            default :
+	                return '0';
+	        }
+	    }
+	    else 
+	    {
+	        return $this->approval ? '1' : '2';
+	    }
+	    
+	    return '0';
+	}
 	
 	public function save()
 	{
@@ -272,7 +301,23 @@ class InvoiceManipulation {
     	            $item = new InvoiceItem();
     	            $item->created_at = $item->updated_at = time();
     	        }
-    	        
+
+                $productMap = ProductSearchCustomerMap::where('productId',$i['productId'])->where('customerId',$this->im->customerId)->first();
+               //pd($productMap);
+
+                if($productMap==null){
+                    $productMap = new ProductSearchCustomerMap();
+                    $productMap->customerId = $this->im->customerId;
+                    $productMap->productId = $i['productId'];
+                    $productMap->sumation = 1;
+                    $productMap->save();
+                }else{
+                    $productMap->sumation += 1;
+                    $productMap->save();
+                }
+
+
+
     	        $item->invoiceId = $this->invoiceId;
     	        $item->productId = $i['productId'];
     	        $item->productQtyUnit = $i['productQtyUnit']['value'];
@@ -293,7 +338,11 @@ class InvoiceManipulation {
     	            $item->save();
     	        }
     	    }
-    	    
+
+            $in = Invoice::where('invoiceId',$this->invoiceId)->with('invoiceItem')->first();
+            $in->amount = $in->invoiceTotalAmount;
+            $in->save();
+
     	    // prepare invoice image
     	    $this->__queueInvoiceImage();
 
@@ -314,10 +363,104 @@ class InvoiceManipulation {
 	    ];
 	    
 	}
-	
-	private function __queueInvoiceImage()	
+
+    public function generatePrintInvoiceImage($invoice_id)
+    {
+        $e = Invoice::where('invoiceId', $invoice_id)->first();
+        $image = new InvoiceImage();
+
+        // generate print version
+        $files = $image->generate($invoice_id, true)->saveAll();
+        $j = 0;
+        $file = [];
+
+        foreach($files as $f)
+        {
+            // pd($f);
+
+            //$files[$j]['url'] = CloudStorageTools::getImageServingUrl($f['fullpath'], ['size'=>0]);
+
+            //$file['print_url'][$j] = $files[$j]['url'] = CloudStorageTools::getImageServingUrl($f['fullpath'], ['size'=>0]);
+            $file['print_url'][$j] = $files[$j]['url'] = 'http://yatfai.cyrustc.net/print_I1503-000028-1.png';
+
+
+
+            $file['print_storage'][$j] = $f['fullpath'];
+            $j++;
+        }
+
+
+        $e->invoicePrintImage = serialize($file);
+        $e->save();
+        // pd($files);
+
+    }
+
+    public function generateInvoicePDF($invoice_id,$instructor)
+    {
+       // syslog(LOG_DEBUG, print_r(['user'=>Auth::user(), 'server'=> $_SERVER, 'get'=>$_GET, 'post'=>$_POST], true));
+        Auth::onceUsingId("27");
+
+        $oldQs = PrintQueue::where('invoiceId', $invoice_id)
+            ->wherein('status', ['queued', 'fast-track'])
+            ->get();
+        if($oldQs)
+        {
+            foreach($oldQs as $oldQ)
+            {
+                $oldQ->status = "dead:regenerated";
+                $oldQ->save();
+            }
+        }
+
+        $pdf = new InvoicePdf(); //convert png to pdf
+
+        //$pdf_file = $pdf->generate(Input::get('invoiceId'))->save();
+        $pdf_file = $pdf->generate($invoice_id);
+
+        // update invoice entry
+        if($pdf_file['zoneId'] != "")
+        {
+            $x = Invoice::where('invoiceId', $invoice_id)->first();
+            $x->invoicePrintPDF = $pdf_file['path'];
+            $x->save();
+
+            $url = $_SERVER['backend'].substr($pdf_file['path'],-24);
+
+            $q = new PrintQueue();
+            $q->file_path = $url;
+            $q->target_path = $x->zoneId;
+           // $q->target_route = $x->routePlanningPriority;
+            $q->insert_time = time();
+            $q->status = "queued";
+            $q->invoiceId = $invoice_id;
+
+
+            $q->target_time = strtotime("tomorrow 3am");
+
+            $q->created_by = $instructor;
+            $q->save();
+        }
+
+
+        // queue if instant print job
+        /*
+        if(Input::get('printInstant'))
+        {
+            $task = new PushTask('/queue/send-print-job-to-printer.queue', ['jobId' => $q->job_id]);
+            $task_name = $task->add('invoice-printing-factory');
+        }
+        */
+    }
+
+    private function __queueInvoiceImage()
 	{
-	    if($_SERVER['env'] == 'production')
+
+        $this->generatePrintInvoiceImage($this->invoiceId);
+
+        $this->generateInvoicePDF($this->invoiceId,Auth::user()->id);
+
+	    /*if($_SERVER['env'] == 'production')
 	    {
 	        syslog(LOG_DEBUG, "New Push Queue to Print Invoice");
 	        syslog(LOG_DEBUG, print_r(['user'=>Auth::user(), 'server'=> $_SERVER, 'get'=>$_GET, 'post'=>$_POST], true));
@@ -325,10 +468,10 @@ class InvoiceManipulation {
 	        $task = new PushTask('/queue/generate-print-invoice-image.queue', ['invoiceId' => $this->invoiceId]);
 	        $task_name = $task->add('generate-invoice-image');
 	        
-	        /*
-	        $task = new PushTask('/queue/generate-preview-invoice-image.queue', ['invoiceId' => $this->invoiceId]);
-	        $task_name = $task->add('generate-invoice-image');
-	        */
+
+	       // $task = new PushTask('/queue/generate-preview-invoice-image.queue', ['invoiceId' => $this->invoiceId]);
+	       // $task_name = $task->add('generate-invoice-image');
+
 
 	        $task = new PushTask('/queue/generate-invoice-pdf.queue', 
 	            [
@@ -338,7 +481,7 @@ class InvoiceManipulation {
 	                'instructor' => Auth::user()->id,	                
 	            ]);
 	        $task_name = $task->add('invoice-printing-factory');
-	    }
+	    }*/
 	}
 	
 }

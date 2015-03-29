@@ -10,14 +10,14 @@ class ReportFactory{
     private $_title = false;
     private $_compiledReport = false;
 
-    public function __construct($reportId)
+    public function __construct($reportId,$data)
     {
         $this->_reportId = $reportId;
         
         $report = Report::where('id', $this->_reportId)->firstOrFail();
         
         $module = $report->module;
-        
+
         $this->_module = new $module(Input::all());
     }
     

@@ -21,11 +21,20 @@ App::before(function($request)
 	{
 	   @header('Access-Control-Allow-Origin: http://portal.pingkee.hk');
 	   $_SERVER['env'] = 'production';
+       $_SERVER['frontend'] = 'http://frontend.pingkee.hk';
 	}
+    elseif($_SERVER['HTTP_HOST'] == 'backend.sylam.net'){
+        @header('Access-Control-Allow-Origin: http://frontend.sylam.net');
+        $_SERVER['env'] = 'production';
+        $_SERVER['frontend'] = 'http://frontend.sylam.net';
+        $_SERVER['backend'] = 'http://backend.sylam.net';
+    }
 	else
 	{
 	   @header('Access-Control-Allow-Origin: http://yatfai-f.cyrustc.net');
-	   $_SERVER['env'] = 'test';
+        $_SERVER['env'] = 'test';
+        $_SERVER['frontend'] = 'http://yatfai-f.cyrustc.net';
+        $_SERVER['backend'] = 'http://yatfai.cyrustc.net';
 	}
 	
 	

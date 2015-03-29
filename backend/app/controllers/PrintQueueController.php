@@ -26,8 +26,7 @@ class PrintQueueController extends BaseController {
         }
         else
         {
-            $jobs = PrintQueue::wherein('status', ['queued', 'fast-track'])->where('target_time', '<', time())->get();
-            
+            $jobs = PrintQueue::wherein('status', ['queued', 'fast-track'])->where('target_time', '<', time())->OrderBy('file_path','desc')->get();
             $returnCustom = [
                 'currentTimeStamp' => time(),
                 'jobs' => $jobs,
@@ -43,15 +42,41 @@ class PrintQueueController extends BaseController {
         $jobId = Input::get('jobId');
         $job = PrintQueue::where('job_id', $jobId)->first();
         $job->target_time = time();
-        $job->status = "fast-track";
+        $job->status = "fast-track"; 
         $job->save();       
+    }
+    
+    public function getAllPrintJobsWithinMyZone()
+    {
+        // list jobs that are created since 3 days ago. 
         
+        $jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
+                            ->where('insert_time', '>', strtotime("3 days ago"))
+                             ->where('status','!=','dead:regenerate')
+                            ->with('staff')
+
+                            ->orderBy('insert_time', 'asc')
+                            ->get();
+        
+        return Response::json($jobs);
+    }
+    
+    public function printAllPrintJobsWithinMyZone()
+    {
+        $affected_jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
+                            ->update(['target_time'=>time()]);
+        return Response::json(['affected'=>$affected_jobs]);
     }
     
     public function rePrint()
     {
         $invoiceId = Input::get('invoiceId');
-        
+
+        $this->generatePrintInvoiceImage($invoiceId);
+
+        $this->generateInvoicePDF($invoiceId,Auth::user()->id);
+
+        /*
         $task = new PushTask('/queue/generate-print-invoice-image.queue', ['invoiceId' => $invoiceId]);
         $task_name = $task->add('generate-invoice-image');
         
@@ -63,7 +88,7 @@ class PrintQueueController extends BaseController {
                 'instructor' => Auth::user()->id,
             ]);
         $task_name = $task->add('invoice-printing-factory');
-        
+        */
     
     }
     

@@ -20,8 +20,8 @@ class ReportController extends BaseController {
     {
 
         $reportId = Input::get('reportId');
-        
-        $factory = new ReportFactory($reportId);
+        $data = Input::all();
+        $factory = new ReportFactory($reportId,$data);
         $factory->run();
         
         

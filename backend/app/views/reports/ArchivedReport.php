@@ -17,6 +17,6 @@
                 <td><?php echo date("Y-m-d H:i:s", $row['created_at']); ?></td>
                 <td><a target="_blank" href="<?php echo Config::get('app.url');?>/viewArchivedReport?rid=<?php echo $row['id']; ?>">View</a></td>
             </tr>  
-         <?php endforeach; ?>.
+         <?php endforeach; ?>
     </tbody>
 </table>

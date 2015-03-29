@@ -52,6 +52,8 @@ Route::group(array('before' => 'auth'), function()
     Route::get('/previewInvoice.image','OrderController@previewInvoice');
     Route::post('/getClientLastInvoice.json','OrderController@jsonGetClientLastInvoice');
     Route::post('/voidInvoice.json', 'OrderController@jsonVoidInvoice');
+    Route::post('/getLastItem.json', 'OrderController@jsonGetLastItem');
+
     
     //Route::any('/getInvoices.json', 'OrderController@jsonListOrders');
     Route::any('/queryInvoice.json', 'OrderController@jsonQueryFactory');
@@ -88,10 +90,21 @@ Route::group(array('before' => 'auth'), function()
     // Printer
     Route::any('/instantPrint.json', 'PrintQueueController@instantPrint');
     Route::any('/rePrint.json', 'PrintQueueController@rePrint');
+    Route::any('/getAllPrintJobsWithinMyZone.json', 'PrintQueueController@getAllPrintJobsWithinMyZone');
+    Route::any('/printAllPrintJobsWithinMyZone.json', 'PrintQueueController@printAllPrintJobsWithinMyZone'); 
     
     // Invoice Status Manager
     Route::post('/retrieveInvoiceAssociation.json', 'InvoiceStatusController@jsonRetrieveAssociation');
     Route::post('/updateStatus.json', 'InvoiceStatusController@updateStatus');
+
+    // Payment
+    Route::post('/addCheque.json','PaymentController@addCheque');
+    Route::any('querryClientClearance.json','PaymentController@getClientClearance');
+    Route::any('querryCashCustomer.json','PaymentController@querryCashCustomer');
+
+    //Data analysis
+    Route::any('/searchProductDataProduct.json', 'DataWarehouseController@jsonSearchDataProduct');
+
     
 });
 
@@ -106,9 +119,11 @@ Route::get('/ping.json', function(){
 });
 
 Route::get('/setZone', function(){
+    //pd($_ENV);
     $zoneid = Input::get('id');
     Session::put('zone', $zoneid);
-    return Redirect::to('//portal.pingkee.hk');
+
+    return Redirect::to($_SERVER['frontend']);
 });
 
 Route::any('/credential/auth', 'UserController@authenticationProcess');
@@ -127,3 +142,6 @@ Route::any('/queue/generate-invoice-pdf.queue', 'QueueController@generateInvoice
 
 // Printer
 Route::get('/getUnprintJobs.json', 'PrintQueueController@jsonGetUnprintJobs');
+
+//Data warehouse
+Route::get('invoice','DataWarehouseController@getInvoice');

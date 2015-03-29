@@ -30,7 +30,7 @@ class Customer_MonthlyCreditSummary {
     {
         
                 
-        Invoice::where('invoiceStatus', '20')->with('client', 'invoiceItem')->chunk(50, function($invoices){
+        Invoice::where('invoiceStatus', '20')->with('client', 'invoiceItem')->OrderBy('deliveryDate')->chunk(50, function($invoices){
             foreach($invoices as $invoice)
             {
                 $customerId = $invoice['client']->customerId;
@@ -44,7 +44,8 @@ class Customer_MonthlyCreditSummary {
                     'invoiceDate' => $invoice->invoiceDate,
                     'invoice' => $invoice->invoiceId,
                     'invoiceAmount' => $invoice->invoiceTotalAmount,
-                    'accumulator' => (isset($this->_unPaid[$customerId]['breakdown']) ? end($this->_unPaid[$customerId]['breakdown'])['accumulator'] : 0) + $invoice->invoiceTotalAmount
+                    'paid' => $invoice->paid,
+                    'accumulator' => (isset($this->_unPaid[$customerId]['breakdown']) ? end($this->_unPaid[$customerId]['breakdown'])['accumulator'] : 0) + ($invoice->invoiceTotalAmount-$invoice->paid)
                 ];
             }
         });

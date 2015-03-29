@@ -49,17 +49,15 @@ class UserController extends BaseController {
     	            $zones = UserZone::where('userId', Auth::user()->id)->lists('zoneId');
     	            $user = User::find(Auth::user()->id);
     	            $user->temp_zone = implode(',', $zones);
-    	            $user->disabled = 1;
+
+
+
+                    if(User::where('id',Auth::user()->id)->with('role')->first()->role[0]->id != 3)
+                        $user->disabled = 1;
     	            $user->save(); 
     	            
-    	            if(isset($_SERVER['HTTP_X_APPENGINE_REGION']))
-    	            {
-    	                return Redirect::to('//portal.pingkee.hk');
-    	            }
-    	            else
-    	            {
-    	               return Redirect::to('//yatfai-f.cyrustc.net');
-    	            }
+                    return Redirect::to($_SERVER['frontend']);
+
     	            exit;
     	        }
     	        catch (Toddish\Verify\UserDeletedException $e)
@@ -166,12 +164,17 @@ class UserController extends BaseController {
 	
 	public function jsonManiulateStaff()
 	{
+
+
+
 	    $id = Input::get('StaffId');
 	    $account = Input::get('account');
 	    $zones = Input::get('zone');
 	    
 	    // update user information
 	    $user = User::where('id', $id)->first();
+       // pd($account);
+
 	    $user->username = $account['username'];
 	    $user->name = $account['name'];
 	    $user->email = $account['email'];
@@ -180,7 +183,9 @@ class UserController extends BaseController {
 	        $user->password = $account['password'];
 	    }
 	    $user->save();
-	    
+
+        //pd(Input::all());
+
 	    // update role
 	    $user->roles()->sync(array($account['roles']['id']));
 	    
@@ -193,7 +198,7 @@ class UserController extends BaseController {
 	        if($zone['assigned'])
 	        {
 	            
-	            DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, $zone['zoneId']]);
+	           DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, $zone['zoneId']]);
 	        }
 	    }
 	    

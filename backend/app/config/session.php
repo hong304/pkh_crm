@@ -123,7 +123,7 @@ return array(
 	|
 	*/
 
-	'domain' => isset($_SERVER['HTTP_X_APPENGINE_REGION']) ? '.pingkee.hk' : '.cyrustc.net',
+	'domain' => null,
 
 	/*
 	|--------------------------------------------------------------------------

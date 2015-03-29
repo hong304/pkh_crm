@@ -114,6 +114,9 @@ class InvoiceStatusManager {
         ];
         
         $currentState = $invoice->invoiceStatus;
+
+
+
         return $route[$currentState];
     }
 }
