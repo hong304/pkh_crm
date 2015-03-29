@@ -1,7 +1,5 @@
 <?php
 
-use google\appengine\api\taskqueue\PushTask;
-
 /*
  * Status Changes:
  * 1. Queued
@@ -72,9 +70,9 @@ class PrintQueueController extends BaseController {
     {
         $invoiceId = Input::get('invoiceId');
 
-        $this->generatePrintInvoiceImage($invoiceId);
-
-        $this->generateInvoicePDF($invoiceId,Auth::user()->id);
+        $class = New InvoiceManipulation();
+        $class->generatePrintInvoiceImage($invoiceId);
+        $class->generateInvoicePDF($invoiceId,Auth::user()->id);
 
         /*
         $task = new PushTask('/queue/generate-print-invoice-image.queue', ['invoiceId' => $invoiceId]);
