@@ -1,0 +1,70 @@
+<form class="form-horizontal" role="form" id="queryInfo" ng-init="updatePrintQueue();">
+	<div class="col-md-12">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">訂單列印 (Push-to-Print)</span>
+						</div>
+						<div class="actions">
+							<div class="btn-group">
+							<a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="pushPrintQueue();">
+							<i class="fa fa-print"></i> 全部立即列印 </a>
+						</div>
+					</div>
+					<div class="portlet-body">
+						<form role="form">
+							<div class="row">
+								<div class="col-md-12">
+									<table class="table table-bordered table-hover" style="font-size:15px;">
+									    <thead>
+									        <tr role="row" class="heading">
+									            <th width="8%">列印編號</th>
+									            <th width="8%">訂單編號</th>
+									            <th width="5%">車號</th>
+									            <th width="20%">建立時間</th>
+									            <th width="20%">最遲列印時間</th>
+									            <th width="10%">用戶</th>
+									            <th width="20%">現時狀態</th>
+									        </tr>
+									    </thead>
+									    <tbody>									            
+								            <tr data-ng-repeat="q in queue">
+								                <td>{{q.job_id}}</td>
+								                <td>{{q.invoiceId}}</td>
+								                <td>{{q.target_path}}</td>
+								                <td>{{q.insert_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
+								                <td>{{q.target_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
+								                <td>{{q.staff.username}}</td>
+								                <td>
+								                	<span data-ng-if="q.status == 'downloaded;pass'">
+								                		已下載至列印伺服器
+								                	</span>
+								                	<span data-ng-if="q.status == 'Dead:regenerate'">
+								                		被取代
+								                	</span>
+								                	<span data-ng-if="q.status == 'queued'">
+								                		等待下載
+								                	</span>
+												</td>
+								            <tr>
+								             
+									    </tbody>
+									</table>
+								</div>
+							</div>
+						</form>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</form>
+	
+</div>
+
+<!-- Customer Maintenance Form -->
+<div ng-include="'/views/ipfForm.html'"></div>

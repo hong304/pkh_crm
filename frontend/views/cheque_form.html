@@ -1,0 +1,119 @@
+<div class="row">
+	<div class="col-md-12">
+		<form class="form-horizontal form-row-seperated" action="javascript:;">
+
+
+			<div class="portlet light">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="icon-basket font-green-sharp"></i>
+						<span class="caption-subject font-green-sharp bold uppercase">
+						支票入帳</span>
+						<span class="caption-helper">&nbsp;</span>
+					</div>
+
+				</div>
+
+
+                <div class="tab-content no-space">
+                    <div class="tab-pane active" id="tab_general">
+                        <div class="form-body">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">支票號碼: <span class="required">
+										* </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" data-ng-model="cheque.no" placeholder="">
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">客戶 (c) <span class="required">
+										* </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <input id="client" class="form-control" type="text" disabled name="client" placeholder="自動填上, 請按鍵選擇" data-ng-model="filterData.displayName")/>
+											<span class="input-group-btn">
+												<a href="#" accesskey="c" data-target="#selectclientmodel" data-toggle="modal"  id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
+											</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">總數: <span class="required">
+										* </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" data-ng-model="cheque.amount" placeholder="">
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">收票日期:
+                                </label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                        <input type="text" class="form-control"  ng-model="cheque.receiveDate"  readonly>
+											<span class="input-group-btn">
+												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+											</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">開始日期:
+                                </label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                        <input type="text" class="form-control"  ng-model="cheque.startDate"  readonly>
+											<span class="input-group-btn">
+												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+											</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">結束日期:
+                                </label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                        <input type="text" class="form-control"  ng-model="cheque.endDate"  readonly>
+											<span class="input-group-btn">
+												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+											</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+
+                                <div class="col-md-12">
+                                   <div class="pull-right"> <button type="button" ng-click="submitCheque();" id="submitbutton" class="btn blue">提交 (F10)</button></div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+			</div>
+
+
+		</form>
+
+        <!-- Select Client Modal -->
+        <div ng-include="'/views/model_selectclient.html'"></div>
+
+	</div>
+</div>
+
+
+
+
+
