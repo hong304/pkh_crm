@@ -44,7 +44,7 @@
 										<label>客戶備註</label>
 									</div>
 									<div class="col-md-4">
-										<label>{{invoiceinfo.customerRef}}</label>
+										<label>{{invoiceinfo.invoiceRemark}}</label>
 									</div>
 								</div>
 								
@@ -207,7 +207,7 @@
 															<td >{{a.attribute}}</td>
 															<td >{{a.data_from}}</td>
 															<td >{{a.data_to}}</td>
-															<td >{{a.created_at  * 1000 | date: 'yyyy.MM.dd hh:mm:ss'}}</td>
+															<td >{{a.created_at  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
 															<td >{{a.user.name}}</td>
 														</tr>
 													</tbody>
