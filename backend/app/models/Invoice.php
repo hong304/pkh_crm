@@ -30,7 +30,7 @@ class Invoice extends Eloquent  {
 	    {
 	        foreach($model->getDirty() as $attribute => $value){
 	            $original= $model->getOriginal($attribute);
-	            if(!in_array($attribute, array('created_by', 'created_at', 'updated_at')))
+	            if(!in_array($attribute, array('created_by', 'created_at', 'updated_at','invoicePrintPDF','invoicePrintImage')))
 	            {
 	                $x = new TableAudit();
 	                $x->referenceKey = $model->invoiceId;
@@ -40,8 +40,7 @@ class Invoice extends Eloquent  {
 	                $x->data_to = $value;
 	                $x->created_by = (isset(Auth::user()->id) ? Auth::user()->id : 27);
 	                $x->created_at_micro = microtime(true);
-
-                    if(($attribute != 'amount' || $original != null) || $attribute !='invoicePrintPDF' || $attribute != 'invoicePrintImage' )
+                    if($attribute != 'amount' || $original != null)
 	                    $x->save();
 	            }
 	        }
