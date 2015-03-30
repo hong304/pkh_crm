@@ -41,7 +41,9 @@ class Invoice extends Eloquent  {
 	                $x->data_to = $value;
 	                $x->created_by = (isset(Auth::user()->id) ? Auth::user()->id : 27);
 	                $x->created_at_micro = microtime(true);
-	                $x->save();
+
+                    if(($attribute != 'amount' || $original != null) || $attribute !='invoicePrintPDF' || $attribute != 'invoicePrintImage' )
+	                    $x->save();
 	            }
 	        }
 	    });
