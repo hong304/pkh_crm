@@ -132,7 +132,7 @@
 																<span>{{invoiceinfo.products[i.productId].productPackingName[i.productQtyUnit]}}</span>
 															</td>
 															<td>
-																${{i.productPrice}}
+																${{i.productPrice | number : 1}}
 															</td>
 															<td>
 																<span>${{invoiceinfo.products[i.productId].productStdPrice[i.productQtyUnit]}}</span>
@@ -146,11 +146,11 @@
 																<span data-ng-if="i.productDiscount == 0">-</span>
 															</td>
 															<td>
-																${{i.productQty * i.productPrice * (100-i.productDiscount)/100}}
+																${{i.productQty * i.productPrice * (100-i.productDiscount)/100 | number : 2}}
 															</td>
 														</tr>
 														<tr>
-															<td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">總額: HK${{invoiceinfo.invoiceTotalAmount}}</td>
+															<td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">總額: HK${{invoiceinfo.invoiceTotalAmount | number : 1}}</td>
 														</tr>
 													</tbody>
 												</table>

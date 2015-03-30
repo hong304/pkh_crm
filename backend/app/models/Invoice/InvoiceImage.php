@@ -241,7 +241,7 @@ class InvoiceImage {
                 /*
                  * Add Product Price
                 */
-                $price = '$ ' . number_format($item['productPrice'], 1);
+                $price = '$ ' . round($item['productPrice'],1);
                 $this->image[$p]->text($price, 1210, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
@@ -251,7 +251,7 @@ class InvoiceImage {
                 /*
                  * Add Item Price
                 */
-                $item_price = '$ ' . number_format($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,1);
+                $item_price = '$ ' . round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,2);
                 $this->image[$p]->text($item_price, 1390, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
