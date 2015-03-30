@@ -11,8 +11,7 @@ class Invoice extends Eloquent  {
 	protected $hidden = ['invoicePreviewImage', 'invoicePrintImage', 'invoicePrintPDF'];
 	
 	protected $with = ['zone'];
-	
-	
+
 	public static function boot()
 	{
 	    parent::boot();
