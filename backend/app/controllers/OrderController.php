@@ -126,6 +126,10 @@ class OrderController extends BaseController {
 
     public function jsonQueryFactory()
     {
+        $itemIds = array('斤','樽','桶','排','箱');
+
+        $ids = "'" . implode("','", $itemIds) . "'";
+
         $mode = Input::get('mode');
         
         if($mode == 'collection')
@@ -220,7 +224,17 @@ class OrderController extends BaseController {
             
             // created by
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $invoices = $invoice->with('invoiceItem', 'client', 'staff')->orderby('invoiceId', 'desc')->paginate($page_length);
+
+
+
+          /*  $invoices = $invoices->with(['invoiceItem'=>function($query) use($ids){
+                $query->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"));
+            }])->with( 'client', 'staff')->get();*/
+
+
+            $invoices = $invoice->with(['invoiceItem'=>function($query) use($ids){
+                $query->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"));
+            }])->with( 'client', 'staff')->orderby('invoiceId', 'desc')->paginate($page_length);
             
             foreach($invoices as $invoice)
             {
@@ -230,7 +244,9 @@ class OrderController extends BaseController {
         elseif($mode == 'single')
         {
             $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
-                                ->with('invoiceItem', 'products', 'client', 'staff', 'printqueue', 'audit', 'audit.User')
+                                ->with(['invoiceItem'=>function($query) use($ids){
+                                    $query->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"));
+                                }])->with('products', 'client', 'staff', 'printqueue', 'audit', 'audit.User')
                                 ->withTrashed()
                                 ->first();
 
