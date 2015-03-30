@@ -175,8 +175,8 @@
 													<tbody>
 														<tr data-ng-repeat="p in invoiceinfo.printqueue" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
 															<td >{{p.job_id}}</td>
-															<td >{{p.insert_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss'}}</td>
-															<td >{{p.target_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss'}}</td>
+															<td >{{p.insert_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
+															<td >{{p.target_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
 															<td >{{p.status}}</td>
 															<td >{{p.created_by}}</td>
 															<!--<td >
