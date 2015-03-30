@@ -34,7 +34,8 @@ class PrintQueueController extends BaseController {
         
         return Response::json($returnCustom);
     }
-    
+
+    //queryInvoice - 列印記錄
     public function instantPrint()
     {
         $jobId = Input::get('jobId');

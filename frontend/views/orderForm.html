@@ -323,7 +323,7 @@
 									</div>
 								</td>
 								<td style="line-height:35px;font-size:15px;">
-									HK${{product[i]['qty'] * product[i]['unitprice']  | number : 1}}
+									HK${{product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['itemdiscount'])/100  | number : 1}}
                                     <!--HK${{product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['itemdiscount'])/100 | number:0}}-->
 								</td>
 								<td style="line-height:35px;font-size:15px;">
