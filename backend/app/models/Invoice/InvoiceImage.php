@@ -241,7 +241,7 @@ class InvoiceImage {
                 /*
                  * Add Product Price
                 */
-                $price = '$ ' . number_format($item['productPrice'], 2);
+                $price = '$ ' . number_format($item['productPrice'], 1);
                 $this->image[$p]->text($price, 1210, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
@@ -251,7 +251,7 @@ class InvoiceImage {
                 /*
                  * Add Item Price
                 */
-                $item_price = '$ ' . $item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100;
+                $item_price = '$ ' . number_format($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,1);
                 $this->image[$p]->text($item_price, 1390, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
@@ -271,7 +271,7 @@ class InvoiceImage {
             });
         }
         
-        $total_amount = "合計  HKD " . $english_format_number = number_format($i['totalAmount'], 2, '.', ',');;
+        $total_amount = "合計  HKD " . $english_format_number = number_format($i['totalAmount'], 1, '.', ',');;
         $this->image[$p]->text($total_amount, 1560, 900, function($font) use($font_file) {
             $font->file($font_file);
             $font->size(40);
