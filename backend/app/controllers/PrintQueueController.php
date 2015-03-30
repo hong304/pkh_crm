@@ -53,7 +53,7 @@ class PrintQueueController extends BaseController {
                              ->where('status','!=','dead:regenerate')
                             ->with('staff')
 
-                            ->orderBy('insert_time', 'asc')
+                            ->orderBy('insert_time', 'desc')
                             ->get();
         
         return Response::json($jobs);

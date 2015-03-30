@@ -265,7 +265,7 @@
 								<th width="8%">單位</th>
 								<th width="8%">單價</th>
 								<th width="8%">折扣</th>
-								<th width="10%">金額 (HK${{totalAmount}})</th>
+								<th width="10%">金額 (HK${{totalAmount | number : 1 }})</th>
 								<th width="10%"></th>
 							</tr>
 						</thead>
@@ -323,7 +323,7 @@
 									</div>
 								</td>
 								<td style="line-height:35px;font-size:15px;">
-									HK${{product[i]['qty'] * product[i]['unitprice']}}
+									HK${{product[i]['qty'] * product[i]['unitprice']  | number : 1}}
                                     <!--HK${{product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['itemdiscount'])/100 | number:0}}-->
 								</td>
 								<td style="line-height:35px;font-size:15px;">
