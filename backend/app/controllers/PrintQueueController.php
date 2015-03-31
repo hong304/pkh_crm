@@ -55,9 +55,11 @@ class PrintQueueController extends BaseController {
                             ->with('staff')->leftJoin('Invoice', function($join) {
                                     $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
                                 })
-                                    ->where('Invoice.invoiceStatus','2')
 
-
+            ->where(function($query){
+                $query->where('Invoice.invoiceStatus','2')
+                    ->orwhere('Invoice.invoiceStatus','4');
+            })
             /*->with(['Invoice'=>function($q){
                                     $q->where('invoiceStatus','2');
                                 }])*/

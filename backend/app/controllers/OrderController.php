@@ -101,7 +101,10 @@ class OrderController extends BaseController {
         $jobscount = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->where('status', 'queued')->leftJoin('Invoice', function($join) {
             $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
         })
-            ->where('Invoice.invoiceStatus','2')->count();
+              ->where(function($query){
+                $query->where('Invoice.invoiceStatus','2')
+                    ->orwhere('Invoice.invoiceStatus','4');
+            })->count();
         $summary['printjobs'] = $jobscount;
         
         
