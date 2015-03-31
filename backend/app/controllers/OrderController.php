@@ -98,7 +98,10 @@ class OrderController extends BaseController {
             $summary['countInDataMart'] += $invoice->counts;
         }
         
-        $jobscount = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->where('status', 'queued')->count();
+        $jobscount = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->where('status', 'queued')->leftJoin('Invoice', function($join) {
+            $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+        })
+            ->where('Invoice.invoiceStatus','2')->count();
         $summary['printjobs'] = $jobscount;
         
         
