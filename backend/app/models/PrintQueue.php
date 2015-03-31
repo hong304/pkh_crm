@@ -43,6 +43,10 @@ class PrintQueue extends Eloquent  {
 	{
 	    return $this->hasOne('User', 'id', 'created_by');
 	}
+
+    public function Invoice(){
+        return $this->hasOne('Invoice','invoiceId','invoiceId');
+    }
 	
 	
 	
