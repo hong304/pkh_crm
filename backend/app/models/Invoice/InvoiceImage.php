@@ -182,7 +182,7 @@ $debug = 0;
             
             $current_page = $p + 1;
             $page_text = "P. $current_page / $section_required";
-            $this->image[$p]->text($page_text, 1540, 1180, function($font) use($font_file) {
+            $this->image[$p]->text($page_text, 1540, 1185, function($font) use($font_file) {
                 $font->file($font_file);
                 $font->size(30);
                 $font->color('#000000');
@@ -211,6 +211,12 @@ $debug = 0;
                 'y' => 480,
                 'row_interval' => 50, //(400 / $max_item_per_section),
             ];
+
+            $line_total = 1425;
+            foreach($sections_items as $check){
+               if($check['productDiscount'] > 0)
+                   $line_total = 1355;
+            }
 
             foreach($sections_items as $item)
             {
@@ -268,7 +274,7 @@ $debug = 0;
                  * Add Item Price
                 */
                 $item_price = '$ ' . round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,2);
-                $this->image[$p]->text($item_price, 1355, $position['y'], function($font) use($font_file) {
+                $this->image[$p]->text($item_price, $line_total, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
@@ -277,13 +283,14 @@ $debug = 0;
                 /*
                  * Add % off
                 */
-                $item_price = '('.$item['productDiscount'].'%)';
-                $this->image[$p]->text($item_price, 1495, $position['y'], function($font) use($font_file) {
-                    $font->file($font_file);
-                    $font->size(25);
-                    $font->color('#000000');
-                });
-
+                if($item['productDiscount'] > 0){
+                    $item_price = '('.$item['productDiscount'].'%)';
+                    $this->image[$p]->text($item_price, 1495, $position['y'], function($font) use($font_file) {
+                        $font->file($font_file);
+                        $font->size(25);
+                        $font->color('#000000');
+                    });
+                }
 
                 $position['y'] += $position['row_interval'];
                 $item_counter++;
