@@ -45,13 +45,9 @@ class InvoiceImage {
              * Format JPG
              */
 
-            $this->print = true;
-            $this->image[$p] = Image::make($image_template);
-            $this->image[$p]->resize(1654, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
 
-           /* if($print_ver)
+
+           if($print_ver)
             {
                 $this->print = true;
                 $this->image[$p] = Image::canvas(1654, 1200);
@@ -64,7 +60,7 @@ class InvoiceImage {
                     $constraint->aspectRatio();
                 });
                 
-            }*/
+            }
             
             
             
