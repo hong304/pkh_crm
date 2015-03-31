@@ -44,7 +44,14 @@ class InvoiceImage {
              * Last receive date: 2014 DEC 22
              * Format JPG
              */
-            if($print_ver)
+
+            $this->print = true;
+            $this->image[$p] = Image::make($image_template);
+            $this->image[$p]->resize(1654, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
+           /* if($print_ver)
             {
                 $this->print = true;
                 $this->image[$p] = Image::canvas(1654, 1200);
@@ -57,7 +64,7 @@ class InvoiceImage {
                     $constraint->aspectRatio();
                 });
                 
-            }
+            }*/
             
             
             
@@ -159,7 +166,13 @@ class InvoiceImage {
                 $font->size(30);
                 $font->color('#000000');
             });
-    
+
+            $this->image[$p]->text('(折扣)', 1480, 418, function($font) use($font_file) {
+                $font->file($font_file);
+                $font->size(25);
+                $font->color('#FFFFFF');
+            });
+
             /*
              * Add Page Information to the invoice image
             */
@@ -252,9 +265,19 @@ class InvoiceImage {
                  * Add Item Price
                 */
                 $item_price = '$ ' . round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,2);
-                $this->image[$p]->text($item_price, 1390, $position['y'], function($font) use($font_file) {
+                $this->image[$p]->text($item_price, 1340, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
+                    $font->color('#000000');
+                });
+
+                /*
+                 * Add % off
+                */
+                $item_price = '('.$item['productDiscount'].'%)';
+                $this->image[$p]->text($item_price, 1480, $position['y'], function($font) use($font_file) {
+                    $font->file($font_file);
+                    $font->size(25);
                     $font->color('#000000');
                 });
 
@@ -272,7 +295,7 @@ class InvoiceImage {
         }
         
         $total_amount = "合計  HKD " . $english_format_number = number_format($i['totalAmount'], 1, '.', ',');;
-        $this->image[$p]->text($total_amount, 1500, 900, function($font) use($font_file) {
+        $this->image[$p]->text($total_amount, 1550, 900, function($font) use($font_file) {
             $font->file($font_file);
             $font->size(40);
             $font->color('#000000');
