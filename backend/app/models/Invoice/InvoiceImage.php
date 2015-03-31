@@ -101,13 +101,13 @@ $debug = 0;
                 $font->color('#000000');
             });
             
-            $max_length = 14;
+            $max_length = 22;
             $address_splits = str_split_unicode($i['client']['address_chi'], $max_length);
             $address = implode("\n", $address_splits);  
             
             $this->image[$p]->text($address, 155, 320, function($font) use($font_file) {
                 $font->file($font_file);
-                $font->size(35);
+                $font->size(30);
                 $font->color('#000000');
             });
     
@@ -182,7 +182,7 @@ $debug = 0;
             
             $current_page = $p + 1;
             $page_text = "P. $current_page / $section_required";
-            $this->image[$p]->text($page_text, 1540, 1150, function($font) use($font_file) {
+            $this->image[$p]->text($page_text, 1540, 1180, function($font) use($font_file) {
                 $font->file($font_file);
                 $font->size(30);
                 $font->color('#000000');
@@ -268,7 +268,7 @@ $debug = 0;
                  * Add Item Price
                 */
                 $item_price = '$ ' . round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,2);
-                $this->image[$p]->text($item_price, 1340, $position['y'], function($font) use($font_file) {
+                $this->image[$p]->text($item_price, 1345, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
@@ -278,7 +278,7 @@ $debug = 0;
                  * Add % off
                 */
                 $item_price = '('.$item['productDiscount'].'%)';
-                $this->image[$p]->text($item_price, 1480, $position['y'], function($font) use($font_file) {
+                $this->image[$p]->text($item_price, 1485, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(25);
                     $font->color('#000000');
