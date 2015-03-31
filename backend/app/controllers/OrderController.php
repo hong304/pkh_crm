@@ -14,7 +14,7 @@ class OrderController extends BaseController {
         
         foreach($product as $p)
         {
-            $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted']);
+            $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'],$p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted']);
         }
         $result = $ci->save();
         

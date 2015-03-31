@@ -59,14 +59,17 @@ class Invoice extends Eloquent  {
 	        $invoices = $invoices->where('zoneId', $zoneid);
 	    }
 
-           $itemIds = array('箱','桶','排','樽','斤');
+        /*   $itemIds = array('箱','桶','排','樽','斤');
 
         $ids = "'" . implode("','", $itemIds) . "'";
 
 	    $invoices = $invoices->with(['invoiceItem'=>function($query) use($ids){
             $query->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"));
-        }])->with( 'client', 'staff')->get();
+        }])->with( 'client', 'staff')->get();*/
 
+        $invoices = $invoices->with(['invoiceItem'=>function($query){
+            $query->orderBy('productLocation')->orderBy('productQtyUnit');
+        }])->with( 'client', 'staff')->get();
 
 	   // $invoices = $invoices->with('invoiceItem', 'client', 'staff')->get();
 	    $total = $invoices->count();

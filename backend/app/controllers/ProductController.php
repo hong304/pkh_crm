@@ -8,7 +8,7 @@ class ProductController extends BaseController {
         
         $products = Cache::remember('AllProducts', 5, function()
         {
-            $products = Product::select('productId', 'productName_chi',
+            $products = Product::select('productId', 'productName_chi','productLocation',
             'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPacking_size',
             'productPackingName_inner', 'productPackingName_unit', 'productPackingName_carton',
             'productPackingInterval_carton', 'productPackingInterval_inner', 'productPackingInterval_unit',

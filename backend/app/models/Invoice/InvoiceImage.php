@@ -272,7 +272,7 @@ class InvoiceImage {
         }
         
         $total_amount = "合計  HKD " . $english_format_number = number_format($i['totalAmount'], 1, '.', ',');;
-        $this->image[$p]->text($total_amount, 1560, 900, function($font) use($font_file) {
+        $this->image[$p]->text($total_amount, 1500, 900, function($font) use($font_file) {
             $font->file($font_file);
             $font->size(40);
             $font->color('#000000');

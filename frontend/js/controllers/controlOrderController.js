@@ -61,6 +61,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		dbid		:	'',
 		code		:	'', 
 		qty			:	1,
+        productLocation : '',
 		availableunit	:	[],
 		unit		:	'',
 		unitprice	:	0,
@@ -387,6 +388,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         			$scope.product[j]['qty'] = item.productQty;
         			
         			$scope.product[j]['unitprice'] = item.productPrice;
+                    $scope.product[j]['productLocation'] = item.productLocation;
         			$scope.product[j]['itemdiscount'] = item.productDiscount;
         			$scope.product[j]['remark'] = item.productRemark;
         			$scope.product[j]['approverid'] = item.approvedSupervisorId;
@@ -435,6 +437,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 			$("#productCode_"+i).val(code);
 			$scope.product[i].code = code.toUpperCase();
 			$scope.product[i].name = item.productName_chi;
+            $scope.product[i].productLocation = item.productLocation;
 			$scope.product[i].spec = '(' + item.productPacking_carton + '*' + item.productPacking_inner + '*' + item.productPacking_unit + '*' + item.productPacking_size + ')';
 			$scope.product[i].itemdiscount = item.itemdiscount;
 			
@@ -731,6 +734,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         
         if(!generalError)
     	{
+
         	$http.post(
             	endpoint + '/placeOrder.json', {
             	product : $scope.product,

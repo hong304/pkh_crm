@@ -100,13 +100,14 @@ class InvoiceManipulation {
 	    return $this;
 	}
 	
-	public function setItem($dbid = false, $productId, $productPrice, $productQtyUnit, $productQty, $productDiscount = false, $productRemark = false, $deleted)
+	public function setItem($dbid = false, $productId, $productPrice, $productQtyUnit,$productLocation, $productQty, $productDiscount = false, $productRemark = false, $deleted)
 	{
 	    $this->items[] = [
 	        'dbid' => $dbid,
 	        'productId' => $productId,
 	        'productPrice' => $productPrice,
 	        'productQtyUnit' => $productQtyUnit,
+            'productLocation' => $productLocation,
 	        'productQty' => $productQty,
 	        'productDiscount' => $productDiscount,
 	        'productRemark' => $productRemark,
@@ -321,6 +322,7 @@ class InvoiceManipulation {
     	        $item->invoiceId = $this->invoiceId;
     	        $item->productId = $i['productId'];
     	        $item->productQtyUnit = $i['productQtyUnit']['value'];
+                $item->productLocation = $i['productLocation'];
     	        $item->productQty = $i['productQty'];
     	        $item->productPrice = $i['productPrice'];
     	        $item->productDiscount = $i['productDiscount'];
