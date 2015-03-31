@@ -268,7 +268,7 @@ $debug = 0;
                  * Add Item Price
                 */
                 $item_price = '$ ' . round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,2);
-                $this->image[$p]->text($item_price, 1345, $position['y'], function($font) use($font_file) {
+                $this->image[$p]->text($item_price, 1355, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
@@ -278,7 +278,7 @@ $debug = 0;
                  * Add % off
                 */
                 $item_price = '('.$item['productDiscount'].'%)';
-                $this->image[$p]->text($item_price, 1485, $position['y'], function($font) use($font_file) {
+                $this->image[$p]->text($item_price, 1495, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(25);
                     $font->color('#000000');
