@@ -45,9 +45,16 @@ class InvoiceImage {
              * Format JPG
              */
 
+$debug = 0;
 
-
-           if($print_ver)
+            if($debug){
+                $this->print = true;
+                $this->image[$p] = Image::make($image_template);
+                $this->image[$p]->resize(1654, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            }
+             else if($print_ver)
             {
                 $this->print = true;
                 $this->image[$p] = Image::canvas(1654, 1200);
@@ -175,7 +182,7 @@ class InvoiceImage {
             
             $current_page = $p + 1;
             $page_text = "P. $current_page / $section_required";
-            $this->image[$p]->text($page_text, 1540, 50, function($font) use($font_file) {
+            $this->image[$p]->text($page_text, 1540, 1150, function($font) use($font_file) {
                 $font->file($font_file);
                 $font->size(30);
                 $font->color('#000000');
