@@ -222,7 +222,7 @@ class Invoice_CustomerBreakdown {
                     $consec = 0;
                 }
             }else{
-                if($consec > 32)
+                if($consec > 20)
                 {
                     $j++;
                     $consec = 0;
