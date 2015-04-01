@@ -215,7 +215,7 @@ class Invoice_CustomerBreakdown {
             $nf['consec'] = $ninef[$c]['consec'] = $consec;
         
             // we can have 20 items as most per section
-            if($consec > 35)
+            if($consec > 32)
             {
                 $j++;
                 $consec = 0;
