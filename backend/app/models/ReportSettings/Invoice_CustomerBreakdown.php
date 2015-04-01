@@ -211,12 +211,12 @@ class Invoice_CustomerBreakdown {
        foreach($ninef as $c=>$nf)
         {
         
-            $consec += count($nf['items']);
+            $consec += count($nf['items'])+3;
             $nf['consec'] = $ninef[$c]['consec'] = $consec;
         
             // we can have 20 items as most per section
             $ninefproducts[$j][] = $nf;
-            if($consec > (40-(sizeof($ninef)*3)))
+            if($consec > 35)
             {
                 $j++;
                 $consec = 0;
