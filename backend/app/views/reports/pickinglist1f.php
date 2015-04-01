@@ -1,8 +1,16 @@
+<div class="portlet-title">
+    <div class="caption">
+        <span class="caption-subject bold ">版本:<?=$data['version']?></span>
+    </div>
+
+</div>
+<br/>
+
 <table class="table table-bordered table-hover">
     <thead>
         <tr role="row" class="heading">
             <th width="20%">
-                                                        貨品編號
+                貨品編號
             </th>
             <th width="60%">
                 貨品名稱

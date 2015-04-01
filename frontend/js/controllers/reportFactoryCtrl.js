@@ -37,6 +37,8 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
         $http.post(querytarget, {reportId: $location.search().id, filterData: $scope.filterData, output: "setting"})
     	.success(function(res, status, headers, config){
+                console.log(res);
+
     		$scope.setting = res;
     		Metronic.unblockUI();
     		$timeout(function(){
@@ -78,7 +80,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     {
     	$http.post(querytarget, {reportId: $location.search().id, output: "preview", filterData: $scope.filterData, query:$location.search()})
     	.success(function(res, status, headers, config){    
-    		$scope.report = $sce.trustAsHtml(res);   
+    		$scope.report = $sce.trustAsHtml(res);
     		Metronic.unblockUI();
     		
     	});

@@ -8,6 +8,7 @@ class Invoice_1FPickingList {
     private $_zone = "";
     private $_invoices = [];
     private $_uniqueid = "";
+    private $_version = '';
     
     public function __construct($indata)
     {
@@ -25,15 +26,26 @@ class Invoice_1FPickingList {
             App::abort(401, "Unauthorized Zone");
         }
         // version & id
-         $this->_uniqueid = date("Ymd", $this->_date) . $this->_zone;
+         $this->_uniqueid = date("Ymd", $this->_date) .  $this->_zone;
+
+
+
          $lastid = ReportArchive::where('id', 'like', $this->_uniqueid.'-%-1')->select('id')->orderby('created_at', 'desc')->first();
+
+
+
          $lastid = @explode('-', $lastid->id);
+
+        $this->_version = isset($lastid[1]) ? $lastid[1]+1 : '1';
          
-         $version = isset($lastid[1]) ? $lastid[1]+1 : '1';
-         
-         $this->_uniqueid = sprintf("%s-%s-1", $this->_uniqueid, $version);
-         
-         $this->_reportTitle = sprintf("%s - v%s", $report->name, $version);
+         $this->_uniqueid = sprintf("%s-%s-1", $this->_uniqueid,  $this->_version);
+
+       // $this->_reportTitle = sprintf("%s - v%s", $report->name,  $this->_version);
+        $this->_reportTitle = sprintf("%s", $report->name);
+       // $hi = New Debug();
+       // $hi->content = $this->_reportTitle;
+      //  $hi->save();
+
     }
     
     public function registerTitle() 
@@ -47,7 +59,7 @@ class Invoice_1FPickingList {
         $zone = $this->_zone;
         
         // get invoice from that date and that zone
-        $this->goods = ['1F'=>[], '9F'=>[]];
+        $this->goods = ['1F'=>[], 'version'=>[]];
         Invoice::select('*')->wherein('invoiceStatus', ['2', '4'])->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
@@ -102,6 +114,8 @@ class Invoice_1FPickingList {
                
        ksort($this->goods['1F']);
        $this->data = $this->goods;
+        $this->data['version'] = $this->_version;
+
        return $this->data;        
     }
     
@@ -184,7 +198,7 @@ class Invoice_1FPickingList {
         $pdf->SetFont('chi','',18);
         $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
-        $pdf->Cell(0, 10,$this->_reportTitle,0,1,"C");
+        $pdf->Cell(0, 10,$this->_reportTitle."v".$this->_version,0,1,"C");
         $pdf->SetFont('chi','U',13);
         $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT), 0, 2, "L");
         $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date), 0, 2, "L");
