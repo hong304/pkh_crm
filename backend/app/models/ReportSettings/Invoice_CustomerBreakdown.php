@@ -216,13 +216,13 @@ class Invoice_CustomerBreakdown {
         
             // we can have 20 items as most per section
             if($j % 2 == 0){
-                if($consec > 37)
+                if($consec > 36)
                 {
                     $j++;
                     $consec = 0;
                 }
             }else{
-                if($consec > 20)
+                if($consec > 30)
                 {
                     $j++;
                     $consec = 0;
