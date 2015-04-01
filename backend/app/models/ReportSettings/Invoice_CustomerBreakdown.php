@@ -42,7 +42,9 @@ class Invoice_CustomerBreakdown {
         
         // get invoice from that date and that zone
         $this->goods = ['1F9F'=>[]];
-        Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
+        Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+            $query->orderBy('productLocation')->orderBy('productQtyUnit');
+        }])->with('products', 'client')
                ->chunk(50, function($invoicesQuery){
                    
                    // first of all process all products
