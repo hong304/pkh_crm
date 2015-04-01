@@ -204,7 +204,8 @@ class Invoice_CustomerBreakdown {
         
         // handle all 1F, 9F goods
         $ninef = $this->data['1F9F'];
-        $consec = $j = 0;                
+        $consec = $j = 0;
+      //  pd($ninef);
         foreach($ninef as $c=>$nf)
         {
         
@@ -219,7 +220,9 @@ class Invoice_CustomerBreakdown {
                 $consec = 0;
             }
         }
-        
+
+       // pd($ninefproducts);
+
         foreach($ninefproducts as $index=>$order)
         {
         //dd($order);   
@@ -230,7 +233,7 @@ class Invoice_CustomerBreakdown {
                 $pdf->AddPage();
                 $this->generateHeader($pdf);
         
-                $pdf->SetFont('chi','',10);
+              /*  $pdf->SetFont('chi','',10);
                 $pdf->setXY(10, $pdf->h-30);
                 $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
         
@@ -238,7 +241,17 @@ class Invoice_CustomerBreakdown {
                 $pdf->Cell(0, 0, "核數人", 0, 0, "L");
         
                 $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
-                $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+                $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);*/
+
+                $pdf->SetFont('chi','',10);
+                $pdf->setXY(110, $pdf->h-30);
+                $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+                $pdf->setXY(170, $pdf->h-30);
+                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+                $pdf->Line(110, $pdf->h-35, 150, $pdf->h-35);
+                $pdf->Line(170, $pdf->h-35, 210, $pdf->h-35);
         
                 $pdf->setXY(0, 0);
         
@@ -247,7 +260,8 @@ class Invoice_CustomerBreakdown {
                 $pdf->Line(105, 45, 105, 280);
         
                 $pdf->SetFont('chi','',10);
-                $pdf->setXY(500, $pdf->h-30);
+               $pdf->setXY(500, $pdf->h-22);
+               // $pdf->setXY(500, $pdf->h-0);
                 $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index/2+1, ceil(count($ninefproducts)/2)) , 0, 0, "R");
             }
         
@@ -321,8 +335,8 @@ class Invoice_CustomerBreakdown {
                 $pdf->SetDash(1, 1);
                 $pdf->Line($base_x + 2, $y-5, $base_x + 85, $y-5);
             }
-        
-        
+
+
         }
         
         // output
