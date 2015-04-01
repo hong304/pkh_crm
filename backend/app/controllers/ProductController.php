@@ -106,7 +106,7 @@ class ProductController extends BaseController {
             }
         }
         //dd(DB::getQueryLog());
-        
+
         return Response::json($productCustom);
     }
     

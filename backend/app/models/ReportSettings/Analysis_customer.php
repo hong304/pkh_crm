@@ -36,7 +36,7 @@ class Analysis_customer {
         // get invoice from that date and that zone
 
         // $reports = data_product::with('datawarehouse_product')->where('id',$this->_product_id)->first();
-        $reports = datawarehouse_customer::with('customer')->where('customer_id',$this->_client_id)->where(function($query){
+        $reports = datawarehouse_customer::with('Customer')->where('customer_id',$this->_client_id)->where(function($query){
             $query->where('year',date('Y'))
                 ->orWhere('year', date('Y')-1);
         })->get();

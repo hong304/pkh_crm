@@ -95,6 +95,7 @@ $debug = 0;
              * Position: 155W 280H
              * Font Size: 35
             */
+
             $this->image[$p]->text($i['client']['customerName_chi'] . '('.$i['client']['customerId'].')', 155, 280, function($font) use($font_file) {
                 $font->file($font_file);
                 $font->size(35);
