@@ -2,9 +2,9 @@
 
 class datawarehouse_customer extends Eloquent  {
 
-    public function customer()
+    public function Customer()
     {
-        return $this->hasOne('customer','customerId','customer_id');
+        return $this->hasOne('Customer','customerId','customer_id');
     }
 
 
