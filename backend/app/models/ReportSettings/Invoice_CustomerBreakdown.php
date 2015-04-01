@@ -326,9 +326,10 @@ class Invoice_CustomerBreakdown {
 
                         $pdf->Cell(0, 0, sprintf(" $%s", round($item['itemPrice']*$item['counts']*(100-$item['discount'])/100,2) ), 0, 0, 'L');
 
-                        $pdf->setXY($base_x + 85, $y);
-                        $pdf->Cell(0, 0, "(".$item['discount']."%)", 0, 0, 'L');
-                        
+                        if($item['discount']>0){
+                            $pdf->setXY($base_x + 85, $y);
+                            $pdf->Cell(0, 0, "(".$item['discount']."%)", 0, 0, 'L');
+                        }
                         $y +=  5;
                     }
                 }
