@@ -1,11 +1,3 @@
-<div class="portlet-title">
-    <div class="caption">
-        <span class="caption-subject bold ">版本:<?=$data['version']?></span>
-    </div>
-
-</div>
-<br/>
-
 <table class="table table-bordered table-hover">
     <thead>
         <tr role="row" class="heading">

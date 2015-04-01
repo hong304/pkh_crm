@@ -1,11 +1,3 @@
-<div class="portlet-title">
-    <div class="caption">
-        <span class="caption-subject bold ">版本:<?=$data['version']?></span>
-    </div>
-
-</div>
-<br/>
-
 <?php if(count($data['9F']>0)) foreach($data['9F'] as $nf):?>
 <h4 class="font-green-sharp"><?php echo $nf['customerInfo']['customerName_eng']; ?> (<?php echo $nf['customerInfo']['customerId'];?>)</h4>
 
