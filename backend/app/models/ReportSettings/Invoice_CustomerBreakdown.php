@@ -206,8 +206,9 @@ class Invoice_CustomerBreakdown {
         // handle all 1F, 9F goods
         $ninef = $this->data['1F9F'];
         $consec = $j = 0;
-      //  pd($ninef);
-        foreach($ninef as $c=>$nf)
+       // pd($ninef);
+
+       foreach($ninef as $c=>$nf)
         {
         
             $consec += count($nf['items']);
@@ -215,7 +216,7 @@ class Invoice_CustomerBreakdown {
         
             // we can have 20 items as most per section
             $ninefproducts[$j][] = $nf;
-            if($consec > 20)
+            if($consec > (40-(sizeof($ninef)*3)))
             {
                 $j++;
                 $consec = 0;
