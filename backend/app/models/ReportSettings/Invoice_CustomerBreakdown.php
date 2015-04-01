@@ -87,6 +87,7 @@ class Invoice_CustomerBreakdown {
                                'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
                                'stdPrice' => $productDetail->productStdPrice[$unit],
                                'itemPrice' => $item->productPrice,
+                               'discount' => $item->productDiscount,
                            ];
 
                            $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
@@ -306,24 +307,27 @@ class Invoice_CustomerBreakdown {
                         $pdf->setXY($base_x + 0, $y);
                         $pdf->Cell(0, 0, "    " . $item['name'], 0, 0, 'L');
                          
-                        $pdf->setXY($base_x + 40, $y);
+                        $pdf->setXY($base_x + 37, $y);
                         $pdf->Cell(0, 0, "    $" . $item['itemPrice'], 0, 0, 'L');
                         
-                        $pdf->setXY($base_x + 55, $y);
+                        $pdf->setXY($base_x + 53, $y);
                         $pdf->Cell(0, 0, "x", 0, 0, 'L');
                         
-                        $pdf->setXY($base_x + 55, $y);
+                        $pdf->setXY($base_x + 53, $y);
                         $pdf->Cell(0, 0, "    " . sprintf("%s", $item['counts']), 0, 0, 'L');
                          
-                        $pdf->setXY($base_x + 65, $y);
+                        $pdf->setXY($base_x + 63, $y);
                         $pdf->Cell(0, 0, "" . $item['unit_txt'], 0, 0, 'L');
                          
-                        $pdf->setXY($base_x + 70, $y);
+                        $pdf->setXY($base_x + 68, $y);
                         $pdf->Cell(0, 0, "=", 0, 0, 'L');
                         
-                        $pdf->setXY($base_x + 73, $y);
+                        $pdf->setXY($base_x + 70, $y);
 
-                        $pdf->Cell(0, 0, sprintf(" $%s", $item['itemPrice']*$item['counts']), 0, 0, 'L');
+                        $pdf->Cell(0, 0, sprintf(" $%s", round($item['itemPrice']*$item['counts']*(100-$item['discount'])/100,2) ), 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 85, $y);
+                        $pdf->Cell(0, 0, "(".$item['discount']."%)", 0, 0, 'L');
                         
                         $y +=  5;
                     }
