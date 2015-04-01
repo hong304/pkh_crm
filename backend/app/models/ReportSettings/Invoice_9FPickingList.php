@@ -48,7 +48,9 @@ class Invoice_9FPickingList {
         
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], '9F'=>[]];
-        Invoice::select('*')->wherein('invoiceStatus', ['2'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
+        Invoice::select('*')->wherein('invoiceStatus', ['2'])->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+                        $query->orderBy('productLocation',9)->orderBy('productQtyUnit');
+                    }])->with('products', 'client')
                ->chunk(50, function($invoicesQuery){
                    
                    // first of all process all products
@@ -106,6 +108,7 @@ class Invoice_9FPickingList {
        });
        
        $this->data = $this->goods;
+       // pd($this->data);
        return $this->data;        
     }
     
