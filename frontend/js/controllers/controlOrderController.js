@@ -940,11 +940,12 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     		// Credit
     		var currentDate = new Date(new Date().getTime());
     		var day = currentDate.getDate();
-    		var month = ("0" + currentDate.getDate()).slice(-2);
+    		var month = currentDate.getMonth();
     		var year = currentDate.getFullYear();
     		
     		var d = new Date(year, month + 2, 0);
     		var month = d.getMonth() + 1;
+            month = ("0" + month).slice(-2);
     		$scope.order.dueDate = d.getFullYear() + '-' + month + '-' + d.getDate();  
     		console.log(d, $scope.order.dueDate);
     	}
