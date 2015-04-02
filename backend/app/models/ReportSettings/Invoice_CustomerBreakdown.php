@@ -291,16 +291,15 @@ class Invoice_CustomerBreakdown {
         
             foreach($order as $o)
             {
-                
-                $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',10);
-                
-                $pdf->Cell(0, 0, sprintf("%s (%s)", $o['invoiceId'], $o['invoiceStatusText']), 0, 0, "L");
-                
-                $y += 5;
+
                 $pdf->setXY($base_x + 0, $y);
                 $pdf->SetFont('chi','',9);
                 $pdf->Cell(0, 0, sprintf("%s (%s)", $o['customerInfo']['customerName_chi'], $o['customerInfo']['customerId']), 0, 0, "L");
+
+                $y += 5;
+                $pdf->setXY($base_x + 0, $y);
+                $pdf->SetFont('chi','',10);
+                $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");
                 
                 $pdf->setXY($base_x + 64, $y);
                 $pdf->Cell(20, 0, sprintf("TOTAL: HK$%s", $o['totalAmount']), 0, 0, "R");
