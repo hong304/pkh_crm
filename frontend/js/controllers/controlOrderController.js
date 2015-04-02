@@ -940,7 +940,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     		// Credit
     		var currentDate = new Date(new Date().getTime());
     		var day = currentDate.getDate();
-    		var month = currentDate.getMonth();
+    		var month = ("0" + currentDate.getDate()).slice(-2);
     		var year = currentDate.getFullYear();
     		
     		var d = new Date(year, month + 2, 0);
