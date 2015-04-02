@@ -28,8 +28,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	}, function() {
 	  $scope.systeminfo = $rootScope.systeminfo;
 	}, true);
-	
-	
+
+    $scope.sameDayInvoice = '';
 	$scope.productCode = [];
 	$scope.itemlist = [1, 2, 3];
 	$scope.retrievedProduct = []; 
@@ -107,7 +107,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		
 		$scope.order.paymentTerms = SharedService.clientPaymentTermId;
 		$scope.updatePaymentTerms();
-		
+
+        $scope.getSameDayInvoice();
+
+
 		//disable changing payment terms if it is a COD client
 		if(SharedService.clientPaymentTermId == 1)
 		{
@@ -133,7 +136,17 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		
 		Metronic.unblockUI();
 	});
-	
+
+
+    $scope.getSameDayInvoice = function(){
+        var target = endpoint + '/getClientSameDayOrder.json';
+
+        $http.post(target, {customerId: $scope.order.clientId, dueDate:$scope.order.dueDate})
+            .success(function(res, status, headers, config){
+                $scope.sameDayInvoice = res;
+                //console.log(res);
+            });
+    }
 	// Recalculate the total amount if any part of the product object has been changed. 
 	$scope.$watch('product', function() {
 		  $scope.reCalculateTotalAmount();
@@ -943,6 +956,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     	{
     		$scope.order.dueDate = $scope.order.deliveryDate
     	}
+        $scope.getSameDayInvoice();
     }
     
     

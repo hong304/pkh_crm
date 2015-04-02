@@ -8,11 +8,12 @@ app.controller('reportSelectionCtrl', function($scope, $http, SharedService, $ti
         
         var querytarget = endpoint + "/getAvailableReportsType.json";
         
-        $http.post(querytarget, {})
-    	.success(function(res, status, headers, config){    
+        $http.get(querytarget, {})
+    	.success(function(res, status, headers, config){
+
     		$scope.reports = res;
-    		
-    	});
+
+            });
     });
     
     $scope.viewReport = function(id)

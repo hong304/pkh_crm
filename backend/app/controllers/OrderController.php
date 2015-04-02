@@ -312,6 +312,19 @@ if($items == null)
     return Response::json($items);
         return Response::json($items[0]);
     }
+
+    public function jsonGetSameDayOrder(){
+        $customerId = Input::get('customerId');
+        $dueDate = Input::get('dueDate');
+
+        $dueDate = strtotime($dueDate);
+
+        $invoice_id = Invoice::where('customerId',$customerId)->where('dueDate',$dueDate)->first();
+
+      // pd($invoice_id);
+
+        return Response::json($invoice_id);
+    }
     
     public function jsonUnloadInvoice()
     {

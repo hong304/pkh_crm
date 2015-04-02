@@ -51,6 +51,8 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/getSingleInvoice.json', 'OrderController@jsonGetSingleInvoice');
     Route::get('/previewInvoice.image','OrderController@previewInvoice');
     Route::post('/getClientLastInvoice.json','OrderController@jsonGetClientLastInvoice');
+    Route::post('/ getClientSameDayOrder.json','OrderController@jsonGetSameDayOrder');
+
     Route::post('/voidInvoice.json', 'OrderController@jsonVoidInvoice');
     Route::post('/getLastItem.json', 'OrderController@jsonGetLastItem');
 
