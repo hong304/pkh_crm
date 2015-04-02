@@ -50,11 +50,10 @@ class CustomerManipulation {
 	
 	public function save($info)
 	{
-	    $fields = ['address_chi', 'address_eng', 'contactPerson_1', 'contactPerson_2', 'currencyId', 'customerId', 'customerName_chi', 'customerName_eng', 'customerTypeId', 'discount', 'email', 'fax_1', 'fax_2', 'phone_1', 'phone_2', 'paymentTermId', 'routePlanningPriority'];
+	    $fields = ['address_chi', 'address_eng', 'contactPerson_1', 'contactPerson_2', 'currencyId', 'customerId', 'customerName_chi', 'customerName_eng', 'customerTypeId', 'discount', 'email', 'fax_1', 'fax_2', 'phone_1', 'phone_2', 'paymentTermId', 'routePlanningPriority', 'remark'];
 	    
 	    foreach($fields as $f)
 	    {
-	        
 	        $this->im->$f = $info[$f];
 	    }
 	    $this->im->deliveryZone = $info['deliveryZone']['zoneId'];

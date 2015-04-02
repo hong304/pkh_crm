@@ -103,6 +103,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		$scope.order.zoneName = SharedService.clientZoneName;
 		$scope.order.route = SharedService.clientRoute;
 		$scope.order.discount = SharedService.clientDiscount;
+        $scope.order.invoiceRemark = SharedService.clientRemark;
 		$scope.displayName = $scope.order.clientId + " (" + $scope.order.clientName + ")"; 
 		
 		$scope.order.paymentTerms = SharedService.clientPaymentTermId;

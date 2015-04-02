@@ -37,6 +37,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     	SharedService.setValue('clientZoneId', c.zone.zoneId, 'handleCustomerUpdate');
     	SharedService.setValue('clientZoneName', c.zone.zoneName, 'handleCustomerUpdate');
     	SharedService.setValue('clientRoute', c.routePlanningPriority, 'handleCustomerUpdate');
+        SharedService.setValue('clientRemark', c.remark, 'handleCustomerUpdate');
     	SharedService.setValue('clientPaymentTermId', c.paymentTermId, 'handleCustomerUpdate');
     	
     	SharedService.setValue('clientDiscount', c.discount, 'handleCustomerUpdate');

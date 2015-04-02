@@ -39,6 +39,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 			'phone_2'			:	'',
 			'paymentTermId'		:	'',
 			'routePlanningPriority':	'',
+             'remark' : '',
 	};
 	
 	$scope.submitbtn = true;
