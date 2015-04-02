@@ -4,6 +4,8 @@
 class ProductManipulation {
 
     private $_productId = '';
+    private $_departmentid = '';
+    private $_groupid = '';
     
     public function __construct($productId = false, $group)
     {
@@ -28,19 +30,33 @@ class ProductManipulation {
 	{
 	    $length = 3;
 	    
-	    $prefix = $group;
-	    $lastid = Product::where('productId', 'like', $prefix.'%')->limit(1)->orderBy('productId', 'Desc')->first();
+	//    $prefix = $group;
+
+        $groupid =  substr($group, 0, -1);
+        $pieces = explode("-",$groupid);
+        $this->_departmentid = $pieces[0];
+        $this->_groupid = $pieces[1];
+
+	    $lastid = Product::where('department', $pieces[0])->where('group', $pieces[1])->limit(1)->orderBy('productId', 'Desc')->first();
 	    	    
 	    if(count($lastid) > 0)
 	    {
 	        // extract latter part
-	        $i = explode('-', $lastid->productId);
-	        $nextId = (int) $i[2] + 1;
-	        $nextId = $prefix . str_pad($nextId, $length, '0', STR_PAD_LEFT);
+	      //  $i = explode('-', $lastid->productId);
+	      //  $nextId = (int) $i[2] + 1;
+	     //   $nextId = $prefix . str_pad($nextId, $length, '0', STR_PAD_LEFT);
+
+            if(is_numeric($lastid->productId)){
+                $nextId = (int) $lastid->productId + 1;
+            }else{
+                $nextId = (int) substr($lastid->productId, 1) + 1;
+                $nextId = substr($lastid->productId,0, 1).str_pad($nextId, $length, '0', STR_PAD_LEFT);
+            }
+
 	    }
 	    else
 	    {
-	        $nextId = $prefix.str_pad('1', $length, '0', STR_PAD_LEFT);
+	        $nextId = str_pad('1', $length, '0', STR_PAD_LEFT);
 	    }
 	    
 	    $this->_productId = $nextId;
@@ -67,6 +83,12 @@ class ProductManipulation {
         unset($this->im->productPackingInterval);
         unset($this->im->productMinPrice);
 	    $this->im->productId = $this->_productId;
+
+        if($this->action == 'create'){
+            $this->im->department = $this->_departmentid;
+            $this->im->group = $this->_groupid;
+        }
+
 	    $this->im->save();
 	    
 	    return $this->_productId;

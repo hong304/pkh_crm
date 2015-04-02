@@ -150,7 +150,11 @@ class ProductController extends BaseController {
     public function jsonManiulateProduct()
     {
         $i = Input::get('info');
-        $cm = new ProductManipulation($i['productId'], (isset($i['group']) ? $i['group']['groupid'] : false));
+
+
+
+        $cm = new ProductManipulation($i['productId'], (isset($i['group']['groupid']) ? $i['group']['groupid'] : false));
+      //  $cm = new ProductManipulation($i['productId'], (isset($i['productId']) ? false : $i['group']['groupid']));
         $id = $cm->save($i);
         
         return Response::json(['mode'=>($i['productId'] == $id ? 'update' : 'create'), 'id'=>$id]);
@@ -167,8 +171,11 @@ public function jsonQueryProduct()
             $filter = Input::get('filterData');
             Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
             $product = Product::select('*');
-    
-    
+
+
+
+
+
             if($filter['keyword'] != '')
             {
                 $filter['keyword'] = str_replace(array('*', '?'), '%', $filter['keyword']);
@@ -177,7 +184,11 @@ public function jsonQueryProduct()
             } 
             elseif($filter['group'] != '')
             {
-                $product->where('productId', 'LIKE', $filter['group']['groupid'].'%');
+                $groupid =  substr($filter['group']['groupid'], 0, -1);
+                $pieces = explode("-",$groupid);
+
+                $product->where('department', $pieces[0]);
+                $product->where('group', $pieces[1]);
             }
             // query
     
