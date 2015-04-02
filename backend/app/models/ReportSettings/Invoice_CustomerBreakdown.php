@@ -293,12 +293,12 @@ class Invoice_CustomerBreakdown {
             {
 
                 $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',9);
+                $pdf->SetFont('chi','',10);
                 $pdf->Cell(0, 0, sprintf("%s (%s)", $o['customerInfo']['customerName_chi'], $o['customerInfo']['customerId']), 0, 0, "L");
 
                 $y += 5;
                 $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',10);
+                $pdf->SetFont('chi','',9);
                 $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");
                 
                 $pdf->setXY($base_x + 64, $y);
