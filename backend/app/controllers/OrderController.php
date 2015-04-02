@@ -106,7 +106,8 @@ class OrderController extends BaseController {
                     ->orwhere('Invoice.invoiceStatus','4');
             })->count();
         $summary['printjobs'] = $jobscount;
-        
+        $summary['logintime'] = Session::get('logintime');
+        $summary['db_logintime'] = Auth::user()->logintime;
         
         return Response::json($summary);
     }

@@ -44,12 +44,12 @@ class UserController extends BaseController {
     	            $loginRc->save();
     	            
     	            Session::put('LoginId', $loginRc->id); 
-    	            
+    	            Session::put('logintime',time());
     	            
     	            $zones = UserZone::where('userId', Auth::user()->id)->lists('zoneId');
     	            $user = User::find(Auth::user()->id);
     	            $user->temp_zone = implode(',', $zones);
-
+                    $user->logintime = Session::get('logintime');
 
 
                     if(User::where('id',Auth::user()->id)->with('role')->first()->role[0]->id != 3)

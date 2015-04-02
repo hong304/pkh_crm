@@ -74,6 +74,7 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
 	$http.get($scope.endpoint + '/system.json').success(function(data) {
 
           $scope.systemInfo = data;
+
        /* if(!data.user)
         {
         	window.location.href = $scope.endpoint + '/credential/auth';
@@ -173,6 +174,12 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
     		
     		// --------------------- handle pending approval order
     		$scope.notification = data;
+
+            if(data.logintime != data.db_logintime){
+                alert('你已被登出')
+                window.location.href = $scope.endpoint + '/logout?mode=manual';
+            }
+
             $timeout(function(){
             	$(".slimScrollDiv").css('height', '');
             });

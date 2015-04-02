@@ -71,8 +71,9 @@ class SystemController extends BaseController {
           'availableZone' => $z,
           'currentzone' => $currentzone,
           'productgroup' => $productgroup,    
-          'invoiceStatus' => Config::get('invoiceStatus'),   
-        ];
+          'invoiceStatus' => Config::get('invoiceStatus'),
+         ];
+
         return Response::json($systeminfo);
     }
 
