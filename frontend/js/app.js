@@ -176,11 +176,8 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
     		$scope.notification = data;
 
             if(data.logintime != parseInt(data.db_logintime)){
-                console.log('hihihi');
                 alert('你已被登出')
                 window.location.href = $scope.endpoint + '/logout?mode=manual';
-            }else{
-                console.log('hi');
             }
 
             $timeout(function(){
