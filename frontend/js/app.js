@@ -579,11 +579,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
         } 
     })
     
-    .state('productDepartmentMaintenance', {
+    .state('productDepartment', {
         url: "/productDepartmentMaintenance",
         templateUrl: "views/productDepartmentListing.html",            
         data: {pageTitle: '產品類別設定', pageSubTitle: ''},
-        controller: "productMaintenanceCtrl",
+        controller: "productDepartment",
         resolve: {
             deps: ['$ocLazyLoad', function($ocLazyLoad) {
                 return $ocLazyLoad.load({
@@ -593,7 +593,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 						assets + '/global/plugins/datatables/all.min.js',
 						assets + '/global/scripts/datatable.js',
 
-                        'js/controllers/productDepartmentMaintenanceCtrl.js',
+                        'js/controllers/productDepartment.js',
                     ] 
                 });
             }]

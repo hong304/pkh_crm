@@ -8,7 +8,7 @@ function editProduct(productId)
     });
 }
 
-app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
+app.controller('productDepartment', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 	
 	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
@@ -30,14 +30,15 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     $scope.$on('$viewContentLoaded', function() {   
     	
         Metronic.initAjax();        
-        $scope.systeminfo = $rootScope.systeminfo;   
+        $scope.systeminfo = $rootScope.systeminfo;
         $scope.updateDataSet();
     });
     
     $scope.$watch(function() {
     	return $rootScope.systeminfo;
   	}, function() {
-  		$scope.systeminfo = $rootScope.systeminfo;  		
+  		$scope.systeminfo = $rootScope.systeminfo;
+
   	}, true);
     
     
@@ -70,7 +71,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	//var info = grid.page.info();
     	if(!$scope.firstload)
 		{
-    		$("#datatable_ajax").dataTable().fnDestroy(); 
+    		$("#datatable_ajax").dataTable().fnDestroy();
 		}
     	else
 		{

@@ -55,13 +55,14 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	
         Metronic.initAjax();        
         $scope.systeminfo = $rootScope.systeminfo;   
-        $scope.updateDataSet();
+
     });
     
     $scope.$watch(function() {
     	return $rootScope.systeminfo;
   	}, function() {
-  		$scope.systeminfo = $rootScope.systeminfo;  		
+  		$scope.systeminfo = $rootScope.systeminfo;
+        $scope.updateDataSet();
   	}, true);
     
     
