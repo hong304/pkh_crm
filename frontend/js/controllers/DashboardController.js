@@ -14,6 +14,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $scope.availableZones = data.zones;
         $scope.currentZone = data.current_zone;
         Metronic.unblockUI();
+        console.log($scope.promotionProducts);
     });
     
     $scope.createCustomerInvoice = function(customerId)

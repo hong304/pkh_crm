@@ -11,7 +11,7 @@ class HomeController extends BaseController {
         {
             $products[] = [
               'name' => '',
-              'image' => 'http://yatfai-f.cyrustc.net/assets/temp_photo/'.$photos[rand(0, 2)].'.png',  
+              'image' => $_SERVER['frontend'].'/assets/temp_photo/'.$photos[rand(0, 2)].'.png',
             ];
         }
         /*
