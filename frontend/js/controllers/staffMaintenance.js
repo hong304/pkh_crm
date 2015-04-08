@@ -81,7 +81,19 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     		
     		$scope.user = res.account;
     		$scope.availableroles = res.available_roles;
-    		
+
+                var status = [];
+                status = status.concat([{value: 0, label: "正常"}]);
+                status = status.concat([{value: 1, label: "暫停"}]);
+                $scope.status = status;
+
+                var pos = status.map(function(e) {
+                    return e.value;
+                }).indexOf(res.account.disabled);
+
+                $scope.user.status = status[pos];
+
+
     		var pos = $scope.availableroles.map(function(e) { 
 				return e.id; 
 			  }).indexOf(res.account.roles[0].id);
@@ -202,7 +214,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
             src: $("#datatable_ajax"),
             onSuccess: function (grid) {
                 // execute some code after table records loaded
-            	
+
             },
             onError: function (grid) {
                 // execute some code on network or other general error  
@@ -242,7 +254,8 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
                 "columns": [
                             { "data": "username" },
                             { "data": "name" },
-                            { "data": "role" },
+                            { "data": "m_role" },
+                            { "data": "disabled" },
                             { "data": "link" },
                             
                 ],           

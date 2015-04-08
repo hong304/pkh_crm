@@ -199,6 +199,12 @@ public function jsonQueryProduct()
             
             foreach($product['data'] as $c)
             {
+
+                if($c['productStatus'] == 'o'){
+                    $c['productStatus'] = '正常';
+                }else{
+                    $c['productStatus'] = '暫停';
+                }
                 
                 $c['link'] = '<span onclick="editProduct(\''.$c['productId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                 $products[] = $c;

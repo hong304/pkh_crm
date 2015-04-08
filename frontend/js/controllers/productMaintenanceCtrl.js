@@ -234,6 +234,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
                 "columns": [
                             { "data": "productId" },
                             { "data": "productName_chi" },
+                            { "data": "productStatus" },
                             { "data": "productStdPrice_carton" },
                             { "data": "productStdPrice_inner" },
                             { "data": "productStdPrice_unit" },  

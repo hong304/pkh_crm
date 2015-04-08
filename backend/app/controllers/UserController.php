@@ -178,6 +178,7 @@ class UserController extends BaseController {
 	    $user->username = $account['username'];
 	    $user->name = $account['name'];
 	    $user->email = $account['email'];
+       $user->disabled = $account['status']['value'];
 	    if(isset($account['password']))
 	    {
 	        $user->password = $account['password'];
@@ -219,15 +220,22 @@ class UserController extends BaseController {
 
 	
 	        $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-	        $staff = $staff->paginate($page_length);
+	        $staff = $staff->with('role')->paginate($page_length);
 	
 	        //$staff = $staff->toArray();
-	        
+
 	        foreach($staff as $c)
 	        {
-	
+
+                if($c->disabled == 0){
+                    $c->disabled = '正常';
+                }else{
+                    $c->disabled = '暫停';
+                }
 	            $c->link = '<span onclick="editStaff(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
-	            $c->role = 'A'; 
+                $c->m_role = '';
+                foreach($c->role as $v)
+	                $c->m_role =  $v->name;
 	            //$staff[] = $c;
 	        }
 	
