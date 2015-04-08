@@ -111,6 +111,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         $scope.getSameDayInvoice();
 
+        console.log($scope.order);
 
 		//disable changing payment terms if it is a COD client
 		if(SharedService.clientPaymentTermId == 1)
@@ -259,7 +260,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         		var res = data.invoice.client;
         		var inf = data.invoice;
-        		
+
+
+
         		// set client information
         		$scope.order.clientId = res.customerId;
         		$scope.order.clientName = res.customerName_chi;
@@ -274,7 +277,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         		$scope.order.update = true;
         		$scope.order.invoiceNumber = inf.invoiceId;
         		$scope.order.invoiceId = inf.invoiceId;
-                    $scope.order.invoiceRemark = inf.invoiceRemark;
+                $scope.order.invoiceRemark = inf.invoiceRemark;
         		$scope.order.referenceNumber = inf.customerRef;
         		
         		$scope.updatePaymentTerms();

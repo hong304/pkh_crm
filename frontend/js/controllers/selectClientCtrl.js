@@ -96,6 +96,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	        ).
 	        success(function(res, status, headers, config) {
 	        	$scope.clientSuggestion = res;
+
 	        	//$timeout($scope.openSelectionModal, 1000);
 	        	$scope.openSelectionModal();
 	        }).
