@@ -111,12 +111,14 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     $scope.saveProfile = function()
     {
     	$scope.staffId = $location.search().staffId;
-    	
+    	if($scope.user.password != '')
+            if($scope.user.password.length > 7)
     	$http.post(iutarget, {StaffId: $scope.staffId, account: $scope.user, zone: $scope.zones})
     	.success(function(res, status, headers, config){    
     		alert('已更新用戶資料');
-    		
     	});
+        else
+            alert('密碼太短');
     }
     
     // -- kick user
