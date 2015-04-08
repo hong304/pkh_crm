@@ -41,7 +41,8 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     $scope.$watch(function() {
     	return $rootScope.systeminfo;
   	}, function() {
-  		$scope.systeminfo = $rootScope.systeminfo; 
+  		$scope.systeminfo = $rootScope.systeminfo;
+        $scope.updateDataSet();
   	}, true);
        
     $scope.editStaff = function(StaffId)
@@ -195,10 +196,12 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
         		}
         		else
         		{
-        			$scope.editStaff(res.id, $scope.info.groups.value);
+                    $("#StaffFormModal").modal('hide');
+        			//$scope.editStaff(res.id, $scope.info.groups.value);
+                    $scope.updateDataSet();
         		}
         		
-        		$scope.updateDataSet();
+
         		
         	});
     	}
