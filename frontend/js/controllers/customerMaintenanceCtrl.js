@@ -75,24 +75,32 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	.success(function(res, status, headers, config){    
     		$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
     		$scope.customerInfo = res;
-    		
+
+
+
     		var statuscat = [];
-    		statuscat = statuscat.concat([{value: '1', label: "Normal"}]);
-    		statuscat = statuscat.concat([{value: '2', label: "Suspended"}]);
+    		statuscat = statuscat.concat([{value: 1, label: "Normal"}]);
+    		statuscat = statuscat.concat([{value: 2, label: "Suspended"}]);
         	$scope.statuscat = statuscat;
         	
-        	var pos = statuscat.map(function(e) { 
-				return e.value; 
+        	var pos = $scope.statuscat.map(function(e) {
+
+				return e.value;
 			  }).indexOf(res.status);
-        	
+
+
+
         	$scope.customerInfo.status = $scope.statuscat[pos];
-        	
+
+
+
     		$("#customerFormModal").modal({backdrop: 'static'});
-    		
+
+
     		var pos = $scope.systeminfo.availableZone.map(function(e) { 
 				return e.zoneId; 
 			  }).indexOf(res.deliveryZone);
-	    	
+
 	    	$scope.customerInfo.deliveryZone = $scope.systeminfo.availableZone[pos];
     	});
     	
@@ -220,6 +228,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
                 "columns": [
                             { "data": "customerId" },
                             { "data": "customerName_chi" },
+                            { "data": "status" },
                             { "data": "deliveryZone" },
                             { "data": "routePlanningPriority" },
                             { "data": "paymentTerms" },

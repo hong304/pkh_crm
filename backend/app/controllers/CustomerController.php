@@ -133,6 +133,11 @@ class CustomerController extends BaseController {
                 {
                     $c->paymentTerms = 'UNKNOWN';
                 }
+
+                if($c->status == '1')
+                    $c->status = '正常';
+                else
+                    $c->status = '暫停';
             
                 $c->link = '<span onclick="editCustomer(\''.$c->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
             }
