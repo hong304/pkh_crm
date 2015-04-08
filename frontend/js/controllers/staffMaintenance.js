@@ -13,6 +13,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
 	
 	var querytarget = endpoint + '/queryStaff.json';
 	var iutarget = endpoint + '/manipulateStaff.json';
+    var addStaffquery = endpoint + '/UserManipulation.json';
 	
 	$scope.info_def = {
 			'id'		:	false,
@@ -121,7 +122,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     // -- kick user
     $scope.logout = function(auditId)
     {
-    	console.log(auditId);
+    	//console.log(auditId);
     	$http.post(querytarget, {mode: "forcelogout", hash: auditId})
     	.success(function(res, status, headers, config){    
     		$("#forcebtn_" + auditId).css('display', 'none');
@@ -132,6 +133,8 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     
     $scope.addStaff = function()
     {
+
+      //  console.log($scope.systeminfo);
 
     	$scope.submitbtn = true;
     	$scope.info = $.extend(true, {}, $scope.info_def);
@@ -148,7 +151,9 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     	disabled = groups.concat([{value: '1', label: "Suspended"}]);
     	
     	$scope.disabled = disabled;
-    	
+
+        $scope.zones = $scope.systeminfo.availableZone;
+
     	$("#StaffFormModal").modal({backdrop: 'static'});
     	$('.date-picker').datepicker({
             rtl: Metronic.isRTL(),
@@ -160,6 +165,8 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     
     $scope.submitStaffForm = function()
     {
+       // console.log($scope.zones);
+
     	if(
     			$scope.info.username == "" ||
     			$scope.info.name == "" 
@@ -170,9 +177,9 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     	else
     	{
 
-    		$http.post(iutarget, {info: $scope.info, permission: $scope.permission, zone: $scope.zone})
+    		$http.post(addStaffquery, {info: $scope.info, zone: $scope.zones})
         	.success(function(res, status, headers, config){    
-        		$scope.submitbtn = false;
+        		//$scope.submitbtn = false;
 
         		if(res.mode == 'error')
     			{

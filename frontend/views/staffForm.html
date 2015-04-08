@@ -12,14 +12,14 @@
 					<div class="form-body">
 						
 						<div class="form-group">
-							<label class="col-md-2 control-label">UserName</label>
+							<label class="col-md-2 control-label">登入名稱</label>
 							<div class="col-md-10">
 								<input type="text" ng-model="info.username" class="form-control" placeholder="至少3個數字及英文字">
 							</div>
 						</div>
 						
 						<div class="form-group">
-							<label class="col-md-2 control-label">Password</label>
+							<label class="col-md-2 control-label">密碼</label>
 							<div class="col-md-10">
 								<input type="text" ng-model="info.password" class="form-control" placeholder="">
 								<label>留空為不設定/更改密碼, 至少8個數字及英文字</label>
@@ -27,7 +27,7 @@
 						</div>
 						
 						<div class="form-group">
-							<label class="col-md-2 control-label">Name</label>
+							<label class="col-md-2 control-label">用戶名稱</label>
 							<div class="col-md-10">
 								<input type="text" ng-model="info.name" class="form-control" placeholder="顯示於Invoice上">
 							</div>
@@ -63,16 +63,16 @@
 						 </div>
 						<br/>
 						<div style="clear:both"></div>
-						<h4 data-ng-if="info.id != ''">車線管理</h4>
+						<h4>車線管理</h4>
 						
-						<div data-ng-if="info.id != ''" class="col-md-3" ng-repeat="z in zone">
+						<div class="col-md-3" ng-repeat="z in zones">
 							<label>
 							  
 								  <input
 								    type="checkbox"
-								    value="{{z.name}}"
+								    value="{{z.zoneId}}"
 								    ng-model="z.selected"
-								  > {{z.name}}<br/>
+								  > {{z.zoneName}}<br/>
 							 
 							</label>
 						 </div>

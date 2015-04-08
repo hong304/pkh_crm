@@ -7,14 +7,14 @@ $permission = new Toddish\Verify\Models\Permission;
 class UserManipulation {
 
     private $_staffId = '';
-    
+
     public function __construct($staffId = false)
     {
         $this->action = $staffId ? 'update' : 'create';
-                
-        
+
+
     }
-   
+
 	
 	public function save($info)
 	{
@@ -29,7 +29,7 @@ class UserManipulation {
             $user->save();
 
             $user->roles()->sync(array($e['groups']['value']));
-            
+
             return $user->id;
         }
         elseif($this->action == 'update')

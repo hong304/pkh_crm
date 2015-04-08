@@ -14,6 +14,8 @@
 						<a href="/#/newOrder" class="icon-btn"><i class="fa fa-plus" style="font-size:30px;"></i><div>新訂單</div></a>
 					
 						<a href="/#/queryInvoice" class="icon-btn" style="margin-left:25px;"><i class="fa fa-search" style="font-size:30px;"></i><div>搜尋訂單</div></a>
+
+                        <a href="#" data-ng-click="generalPickingStatus();" class="icon-btn" style="margin-left:25px;"><i class="fa fa-plus" style="font-size:30px;"></i><div>產生備貨單</div></a>
 						
 						<a href="/#/reportFactory?id=pickinglist" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>1樓備貨單</div></a>
 
@@ -156,4 +158,6 @@
 			</div>
 		</div>
 	</div>
-</div>  
+</div>
+
+<div ng-include="'/views/model_generalPickingStatus.html'"></div>

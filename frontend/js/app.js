@@ -263,6 +263,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                     name: 'app',
                     insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                     files: [
+
+                        assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
                         'js/controllers/DashboardController.js',
                     ] 
                 });
@@ -768,8 +772,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                 }],
             }
         })
-    
-      
+
+
 
 }]);
 

@@ -1,0 +1,67 @@
+<div class="modal fade bs-modal-lg " id="generalPickingModal" data-ng-init="" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true"></button>
+
+                <h4 class="modal-title">員工管理</h4>
+            </div>
+
+
+            <div class="modal-body">
+
+                <form action="javascript:;" class="form-horizontal">
+                    <div class="form-body">
+
+                                  <div class="form-group">
+
+                                    <label class="col-md-2 control-label">車號:
+                                    </label>
+                                      <div class="col-md-5">
+                                    <select class="form-control"
+                                            ng-model="picking.zone"
+                                            data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
+                                            data-ng-change="updateZone();">
+                                        <option value=''>選擇車號</option>
+
+                                    </select>
+                                          </div>
+                                </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">選擇日期:
+                            </label>
+                            <div class="col-md-5">
+                                <div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                    <input type="text" class="form-control" data-ng-change="updateDate();" ng-model="picking.date"  readonly>
+											<span class="input-group-btn">
+												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+											</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">備貨單版本:</label>
+                            <div class="col-md-5">
+                                <div class="control-label pull-left">一樓: V{{version.f1_version}} <br>九樓: V{{version.f9_version}}</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <h2>{{newId}}</h2>
+                <button type="button" class="btn blue"  data-ng-click="submitStaffForm();">提交</button>
+                <button type="button" class="btn default"  data-dismiss="modal">取消</button>
+            </div>
+
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>

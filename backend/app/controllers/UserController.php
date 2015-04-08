@@ -205,7 +205,30 @@ class UserController extends BaseController {
 	    
 	    
 	}
-	
+
+    public function addStaff(){
+
+        $e = Input::get('info');
+        $zone = Input::get('zone');
+
+        $user = new Toddish\Verify\Models\User;
+        $user->username = $e['username'];
+        $user->password = $e['password'];
+        $user->name = $e['name'];
+        $user->verified = 1;
+        $user->save();
+
+        $user->roles()->sync(array($e['groups']['value']));
+
+        foreach($zone as $pid=>$i)
+        {
+            if(isset($i['selected']))
+            {
+                DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, $i['zoneId']]);
+            }
+        }
+    }
+
 	public function jsonQueryStaff()
 	{
 	

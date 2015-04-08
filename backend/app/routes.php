@@ -88,6 +88,7 @@ Route::group(array('before' => 'auth'), function()
     // Staff Maintenance
     Route::post('/queryStaff.json', 'UserController@jsonQueryStaff');
     Route::post('/manipulateStaff.json', 'UserController@jsonManiulateStaff');
+    Route::post('/UserManipulation.json','UserController@addStaff');
     
     // Printer
     Route::any('/instantPrint.json', 'PrintQueueController@instantPrint');
@@ -107,6 +108,8 @@ Route::group(array('before' => 'auth'), function()
     //Data analysis
     Route::any('/searchProductDataProduct.json', 'DataWarehouseController@jsonSearchDataProduct');
 
+    //change invoice status to picking
+    Route::post('/generalPickingStatus.json','HomeController@generalPickingStatus');
     
 });
 
