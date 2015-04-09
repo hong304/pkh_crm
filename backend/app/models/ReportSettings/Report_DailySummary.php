@@ -122,7 +122,7 @@ class Report_DailySummary {
         if(count($this->goods)>0)
              ksort($this->goods);
 
-      //  pd($this->goods);
+
       // $this->data = ;
 
         $this->data['items']=$this->goods;
@@ -131,8 +131,8 @@ class Report_DailySummary {
         $this->data['sumcod']=$this->_sumcod;
         $this->data['countcredit']=$this->_countcredit;
         $this->data['countcod']=$this->_countcod;
+       // pd($this->data);
 
-//pd($this->data);
        return [$this->data];
     }
     
@@ -316,7 +316,7 @@ class Report_DailySummary {
                 $pdf->Cell(0, 0, $this->data['countcod']."單", 0, 0, "L");
 
                 $pdf->setXY(50, $y+10);
-                $pdf->Cell(0, 0, "$".number_format($this->data['sumcod']), 0, 0, "L");
+                $pdf->Cell(0, 0, "$".number_format($this->data['sumcod'],2,'.',','), 0, 0, "L");
 
                 $pdf->setXY(10, $y+16);
                 $pdf->Cell(0, 0, "月結總數:", 0, 0, "L");
@@ -325,7 +325,7 @@ class Report_DailySummary {
                 $pdf->Cell(0, 0, $this->data['countcredit']."單", 0, 0, "L");
 
                 $pdf->setXY(50, $y+16);
-                $pdf->Cell(0, 0, "$".number_format($this->data['sumcredit']), 0, 0, "L");
+                $pdf->Cell(0, 0, "$".number_format($this->data['sumcredit'],2,'.',','), 0, 0, "L");
 
             }
         }

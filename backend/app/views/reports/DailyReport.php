@@ -40,9 +40,9 @@
             </td>
 
             <td style="text-align:left;">
-                <span style="font-weight:bold;font-size:15px;"><?php echo number_format($data['countcod']); ?>單 $<?php echo number_format($data['sumcod']); ?>
+                <span style="font-weight:bold;font-size:15px;"><?php echo number_format($data['countcod']); ?>單 $<?php echo number_format($data['sumcod'], 2, '.', ','); ?>
                 <br />
-                    <?php echo number_format($data['countcredit']); ?>單 $<?php echo number_format($data['sumcredit']); ?>
+                    <?php echo number_format($data['countcredit']); ?>單 $<?php echo number_format($data['sumcredit'], 2, '.', ','); ?>
                 </span>
             </td>
         <tr>
