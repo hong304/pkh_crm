@@ -54,7 +54,7 @@ class Report_DailySummary {
         // get invoice from that date and that zone
        $this->goods = [];
 
-        Invoice::select('*')->whereIn('invoiceStatus', ['11','20','30'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
+        Invoice::select('*')->whereIn('invoiceStatus', ['20','30'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
                ->chunk(5000, function($invoicesQuery) {
 
 
@@ -80,7 +80,7 @@ class Report_DailySummary {
                    {
                        $this->_invoices[] = $invoiceQ->invoiceId;
 
-                       if($invoiceQ['client']['paymentTermId'] == 2) {
+                       if($invoiceQ['client']['invoiceStatus'] == 20) {
                            $this->_sumcredit += $invoiceQ->invoiceTotalAmount;
                            $this->_countcredit += 1;
                        }
