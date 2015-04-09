@@ -46,7 +46,7 @@ class Invoice_CashReceiptSummary {
         // get invoice from that date and that zone
 
                 
-        Invoice::select('*')->where('paymentTerms', '1')->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
+        Invoice::select('*')->where('paymentTerms', '30')->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
                ->chunk(50, function($invoicesQuery) {
                    
                    foreach($invoicesQuery as $invoiceQ)
