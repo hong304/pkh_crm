@@ -45,7 +45,7 @@ class InvoiceImage {
              * Format JPG
              */
 
-$debug = 0;
+$debug = 1;
 
             if($debug){
                 $this->print = true;
@@ -305,7 +305,7 @@ $debug = 0;
             });
         }
         
-        $total_amount = "合計  HKD " . $english_format_number = number_format($i['totalAmount'], 2, '.', ',');;
+        $total_amount = "合計  HKD " . $english_format_number = number_format(round($i['totalAmount'],1), 2, '.', ',');;
         $this->image[$p]->text($total_amount, 1550, 900, function($font) use($font_file) {
             $font->file($font_file);
             $font->size(40);

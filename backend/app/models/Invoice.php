@@ -219,7 +219,7 @@ class Invoice extends Eloquent  {
 	            foreach($model['invoiceItem'] as $item)
 	            {
 	                $model->invoiceTotalAmount += $item->productQty * $item->productPrice * (100-$item->productDiscount)/100;
-                    $model->invoiceTotalAmount = round($model->invoiceTotalAmount,1);
+                    $model->invoiceTotalAmount = number_format(round($model->invoiceTotalAmount,1),2);
 	            }
 	        }
 	        
