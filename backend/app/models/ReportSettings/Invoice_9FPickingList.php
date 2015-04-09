@@ -27,10 +27,19 @@ class Invoice_9FPickingList {
         }
         // version & id
          $this->_uniqueid = date("Ymd", $this->_date) . $this->_zone;
-         $lastid = ReportArchive::where('id', 'like', $this->_uniqueid.'-%-9')->select('id')->orderby('created_at', 'desc')->first();
+
+       /*  $lastid = ReportArchive::where('id', 'like', $this->_uniqueid.'-%-9')->select('id')->orderby('created_at', 'desc')->first();
          $lastid = @explode('-', $lastid->id);
-         
+
          $this->_version = isset($lastid[1]) ? $lastid[1]+1 : '1';
+*/
+        $lastid = pickingListVersionControl::where('zone',$this->_zone)->where('date',date("Y-m-d",$this->_date))->first();
+
+
+
+        //  $lastid = @explode('-', $lastid->id);
+
+        $this->_version = isset($lastid->f9_version) ? $lastid->f9_version+1 : '1';
 
          $this->_uniqueid = sprintf("%s-%s-9", $this->_uniqueid, $this->_version);
 
@@ -49,7 +58,7 @@ class Invoice_9FPickingList {
         
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], '9F'=>[]];
-        Invoice::select('*')->wherein('invoiceStatus', ['2'])->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        Invoice::select('*')->wherein('invoiceStatus', ['4'])->where('f9_picking_dl',false)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
                         $query->orderBy('productLocation')->orderBy('productQtyUnit');
                     }])->with('products', 'client')
                ->chunk(50, function($invoicesQuery){
@@ -207,10 +216,10 @@ class Invoice_9FPickingList {
     public function outputPDF()
     {
         // Update it as generated into picking list
-        if(count($this->_invoices) > 0)
-        {
-            Invoice::wherein('invoiceId', $this->_invoices)->update(['invoiceStatus'=>'4']);
-        }
+      //  if(count($this->_invoices) > 0)
+      //  {
+           // Invoice::wherein('invoiceId', $this->_invoices)->update(['f9_picking_dl'=>'1']);
+      //  }
         
         
         $pdf = new PDF();

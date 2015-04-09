@@ -172,8 +172,8 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
        // console.log($scope.zones);
 
     	if(
-    			$scope.info.username == "" ||
-    			$scope.info.name == "" 
+    			$scope.info.username.length < 3 ||
+    			$scope.info.name == "" || $scope.info.password.length < 8
     	)
     	{
     		alert('請輸入所需資料');

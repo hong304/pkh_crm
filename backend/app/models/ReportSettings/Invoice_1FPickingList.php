@@ -30,13 +30,15 @@ class Invoice_1FPickingList {
 
 
 
-         $lastid = ReportArchive::where('id', 'like', $this->_uniqueid.'-%-1')->select('id')->orderby('created_at', 'desc')->first();
+      //   $lastid = ReportArchive::where('id', 'like', $this->_uniqueid.'-%-1')->select('id')->orderby('created_at', 'desc')->first();
+
+        $lastid = pickingListVersionControl::where('zone',$this->_zone)->where('date',date("Y-m-d",$this->_date))->first();
 
 
 
-         $lastid = @explode('-', $lastid->id);
+      //  $lastid = @explode('-', $lastid->id);
 
-        $this->_version = isset($lastid[1]) ? $lastid[1]+1 : '1';
+        $this->_version = isset($lastid->f1_version) ? $lastid->f1_version+1 : '1';
          
          $this->_uniqueid = sprintf("%s-%s-1", $this->_uniqueid,  $this->_version);
 
@@ -60,7 +62,7 @@ class Invoice_1FPickingList {
         
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], 'version'=>[]];
-        Invoice::select('*')->wherein('invoiceStatus', ['2', '4'])->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        Invoice::select('*')->wherein('invoiceStatus', ['4'])->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
                ->chunk(50, function($invoicesQuery){

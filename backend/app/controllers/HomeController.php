@@ -57,6 +57,8 @@ class HomeController extends BaseController {
             $f9 = false;
             $deliveryDate = strtotime($info['date']);
 
+            Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',4)->update(['f9_picking_dl'=>1]);
+
             $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',2)->get();
 
             foreach($info_data as $v){

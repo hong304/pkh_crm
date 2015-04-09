@@ -78,10 +78,13 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
     }
 
     $scope.submitStaffForm = function(){
+
+        $("#generalPickingModal").modal('hide');
+
         $http.post(iutarget, {info: $scope.picking, mode : 'post'})
             .success(function(res, status, headers, config){
                 $scope.version = res;
-
+                $scope.picking = true;
             });
     }
 
