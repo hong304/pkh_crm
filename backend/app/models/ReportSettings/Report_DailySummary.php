@@ -80,7 +80,7 @@ class Report_DailySummary {
                    {
                        $this->_invoices[] = $invoiceQ->invoiceId;
 
-                       if($invoiceQ['client']['invoiceStatus'] == 20) {
+                       if($invoiceQ->invoiceStatus == 20) {
                            $this->_sumcredit += $invoiceQ->invoiceTotalAmount;
                            $this->_countcredit += 1;
                        }
