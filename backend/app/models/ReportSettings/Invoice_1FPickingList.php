@@ -38,7 +38,7 @@ class Invoice_1FPickingList {
 
       //  $lastid = @explode('-', $lastid->id);
 
-        $this->_version = isset($lastid->f1_version) ? $lastid->f1_version+1 : '1';
+        $this->_version = isset($lastid->f1_version) ? $lastid->f1_version : '1';
          
          $this->_uniqueid = sprintf("%s-%s-1", $this->_uniqueid,  $this->_version);
 

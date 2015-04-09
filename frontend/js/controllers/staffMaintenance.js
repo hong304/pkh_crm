@@ -171,20 +171,15 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     {
        // console.log($scope.zones);
 
-    	if(
-    			$scope.info.username.length < 3 ||
-    			$scope.info.name == "" || $scope.info.password.length < 8
-    	)
-    	{
+    	if($scope.info.username.length < 3 ||
+    			$scope.info.name == "" || $scope.info.password.length < 8 || typeof($scope.info.groups) == 'undefined')
     		alert('請輸入所需資料');
-    	}
     	else
     	{
 
     		$http.post(addStaffquery, {info: $scope.info, zone: $scope.zones})
         	.success(function(res, status, headers, config){    
         		//$scope.submitbtn = false;
-
         		if(res.mode == 'error')
     			{
     			
