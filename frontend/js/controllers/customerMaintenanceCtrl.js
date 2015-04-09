@@ -14,7 +14,7 @@ function delCustomer(id)
     scope.$apply(function () {
 
         bootbox.dialog({
-            message: "刪除客戶後將不能復原，確定要刪除支票嗎？",
+            message: "刪除客戶後將不能復原，確定要刪除客戶嗎？",
             title: "刪除客戶",
             buttons: {
                 success: {
