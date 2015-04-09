@@ -30,7 +30,7 @@ class Customer_MonthlyCreditSummary {
     {
         
                 
-        Invoice::where('invoiceStatus', '20')->with('client', 'invoiceItem')->OrderBy('deliveryDate')->chunk(50, function($invoices){
+        Invoice::where('invoiceStatus', '20')->with('client', 'invoiceItem')->where('zoneId',$this->_zone)->OrderBy('deliveryDate')->chunk(50, function($invoices){
             foreach($invoices as $invoice)
             {
                 $customerId = $invoice['client']->customerId;
@@ -144,6 +144,9 @@ class Customer_MonthlyCreditSummary {
     
     public function outputPDF()
     {
+
+     // pd($this->data);
+
         $pdf = new PDF();
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
         
@@ -161,6 +164,89 @@ class Customer_MonthlyCreditSummary {
             
             $pdf->setXY(30, 40);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['customerAddress']), 0, 0, "L");
+
+            $pdf->setXY(10, 60);
+            $pdf->Cell(0, 0, "發票日期", 0, 0, "L");
+
+            $pdf->setXY(40, 60);
+            $pdf->Cell(0, 0, "發票編號", 0, 0, "L");
+
+            $pdf->setXY(100, 60);
+            $pdf->Cell(0, 0, "借方", 0, 0, "L");
+
+            $pdf->setXY(140, 60);
+            $pdf->Cell(0, 0, "貨方", 0, 0, "L");
+
+            $pdf->setXY(165, 60);
+            $pdf->Cell(0, 0, "未清付金額", 0, 0, "L");
+
+
+            $pdf->setXY(130, 35);
+            $pdf->Cell(0, 0, '列印日期:', 0, 0, "L");
+
+            $pdf->setXY(155, 35);
+            $pdf->Cell(0, 0, date('Y-m-d',time()), 0, 0, "L");
+
+            $pdf->setXY(130, 40);
+            $pdf->Cell(0, 0, '由日期:', 0, 0, "L");
+
+            $pdf->setXY(155, 40);
+            $pdf->Cell(0, 0, date('Y-m-d',$client['breakdown'][0]['invoiceDate']), 0, 0, "L");
+
+
+
+
+            $pdf->setXY(130, 45);
+            $pdf->Cell(0, 0, '至日期:', 0, 0, "L");
+
+            $pdf->setXY(155, 45);
+            $pdf->Cell(0, 0, date('Y-m-d',$client['breakdown'][sizeof($client['breakdown'])-1]['invoiceDate']), 0, 0, "L");
+
+
+            $pdf->Line(10, 63, 190, 63);
+
+            $y = 70;
+            $amount =0;
+            $paid = 0;
+            foreach($client['breakdown'] as $v){
+
+                $pdf->setXY(10, $y);
+                $pdf->Cell(0, 0, date('Y-m-d',$v['invoiceDate']), 0, 0, "L");
+
+                $pdf->setXY(40, $y);
+                $pdf->Cell(0, 0, $v['invoice'], 0, 0, "L");
+
+                $pdf->setXY(100, $y);
+                $pdf->Cell(10, 0, sprintf("%s", $v['invoiceAmount']), 0, 0, "R");
+
+                $pdf->setXY(140, $y);
+                $pdf->Cell(10, 0, $v['paid'], 0, 0, "R");
+
+                $pdf->setXY(165, $y);
+                $pdf->Cell(20, 0, $v['accumulator'], 0, 0, "R");
+
+                $amount += $v['invoiceAmount'];
+                $paid += $v['paid'];
+                $accu = $v['accumulator'];
+
+                $y += 6;
+
+            }
+
+            $pdf->Line(10, $y, 190, $y);
+
+            $pdf->setXY(40, $y+6);
+            $pdf->Cell(0, 0, '未清付發票總金額(HKD):', 0, 0, "L");
+
+            $pdf->setXY(100, $y+6);
+            $pdf->Cell(10, 0, $amount, 0, 0, "R");
+
+            $pdf->setXY(140, $y+6);
+            $pdf->Cell(10, 0, $paid, 0, 0, "R");
+
+            $pdf->setXY(165, $y+6);
+            $pdf->Cell(20, 0, $accu, 0, 0, "R");
+
         }
         $pdf->Output();exit;
         // output

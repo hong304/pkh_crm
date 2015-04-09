@@ -81,7 +81,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     	$http.post(querytarget, {reportId: $location.search().id, output: "preview", filterData: $scope.filterData, query:$location.search()})
     	.success(function(res, status, headers, config){
 
-                console.log(res);
+
 
     		$scope.report = $sce.trustAsHtml(res);
 

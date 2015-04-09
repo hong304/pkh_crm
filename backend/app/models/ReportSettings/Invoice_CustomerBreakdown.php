@@ -210,7 +210,6 @@ class Invoice_CustomerBreakdown {
 
        foreach($ninef as $c=>$nf)
         {
-        
             $consec += count($nf['items'])+3;
             $nf['consec'] = $ninef[$c]['consec'] = $consec;
         
