@@ -337,6 +337,9 @@ if($items == null)
         {
             $unloader->cancel();
         }
+        elseif($detail['action'] == 'backToNormal'){
+            $unloader->backToNormal();
+        }
         elseif($detail['action'] == 'change-deliverydate')
         {
             $unloader->changeDate($detail['newdate']);

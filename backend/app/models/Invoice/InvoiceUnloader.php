@@ -46,6 +46,15 @@ class InvoiceUnloader {
             $i->save();
         }
     }
+
+    public function backToNormal()
+    {
+        foreach($this->im as $i)
+        {
+            $i->invoiceStatus = '2';
+            $i->save();
+        }
+    }
     
 	
 }
