@@ -161,10 +161,6 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
             $scope.del = true;
             $scope.updateDataSet();
         });
-
-
-
-
     }
 
     $scope.submitCustomerForm = function()

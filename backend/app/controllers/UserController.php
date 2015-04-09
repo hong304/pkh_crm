@@ -166,6 +166,10 @@ class UserController extends BaseController {
 	{
 
 
+        if(Input::get('mode') == 'del'){
+            User::where('id',Input::get('customer_id'))->update(['disabled'=>1,'deleted'=>1]);
+            return [];
+        }
 
 	    $id = Input::get('StaffId');
 	    $account = Input::get('account');
@@ -239,7 +243,7 @@ class UserController extends BaseController {
 	    {
 	        $filter = Input::get('filterData');
 	        Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-	        $staff = User::select('*');
+	        $staff = User::select('*')->where('deleted',false);
 
 	
 	        $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
@@ -255,7 +259,8 @@ class UserController extends BaseController {
                 }else{
                     $c->disabled = '暫停';
                 }
-	            $c->link = '<span onclick="editStaff(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                $c->delete = '<span onclick="delCustomer(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+                $c->link = '<span onclick="editStaff(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                 $c->m_role = '';
                 foreach($c->role as $v)
 	                $c->m_role =  $v->name;

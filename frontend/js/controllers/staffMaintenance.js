@@ -9,6 +9,35 @@ function editStaff(StaffId, RoleId)
     });
 }
 
+function delCustomer(id)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+
+        bootbox.dialog({
+            message: "刪除客戶後將不能復原，確定要刪除客戶嗎？",
+            title: "刪除客戶",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+
+                    }
+                },
+                danger: {
+                    label: "確定刪除",
+                    className: "red",
+                    callback: function() {
+                        scope.delCustomer(id);
+                    }
+                }
+            }
+        });
+
+    });
+}
+
 app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval, $state) {
 	
 	var querytarget = endpoint + '/queryStaff.json';
@@ -71,7 +100,18 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     	
     	
     }
-    
+
+    $scope.delCustomer = function(id){
+        $http({
+            method: 'POST',
+            url: iutarget,
+            data: {mode:'del',customer_id:id}
+        }).success(function () {
+            $scope.del = true;
+            $scope.updateDataSet();
+        });
+    }
+
     // ---- profile page
     $scope.loadStaffProfile = function()
     {
@@ -265,6 +305,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
                             { "data": "m_role" },
                             { "data": "disabled" },
                             { "data": "link" },
+                    { "data": "delete" },
                             
                 ],           
                 
