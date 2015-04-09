@@ -17,7 +17,8 @@ app.controller('invoiceFlowCtrl', function($scope, $rootScope, $http, SharedServ
     $scope.$watch(function() {
     	return $rootScope.systeminfo;
   	}, function() {
-  		$scope.systeminfo = $rootScope.systeminfo;  		
+  		$scope.systeminfo = $rootScope.systeminfo;
+        $scope.init();
   	}, true);
     
     
@@ -43,8 +44,7 @@ app.controller('invoiceFlowCtrl', function($scope, $rootScope, $http, SharedServ
     	
     	$http.post($scope.updateStatusTarget, {steps: invoiceSteps}).
     	  success(function(data, status, headers, config) {
-    	    // this callback will be called asynchronously
-    	    // when the response is available
+    	         $scope.init();
     	  }).
     	  error(function(data, status, headers, config) {
     	    // called asynchronously if an error occurs

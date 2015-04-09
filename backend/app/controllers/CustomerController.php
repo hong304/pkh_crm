@@ -67,6 +67,14 @@ class CustomerController extends BaseController {
     
     public function jsonManiulateCustomer()
     {
+
+        if(Input::get('mode') == 'del'){
+           // pd(Input::get('customer_id'));
+           Customer::where('customerId',Input::get('customer_id'))->update(['status'=>2,'deleted'=>1]);
+           // p(Input::get('customer_id'));
+            return [];
+        }
+
         $i = Input::get('customerInfo');
         $cm = new CustomerManipulation($i['customerId']);
         $id = $cm->save($i);
@@ -84,7 +92,7 @@ class CustomerController extends BaseController {
         {
             $filter = Input::get('filterData');
             Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-            $customer = Customer::select('*');
+            $customer = Customer::select('*')->where('deleted',false);
             
             // client id
             if($filter['clientId'])
@@ -138,7 +146,7 @@ class CustomerController extends BaseController {
                     $c->status = '正常';
                 else
                     $c->status = '暫停';
-            
+                $c->delete = '<span onclick="delCustomer(\''.$c->customerId.'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
                 $c->link = '<span onclick="editCustomer(\''.$c->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
             }
         }

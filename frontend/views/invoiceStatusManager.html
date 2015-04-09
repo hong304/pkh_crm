@@ -1,23 +1,5 @@
 <form class="form-horizontal" role="form" id="queryInfo" ng-init="init()">
-	<div class="col-md-2">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="portlet light">
-					<div class="portlet-title">
-						<div class="caption">
-							<i class="fa fa-cogs font-green-sharp"></i>
-							<span class="caption-subject font-green-sharp bold uppercase">狀態流程</span>
-						</div>
-
-					</div>
-					<div class="portlet-body">
-							
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-10">
+	<div class="col-md-12">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="portlet light">
@@ -37,10 +19,10 @@
 									        <tr role="row" class="heading">
 									            <th width="8%">訂單編號</th>
 									            <th width="8%">送貨日期</th>
-									            <th width="5%">車線</th>
+									            <th width="8%">車線</th>
 									            <th width="10%">客戶</th>
-									            <th width="10%">付款方式</th>
-									            <th width="10%">現時狀態</th>
+									            <th width="8%">付款方式</th>
+									            <th width="8%">現時狀態</th>
 									            <th width="40%">更新狀態</th>
 									        </tr>
 									    </thead>
@@ -50,7 +32,7 @@
 								                <td>{{i.deliveryDate_date}}</td>
 								                <td>{{i.zone.zoneId}} ({{i.zone.zoneName}})</td>
 								                <td>{{i.client.customerName_chi}}</td>
-								                <td>{{i.paymentTermId}}</td>
+								                <td>{{i.client.paymentTermText}}</td>
 								                <td>{{i.invoiceStatusText}}</td>
 								                <td>
 													<div class="input-group">

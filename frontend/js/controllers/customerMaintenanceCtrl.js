@@ -8,6 +8,35 @@ function editCustomer(customerId)
     });
 }
 
+function delCustomer(id)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+
+        bootbox.dialog({
+            message: "刪除客戶後將不能復原，確定要刪除支票嗎？",
+            title: "刪除客戶",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+
+                    }
+                },
+                danger: {
+                    label: "確定刪除",
+                    className: "red",
+                    callback: function() {
+                        scope.delCustomer(id);
+                    }
+                }
+            }
+        });
+
+    });
+}
+
 app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 	
 	var querytarget = endpoint + '/queryCustomer.json';
@@ -120,7 +149,24 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	$("#customerFormModal").modal({backdrop: 'static'});
     	
     }
-    
+
+
+
+    $scope.delCustomer = function(id){
+        $http({
+            method: 'POST',
+            url: iutarget,
+            data: {mode:'del',customer_id:id}
+        }).success(function () {
+            $scope.del = true;
+            $scope.updateDataSet();
+        });
+
+
+
+
+    }
+
     $scope.submitCustomerForm = function()
     {
     	if(
@@ -236,6 +282,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
                             { "data": "contactPerson_1" },
                             { "data": "address_chi" },
                             { "data": "link" },
+                            {"data":"delete"},
                             
                 ],           
                 
