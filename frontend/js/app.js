@@ -576,6 +576,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                     files: [
 						assets + '/global/plugins/datatables/all.min.js',
 						assets + '/global/scripts/datatable.js',
+                        assets + '/global/plugins/bootbox/bootbox.min.js',
 
                         'js/controllers/productMaintenanceCtrl.js',
                     ] 

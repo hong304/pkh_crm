@@ -149,9 +149,16 @@ class ProductController extends BaseController {
     
     public function jsonManiulateProduct()
     {
+
+        if(Input::get('mode') == 'del'){
+            // pd(Input::get('customer_id'));
+            Product::where('productId',Input::get('customer_id'))->update(['productStatus'=>'s','deleted'=>1]);
+            // p(Input::get('customer_id'));
+            return [];
+        }
+
+
         $i = Input::get('info');
-
-
 
         $cm = new ProductManipulation($i['productId'], (isset($i['group']['groupid']) ? $i['group']['groupid'] : false));
       //  $cm = new ProductManipulation($i['productId'], (isset($i['productId']) ? false : $i['group']['groupid']));
@@ -170,7 +177,7 @@ public function jsonQueryProduct()
         {
             $filter = Input::get('filterData');
             Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-            $product = Product::select('*');
+            $product = Product::select('*')->where('deleted',false);
 
 
 
@@ -205,7 +212,8 @@ public function jsonQueryProduct()
                 }else{
                     $c['productStatus'] = '暫停';
                 }
-                
+                $c['delete'] = '<span onclick="delCustomer(\''.$c['productId'].'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+
                 $c['link'] = '<span onclick="editProduct(\''.$c['productId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                 $products[] = $c;
             }

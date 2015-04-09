@@ -8,6 +8,35 @@ function editProduct(productId)
     });
 }
 
+function delCustomer(id)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+
+        bootbox.dialog({
+            message: "刪除產品後將不能復原，確定要刪除產品嗎？",
+            title: "刪除客戶",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+
+                    }
+                },
+                danger: {
+                    label: "確定刪除",
+                    className: "red",
+                    callback: function() {
+                        scope.delCustomer(id);
+                    }
+                }
+            }
+        });
+
+    });
+}
+
 app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 	
 	var fetchDataDelay = 250;   // milliseconds
@@ -64,8 +93,22 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
   		$scope.systeminfo = $rootScope.systeminfo;
         $scope.updateDataSet();
   	}, true);
-    
-    
+
+    $scope.delCustomer = function(id){
+        $http({
+            method: 'POST',
+            url: iutarget,
+            data: {mode:'del',customer_id:id}
+        }).success(function () {
+            $scope.del = true;
+            $scope.updateDataSet();
+        });
+
+
+
+
+    }
+
     $scope.editProduct = function(productId)
     {
     	$scope.newId = "";
@@ -239,6 +282,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
                             { "data": "productStdPrice_inner" },
                             { "data": "productStdPrice_unit" },  
                             { "data": "link" },
+                    { "data": "delete" },
                             
                 ],           
                 
