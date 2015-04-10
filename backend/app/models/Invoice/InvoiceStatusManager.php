@@ -62,6 +62,8 @@ class InvoiceStatusManager {
 	
     public static function determinateNextStatus($invoice)
     {
+
+
         $route = [
             '4' => [
                'default' => '11',
@@ -110,6 +112,21 @@ class InvoiceStatusManager {
             '30' => [
                 'default' => '30',
                 'steps' => [            
+                ],
+            ],
+            '21' => [
+                'default' => '21',
+                'steps' => [
+                ],
+            ],
+            '22' => [
+                'default' => '22',
+                'steps' => [
+                ],
+            ],
+            '23' => [
+                'default' => '22',
+                'steps' => [
                 ],
             ],
             

@@ -8,11 +8,13 @@ class InvoiceStatusController extends BaseController {
 
 
 
+
         $association = ReportArchive::where('id', $reportId)->Orderby('created_at','desc')->first();
 
 
 
        $invoiceIds = json_decode(json_decode($association->associates, true, true));
+
 
      //   $invoiceIds = json_decode($association->associates);
 
@@ -20,11 +22,12 @@ class InvoiceStatusController extends BaseController {
 
 
 
+
         foreach($invoices as $invoice)
         {
             $invoice->nextStatus = InvoiceStatusManager::determinateNextStatus($invoice);
         }
-        
+
         $returnCustom = [
             'currentStatus' => $invoices[0]->invoiceStatus,
             'currentStatusText' => $invoices[0]->invoiceStatusText,
