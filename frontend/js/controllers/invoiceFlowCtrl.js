@@ -45,6 +45,7 @@ app.controller('invoiceFlowCtrl', function($scope, $rootScope, $http, SharedServ
     	$http.post($scope.updateStatusTarget, {steps: invoiceSteps}).
     	  success(function(data, status, headers, config) {
     	         $scope.init();
+                 alert('已更新');
     	  }).
     	  error(function(data, status, headers, config) {
     	    // called asynchronously if an error occurs
