@@ -102,10 +102,10 @@ class InvoiceStatusManager {
             '20' => [
                 'default' => '30',
                 'steps' => [
-                    '30' => [
+                    //'30' => [
                        // 'invoiceStatus' => '30',
                       //  'invoiceStatusText' => Config::get('invoiceStatus.30.descriptionChinese'),
-                    ],
+                    // ],
                     
                 ],
             ],
