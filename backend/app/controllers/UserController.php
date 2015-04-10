@@ -226,10 +226,12 @@ class UserController extends BaseController {
 
         $i = 0;
 
+
         if($e['groups']['value'] == 2 || $e['groups']['value'] == 5 || $e['groups']['value'] == 3)
             foreach($zone as $pid=>$i)
             {
                       DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, $i['zoneId']]);
+                     $i++;
 
             }
         else
