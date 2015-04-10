@@ -12,7 +12,7 @@ class Zone extends Eloquent  {
 	public static function getIdByName($name)
 	{
 	    $zone = Zone::where('zone', $name)->first();
-	    dd($name);
+	  //  dd($name);
 	    return $zone->zoneId;
 	} 
 	

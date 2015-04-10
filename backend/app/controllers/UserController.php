@@ -224,13 +224,28 @@ class UserController extends BaseController {
 
         $user->roles()->sync(array($e['groups']['value']));
 
-        foreach($zone as $pid=>$i)
-        {
-            if(isset($i['selected']))
+        $i = 0;
+
+        if($e['groups']['value'] == 4 || $e['groups']['value'] == 5 || $e['groups']['value'] == 3)
+            foreach($zone as $pid=>$i)
             {
-                DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, $i['zoneId']]);
+                      DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, $i['zoneId']]);
+
             }
+        else
+            foreach($zone as $pid=>$i)
+            {
+                if(isset($i['selected']))
+                {
+                    DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, $i['zoneId']]);
+                    $i++;
+                }
+            }
+
+        if($i == 0){
+            DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, 1]);
         }
+
     }
 
 	public function jsonQueryStaff()
