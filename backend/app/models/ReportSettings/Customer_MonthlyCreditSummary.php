@@ -145,13 +145,31 @@ class Customer_MonthlyCreditSummary {
     public function outputPDF()
     {
 
-     // pd($this->data);
+        $times  = array();
+        for($month = 1; $month <= 12; $month++) {
+            $first_minute = mktime(0, 0, 0, $month, 1,date('Y'));
+            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),date('Y'));
+            $times[$month] = array($first_minute, $last_minute);
+        }
+
+        for ($i = date('n'); $i>0; $i--){
+            $data[$i] = Invoice::whereBetween('deliveryDate',$times[$i])->where('invoiceStatus',20)->sum('amount');
+        }
+     // pd($data);
 
         $pdf = new PDF();
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
-        
+
+
+
+        $i = 0;
         foreach($this->data as $client)
         {
+
+            for ($i = date('n'); $i>0; $i--){
+                $data[$i] = Invoice::whereBetween('deliveryDate',$times[$i])->where('invoiceStatus',20)->where('customerId',$client['customer']['customerId'])->sum('amount');
+            }
+
             $pdf->AddPage();
             $this->generateHeader($pdf);
             
@@ -193,7 +211,8 @@ class Customer_MonthlyCreditSummary {
             $pdf->setXY(155, 40);
             $pdf->Cell(0, 0, date('Y-m-d',$client['breakdown'][0]['invoiceDate']), 0, 0, "L");
 
-
+            $pdf->setXY(500, $pdf->h-30);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i+1, count($this->data)) , 0, 0, "R");
 
 
             $pdf->setXY(130, 45);
@@ -247,6 +266,37 @@ class Customer_MonthlyCreditSummary {
             $pdf->setXY(165, $y+6);
             $pdf->Cell(20, 0, $accu, 0, 0, "R");
 
+            $pdf->Line(10, $y+12, 190, $y+12);
+
+            $pdf->setXY(10, $y+18);
+            $pdf->Cell(0, 0, 'The outstanding balance is aged by invoice date as '.date('Y-m-d',time()).' below:', 0, 0, "L");
+
+            $pdf->setXY(10, $y+24);
+            $pdf->Cell(0, 0, date('Y').'/'.date('n'), 0, 0, "L");
+
+            $pdf->setXY(10, $y+30);
+            $pdf->Cell(0, 0,  '$'.$data[date('n')], 0, 0, "L");
+
+            $pdf->setXY(40, $y+24);
+            $pdf->Cell(0, 0, date('Y').'/'.(date('m')-1), 0, 0, "L");
+
+            $pdf->setXY(40, $y+30);
+            $pdf->Cell(0, 0,  '$'.$data[date('n')-1], 0, 0, "L");
+
+            $pdf->setXY(70, $y+24);
+            $pdf->Cell(0, 0, date('Y').'/'.(date('m')-2), 0, 0, "L");
+
+            $pdf->setXY(70, $y+30);
+            $pdf->Cell(0, 0,  '$'.$data[date('n')-2], 0, 0, "L");
+
+            $pdf->setXY(100, $y+24);
+            $pdf->Cell(0, 0, date('Y').'/'.(date('m')-3), 0, 0, "L");
+
+            $pdf->setXY(100, $y+30);
+            $pdf->Cell(0, 0,  '$'.$data[date('n')-3], 0, 0, "L");
+
+            $pdf->setXY(10, $y+36);
+            $pdf->Cell(0, 0,  'Payment received after statement date not included', 0, 0, "L");
         }
         $pdf->Output();exit;
         // output
