@@ -114,7 +114,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         	
         	var pos = $scope.statuscat.map(function(e) {
 
-				return e.value;
+				return parseInt(e.value);
 			  }).indexOf(res.status);
 
 

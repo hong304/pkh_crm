@@ -131,7 +131,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
 
                 var pos = status.map(function(e) {
                     return e.value;
-                }).indexOf(res.account.disabled);
+                }).indexOf(parseInt(res.account.disabled));
 
                 $scope.user.status = status[pos];
 
