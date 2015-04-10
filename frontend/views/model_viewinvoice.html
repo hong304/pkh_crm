@@ -180,7 +180,7 @@
 															<td >{{p.status}}</td>
 															<td >{{p.created_by}}</td>
 															<td >
-																<button data-ng-click="instantPrint(p.job_id);" data-ng-if="p.target_time > nowUnixTime && p.status == queued" class="btn btn-xs default btn-editable"><i class="fa fa-sign-out"></i> 立即列印</button>
+																<button data-ng-click="instantPrint(p.job_id);" data-ng-if="p.target_time > nowUnixTime && p.status == 'queued'" class="btn btn-xs default btn-editable"><i class="fa fa-sign-out"></i> 立即列印</button>
 															</td>
 														</tr>
 													</tbody>
