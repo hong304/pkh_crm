@@ -484,7 +484,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 			$scope.product[i].unit = $scope.product[i].availableunit[0];
 			$scope.updateStandardPrice(i);
 
-           // console.log(code);
             $scope.getLastItem(code,$scope.order.clientId);
 
            // console.log($scope.lastitem);

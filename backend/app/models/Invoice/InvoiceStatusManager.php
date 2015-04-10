@@ -44,6 +44,8 @@ class InvoiceStatusManager {
             
             $i->invoiceStatus = '2';
             $i->save();
+
+            PrintQueue::where('invoiceId', $this->invoiceId)->update(['status'=>'queued']);
         }
         return $this;
     }
