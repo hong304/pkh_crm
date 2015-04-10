@@ -8,7 +8,7 @@ class InvoiceStatusController extends BaseController {
 
 
 
-        $association = ReportArchive::where('id', $reportId)->first();
+        $association = ReportArchive::where('id', $reportId)->Orderby('created_at','desc')->first();
 
 
 
