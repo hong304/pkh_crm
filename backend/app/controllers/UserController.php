@@ -262,6 +262,12 @@ class UserController extends BaseController {
 	        Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
 	        $staff = User::select('*')->where('deleted',false);
 
+            if($filter['ceritera'] != '')
+            {
+                $staff->where('username', 'LIKE', '%'.$filter['ceritera'].'%')
+                    ->orwhere('name', 'LIKE', '%'.$filter['ceritera'].'%');
+            }
+
 	
 	        $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 	        $staff = $staff->with('role')->paginate($page_length);

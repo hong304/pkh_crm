@@ -53,6 +53,10 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
 			'permission'	:	'',
 			'group'	:	'',
 	};
+
+    $scope.filterData = {
+        'ceritera' : '',
+    };
 	
 	$scope.info = {};
 	$scope.zone = {};
@@ -244,7 +248,10 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     	
     }
     
-    
+    $scope.searchStaff = function(){
+        $scope.updateDataSet();
+    }
+
     $scope.updateDataSet = function()
     {
     	
@@ -282,7 +289,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
-                    "data": {mode: "collection"},
+                    "data": {filterData: $scope.filterData,mode: "collection"},
             		"xhrFields": {withCredentials: true},
                 },
                 "language": {
