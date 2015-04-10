@@ -28,7 +28,7 @@ class ProductManipulation {
     
     public function generateId($group)
 	{
-	    $length = 3;
+	    $length = 6;
 	    
 	//    $prefix = $group;
 
@@ -37,26 +37,40 @@ class ProductManipulation {
         $this->_departmentid = $pieces[0];
         $this->_groupid = $pieces[1];
 
-	    $lastid = Product::where('department', $pieces[0])->where('group', $pieces[1])->limit(1)->orderBy('productId', 'Desc')->first();
+	    $lastid = Product::where('department', $pieces[0])->where('group', $pieces[1])->where('new_product_id',0)->orderBy('productId', 'Desc')->first();
 	    	    
-	    if(count($lastid) > 0)
-	    {
-	        // extract latter part
-	      //  $i = explode('-', $lastid->productId);
-	      //  $nextId = (int) $i[2] + 1;
-	     //   $nextId = $prefix . str_pad($nextId, $length, '0', STR_PAD_LEFT);
-
-            if(is_numeric($lastid->productId)){
-                $nextId = (int) $lastid->productId + 1;
-            }else{
-                $nextId = (int) substr($lastid->productId, 1) + 1;
-                $nextId = substr($lastid->productId,0, 1).str_pad($nextId, $length, '0', STR_PAD_LEFT);
+	    if(count($lastid) > 0) {
+            // extract latter part
+            //  $i = explode('-', $lastid->productId);
+            //  $nextId = (int) $i[2] + 1;
+            //   $nextId = $prefix . str_pad($nextId, $length, '0', STR_PAD_LEFT);
+            if (strlen((string)$lastid->productId) == 6){
+                $nextId = (int)$lastid->productId + 1;
+            }else {
+                //$nextId = (int) substr($lastid->productId, 1) + 1;
+                // $nextId = substr($lastid->productId,0, 1).str_pad($nextId, $length, '0', STR_PAD_LEFT);
+                $alpha = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X ', 'Y', 'Z');
+                $inGroup = strtoupper($pieces[0]);
+                foreach ($alpha as $k => $v) {
+                    if ($v == $inGroup)
+                        $prefix = $k + 1;
+                }
+                $nextId = $prefix . $pieces[1] . '01';
+                $nextId = str_pad($nextId, $length, '0', STR_PAD_LEFT);
             }
 
-	    }
-	    else
+
+        }else
 	    {
-	        $nextId = str_pad('1', $length, '0', STR_PAD_LEFT);
+	       // $nextId = str_pad('1', $length, '0', STR_PAD_LEFT);
+            $alpha = array('A','B','C','D','E','F','G','H','I','J','K', 'L','M','N','O','P','Q','R','S','T','U','V','W','X ','Y','Z');
+            $inGroup =  strtoupper($pieces[0]);
+            foreach ($alpha as $k => $v){
+                if($v == $inGroup)
+                    $prefix = $k+1;
+            }
+            $nextId = $prefix.$pieces[1].'01';
+            $nextId = str_pad($nextId, $length, '0', STR_PAD_LEFT);
 	    }
 	    
 	    $this->_productId = $nextId;
