@@ -212,7 +212,6 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     		
     		$scope.invoiceinfo = res;
 
-                console.log(res);
     		Metronic.unblockUI();
     		$("#productDetails").modal({backdrop: 'static'});
     		
@@ -341,7 +340,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                             { "data": "zoneId" },
                             { "data": "client.routePlanningPriority" },
                             { "data": "client.customerName_chi" },
-                            { "data": "invoiceTotalAmount" },
+                            { "data": "amount" },
                             { "data": "invoiceStatusText" },
                             { "data": "staff.name" },
                             { "data": "createdat_full" },

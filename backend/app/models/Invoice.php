@@ -24,6 +24,7 @@ class Invoice extends Eloquent  {
             unset($invoice->zoneText);
             unset($invoice->invoiceTotalAmount);
             unset($invoice->backgroundcode);
+
         });
 	    
 	    Invoice::updated(function($model)
@@ -46,9 +47,11 @@ class Invoice extends Eloquent  {
 	        }
 	    });
 	}
-	
-	
-	
+
+
+
+
+
 	public static function getFullInvoice($base, $zoneid = false)
 	{
 	    // get invoices and items
@@ -196,7 +199,7 @@ class Invoice extends Eloquent  {
 	
 	public function newCollection(array $models = array())
 	{
-	
+
 	    foreach($models as $model)
 	    {
 	        
@@ -212,7 +215,9 @@ class Invoice extends Eloquent  {
             //zone text
             $model->zoneText = Config::get('zoneName.'.$model->zoneId);
 	        // calculate invoice total
-	        
+
+
+
 	        if(isset($model['invoiceItem']))
 	        {
 	            $model->invoiceTotalAmount = 0;
