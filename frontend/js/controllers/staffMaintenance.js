@@ -185,6 +185,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     	
     	var groups = [];
     	groups = groups.concat([{value: '3', label: "Manager"}]);
+        groups = groups.concat([{value: '5', label: "Supervisor"}]);
     	groups = groups.concat([{value: '2', label: "System Administrator"}]);
     	groups = groups.concat([{value: '4', label: "Telesales"}]);
     	
