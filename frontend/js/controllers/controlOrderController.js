@@ -111,7 +111,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         $scope.getSameDayInvoice();
 
-        console.log($scope.order);
+      //  console.log($scope.order);
 
 		//disable changing payment terms if it is a COD client
 		if(SharedService.clientPaymentTermId == 1)
@@ -154,6 +154,11 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		  $scope.reCalculateTotalAmount();
 		  
 	}, true);
+
+    $scope.$watch('order.discount', function() {
+        $scope.reCalculateTotalAmount();
+
+    }, true);
 	
 	$scope.$on('doneCustomerUpdate', function(){
 		
@@ -714,10 +719,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     		$scope.product[i]['qty'] = Math.ceil( qty / interval ) * interval;
     	}
     }
-    
-    $scope.updateDiscount = function(i)
-    {
-    }
+
     
     $scope.submitOrder = function()
     {
