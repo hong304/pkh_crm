@@ -275,7 +275,7 @@ $debug = 0;
                 /*
                  * Add Item Price
                 */
-                $item_price = round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,2);
+                $item_price = round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,1);
                 $this->image[$p]->text('$'.number_format($item_price,2,'.',','), $line_total, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
