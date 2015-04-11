@@ -19,6 +19,9 @@ class InvoiceImage {
         # Retrieve the invoice data     
         $base = Invoice::where('invoiceId', $invoiceId);
         $invoice = Invoice::categorizePendingInvoice(Invoice::getFullInvoice($base));
+
+      //  pd($invoice);
+
         $i = array_values($invoice['categorized'])[0]['invoices'][0];
         $zoneId = array_values($invoice['categorized'])[0]['zoneId'];
         
@@ -308,8 +311,24 @@ $debug = 0;
             });
         }
         
-        $total_amount = "合計  HKD " . $english_format_number = number_format(round($i['totalAmount'],1), 2, '.', ',');;
-        $this->image[$p]->text($total_amount, 1550, 900, function($font) use($font_file) {
+  //      $total_amount = "合計  HKD " . $english_format_number = number_format(round($i['totalAmount']*$i['invoiceDiscount'],1), 2, '.', ',');;
+       // $total_amount = "合計  HKD " . $i['invoiceTotalAmount'];
+
+        $this->image[$p]->text('HKD ' . number_format($i['invoiceTotalAmount']/((100-$i['invoiceDiscount'])/100),2,'.',','), 1550, 900, function($font) use($font_file) {
+            $font->file($font_file);
+            $font->size(40);
+            $font->color('#000000');
+            $font->align('right');
+        });
+
+        $this->image[$p]->text('- ('. $i['invoiceDiscount'].'%)', 1550, 950, function($font) use($font_file) {
+            $font->file($font_file);
+            $font->size(40);
+            $font->color('#000000');
+            $font->align('right');
+        });
+
+        $this->image[$p]->text('HKD '. $i['invoiceTotalAmount'], 1550, 1000, function($font) use($font_file) {
             $font->file($font_file);
             $font->size(40);
             $font->color('#000000');

@@ -648,7 +648,13 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         	$scope.submitButtonColor = 'blue'; 
     	} 
     }
-    
+
+    $scope.updateDiscount = function()
+    {
+        console.log('hi');
+        $scope.reCalculateTotalAmount();
+    }
+
     $scope.updateQty = function(i)
     { 
     	/*

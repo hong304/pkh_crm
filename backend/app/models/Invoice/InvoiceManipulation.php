@@ -225,6 +225,7 @@ class InvoiceManipulation {
 	    }
 	    elseif($this->action == 'update')
 	    {
+            $this->im->invoiceDiscount = $this->temp_invoice_information['discount'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
 	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
 	        $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
