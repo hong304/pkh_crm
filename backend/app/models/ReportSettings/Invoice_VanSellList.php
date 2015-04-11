@@ -157,7 +157,7 @@ class Invoice_VanSellList {
             [
                 'type' => 'pdf',
                 'name' => '列印 PDF 版本',
-                'warning'   =>  '確定列印缷載單?'
+                'warning'   =>  '確定列印卸載單?'
             ],
         ];
         

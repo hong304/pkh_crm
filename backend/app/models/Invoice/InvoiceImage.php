@@ -265,7 +265,7 @@ $debug = 0;
                  * Add Product Price
                 */
                 $price = round($item['productPrice'],1);
-                $this->image[$p]->text('$'.number_format($price,2,'.',','), 1300, $position['y'], function($font) use($font_file) {
+                $this->image[$p]->text('$'.number_format($price,2,'.',','), 1310, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
