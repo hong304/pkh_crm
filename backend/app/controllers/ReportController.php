@@ -6,7 +6,15 @@ class ReportController extends BaseController {
     
     public function loadAvailableReports()
     {
+
+
+        if (Auth::user()->role[0]->id == 4){
+            $filter = ['archivedreport','productReport','customerReport'];
+            $reports = Report::select('*')->orderBy('id', 'asc')->whereNotIn('id',$filter)->get();
+        }
+
         $reports = Report::select('*')->orderBy('id', 'asc')->get();
+
         foreach($reports as $report)
         {
             $reportCustom[$report->group]['reports'][] = $report;
