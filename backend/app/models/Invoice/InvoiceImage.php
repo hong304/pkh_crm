@@ -45,7 +45,7 @@ class InvoiceImage {
              * Format JPG
              */
 
-$debug = 1;
+$debug = 0;
 
             if($debug){
                 $this->print = true;
