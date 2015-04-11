@@ -27,9 +27,9 @@
 
                         <a href="/#/reportFactory?id=picklinglist9f" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>9樓備貨單</div></a>
 
-                        <a href="/#/reportFactory?id=customerReport" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>客戶分析</div></a>
+                        <a href="/#/reportFactory?id=customerReport" data-ng-if="systemInfo.permission.customer_maintenance == true" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>客戶分析</div></a>
 
-                        <a href="/#/reportFactory?id=productReport" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>產品分析</div></a>
+                        <a href="/#/reportFactory?id=productReport" data-ng-if="systemInfo.permission.customer_maintenance == true" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>產品分析</div></a>
 					
 					
 						<!-- <a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-tags" style="font-size:30px;"></i><div>產品</div></a>
