@@ -171,11 +171,11 @@ $debug = 0;
                 $font->color('#000000');
             });
 
-            $this->image[$p]->text('(折扣)', 1480, 418, function($font) use($font_file) {
+        /*    $this->image[$p]->text('(折扣)', 1480, 418, function($font) use($font_file) {
                 $font->file($font_file);
                 $font->size(25);
                 $font->color('#FFFFFF');
-            });
+            }); */
 
             /*
              * Add Page Information to the invoice image
@@ -213,10 +213,10 @@ $debug = 0;
                 'row_interval' => 50, //(400 / $max_item_per_section),
             ];
 
-            $line_total = 1425;
+            $line_total = 1480;
             foreach($sections_items as $check){
                if($check['productDiscount'] > 0)
-                   $line_total = 1355;
+                   $line_total = 1480;
             }
 
             foreach($sections_items as $item)
@@ -264,21 +264,23 @@ $debug = 0;
                 /*
                  * Add Product Price
                 */
-                $price = '$ ' . round($item['productPrice'],1);
-                $this->image[$p]->text($price, 1210, $position['y'], function($font) use($font_file) {
+                $price = round($item['productPrice'],1);
+                $this->image[$p]->text('$'.number_format($price,2,'.',','), 1300, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
+                    $font->align('right');
                 });
 
                 /*
                  * Add Item Price
                 */
-                $item_price = '$ ' . round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,2);
-                $this->image[$p]->text($item_price, $line_total, $position['y'], function($font) use($font_file) {
+                $item_price = round($item['productPrice'] * $item['productQty'] * (100-$item['productDiscount'])/100,2);
+                $this->image[$p]->text('$'.number_format($item_price,2,'.',','), $line_total, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
+                    $font->align('right');
                 });
 
                 /*
@@ -286,10 +288,11 @@ $debug = 0;
                 */
                 if($item['productDiscount'] > 0){
                     $item_price = '('.$item['productDiscount'].'%)';
-                    $this->image[$p]->text($item_price, 1495, $position['y'], function($font) use($font_file) {
+                    $this->image[$p]->text($item_price, 1030, $position['y'], function($font) use($font_file) {
                         $font->file($font_file);
                         $font->size(25);
                         $font->color('#000000');
+                        $font->align('right');
                     });
                 }
 
