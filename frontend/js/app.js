@@ -472,6 +472,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                     files: [
                         assets + '/global/plugins/icheck/skins/all.css',
                         assets + '/global/plugins/icheck/icheck.min.js',
+                        assets + '/global/plugins/bootbox/bootbox.min.js',
+
                         'js/controllers/invoiceFlowCtrl.js',
                     ] 
                 });

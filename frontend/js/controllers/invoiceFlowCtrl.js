@@ -44,7 +44,9 @@ app.controller('invoiceFlowCtrl', function($scope, $rootScope, $http, SharedServ
     	
     	$http.post($scope.updateStatusTarget, {steps: invoiceSteps}).
     	  success(function(data, status, headers, config) {
-    	         $scope.init();
+                alert('狀態已更改')
+    	        // $scope.init();
+                window.location.replace("/#/salesPanel");
 
     	  }).
     	  error(function(data, status, headers, config) {

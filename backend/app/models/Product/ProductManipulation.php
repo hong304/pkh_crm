@@ -46,9 +46,16 @@ class ProductManipulation {
             //  $i = explode('-', $lastid->productId);
             //  $nextId = (int) $i[2] + 1;
             //   $nextId = $prefix . str_pad($nextId, $length, '0', STR_PAD_LEFT);
+
+//echo $lastid->productId;
+
             if (strlen((string)$lastid->productId) == 6){
+              //  p('1');
                 $nextId = (int)$lastid->productId + 1;
+               // pd($nextId);
+                $nextId = str_pad($nextId, $length, '0', STR_PAD_LEFT);
             }else {
+               // p('2');
                 //$nextId = (int) substr($lastid->productId, 1) + 1;
                 // $nextId = substr($lastid->productId,0, 1).str_pad($nextId, $length, '0', STR_PAD_LEFT);
                 $alpha = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X ', 'Y', 'Z');
@@ -65,6 +72,7 @@ class ProductManipulation {
 
         }else
 	    {
+          //  p('3');
 	       // $nextId = str_pad('1', $length, '0', STR_PAD_LEFT);
             $alpha = array('A','B','C','D','E','F','G','H','I','J','K', 'L','M','N','O','P','Q','R','S','T','U','V','W','X ','Y','Z');
             $inGroup =  strtoupper($pieces[0]);
@@ -76,7 +84,8 @@ class ProductManipulation {
                 $nextId = $prefix.$pieces[1].'01';
             $nextId = str_pad($nextId, $length, '0', STR_PAD_LEFT);
 	    }
-	    
+
+
 	    $this->_productId = $nextId;
 	    
 	    return $this;	    
