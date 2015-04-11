@@ -38,7 +38,9 @@ class ProductManipulation {
         $this->_groupid = $pieces[1];
 
 	    $lastid = Product::where('department', $pieces[0])->where('group', $pieces[1])->where('new_product_id',0)->orderBy('productId', 'Desc')->first();
-	    	    
+
+        $prefix = '';
+
 	    if(count($lastid) > 0) {
             // extract latter part
             //  $i = explode('-', $lastid->productId);
@@ -55,7 +57,8 @@ class ProductManipulation {
                     if ($v == $inGroup)
                         $prefix = $k + 1;
                 }
-                $nextId = $prefix . $pieces[1] . '01';
+                if($prefix == '') $prefix = 27;
+                    $nextId = $prefix . $pieces[1] . '01';
                 $nextId = str_pad($nextId, $length, '0', STR_PAD_LEFT);
             }
 
@@ -69,7 +72,8 @@ class ProductManipulation {
                 if($v == $inGroup)
                     $prefix = $k+1;
             }
-            $nextId = $prefix.$pieces[1].'01';
+            if($prefix == '') $prefix = 27;
+                $nextId = $prefix.$pieces[1].'01';
             $nextId = str_pad($nextId, $length, '0', STR_PAD_LEFT);
 	    }
 	    
