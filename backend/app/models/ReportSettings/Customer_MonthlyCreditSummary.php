@@ -193,7 +193,7 @@ class Customer_MonthlyCreditSummary {
             $pdf->Cell(0, 0, "借方", 0, 0, "L");
 
             $pdf->setXY(140, 60);
-            $pdf->Cell(0, 0, "貨方", 0, 0, "L");
+            $pdf->Cell(0, 0, "貸方", 0, 0, "L");
 
             $pdf->setXY(165, 60);
             $pdf->Cell(0, 0, "未清付金額", 0, 0, "L");
