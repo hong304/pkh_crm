@@ -227,7 +227,7 @@ class Invoice extends Eloquent  {
                     //$model->invoiceTotalAmount = round($model->invoiceTotalAmount*((100-$model->invoiceDiscount)/100),1);
 	            }
 
-                $model->invoiceTotalAmount = number_format(round($model->invoiceTotalAmount*((100-$model->invoiceDiscount)/100),1),2,'.',',');
+                $model->invoiceTotalAmount = round($model->invoiceTotalAmount*((100-$model->invoiceDiscount)/100),1);
 	        }
 	        
 	    }
