@@ -59,13 +59,14 @@ class Invoice_CashReceiptSummary {
                        $invoices[$invoiceId] = $invoiceQ;
                        $client = $invoiceQ['client'];
                        
-                       $this->_accumulator += $invoiceQ->invoiceTotalAmount;
+                       $this->_accumulator += $invoiceQ->amount;
                        
                        $this->_account[] = [
                            'name' => $client->customerName_chi,
                            'invoiceNumber' => $invoiceId,
-                           'invoiceTotalAmount' => $invoiceQ->invoiceTotalAmount,
-                           'accumulator' => $this->_accumulator,
+                           'invoiceTotalAmount' => $invoiceQ->amount,
+                           'amount' => number_format($invoiceQ->amount,2,'.',','),
+                           'accumulator' => number_format($this->_accumulator,2,'.',','),
                        ];
                        
                    }
@@ -176,7 +177,8 @@ class Invoice_CashReceiptSummary {
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
 
         $datamart = array_chunk($this->data, 25, true);
-        
+
+
         foreach($datamart as $i=>$f)
         {
             // for first Floor
@@ -225,10 +227,10 @@ class Invoice_CashReceiptSummary {
                 $pdf->Cell(0, 0, $e['name'], 0, 0, "L");
     
                 $pdf->setXY(130, $y);
-                $pdf->Cell(0, 0, sprintf("HK$ %s", number_format($e['invoiceTotalAmount'])), 0, 0, "L");
+                $pdf->Cell(0, 0, sprintf("HK$ %s", $e['amount']), 0, 0, "L");
     
                 $pdf->setXY(160, $y);
-                $pdf->Cell(0, 0, sprintf("HK$ %s", number_format($e['accumulator'])), 0, 0, "L");
+                $pdf->Cell(0, 0, sprintf("HK$ %s", $e['accumulator']), 0, 0, "L");
     
                 $y += 6;
                

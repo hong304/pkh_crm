@@ -13,13 +13,13 @@
             <tr>
                 <td><?php echo $row['invoiceNumber']; ?></td>
                 <td><?php echo $row['name']; ?></td>
-                <td>HK$ <?php echo number_format($row['invoiceTotalAmount']); ?></td>
-                <td>HK$ <?php echo number_format($row['accumulator']); ?></td>
+                <td>HK$ <?php echo $row['amount']; ?></td>
+                <td>HK$ <?php echo $row['accumulator']; ?></td>
             </tr>  
          <?php endforeach; ?>.
          <tr>
             <td colspan="4" style="text-align:right;">
-                <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo number_format(end($data)['accumulator']); ?></span>
+                <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo end($data)['accumulator']; ?></span>
             </td>
          <tr>
     </tbody>
