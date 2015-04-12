@@ -47,6 +47,7 @@ class Analysis_customer {
 
         for ($i = 1; $i <= 13; $i++) {
             $a_data[$i] = '';
+
         }
 
 
