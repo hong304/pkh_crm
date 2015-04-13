@@ -236,7 +236,14 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         if(!$location.search().invoiceId && !$location.search().clientId)
     	{
 	        $timeout(function(){
-	        	$('#selectclientmodel').modal({backdrop: 'static'});
+                $('#selectclientmodel').modal('show');
+
+                $('#selectclientmodel').on('shown.bs.modal', function () {
+                    $('#keyword').focus();
+                })
+
+
+	        	//$('#selectclientmodel').modal({backdrop: 'static'});
 	        }, 1000);
     	}
         
@@ -441,7 +448,14 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     	$scope.timer.product[i]['openPanel'] = Date.now();
     	
     	$('#selectProduct').modal('show');
-    	$scope.currentSelectProductRow = i;
+
+
+        $('#selectProduct').on('shown.bs.modal', function () {
+            $("#productSearchField").focus().select();
+        })
+
+
+        $scope.currentSelectProductRow = i;
     	SharedService.setValue('currentSelectProductRow', i, 'updateProductSelection');
     }
     
@@ -543,7 +557,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 			
 			
 			// Focus to the qty input box
-			 $("#qty_" + i).focus();
+			 $("#qty_" + i).focus().select();
 			 
 			 
 			 
@@ -983,6 +997,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.saveRemark = function(r)
     {
     	$("#remarkModal").modal('hide');
+
+
     	$scope.product[$scope.editable_row].remark = $scope.editable_remark;
     	
     }

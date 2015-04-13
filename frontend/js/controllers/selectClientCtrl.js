@@ -9,15 +9,50 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	
 	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
-	
+var suggestion = -1;
+
+    document.addEventListener('keydown', function(evt) {
+        var e = window.event || evt;
+        var key = e.which || e.keyCode;
+
+        if(e.keyCode == 38) // up
+        {
+            // e.preventDefault();
+            $("#suggestion_row1_" + suggestion).css('background', '');
+            suggestion--;
+            $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
+            //console.log(suggestion);
+        }
+        if(e.keyCode == 40) //down
+        {
+            //  e.preventDefault();
+            $("#suggestion_row1_" + suggestion).css('background', '');
+            suggestion++;
+            $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
+            //console.log(suggestion);
+        }
+        if(e.keyCode == 39)
+        {
+            // e.preventDefault();
+            $("#suggestion_row1_" + suggestion).css('background', '');
+            $("#suggestion_row1_" + suggestion).click();
+            suggestion = -1;
+            //console.log(suggestion);
+        }
+
+
+    }, false);
+
     $scope.$on('$viewContentLoaded', function() {   
         // initialize core components
+
         Metronic.initAjax();      
          
     }); 
     
     $scope.$on('ZoneChanged', function(){
     	$scope.searchClient($scope.keyword);
+       // $("#keyword").focus().select();
     });
     
     
@@ -29,6 +64,9 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     $scope.selectClient = function(c)
     {
     	$('#selectclientmodel').modal('hide');
+        $('#selectclientmodel').on('hidden.bs.modal', function () {
+            $('#productCode_1').focus();
+        })
     	$scope.keyword = "";
     	$scope.searchClient("");
     	SharedService.setValue('clientId', c.customerId, 'handleCustomerUpdate');

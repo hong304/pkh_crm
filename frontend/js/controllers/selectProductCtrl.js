@@ -12,46 +12,46 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
     var fetchDataTimer;
     var suggestion = -1;
 
-    
-	
+
+
     document.addEventListener('keydown', function(evt) {
-		var e = window.event || evt;
-		var key = e.which || e.keyCode;
-		
-		if(e.keyCode == 13)
-		{    			
-			$("#productSearchField").focus().select();
-			suggestion = -1;
-		}
-		
-		if(e.keyCode == 38) // up
-		{
-			e.preventDefault();
-			$("#suggestion_row_" + suggestion).css('background', '');
-			suggestion--;
-			$("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
-			//console.log(suggestion);
-		}
-		if(e.keyCode == 40)
-		{
-			e.preventDefault();
-			$("#suggestion_row_" + suggestion).css('background', '');
-			suggestion++;
-			$("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
-			//console.log(suggestion);
-		}
-		if(e.keyCode == 39)
-		{
-			e.preventDefault();
-			$("#suggestion_row_" + suggestion).css('background', '');
-			$("#suggestion_row_" + suggestion).click();
-			suggestion = -1;
-			//console.log(suggestion);
-		}
-		
-		
-	}, false);
-	
+        var e = window.event || evt;
+        var key = e.which || e.keyCode;
+
+        if(e.keyCode == 13)
+        {
+            $("#productSearchField").focus().select();
+            suggestion = -1;
+        }
+
+        if(e.keyCode == 38) // up
+        {
+           // e.preventDefault();
+            $("#suggestion_row_" + suggestion).css('background', '');
+            suggestion--;
+            $("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
+            //console.log(suggestion);
+        }
+        if(e.keyCode == 40) //down
+        {
+          //  e.preventDefault();
+            $("#suggestion_row_" + suggestion).css('background', '');
+            suggestion++;
+            $("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
+            //console.log(suggestion);
+        }
+        if(e.keyCode == 39)
+        {
+           // e.preventDefault();
+            $("#suggestion_row_" + suggestion).css('background', '');
+            $("#suggestion_row_" + suggestion).click();
+            suggestion = -1;
+            //console.log(suggestion);
+        }
+
+
+    }, false);
+
     $scope.$on('$viewContentLoaded', function() {   
         // initialize core components
         Metronic.initAjax();

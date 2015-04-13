@@ -281,7 +281,7 @@
 								<td style="line-height:35px;font-size:15px;">{{i}}</td>
 								<td>
 									<div class="input-group">
-										<input id="productCode_{{i}}" ng-mouseover="addMaskToProductField();" name="productCode_{{i}}" class="form-control productCodeField"  ng-model="productCode[i]" type="text" placeholder="" ng-change="searchProduct(i, productCode[i])"/>
+										<input id="productCode_{{i}}" onClick="this.select();"  name="productCode_{{i}}" class="form-control productCodeField"  ng-model="productCode[i]" type="text" placeholder="" ng-change="searchProduct(i, productCode[i])"/>
 										<span class="input-group-btn">
 											<a href="#" data-ng-click="selectProduct(i);" id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 選擇</a>
 										</span>
