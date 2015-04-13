@@ -555,11 +555,12 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 			}, 1000);
 			
 			
-			
+		//	console.log(i);
 			// Focus to the qty input box
+
 			 $("#qty_" + i).focus().select();
 			 
-			 
+
 			 
 			
 			
@@ -586,7 +587,14 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     	$scope.searchProduct($scope.currentSelectProductRow, $scope.selectedProduct);
 
-         $("#selectProduct").modal('toggle');
+         $("#selectProduct").modal('hide');
+
+
+
+        $('#selectProduct').on('hidden.bs.modal', function () {
+            $("#qty_" + $scope.currentSelectProductRow).focus().select();
+
+        })
     });
 
     
@@ -670,7 +678,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     $scope.updateDiscount = function()
     {
-        console.log('hi');
+
         $scope.reCalculateTotalAmount();
     }
 
