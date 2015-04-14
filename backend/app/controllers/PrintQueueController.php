@@ -72,8 +72,18 @@ class PrintQueueController extends BaseController {
     
     public function printAllPrintJobsWithinMyZone()
     {
-        $affected_jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
-                            ->update(['target_time'=>time()]);
+        $count = PrintQueue::select('invoiceId', DB::raw('count(*) as total'))->wherein('target_path', explode(',', Auth::user()->temp_zone))->wherein('status',['queued','fast-track'])
+            ->groupBy('invoiceId')->having('total','>',1)
+            ->get();
+
+        if($count){
+            foreach($count as $v){
+                $delete = PrintQueue::where('invoiceId',$v->invoiceId)->orderBy('insert_time','desc')->first();
+                $delete->delete();
+            }
+        }
+
+        $affected_jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->update(['target_time'=>time()]);
         return Response::json(['affected'=>$affected_jobs]);
     }
     

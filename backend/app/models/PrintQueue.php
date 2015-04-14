@@ -1,10 +1,10 @@
 <?php
-
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
 class PrintQueue extends Eloquent  {
 
-    //use SoftDeletingTrait;
-    
+    use SoftDeletingTrait;
+    protected $dates = ['deleted_at'];
 	/**
 	 * The database table used by the model.
 	 *
