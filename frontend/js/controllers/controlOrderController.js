@@ -559,7 +559,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		//	console.log(i);
 			// Focus to the qty input box
 
-			 $("#qty_" + i).focus().select();
+			// $("#qty_" + i).focus().select();
 			 
 
 			 
