@@ -404,22 +404,11 @@ class InvoiceManipulation {
        // syslog(LOG_DEBUG, print_r(['user'=>Auth::user(), 'server'=> $_SERVER, 'get'=>$_GET, 'post'=>$_POST], true));
         Auth::onceUsingId("27");
 
-        $oldQs = PrintQueue::where('invoiceId', $invoice_id)
-            ->wherein('status', ['queued', 'fast-track'])
-            ->get();
-        if($oldQs)
-        {
-            foreach($oldQs as $oldQ)
-            {
-                $oldQ->status = "dead:regenerated";
-                $oldQ->save();
-            }
-        }
-
         $pdf = new InvoicePdf(); //convert png to pdf
-
         //$pdf_file = $pdf->generate(Input::get('invoiceId'))->save();
         $pdf_file = $pdf->generate($invoice_id);
+
+
 
         // update invoice entry
         if($pdf_file['zoneId'] != "")
@@ -429,6 +418,18 @@ class InvoiceManipulation {
             $x->save();
 
             $url = $_SERVER['backend'].substr($pdf_file['path'],-24);
+
+            $oldQs = PrintQueue::where('invoiceId', $invoice_id)
+                ->wherein('status', ['queued', 'fast-track'])
+                ->get();
+            if($oldQs)
+            {
+                foreach($oldQs as $oldQ)
+                {
+                    $oldQ->status = "dead:regenerated";
+                    $oldQ->save();
+                }
+            }
 
             $q = new PrintQueue();
             $q->file_path = $url;
