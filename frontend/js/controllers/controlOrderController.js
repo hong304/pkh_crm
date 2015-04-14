@@ -369,7 +369,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         else
         {
         	$('#selectclientmodel').modal('show');
-        	
+            $('#selectclientmodel').on('shown.bs.modal', function () {
+                $('#keyword').focus();
+            })
         	$scope.loadProduct($location.search().clientId);
         	
         	/*Metronic.blockUI({
