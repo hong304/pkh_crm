@@ -93,21 +93,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	// product: select, change_qty, change_unit
 
 
-    document.addEventListener('keydown', function(evt) {
-        var e = window.event || evt;
-        var key = e.which || e.keyCode;
-
-        if(e.keyCode == 39)
-        {
-            // e.preventDefault();
-            $("#suggestion_row_" + suggestion).css('background', '');
-            $("#suggestion_row_" + suggestion).click();
-            suggestion = -1;
-            //console.log(suggestion);
-        }
-
-
-    }, false);
 	
 	$scope.$on('handleCustomerUpdate', function(){
 		// received client selection broadcast. update to the invoice portlet
