@@ -77,7 +77,9 @@ class Invoice_1FPickingList {
                             $products[$pQ->productId] = $pQ;
                        }
                    }
-                   
+
+                 //  pd($invoicesQuery);
+
                    // second process invoices                   
                    foreach($invoicesQuery as $invoiceQ)
                    {
@@ -114,7 +116,7 @@ class Invoice_1FPickingList {
                });
                
                
-       ksort($this->goods['1F']);
+       asort($this->goods['1F']);
        $this->data = $this->goods;
         $this->data['version'] = $this->_version;
 
