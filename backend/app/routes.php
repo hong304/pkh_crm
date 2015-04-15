@@ -120,6 +120,7 @@ Route::get('/', function(){
 
 Route::get('/system.json', 'SystemController@jsonSystem');
 Route::get('/test', function(){
+
   //  $lastid = Product::where('department', 'A')->where('group', '05')->where('new_product_id',0)->orderBy('productId', 'Desc')->first();
       //  pd($lastid);
 

@@ -225,6 +225,10 @@ class InvoiceManipulation {
 	    }
 	    elseif($this->action == 'update')
 	    {
+
+            $this->im->zoneId = $this->temp_invoice_information['zoneId'];
+            $this->im->customerId = $this->temp_invoice_information['clientId'];
+            $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
             $this->im->invoiceDiscount = $this->temp_invoice_information['discount'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
 	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
@@ -417,6 +421,8 @@ class InvoiceManipulation {
             $x->invoicePrintPDF = $pdf_file['path'];
             $x->save();
 
+
+
             $url = $_SERVER['backend'].substr($pdf_file['path'],-24);
 
             $oldQs = PrintQueue::where('invoiceId', $invoice_id)
@@ -442,8 +448,10 @@ class InvoiceManipulation {
                 $q->status = "queued";
             $q->invoiceId = $invoice_id;
 
-
-            $q->target_time = strtotime("tomorrow 3am");
+            if($x->deliveryDate = strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12)
+                $q->target_time = time();
+            else
+                $q->target_time = strtotime("tomorrow 3am");
 
             $q->created_by = $instructor;
             $q->save();
