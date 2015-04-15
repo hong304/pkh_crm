@@ -42,6 +42,8 @@ class Invoice_CustomerBreakdown {
         
         // get invoice from that date and that zone
         $this->goods = ['1F9F'=>[]];
+
+
         Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
@@ -57,7 +59,12 @@ class Invoice_CustomerBreakdown {
                             $products[$pQ->productId] = $pQ;
                        }
                    }
-                   
+
+
+                   foreach($invoicesQuery as $v){
+                       $amount[$v['client']->customerId] = 0;
+                   }
+
                    // second process invoices                   
                    foreach($invoicesQuery as $invoiceQ)
                    {
@@ -67,7 +74,9 @@ class Invoice_CustomerBreakdown {
                        $invoiceId = $invoiceQ->invoiceId;
                        $invoices[$invoiceId] = $invoiceQ;
                        $client = $invoiceQ['client'];
-                       
+
+                       $amount[$client->customerId]  +=$invoiceQ->invoiceTotalAmount;
+
                        // second, separate 1F goods and 9F goods
                        foreach($invoiceQ['invoiceItem'] as $item)
                        {
@@ -89,19 +98,19 @@ class Invoice_CustomerBreakdown {
                                'itemPrice' => $item->productPrice,
                                'discount' => $item->productDiscount,
                            ];
-
-                           $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
-                           $this->goods['1F9F'][$customerId]['totalAmount'] = $invoiceQ->invoiceTotalAmount;
-                           $this->goods['1F9F'][$customerId]['invoiceId'] = $invoiceQ->invoiceId;
-                           $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
-                          
-
+                           // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
                        }
+
+                       $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
+                       $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
+                       $this->goods['1F9F'][$customerId]['invoiceId'] = $invoiceQ->invoiceId;
+                       $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
                    }
                    
                });
 
        $this->data = $this->goods;
+       // pd($this->data);
        return $this->data;        
     }
     

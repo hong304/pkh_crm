@@ -54,7 +54,7 @@ class Report_DailySummary {
         // get invoice from that date and that zone
        $this->goods = [];
 
-        Invoice::select('*')->whereIn('invoiceStatus', ['20','30'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
+        Invoice::select('*')->whereIn('invoiceStatus', ['2','4','11','20','21','22','23','30'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
                ->chunk(5000, function($invoicesQuery) {
 
 
