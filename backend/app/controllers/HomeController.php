@@ -59,7 +59,7 @@ class HomeController extends BaseController {
 
             Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',4)->update(['f9_picking_dl'=>1]);
 
-            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',2)->get();
+            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
 
             foreach($info_data as $v){
                  $q[]= $v->invoiceId;
@@ -78,7 +78,7 @@ class HomeController extends BaseController {
             }
 
 
-            $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',2)->with('InvoiceItem')->update(array('invoiceStatus' => 4));
+            $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->with('InvoiceItem')->update(array('invoiceStatus' => 4));
 
 
 
