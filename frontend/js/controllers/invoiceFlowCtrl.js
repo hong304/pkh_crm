@@ -30,7 +30,8 @@ app.controller('invoiceFlowCtrl', function($scope, $rootScope, $http, SharedServ
     	})
     	.success(function(res, status, headers, config){     
     		$scope.retrieval = res;
-    		
+    		console.log(res);
+
     		res.invoices.forEach(function(invoice){
     			$scope.nextStep[invoice.invoiceId] = invoice.nextStatus.default;
     		});

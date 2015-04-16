@@ -65,7 +65,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     	$('#selectclientmodel').modal('hide');
         $('#selectclientmodel').on('hidden.bs.modal', function () {
             $('#productCode_1').focus();
-
+            console.log('hi');
         })
     	$scope.keyword = "";
     	$scope.searchClient("");

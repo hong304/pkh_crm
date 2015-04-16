@@ -32,7 +32,9 @@ class SystemController extends BaseController {
             {
                 $permissionList[$perm->name] = $user->can($perm->name);
             }
-            
+
+
+
             // zone
             $z = Zone::wherein('zoneId', explode(',', Auth::user()->temp_zone))->get()->toArray();
 

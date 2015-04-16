@@ -51,7 +51,7 @@
 								</div>
 							</div>
 							<div class="form-actions" style="text-align:right;">
-								<button type="submit" class="btn green-haze" data-ng-click="updateStatus(nextStep);">確定</button>
+								<button type="submit" class="btn green-haze" data-ng-if="(retrieval.userRole == 4 && currentStatus == 4) || retrieval.userRole != 4" data-ng-click="updateStatus(nextStep);">確定</button>
 							</div>
 						</form>
 						

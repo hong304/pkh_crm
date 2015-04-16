@@ -208,7 +208,9 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
     
     $scope.updateStatusFindReport = function(statusId)
     {
+
     	$("#updateStatusFindReport").modal({backdrop: 'static'});
+
     }
     
     $scope.updateStatusNextStep = function(reportId)

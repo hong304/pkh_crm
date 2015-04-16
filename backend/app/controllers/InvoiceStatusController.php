@@ -22,13 +22,13 @@ class InvoiceStatusController extends BaseController {
 
 
 
-
         foreach($invoices as $invoice)
         {
             $invoice->nextStatus = InvoiceStatusManager::determinateNextStatus($invoice);
         }
 
         $returnCustom = [
+            'userRole' => Auth::user()->role[0]->id,
             'currentStatus' => $invoices[0]->invoiceStatus,
             'currentStatusText' => $invoices[0]->invoiceStatusText,
             'invoices' => $invoices,  
