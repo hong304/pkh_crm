@@ -115,7 +115,7 @@ $debug = 0;
                 $font->color('#000000');
             });
     
-            $this->image[$p]->text("車線 " .str_pad($zoneId, 2, '0', STR_PAD_LEFT) ."/".str_pad($i['routePlanningPriority'], 2, '0', STR_PAD_LEFT), 1002, 350, function($font) use($font_file) {
+            $this->image[$p]->text("車線 " .str_pad($i['zoneId'], 2, '0', STR_PAD_LEFT) ."/".str_pad($i['routePlanningPriority'], 2, '0', STR_PAD_LEFT), 1002, 350, function($font) use($font_file) {
                 $font->file($font_file);
                 $font->size(35);
                 $font->color('#000000');
