@@ -338,7 +338,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                             { "data": "invoiceId" },
                             { "data": "deliveryDate_date" },
                             { "data": "zoneId" },
-                            { "data": "client.routePlanningPriority" },
+                            { "data": "routePlanningPriority" },
                             { "data": "client.customerName_chi" },
                             { "data": "amount" },
                             { "data": "invoiceStatusText" },

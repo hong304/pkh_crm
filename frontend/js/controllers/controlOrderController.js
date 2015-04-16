@@ -795,8 +795,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     	{
 
 
-           // console.log($scope.order);
-          //  return false;
+
 
         	$http.post(
             	endpoint + '/placeOrder.json', {

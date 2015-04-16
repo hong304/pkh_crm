@@ -204,6 +204,9 @@ class OrderController extends BaseController {
             }
             else
             {
+
+              //  pd($permittedZone);
+
                 $invoice->wherein('zoneId', $permittedZone);
             }
             
