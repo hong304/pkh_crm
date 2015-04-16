@@ -47,8 +47,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		status		:	'1',
 		referenceNumber	:	'',
 		zoneId		:	'',
+        defaultZoneId : '',
 		zoneName	:	'',
 		route		:	'',
+        defaultRoute : '',
 		address		:	'',
         invoiceRemark : '',
 		clientId	:	'',
@@ -101,8 +103,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		$scope.order.clientName = SharedService.clientName;
 		$scope.order.address = SharedService.clientAddress;
 		$scope.order.zoneId = SharedService.clientZoneId;
+        $scope.order.defaultZoneId = SharedService.clientZoneId;
 		$scope.order.zoneName = SharedService.clientZoneName;
 		$scope.order.route = SharedService.clientRoute;
+        $scope.order.defaultRoute = SharedService.clientRoute;
 		$scope.order.discount = SharedService.clientDiscount;
         $scope.order.invoiceRemark = SharedService.clientRemark;
 		$scope.displayName = $scope.order.clientId + " (" + $scope.order.clientName + ")"; 
@@ -158,7 +162,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     $scope.$watch('order.discount', function() {
         $scope.reCalculateTotalAmount();
-
     }, true);
 	
 	$scope.$on('doneCustomerUpdate', function(){
@@ -180,7 +183,14 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
 		
 	});
-	
+
+    $scope.relocate = function(){
+        if($scope.order.zoneId != $scope.order.defaultZoneId)
+            $scope.order.route = 0;
+        else
+            $scope.order.route = $scope.order.defaultRoute;
+    }
+
 	$scope.getClientLastInvoice = function(clientId)
 	{
 		var target = endpoint + '/getClientLastInvoice.json';

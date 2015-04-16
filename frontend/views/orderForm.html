@@ -191,7 +191,12 @@
 										車線 / 路線
 									</label>
 									<div class="col-md-6">
-											<input type="text" class="form-control" value="{{order.zoneName}} / {{order.route}}" placeholder="自動填上" disabled required>
+
+                                        <div class="input-group">
+											<input type="text" class="form-control" ng-model="order.zoneId" onClick="this.select();" value="{{order.zoneId}}" placeholder="自動填上" ng-change="relocate();" required>
+                                            <span class="input-group-addon">{{order.route}}</span>
+                                        </div>
+
 									</div>
 								</div>
 							</div>	
@@ -218,7 +223,7 @@
 										送貨地址
 									</label>
 									<div class="col-md-11">
-										<input type="text" class="form-control" placeholder=""  ng-model="order.address">
+										<input type="text" class="form-control" placeholder="自動填上" disabled  ng-model="order.address">
 									</div>
 								</div>
 							</div>	
