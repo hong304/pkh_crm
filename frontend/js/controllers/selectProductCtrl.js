@@ -18,12 +18,6 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
         var e = window.event || evt;
         var key = e.which || e.keyCode;
 
-        if(e.keyCode == 13)
-        {
-            $("#productSearchField").focus().select();
-            suggestion = -1;
-        }
-
         if(e.keyCode == 38) // up
         {
            // e.preventDefault();

@@ -9,35 +9,34 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	
 	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
-var suggestion = -1;
+    var suggestion = -1;
+
 
     document.addEventListener('keydown', function(evt) {
         var e = window.event || evt;
         var key = e.which || e.keyCode;
 
-        if(e.keyCode == 38) // up
+        if(e.keyCode == 36) // up
         {
-            // e.preventDefault();
+            e.preventDefault();
             $("#suggestion_row1_" + suggestion).css('background', '');
             suggestion--;
             $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
-            //console.log(suggestion);
-        }
-        if(e.keyCode == 40) //down
+            console.log(suggestion);
+        }else if(e.keyCode == 35) //down
         {
-            //  e.preventDefault();
+            e.preventDefault();
             $("#suggestion_row1_" + suggestion).css('background', '');
             suggestion++;
             $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
-            //console.log(suggestion);
-        }
-        if(e.keyCode == 39)
+            console.log(suggestion);
+        }else if(e.keyCode == 34)
         {
-            // e.preventDefault();
+            e.preventDefault();
             $("#suggestion_row1_" + suggestion).css('background', '');
             $("#suggestion_row1_" + suggestion).click();
             suggestion = -1;
-            //console.log(suggestion);
+            console.log(suggestion);
         }
 
 
@@ -66,6 +65,7 @@ var suggestion = -1;
     	$('#selectclientmodel').modal('hide');
         $('#selectclientmodel').on('hidden.bs.modal', function () {
             $('#productCode_1').focus();
+
         })
     	$scope.keyword = "";
     	$scope.searchClient("");
@@ -136,7 +136,7 @@ var suggestion = -1;
 	        	$scope.clientSuggestion = res;
 
 	        	//$timeout($scope.openSelectionModal, 1000);
-	        	$scope.openSelectionModal();
+	        	//$scope.openSelectionModal();
 	        }).
 	        error(function(res, status, headers, config) {
 	          // called asynchronously if an error occurs
