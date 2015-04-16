@@ -48,9 +48,10 @@ class PrintQueueController extends BaseController {
     public function getAllPrintJobsWithinMyZone()
     {
         // list jobs that are created since 3 days ago. 
-        
+      //  p(Auth::user()->temp_zone);
+
         $jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
-                            ->where('insert_time', '>', strtotime("3 days ago"))
+                            ->where('insert_time', '>', strtotime("1 days ago"))
                             ->where('status','!=','dead:regenerate')
                             ->with('staff')->leftJoin('Invoice', function($join) {
                                     $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');

@@ -120,7 +120,7 @@ class Report_DailySummary {
                    
                });
         if(count($this->goods)>0)
-             ksort($this->goods);
+             asort($this->goods);
 
 
       // $this->data = ;
