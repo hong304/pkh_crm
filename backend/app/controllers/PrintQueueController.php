@@ -61,9 +61,6 @@ class PrintQueueController extends BaseController {
                 $query->where('Invoice.invoiceStatus','2')
                     ->orwhere('Invoice.invoiceStatus','4');
             })
-            /*->with(['Invoice'=>function($q){
-                                    $q->where('invoiceStatus','2');
-                                }])*/
                             ->orderBy('insert_time', 'desc')
                             ->get();
      //  pd($jobs);
