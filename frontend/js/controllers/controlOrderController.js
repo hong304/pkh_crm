@@ -753,6 +753,12 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     	}
     }
 
+    $scope.statusChange = function(){
+
+        if($scope.order.status == '98')
+            $scope.order.invoiceRemark = '退貨單';
+
+    }
     
     $scope.submitOrder = function()
     {

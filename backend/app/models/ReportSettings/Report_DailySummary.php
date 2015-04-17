@@ -54,7 +54,7 @@ class Report_DailySummary {
         // get invoice from that date and that zone
        $this->goods = [];
 
-        Invoice::select('*')->whereIn('invoiceStatus', ['2','4','11','20','21','22','23','30'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
+        Invoice::select('*')->whereIn('invoiceStatus', ['2','4','11','20','21','22','23','30','98'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
                ->chunk(5000, function($invoicesQuery) {
 
 
@@ -83,13 +83,13 @@ class Report_DailySummary {
 
                        if($invoiceQ->return){
 
-                           if($invoiceQ['client']->paymentTermId == 2) {
+                          if($invoiceQ['client']->paymentTermId == 2) {
                                $this->_sumcredit -= $invoiceQ->amount;
                            } else {
                                $this->_sumcod -= $invoiceQ->amount;
                            }
 
-/*
+
                            // second, separate 1F goods and 9F goods
                            foreach($invoiceQ['invoiceItem'] as $item)
                            {
@@ -99,18 +99,18 @@ class Report_DailySummary {
                                $productDetail = $products[$productId];
                                $unit = $item->productQtyUnit;
 
-                               $this->returnGoods[$productId][$unit] = [
+                               $this->goods[$productId][$unit] = [
                                    'productId' => $productId,
                                    'name' => $productDetail->productName_chi,
                                    'productPrice' => $item->productPrice,
                                    'unit' => $unit,
                                    'unit_txt' => $item->productUnitName,
-                                   'counts' => (isset($this->returnGoods[$productId][$unit]) ? $this->returnGoods[$productId][$unit]['counts'] : 0) + $item->productQty,
+                                   'counts' => ((isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) - $item->productQty),
                                ];
 
                                //  pd($item);
                            }
-*/
+
 
                        }else{
                            $this->_invoices[] = $invoiceQ->invoiceId;
@@ -124,16 +124,6 @@ class Report_DailySummary {
                                $this->_countcod += 1;
                            }
 
-
-
-                       }
-                       // first, store all invoices
-                       //$invoiceId = $invoiceQ->invoiceId;
-                      // $invoices[$invoiceId] = $invoiceQ;
-                      // $client = $invoiceQ['client'];
-                       // second, separate 1F goods and 9F goods
-// . (isset($this->returnGoods[$productId][$unit]) ? " (-" . $this->returnGoods[$productId][$unit]['counts'] . ")" : '')
-                       if(!$invoiceQ->return) {
                            foreach ($invoiceQ['invoiceItem'] as $item) {
                                // determin its product location
                                $productId = $item->productId;
@@ -150,7 +140,17 @@ class Report_DailySummary {
                                    'counts' => (isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) + $item->productQty,
                                ];
                            }
+
+
+
                        }
+                       // first, store all invoices
+                       //$invoiceId = $invoiceQ->invoiceId;
+                      // $invoices[$invoiceId] = $invoiceQ;
+                      // $client = $invoiceQ['client'];
+                       // second, separate 1F goods and 9F goods
+// . (isset($this->returnGoods[$productId][$unit]) ? " (-" . $this->returnGoods[$productId][$unit]['counts'] . ")" : '')
+
 
                    }
                    

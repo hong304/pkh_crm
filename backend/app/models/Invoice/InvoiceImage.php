@@ -257,6 +257,11 @@ $debug = 0;
                 /*
                  * Add Qty
                 */
+                if($i['return']){
+                    $i['invoiceTotalAmount'] *= -1;
+                    $i['amount'] *= -1;
+                    $item['productQty'] *= -1;
+            }
                 $qty_text = $item['productQty'] . ' ' .str_replace(' ', '', $item['productInfo']['productPackingName_' . $item['productQtyUnit']]);
                 $this->image[$p]->text($qty_text, 1080, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);

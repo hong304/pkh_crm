@@ -81,8 +81,8 @@
 										狀態
 									</label>
 									<div class="col-md-6">
-										<select class="form-control" ng-model="order.status" >
-											<option value="1" selected="selected">1. 正常(Open)</option>
+										<select class="form-control" ng-model="order.status" ng-change="statusChange();">
+											<option value="1" selected="selected">1. 正常</option>
                                             <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="98" selected="selected">2. 退貨單</option>
 										</select>
 									</div>
