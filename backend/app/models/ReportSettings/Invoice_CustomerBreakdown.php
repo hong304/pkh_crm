@@ -67,8 +67,7 @@ class Invoice_CustomerBreakdown {
                    }
 
                    // second process invoices                   
-                   foreach($invoicesQuery as $invoiceQ)
-                   {
+                   foreach($invoicesQuery as $invoiceQ) {
                        $this->_invoices[] = $invoiceQ->invoiceId;
 
                        // first, store all invoices
@@ -76,59 +75,60 @@ class Invoice_CustomerBreakdown {
                        $invoices[$invoiceId] = $invoiceQ;
                        $client = $invoiceQ['client'];
 
-                       if($invoiceQ->return) {
+                       if ($invoiceQ->return) {
                            $amount[$client->customerId] -= $invoiceQ->amount;
 
-                           foreach($invoiceQ['invoiceItem'] as $item)
-                           {
-                               // determin its product location
-                               $productId = $item->productId;
+                           /* foreach($invoiceQ['invoiceItem'] as $item)
+                            {
+                                // determin its product location
+                                $productId = $item->productId;
 
-                               $productDetail = $products[$productId];
-                               $unit = $item->productQtyUnit;
+                                $productDetail = $products[$productId];
+                                $unit = $item->productQtyUnit;
 
-                               $customerId = $client->customerId;
-                               $this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit] = [
-                                   'invoiceId' => $invoiceId,
-                                   'productId' => $productId,
-                                   'name' => $productDetail->productName_chi,
-                                   'unit' => $unit,
-                                   'unit_txt' => str_replace(' ', '', $item->productUnitName),
-                                   'counts' => (isset($this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]['counts'] : 0) + $item->productQty,
-                                   'stdPrice' => $productDetail->productStdPrice[$unit],
-                                   'itemPrice' => $item->productPrice,
-                                   'discount' => $item->productDiscount,
-                               ];
-                               // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
-                           }
+                                $customerId = $client->customerId;
+                                $this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit] = [
+                                    'invoiceId' => $invoiceId,
+                                    'productId' => $productId,
+                                    'name' => $productDetail->productName_chi,
+                                    'unit' => $unit,
+                                    'unit_txt' => str_replace(' ', '', $item->productUnitName),
+                                    'counts' => (isset($this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                    'stdPrice' => $productDetail->productStdPrice[$unit],
+                                    'itemPrice' => $item->productPrice,
+                                    'discount' => $item->productDiscount,
+                                ];
+                                // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
+                            }*/
 
-                       }else
-                            $amount[$client->customerId]  +=$invoiceQ->amount;
+                       } else {
+
+                       $amount[$client->customerId] += $invoiceQ->amount;
 
                        // second, separate 1F goods and 9F goods
-                       foreach($invoiceQ['invoiceItem'] as $item)
-                       {
+                       foreach ($invoiceQ['invoiceItem'] as $item) {
                            // determin its product location
                            $productId = $item->productId;
-                           
-                           $productDetail = $products[$productId]; 
+
+                           $productDetail = $products[$productId];
                            $unit = $item->productQtyUnit;
 
                            $customerId = $client->customerId;
+                           // .  (isset($this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]) ? "(-".$this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]['counts'].")" : '') ,
                            $this->goods['1F9F'][$customerId]['items'][$productId][$unit] = [
                                'invoiceId' => $invoiceId,
                                'productId' => $productId,
                                'name' => $productDetail->productName_chi,
                                'unit' => $unit,
                                'unit_txt' => str_replace(' ', '', $item->productUnitName),
-                               'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty .  (isset($this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]) ? "(-".$this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]['counts'].")" : '') ,
+                               'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
                                'stdPrice' => $productDetail->productStdPrice[$unit],
                                'itemPrice' => $item->productPrice,
                                'discount' => $item->productDiscount,
                            ];
                            // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
                        }
-
+                       }
                        $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
                        $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
                        $this->goods['1F9F'][$customerId]['invoiceId'] = $invoiceQ->invoiceId;

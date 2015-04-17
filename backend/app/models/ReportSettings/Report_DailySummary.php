@@ -82,14 +82,14 @@ class Report_DailySummary {
 
 
                        if($invoiceQ->return){
+
                            if($invoiceQ['client']->paymentTermId == 2) {
                                $this->_sumcredit -= $invoiceQ->amount;
-                           }
-                           else {
+                           } else {
                                $this->_sumcod -= $invoiceQ->amount;
                            }
 
-
+/*
                            // second, separate 1F goods and 9F goods
                            foreach($invoiceQ['invoiceItem'] as $item)
                            {
@@ -110,7 +110,7 @@ class Report_DailySummary {
 
                                //  pd($item);
                            }
-
+*/
 
                        }else{
                            $this->_invoices[] = $invoiceQ->invoiceId;
@@ -132,24 +132,24 @@ class Report_DailySummary {
                       // $invoices[$invoiceId] = $invoiceQ;
                       // $client = $invoiceQ['client'];
                        // second, separate 1F goods and 9F goods
-                       foreach($invoiceQ['invoiceItem'] as $item)
-                       {
-                           // determin its product location
-                           $productId = $item->productId;
+// . (isset($this->returnGoods[$productId][$unit]) ? " (-" . $this->returnGoods[$productId][$unit]['counts'] . ")" : '')
+                       if(!$invoiceQ->return) {
+                           foreach ($invoiceQ['invoiceItem'] as $item) {
+                               // determin its product location
+                               $productId = $item->productId;
 
-                           $productDetail = $products[$productId];
-                           $unit = $item->productQtyUnit;
+                               $productDetail = $products[$productId];
+                               $unit = $item->productQtyUnit;
 
-                           $this->goods[$productId][$unit] = [
-                               'productId' => $productId,
-                               'name' => $productDetail->productName_chi,
-                               'productPrice' => $item->productPrice,
-                               'unit' => $unit,
-                               'unit_txt' => $item->productUnitName,
-                               'counts' => (isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) + $item->productQty .  (isset($this->returnGoods[$productId][$unit]) ? " (-". $this->returnGoods[$productId][$unit]['counts'].")" : ''),
-                           ];
-
-                           //  pd($item);
+                               $this->goods[$productId][$unit] = [
+                                   'productId' => $productId,
+                                   'name' => $productDetail->productName_chi,
+                                   'productPrice' => $item->productPrice,
+                                   'unit' => $unit,
+                                   'unit_txt' => $item->productUnitName,
+                                   'counts' => (isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) + $item->productQty,
+                               ];
+                           }
                        }
 
                    }
@@ -162,7 +162,9 @@ class Report_DailySummary {
       // $this->data = ;
 
         $this->data['items']=$this->goods;
-        $this->data['returnitems'] =  $this->returnGoods;
+       // $this->data['returnitems'] =  isset($this->returnGoods)?$this->returnGoods:'';
+
+//pd($this->data);
 
         $this->data['sumcredit']=$this->_sumcredit;
         $this->data['sumcod']=$this->_sumcod;
@@ -391,7 +393,7 @@ class Report_DailySummary {
         }*/
 
 
-        if(++$i === $numItems) {
+        if($i === $numItems) {
 
             $pdf->Line(10, $y+5, 190, $y+5);
 

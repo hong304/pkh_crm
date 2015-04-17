@@ -728,8 +728,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     
     $scope.updateUnit = function(i)
     {
-
-    	
     	$scope.updateStandardPrice(i);
     	$scope.checkQtyInterval(i);
     }
