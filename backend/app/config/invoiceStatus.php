@@ -78,6 +78,13 @@ return [
         'explaination'          => 'This invoice has been voided (deleted). No further process is required. ',
         'triggered_by'          => 'Void Function',
     ],
+    '98' => [
+        'statusCode'            => '98',
+        'descriptionEnglish'    => 'returned',
+        'descriptionChinese'    => '退貨',
+        'explaination'          => 'All items in the invoice has been returned.',
+        'triggered_by'          => 'SA+',
+    ],
     'dummy' => [
         'statusCode'            => '',
         'descriptionEnglish'    => '',

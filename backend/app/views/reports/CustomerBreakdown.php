@@ -30,10 +30,30 @@
                     </td>
                 </tr>  
                 <?php endforeach; ?>
-            <?php endforeach; ?> 
+            <?php endforeach; ?>
+
+<?php if(isset($nf['returnitems'])){?>
+    <tr><td colspan="3"></td></tr>
+            <?php foreach($nf['returnitems'] as $itembu){?>
+                <?php foreach($itembu as $item){?>
+                    <tr>
+                        <td>
+                            <?php echo $item['productId'];?>
+                        </td>
+                        <td>
+                            <?php echo $item['name'];?>
+                        </td>
+                        <td>
+                            <?php echo '-'.$item['counts'];?> <?php echo $item['unit_txt'];?>
+                        </td>
+                    </tr>
+                <?php } ?>
+            <?php } ?>
+<?php }?>
+
             <tr>
                 <td colspan="3" style="text-align:right;">
-                    <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo number_format($nf['totalAmount']); ?></span>
+                    <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo number_format($nf['totalAmount'],2,'.',','); ?></span>
                 </td>
             <tr>
     </tbody>

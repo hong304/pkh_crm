@@ -794,7 +794,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         if(!generalError)
     	{
 
-
+//console.log($scope.order);
+         //   return false;
 
 
         	$http.post(

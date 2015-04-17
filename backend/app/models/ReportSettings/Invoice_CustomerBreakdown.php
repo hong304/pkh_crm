@@ -42,7 +42,7 @@ class Invoice_CustomerBreakdown {
         
         // get invoice from that date and that zone
         $this->goods = ['1F9F'=>[]];
-
+        $this->returngoods = ['1F9F'=>[]];
 
         Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
@@ -61,6 +61,7 @@ class Invoice_CustomerBreakdown {
                    }
 
 
+
                    foreach($invoicesQuery as $v){
                        $amount[$v['client']->customerId] = 0;
                    }
@@ -75,7 +76,34 @@ class Invoice_CustomerBreakdown {
                        $invoices[$invoiceId] = $invoiceQ;
                        $client = $invoiceQ['client'];
 
-                       $amount[$client->customerId]  +=$invoiceQ->invoiceTotalAmount;
+                       if($invoiceQ->return) {
+                           $amount[$client->customerId] -= $invoiceQ->amount;
+
+                           foreach($invoiceQ['invoiceItem'] as $item)
+                           {
+                               // determin its product location
+                               $productId = $item->productId;
+
+                               $productDetail = $products[$productId];
+                               $unit = $item->productQtyUnit;
+
+                               $customerId = $client->customerId;
+                               $this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit] = [
+                                   'invoiceId' => $invoiceId,
+                                   'productId' => $productId,
+                                   'name' => $productDetail->productName_chi,
+                                   'unit' => $unit,
+                                   'unit_txt' => str_replace(' ', '', $item->productUnitName),
+                                   'counts' => (isset($this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                   'stdPrice' => $productDetail->productStdPrice[$unit],
+                                   'itemPrice' => $item->productPrice,
+                                   'discount' => $item->productDiscount,
+                               ];
+                               // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
+                           }
+
+                       }else
+                            $amount[$client->customerId]  +=$invoiceQ->amount;
 
                        // second, separate 1F goods and 9F goods
                        foreach($invoiceQ['invoiceItem'] as $item)
@@ -93,7 +121,7 @@ class Invoice_CustomerBreakdown {
                                'name' => $productDetail->productName_chi,
                                'unit' => $unit,
                                'unit_txt' => str_replace(' ', '', $item->productUnitName),
-                               'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                               'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty .  (isset($this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]) ? "(-".$this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]['counts'].")" : '') ,
                                'stdPrice' => $productDetail->productStdPrice[$unit],
                                'itemPrice' => $item->productPrice,
                                'discount' => $item->productDiscount,
@@ -105,8 +133,9 @@ class Invoice_CustomerBreakdown {
                        $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
                        $this->goods['1F9F'][$customerId]['invoiceId'] = $invoiceQ->invoiceId;
                        $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
+
                    }
-                   
+
                });
 
        $this->data = $this->goods;
@@ -333,13 +362,13 @@ class Invoice_CustomerBreakdown {
                         $pdf->setXY($base_x + 53, $y);
                         $pdf->Cell(0, 0, "    " . sprintf("%s", $item['counts']), 0, 0, 'L');
                          
-                        $pdf->setXY($base_x + 63, $y);
+                        $pdf->setXY($base_x + 66, $y);
                         $pdf->Cell(0, 0, "" . $item['unit_txt'], 0, 0, 'L');
                          
-                        $pdf->setXY($base_x + 68, $y);
+                        $pdf->setXY($base_x + 70, $y);
                         $pdf->Cell(0, 0, "=", 0, 0, 'L');
                         
-                        $pdf->setXY($base_x + 70, $y);
+                        $pdf->setXY($base_x + 72, $y);
 
                         $pdf->Cell(0, 0, sprintf(" $%s", round($item['itemPrice']*$item['counts']*(100-$item['discount'])/100,2) ), 0, 0, 'L');
 

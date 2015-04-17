@@ -10,6 +10,7 @@ class Invoice_CashReceiptSummary {
     
     private $_accumulator = 0;
     private $_account = [];
+    private $_rturnaccount = [];
     private $_uniqueid = "";
     
     public function __construct($indata)
@@ -45,34 +46,58 @@ class Invoice_CashReceiptSummary {
         
         // get invoice from that date and that zone
 
+        Invoice::select('*')->whereIn('invoiceStatus',['1','2'])->where('return',true)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
+            ->chunk(5000, function($invoicesQuery) {
+                foreach($invoicesQuery as $invoiceQ)
+                    $this->_returnaccount[$invoiceQ['client']->customerId] = $invoiceQ->amount;
+
+            });
+
                 
-        Invoice::select('*')->where('invoiceStatus', '30')->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
+        Invoice::select('*')->whereIn('invoiceStatus',['30'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
                ->chunk(50, function($invoicesQuery) {
                    
                    foreach($invoicesQuery as $invoiceQ)
                    {
-                       $this->_invoices[] = $invoiceQ->invoiceId;
-                       $this->_zoneName = $invoiceQ->zone->zoneName;
 
-                       // first, store all invoices
-                       $invoiceId = $invoiceQ->invoiceId;
-                       $invoices[$invoiceId] = $invoiceQ;
-                       $client = $invoiceQ['client'];
-                       
-                       $this->_accumulator += $invoiceQ->amount;
-                       
-                       $this->_account[] = [
-                           'name' => $client->customerName_chi,
-                           'invoiceNumber' => $invoiceId,
-                           'invoiceTotalAmount' => $invoiceQ->amount,
-                           'amount' => number_format($invoiceQ->amount,2,'.',','),
-                           'accumulator' => number_format($this->_accumulator,2,'.',','),
-                       ];
-                       
-                   }
-                   
+                      // if(!$invoiceQ->return)
+
+
+
+
+
+                           $this->_invoices[] = $invoiceQ->invoiceId;
+                           $this->_zoneName = $invoiceQ->zone->zoneName;
+
+                           // first, store all invoices
+                           $invoiceId = $invoiceQ->invoiceId;
+                           $invoices[$invoiceId] = $invoiceQ;
+                           $client = $invoiceQ['client'];
+
+                           $this->_account[] = [
+                               'customerId' => $client->customerId,
+                               'name' => $client->customerName_chi,
+                               'invoiceNumber' => $invoiceId,
+                               'invoiceTotalAmount' => $invoiceQ->amount,
+                               'amount' => 0,
+                               'accumulator' => 0
+                           ];
+                      }
+
                });
-       
+        $acc =0;
+
+        foreach($this->_account as &$v){
+            if(isset($this->_returnaccount[$v['customerId']]))
+                 $v['invoiceTotalAmount'] -= $this->_returnaccount[$v['customerId']];
+                 $acc += $v['invoiceTotalAmount'];
+                 $v['accumulator'] =number_format($acc,2,'.',',');
+                 $v['amount'] = number_format($v['invoiceTotalAmount'],2,'.',',');
+
+        }
+       //p($this->_returnaccount);
+       // pd($this->_account);
+
        $this->data = $this->_account;
 
        return $this->data;        

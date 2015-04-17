@@ -34,6 +34,28 @@
         <?php endforeach; ?>
         <tr>
 
+
+            <?php
+            //pd($data);
+            if(count($data['returnitems']>0))
+            ?><tr><td colspan="3"></td></tr><?php
+            foreach($data['returnitems'] as $ffbu):?>
+            <?php foreach($ffbu as $ff): ?>
+            <tr>
+                <td>
+                    <?php echo $ff['productId'];?>
+                </td>
+                <td>
+                    <?php echo $ff['name'];?>
+                </td>
+                <td>
+                    <?php echo '-'.$ff['counts'];?> <?php echo $ff['unit_txt'];?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        <?php endforeach; ?>
+        <tr>
+
             <td colspan="2" style="text-align:right;border-right-style:none;">
                 <span style="font-weight:bold;font-size:15px;">現金總數:<br />
                 月結總數:</span>

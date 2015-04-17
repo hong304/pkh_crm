@@ -210,6 +210,8 @@ class InvoiceManipulation {
 	        $this->im->customerId = $this->temp_invoice_information['clientId'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
 	        $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
+            if($this->temp_invoice_information['status'] == '98')
+                $this->im->return = 1;
 	        $this->im->deliveryTruckId = 0;
 	        $this->im->invoiceCurrency = 'HKD';
 	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
@@ -256,11 +258,12 @@ class InvoiceManipulation {
 	            default :
 	                return '0';
 	        }
-	    }
+	    }else if($this->temp_invoice_information['status'] == '98')
+            return '98';
 	    else 
-	    {
+	        {
 	        return $this->approval ? '1' : '2';
-	    }
+	         }
 	    
 	    return '0';
 	}

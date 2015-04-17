@@ -58,7 +58,6 @@ class Report_DailySummary {
                ->chunk(5000, function($invoicesQuery) {
 
 
-                  // pd($invoicesQuery);
 
                  //  $this->_count = sizeof($invoicesQuery);
                    // first of all process all products
@@ -78,44 +77,81 @@ class Report_DailySummary {
                    // second process invoices                   
                    foreach($invoicesQuery as $invoiceQ)
                    {
-                       $this->_invoices[] = $invoiceQ->invoiceId;
-
-                       if($invoiceQ->invoiceStatus == 20) {
-                           $this->_sumcredit += $invoiceQ->invoiceTotalAmount;
-                           $this->_countcredit += 1;
-                       }
-                       else {
-                           $this->_sumcod += $invoiceQ->invoiceTotalAmount;
-                           $this->_countcod += 1;
-                       }
-
-                       // first, store all invoices
-                       $invoiceId = $invoiceQ->invoiceId;
-                       $invoices[$invoiceId] = $invoiceQ;
-                       $client = $invoiceQ['client'];
-                       
-                       // second, separate 1F goods and 9F goods
-                       foreach($invoiceQ['invoiceItem'] as $item)
-                       {
-                           // determin its product location
-                           $productId = $item->productId;
-                           
-                           $productDetail = $products[$productId]; 
-                           $unit = $item->productQtyUnit;
 
 
 
-                               $this->goods[$productId][$unit] = [
+
+                       if($invoiceQ->return){
+                           if($invoiceQ['client']->paymentTermId == 2) {
+                               $this->_sumcredit -= $invoiceQ->amount;
+                           }
+                           else {
+                               $this->_sumcod -= $invoiceQ->amount;
+                           }
+
+
+                           // second, separate 1F goods and 9F goods
+                           foreach($invoiceQ['invoiceItem'] as $item)
+                           {
+                               // determin its product location
+                               $productId = $item->productId;
+
+                               $productDetail = $products[$productId];
+                               $unit = $item->productQtyUnit;
+
+                               $this->returnGoods[$productId][$unit] = [
                                    'productId' => $productId,
                                    'name' => $productDetail->productName_chi,
                                    'productPrice' => $item->productPrice,
                                    'unit' => $unit,
                                    'unit_txt' => $item->productUnitName,
-                                   'counts' => (isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) + $item->productQty,
+                                   'counts' => (isset($this->returnGoods[$productId][$unit]) ? $this->returnGoods[$productId][$unit]['counts'] : 0) + $item->productQty,
                                ];
 
-                         //  pd($item);
+                               //  pd($item);
+                           }
+
+
+                       }else{
+                           $this->_invoices[] = $invoiceQ->invoiceId;
+
+                           if($invoiceQ['client']->paymentTermId == 2) {
+                               $this->_sumcredit += $invoiceQ->amount;
+                               $this->_countcredit += 1;
+                           }
+                           else {
+                               $this->_sumcod += $invoiceQ->amount;
+                               $this->_countcod += 1;
+                           }
+
+
+
                        }
+                       // first, store all invoices
+                       //$invoiceId = $invoiceQ->invoiceId;
+                      // $invoices[$invoiceId] = $invoiceQ;
+                      // $client = $invoiceQ['client'];
+                       // second, separate 1F goods and 9F goods
+                       foreach($invoiceQ['invoiceItem'] as $item)
+                       {
+                           // determin its product location
+                           $productId = $item->productId;
+
+                           $productDetail = $products[$productId];
+                           $unit = $item->productQtyUnit;
+
+                           $this->goods[$productId][$unit] = [
+                               'productId' => $productId,
+                               'name' => $productDetail->productName_chi,
+                               'productPrice' => $item->productPrice,
+                               'unit' => $unit,
+                               'unit_txt' => $item->productUnitName,
+                               'counts' => (isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) + $item->productQty .  (isset($this->returnGoods[$productId][$unit]) ? " (-". $this->returnGoods[$productId][$unit]['counts'].")" : ''),
+                           ];
+
+                           //  pd($item);
+                       }
+
                    }
                    
                });
@@ -126,12 +162,13 @@ class Report_DailySummary {
       // $this->data = ;
 
         $this->data['items']=$this->goods;
+        $this->data['returnitems'] =  $this->returnGoods;
 
         $this->data['sumcredit']=$this->_sumcredit;
         $this->data['sumcod']=$this->_sumcod;
         $this->data['countcredit']=$this->_countcredit;
         $this->data['countcod']=$this->_countcod;
-       // pd($this->data);
+     // pd($this->data);
 
        return [$this->data];
     }
@@ -231,54 +268,49 @@ class Report_DailySummary {
 
         // Update it as generated into picking list
 
-        if(count($this->_invoices) > 0)
-        {
+       // if(count($this->_invoices) > 0)
+      //  {
             //Invoice::wherein('invoiceId', $this->_invoices)->update(['invoiceStatus'=>'4']);
-        }
+     //   }
         
         
         $pdf = new PDF();
-        $j = 0;
+
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
         // handle 1F goods
-        $firstF = array_chunk($this->data['items'], 30, true);
+        $good = array_chunk($this->data['items'], 30, true);
+       // $returngood = array_chunk($this->data['returnitems'], 30, true);
        // pd($this->data);
 
-        $numItems = count($firstF);
+        $numItems = count($good);
+      //  $numItems += count($returngood);
         $i = 0;
 
-        foreach($firstF as $i=>$f)
+        foreach($good as $ij=>$f)
         {
-            // for first Floor
+            $i++;
             $pdf->AddPage();
-            
-        
+
             $this->generateHeader($pdf);
-        
+
             $pdf->SetFont('chi','',10);
-        
+
             $pdf->setXY(10, 50);
             $pdf->Cell(0, 0, "編號", 0, 0, "L");
-        
+
             $pdf->setXY(50, 50);
             $pdf->Cell(0, 0, "貨品說明", 0, 0, "L");
-        
 
-        
             $pdf->setXY(168, 50);
             $pdf->Cell(0, 0, "發表出貨量", 0, 0, "L");
-        
-            $pdf->Line(10, 53, 190, 53);
-        
-            $y = 60;
-        
 
-        
+            $pdf->Line(10, 53, 190, 53);
+
+            $y = 60;
+
             $pdf->setXY(500, $pdf->h-30);
-            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i+1, count($firstF)) , 0, 0, "R");
-        
-        
-            
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, $numItems) , 0, 0, "R");
+
             foreach($f as $id=>$e)
             {
 
@@ -293,11 +325,9 @@ class Report_DailySummary {
                     $pdf->setXY(168, $y);
                     $pdf->Cell(0, 0, sprintf("%s", $u['counts']), 0, 0, "L");
         
-                    $pdf->setXY(175, $y);
+                    $pdf->setXY(180, $y);
                     $pdf->Cell(0, 0, str_replace(' ', '', $u['unit_txt']), 0, 0, "L");
-        
 
-        
                     $y += 6;
                 }
             }
@@ -305,29 +335,84 @@ class Report_DailySummary {
            // $y += 10;
             // Notes part
 
-            if(++$i === $numItems) {
 
-                $pdf->Line(10, $y+5, 190, $y+5);
+        }
 
-                $pdf->setXY(10, $y+10);
-                $pdf->Cell(0, 0, "現金總數:", 0, 0, "L");
+     /*   foreach($returngood as $ij=>$f)
+        {
 
-                $pdf->setXY(30, $y+10);
-                $pdf->Cell(0, 0, $this->data['countcod']."單", 0, 0, "L");
+            $pdf->AddPage();
 
-                $pdf->setXY(50, $y+10);
-                $pdf->Cell(0, 0, "$".number_format($this->data['sumcod'],2,'.',','), 0, 0, "L");
+            $this->generateHeader($pdf);
 
-                $pdf->setXY(10, $y+16);
-                $pdf->Cell(0, 0, "月結總數:", 0, 0, "L");
+            $pdf->SetFont('chi','',10);
 
-                $pdf->setXY(30, $y+16);
-                $pdf->Cell(0, 0, $this->data['countcredit']."單", 0, 0, "L");
+            $pdf->setXY(10, 50);
+            $pdf->Cell(0, 0, "編號", 0, 0, "L");
 
-                $pdf->setXY(50, $y+16);
-                $pdf->Cell(0, 0, "$".number_format($this->data['sumcredit'],2,'.',','), 0, 0, "L");
+            $pdf->setXY(50, 50);
+            $pdf->Cell(0, 0, "貨品說明", 0, 0, "L");
 
+            $pdf->setXY(168, 50);
+            $pdf->Cell(0, 0, "發表出貨量", 0, 0, "L");
+
+            $pdf->Line(10, 53, 190, 53);
+
+            $y = 60;
+
+            $pdf->setXY(500, $pdf->h-30);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i+1, $numItems) , 0, 0, "R");
+
+            foreach($f as $id=>$e)
+            {
+
+                foreach($e as $u)
+                {
+                    $pdf->setXY(10, $y);
+                    $pdf->Cell(0, 0, $id, 0, 0, "L");
+
+                    $pdf->setXY(50, $y);
+                    $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
+
+                    $pdf->setXY(168, $y);
+                    $pdf->Cell(0, 0, sprintf("%s", '-'.$u['counts']), 0, 0, "L");
+
+                    $pdf->setXY(180, $y);
+                    $pdf->Cell(0, 0, str_replace(' ', '', $u['unit_txt']), 0, 0, "L");
+
+                    $y += 6;
+                }
             }
+
+            // $y += 10;
+            // Notes part
+
+
+        }*/
+
+
+        if(++$i === $numItems) {
+
+            $pdf->Line(10, $y+5, 190, $y+5);
+
+            $pdf->setXY(10, $y+10);
+            $pdf->Cell(0, 0, "現金總數:", 0, 0, "L");
+
+            $pdf->setXY(30, $y+10);
+            $pdf->Cell(0, 0, $this->data['countcod']."單", 0, 0, "L");
+
+            $pdf->setXY(50, $y+10);
+            $pdf->Cell(0, 0, "$".number_format($this->data['sumcod'],2,'.',','), 0, 0, "L");
+
+            $pdf->setXY(10, $y+16);
+            $pdf->Cell(0, 0, "月結總數:", 0, 0, "L");
+
+            $pdf->setXY(30, $y+16);
+            $pdf->Cell(0, 0, $this->data['countcredit']."單", 0, 0, "L");
+
+            $pdf->setXY(50, $y+16);
+            $pdf->Cell(0, 0, "$".number_format($this->data['sumcredit'],2,'.',','), 0, 0, "L");
+
         }
 
         // handle 9F goods
