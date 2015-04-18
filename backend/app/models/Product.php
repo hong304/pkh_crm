@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 class Product extends Eloquent  {
 
     protected $primaryKey = 'productId';
@@ -9,6 +9,10 @@ class Product extends Eloquent  {
 	 *
 	 * @var string
 	 */
+
+    use SoftDeletingTrait;
+
+    protected $dates = ['deleted_at'];
 	protected $table = 'Product';
 	
 	// use collection to protect this	
