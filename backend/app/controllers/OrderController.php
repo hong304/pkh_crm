@@ -342,6 +342,7 @@ if($items == null)
         }
         elseif($detail['action'] == 'backToNormal'){
             $unloader->backToNormal();
+            Invoice::where('invoiceId',$invoiceId)->update(['f9_picking_dl'=>0]);
         }
         elseif($detail['action'] == 'change-deliverydate')
         {
