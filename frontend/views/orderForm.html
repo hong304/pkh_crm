@@ -68,7 +68,7 @@
 										發票日期
 									</label>
 									<div class="col-md-5">
-										<div class="input-group input-medium date " data-date-format="yyyy-mm-dd" data-date-start-date="+1d">
+										<div class="input-group input-small date " data-date-format="yyyy-mm-dd" data-date-start-date="+1d">
 											<input type="text" class="form-control" readonly ng-model="order.deliveryDate">
 										</div>
 									</div>
@@ -81,7 +81,7 @@
 										狀態
 									</label>
 									<div class="col-md-6">
-										<select class="form-control" ng-model="order.status" ng-change="statusChange();">
+										<select class="form-control" ng-model="order.status" ng-change="statusChange();" disabled>
 											<option value="1" selected="selected">1. 正常</option>
                                            <!-- <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="98" selected="selected">2. 退貨單</option>-->
 										</select>
@@ -124,7 +124,7 @@
 										送貨日期
 									</label>
 									<div class="col-md-5">
-										<div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="-5d">
+										<div class="input-group input-small date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="-5d">
 											<input type="text" class="form-control" data-ng-change="updateDeliveryDate();" ng-model="order.deliveryDate"  readonly>
 											<span class="input-group-btn">
 												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
@@ -179,7 +179,7 @@
 										付款日期
 									</label>
 									<div class="col-md-5">
-										<div class="input-group input-medium date " data-date-format="yyyy-mm-dd" data-date-start-date="+0d">
+										<div class="input-group input-small date " data-date-format="yyyy-mm-dd" data-date-start-date="+0d">
 											<input type="text" class="form-control" readonly ng-model="order.dueDate">
 										</div>
 									</div>
