@@ -33,18 +33,18 @@ class InvoicePdf {
                     {
                         $pdf->AddPage();
                         $y = 0;
-                        syslog(LOG_INFO, "Page Added");
+                       // syslog(LOG_INFO, "Page Added");
                     }
                     
-                    syslog(LOG_INFO, $url);
-                    syslog(LOG_INFO, sprintf("i: %s, index: %s, section: %s", $i, $index, $section));
+                 //   syslog(LOG_INFO, $url);
+                 //   syslog(LOG_INFO, sprintf("i: %s, index: %s, section: %s", $i, $index, $section));
                     
                     
                     
                     $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
                     
                     // delete the image afterward
-                    @unlink($url);
+                   // @unlink($url);
                     
                     if($pagesize == "A5")
                     {
@@ -64,7 +64,7 @@ class InvoicePdf {
         catch(Exception $e)
         {
             
-            syslog(LOG_INFO, "Image File Not Ready\n" . print_r($invoiceImage->invoicePrintImage, true));
+           // syslog(LOG_INFO, "Image File Not Ready\n" . print_r($invoiceImage->invoicePrintImage, true));
             App::abort(500);
         }
         $this->pdf = $pdf;

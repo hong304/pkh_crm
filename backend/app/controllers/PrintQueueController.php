@@ -10,7 +10,8 @@
  */
 class PrintQueueController extends BaseController {
 
-    
+    public $invoiceIds = [];
+
     public function jsonGetUnprintJobs()
     {
         Auth::onceUsingId("27");
@@ -81,6 +82,20 @@ class PrintQueueController extends BaseController {
             }
         }
 
+
+
+
+            foreach(explode(',', Auth::user()->temp_zone) as $k => $v){
+                $result = PrintQueue::where('target_path',$v)->wherein('status', ['queued', 'fast-track'])->lists('invoiceId');
+               // if($result)
+                  //  $this->mergeImage($result);
+            }
+
+
+
+
+
+
         $affected_jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->update(['target_time'=>time()]);
         return Response::json(['affected'=>$affected_jobs]);
     }
@@ -107,6 +122,69 @@ class PrintQueueController extends BaseController {
         $task_name = $task->add('invoice-printing-factory');
         */
     
+    }
+
+    public function mergeImage ($Ids){
+
+        $invoiceImage = Invoice::select('invoicePrintImage', 'zoneId','routePlanningPriority')->whereIn('invoiceId', $Ids)->OrderBy('routePlanningPriority')->get();
+        foreach($invoiceImage as $k => $v){
+            $image[] = unserialize($v->invoicePrintImage);
+        }
+
+        $pagesize = "A5";
+        $pdf = new Fpdf();
+
+        foreach ($image as $k => $v){
+            $section = 0;
+            for($i = 1; $i <= 2; $i++)
+            {
+                foreach($v['print_storage'] as $index => $url)
+                {
+
+
+                    if($section == 0 || $section  % 2 == 0)
+                    {
+                        $pdf->AddPage();
+                        $y = 0;
+
+                    }
+
+                    $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
+
+                    // delete the image afterward
+                    // @unlink($url);
+
+                    if($pagesize == "A5")
+                    {
+                        $y += 148;
+                    }
+                    else
+                    {
+                        $y = 0;
+                    }
+
+                    $section++;
+
+                }
+            }
+        }
+
+
+        //  $this->pdf = $pdf;
+
+        // $k = explode('-', $this->invoiceId);
+
+        // $temp_filename = $k[0].'-'.str_pad($this->route, 2, "0", STR_PAD_LEFT).'-'.$k[1];
+
+        $filename = 'pdf/'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
+
+        //$path = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
+
+        $path = public_path($filename);
+
+
+
+        $pdf->Output($path, "F");
     }
     
 }
