@@ -75,7 +75,7 @@ class Invoice_CustomerBreakdown {
                        $invoices[$invoiceId] = $invoiceQ;
                        $client = $invoiceQ['client'];
 
-                       if ($invoiceQ->return) {
+                       if ($invoiceQ->return || $invoiceQ->invoiceStatus == '97') {
                            $amount[$client->customerId] -= $invoiceQ->amount;
 
                             foreach($invoiceQ['invoiceItem'] as $item)
@@ -93,7 +93,7 @@ class Invoice_CustomerBreakdown {
                                     'name' => $productDetail->productName_chi,
                                     'unit' => $unit,
                                     'unit_txt' => str_replace(' ', '', $item->productUnitName),
-                                    'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) - $item->productQty,
+                                    'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
                                     'stdPrice' => $productDetail->productStdPrice[$unit],
                                     'itemPrice' => $item->productPrice,
                                     'discount' => $item->productDiscount,

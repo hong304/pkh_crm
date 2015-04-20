@@ -85,6 +85,14 @@ return [
         'explaination'          => 'All items in the invoice has been returned.',
         'triggered_by'          => 'SA+',
     ],
+    '97' => [
+        'statusCode'            => '97',
+        'descriptionEnglish'    => 'credit note',
+        'descriptionChinese'    => '退款',
+        'explaination'          => 'This is credit note',
+        'triggered_by'          => 'SA+',
+    ],
+
     'dummy' => [
         'statusCode'            => '',
         'descriptionEnglish'    => '',

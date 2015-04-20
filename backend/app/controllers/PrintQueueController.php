@@ -73,7 +73,7 @@ class PrintQueueController extends BaseController {
         $jobId = Input::get('jobId');
         $job = PrintQueue::where('job_id', $jobId)->first();
         $job->target_time = time();
-        $job->status = "donwloaded;passive";
+        $job->status = "downloaded;passive";
        // $job->status = "fast-track";
         $job->save();
 

@@ -260,7 +260,9 @@ class InvoiceManipulation {
 	        }
 	    }else if($this->temp_invoice_information['status'] == '98')
             return '98';
-	    else 
+        else if($this->temp_invoice_information['status'] == '97')
+            return '97';
+        else
 	        {
 	        return $this->approval ? '1' : '2';
 	         }

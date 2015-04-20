@@ -475,7 +475,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
    
     
     $scope.searchProduct = function(i, code) {
-    	
+
+        if(($scope.order.status != '97') && (code='120401')){
+            return false;
+        }
 		var input = $("#productCode_" + i);
 		//console.log($scope.retrievedProduct, code.toUpperCase());
 		if($scope.retrievedProduct[code.toUpperCase()])
@@ -756,7 +759,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.statusChange = function(){
 
         if($scope.order.status == '98')
-            $scope.order.invoiceRemark = '退貨單';
+            $scope.order.invoiceRemark = '退貨單'
+        if($scope.order.status == '97')
+            $scope.order.invoiceRemark = '退款單';
 
     }
     
