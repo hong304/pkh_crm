@@ -130,7 +130,7 @@ class PrintQueueController extends BaseController {
                $this->mergeImage($result);
         }
 
-        $affected_jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->update(['target_time'=>time()]);
+        $affected_jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->update(['target_time'=>time(),'status'=>'downloaded;passive']);
        return Response::json(['affected'=>$affected_jobs]);
     }
     
