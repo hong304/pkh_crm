@@ -94,7 +94,7 @@ Route::group(array('before' => 'auth'), function()
     Route::any('/instantPrint.json', 'PrintQueueController@instantPrint');
     Route::any('/rePrint.json', 'PrintQueueController@rePrint');
     Route::any('/getAllPrintJobsWithinMyZone.json', 'PrintQueueController@getAllPrintJobsWithinMyZone');
-    Route::any('/printAllPrintJobsWithinMyZone.json', 'PrintQueueController@printAllPrintJobsWithinMyZone');
+
 
     
     // Invoice Status Manager
@@ -156,6 +156,7 @@ Route::any('/queue/generate-invoice-pdf.queue', 'QueueController@generateInvoice
 
 // Printer
 Route::get('/getUnprintJobs.json', 'PrintQueueController@jsonGetUnprintJobs');
+Route::any('/printAllPrintJobsWithinMyZone.json', 'PrintQueueController@printAllPrintJobsWithinMyZone');
 
 //Data warehouse
 Route::get('invoice','DataWarehouseController@getInvoice');
