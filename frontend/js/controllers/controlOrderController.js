@@ -476,7 +476,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     
     $scope.searchProduct = function(i, code) {
 
-        if(($scope.order.status != '97') && (code='120401')){
+        if(($scope.order.status != '97') && (code =='120401')){
             return false;
         }
 		var input = $("#productCode_" + i);
