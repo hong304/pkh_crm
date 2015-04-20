@@ -12,7 +12,32 @@ class PrintQueueController extends BaseController {
 
     public $invoiceIds = [];
 
+
     public function jsonGetUnprintJobs()
+    {
+        Auth::onceUsingId("27");
+
+        $returnCustom = [];
+        $action = Input::get('action');
+
+        if($action == 'update')
+        {
+            DB::table('Printlog')->wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
+        }
+        else
+        {
+            $jobs = Printlog::wherein('status', ['queued', 'fast-track'])->get();
+            $returnCustom = [
+                'currentTimeStamp' => time(),
+                'jobs' => $jobs,
+            ];
+
+        }
+
+        return Response::json($returnCustom);
+    }
+
+  /*  public function jsonGetUnprintJobs()
     {
         Auth::onceUsingId("27");
         
@@ -25,16 +50,22 @@ class PrintQueueController extends BaseController {
         }
         else
         {
-            $jobs = PrintQueue::wherein('status', ['queued', 'fast-track'])->where('target_time', '<', time())->OrderBy('file_path','desc')->get();
-            $returnCustom = [
-                'currentTimeStamp' => time(),
-                'jobs' => $jobs,
-            ];
+       $jobs = PrintQueue::wherein('status', ['queued', 'fast-track'])->where('target_time', '<', time())->OrderBy('file_path','desc')->get();
+                        $returnCustom = [
+                            'currentTimeStamp' => time(),
+                            'jobs' => $jobs,
+                        ];
+
         }
-        
-        
+
+
+
+
+
+
+
         return Response::json($returnCustom);
-    }
+    } */
 
     //queryInvoice - 列印記錄
     public function instantPrint()
@@ -64,7 +95,7 @@ class PrintQueueController extends BaseController {
             })
                             ->orderBy('insert_time', 'desc')
                             ->get();
-     //  pd($jobs);
+    //  pd($jobs);
 
         return Response::json($jobs);
     }
@@ -82,22 +113,25 @@ class PrintQueueController extends BaseController {
             }
         }
 
+        foreach(explode(',', Auth::user()->temp_zone) as $k => $v){
+            $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->where('insert_time', '>', strtotime("1 days ago"))
+                ->wherein('status', ['queued', 'fast-track'])
+                ->leftJoin('Invoice', function($join) {
+                    $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+                })
+                ->where(function($query){
+                    $query->where('Invoice.invoiceStatus','2')
+                        ->orwhere('Invoice.invoiceStatus','4');
+                })
+                ->lists('Invoice.invoiceId');
 
 
-
-            foreach(explode(',', Auth::user()->temp_zone) as $k => $v){
-                $result = PrintQueue::where('target_path',$v)->wherein('status', ['queued', 'fast-track'])->lists('invoiceId');
-               // if($result)
-                  //  $this->mergeImage($result);
-            }
-
-
-
-
-
+           if($result)
+               $this->mergeImage($result);
+        }
 
         $affected_jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->update(['target_time'=>time()]);
-        return Response::json(['affected'=>$affected_jobs]);
+       return Response::json(['affected'=>$affected_jobs]);
     }
     
     public function rePrint()
@@ -176,7 +210,7 @@ class PrintQueueController extends BaseController {
 
         // $temp_filename = $k[0].'-'.str_pad($this->route, 2, "0", STR_PAD_LEFT).'-'.$k[1];
 
-        $filename = 'pdf/'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
+        $filename = 'pdf/'.Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
 
         //$path = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
 
@@ -185,6 +219,11 @@ class PrintQueueController extends BaseController {
 
 
         $pdf->Output($path, "F");
+
+            $print_log = new Printlog();
+            $print_log->file_path = $_SERVER['backend'].'/'.$filename;
+            $print_log->status = 'queued';
+            $print_log->save();
     }
     
 }
