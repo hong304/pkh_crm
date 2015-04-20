@@ -19,11 +19,13 @@ class PrintQueueController extends BaseController {
 
         $returnCustom = [];
         $action = Input::get('action');
-        
+
         if(strtotime(date('Y-m-d 18:01:58') < time() && time() < strtotime(date('Y-m-d 18:03:05')))){
             $this->printAllPrintJobsWithinMyZone();
         }
 
+        echo "hi";
+        
         if($action == 'update')
         {
            Printlog::wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
