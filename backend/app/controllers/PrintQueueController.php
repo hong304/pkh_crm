@@ -22,7 +22,7 @@ class PrintQueueController extends BaseController {
 
         if($action == 'update')
         {
-            DB::table('Printlog')->wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
+           Printlog::wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
         }
         else
         {
