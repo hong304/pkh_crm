@@ -223,6 +223,7 @@ class PrintQueueController extends BaseController {
             $print_log = new Printlog();
             $print_log->file_path = $_SERVER['backend'].'/'.$filename;
             $print_log->status = 'queued';
+            $print_log->target_path = $invoiceImage[0]->zoneId;
             $print_log->save();
     }
     
