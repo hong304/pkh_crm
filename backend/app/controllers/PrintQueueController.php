@@ -24,8 +24,6 @@ class PrintQueueController extends BaseController {
             $this->printAllPrintJobsWithinMyZone();
         }
 
-        echo "hi";
-        
         if($action == 'update')
         {
            Printlog::wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
