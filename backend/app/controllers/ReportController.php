@@ -9,7 +9,7 @@ class ReportController extends BaseController {
 
 
         if (Auth::user()->role[0]->id == 4){
-            $filter = ['archivedreport','productReport','customerReport'];
+            $filter = ['productReport','customerReport'];
             $reports = Report::select('*')->orderBy('id', 'asc')->whereNotIn('id',$filter)->get();
         }else{
             $reports = Report::select('*')->orderBy('id', 'asc')->get();
