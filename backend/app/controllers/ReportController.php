@@ -40,12 +40,14 @@ class ReportController extends BaseController {
     public function viewArchivedReport()
     {
         $rid = Input::get('rid');
-        
+
+
+
         $report = ReportArchive::where('id', $rid)->first();
 
-        $url = CloudStorageTools::getPublicUrl($report->file, false);
+       $url = CloudStorageTools::getPublicUrl($report->file, false);
         
-        return Redirect::to($url);
+       return Redirect::to($url);
         
     }
 }

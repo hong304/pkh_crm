@@ -122,9 +122,18 @@ Route::get('/', function(){
 Route::get('/system.json', 'SystemController@jsonSystem');
 Route::get('/test', function(){
 
-echo time();
-    echo "<br>";
-    echo strtotime(date('Y-m-d 18:01:58'));
+    $name = '/home/centos/public_html/pkh_crm/backend/app/storage/report_archive/picklinglist9f/2015041518-2-9.pdf';
+    $content = file_get_content($name);
+
+    header('Content-Type: application/pdf');
+    header('Content-Length: '.strlen( $content ));
+    header('Content-disposition: inline; filename="' . $name . '"');
+    header('Cache-Control: public, must-revalidate, max-age=0');
+    header('Pragma: public');
+    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+
+    echo $content;
     //
 
     //  $lastid = Product::where('department', 'A')->where('group', '05')->where('new_product_id',0)->orderBy('productId', 'Desc')->first();

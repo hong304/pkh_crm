@@ -313,9 +313,8 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
                             { "data": "m_role" },
                             { "data": "disabled" },
                             { "data": "link" },
-                    { "data": "delete" },
-                            
-                ],           
+                            { "data": "delete" },
+                          ],
                 
                 "order": [
                     [1, "asc"]
