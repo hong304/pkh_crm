@@ -173,7 +173,7 @@ class Customer_MonthlyCreditSummary {
             for ($i = date('n'); $i>0; $i--){
                 $data[$i] = Invoice::whereBetween('deliveryDate',$times[$i])->leftJoin('Customer', function($join) {
                     $join->on('Invoice.customerId', '=', 'Customer.customerId');
-                })->where('paymentTermId',2)->where('customerId',$client['customer']['customerId'])->sum('amount');
+                })->where('paymentTermId',2)->where('Invoice.customerId',$client['customer']['customerId'])->sum('amount');
             }
 
             $pdf->AddPage();
