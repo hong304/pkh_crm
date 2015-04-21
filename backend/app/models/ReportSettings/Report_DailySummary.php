@@ -232,7 +232,7 @@ class Report_DailySummary {
             [
                 'type' => 'pdf',
                 'name' => '列印  PDF 版本',
-                'warning'   =>  '你確定要列印日結單嗎?'
+                'warning'   =>  false,
             ],
         ];
         

@@ -180,7 +180,7 @@ class Invoice_9FPickingList {
             [
                 'type' => 'pdf',
                 'name' => '列印  PDF 版本',
-                'warning'   =>  '你確定要編訂備貨單嗎? 一經編訂, 所有訂單將不能再被修改'
+                'warning'   =>  false,
             ],
         ];
         
