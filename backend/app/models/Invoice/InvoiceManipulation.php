@@ -441,7 +441,7 @@ class InvoiceManipulation {
                     $oldQ->save();
                 }
             }
-
+            $flag=false;
             $q = new PrintQueue();
             $q->file_path = $url;
             $q->target_path = $x->zoneId;
@@ -462,14 +462,11 @@ class InvoiceManipulation {
             $q->save();
 
             if($flag){
-
                 $jobs = PrintQueue::where('invoiceId', $invoice_id)->lists('invoiceId');
-
                 if($jobs){
                     $j = new PrintQueueController();
                     $j->mergeImage($jobs);
                 }
-
             }
 
         }
