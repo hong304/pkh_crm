@@ -123,7 +123,7 @@ Route::get('/system.json', 'SystemController@jsonSystem');
 Route::get('/test', function(){
 
     $name = '/home/centos/public_html/pkh_crm/backend/app/storage/report_archive/picklinglist9f/2015041518-2-9.pdf';
-    $content = file_get_content($name);
+    $content = file_get_contents($name);
 
     header('Content-Type: application/pdf');
     header('Content-Length: '.strlen( $content ));
