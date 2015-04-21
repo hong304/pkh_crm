@@ -455,9 +455,11 @@ class InvoiceManipulation {
 
             if($x->deliveryDate = strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12) {
                 $q->target_time = time();
+                $q->status = "downloaded;passive";
                 $flag = true;
             }else
                 $q->target_time = strtotime("tomorrow 3am");
+            
             $q->created_by = $instructor;
             $q->save();
 
