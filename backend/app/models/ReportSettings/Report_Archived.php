@@ -27,15 +27,14 @@ class Report_Archived {
         
         // get invoice from that date and that zone
 
-                
         $reports = ReportArchive::select('*');
         
         if(!Auth::user()->can('view_global_reportarchive'))
         {
             $reports = $reports->where('created_by', Auth::user()->id);
         }
-        
-        $reports = $reports->take(30)->orderby('id', 'desc')->get();
+
+        $reports = $reports->orderby('id', 'desc')->paginate(30);;
         
         
         $this->data = $reports;
