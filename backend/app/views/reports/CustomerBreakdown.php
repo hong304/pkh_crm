@@ -7,11 +7,14 @@
             <th width="20%">
                 貨品編號
             </th>
-            <th width="60%">
+            <th width="50%">
                 貨品名稱
             </th>
             <th width="20%"> 
                 數量
+            </th>
+            <th width="10%">
+                總數
             </th>
         </tr>
     </thead>
@@ -27,6 +30,9 @@
                     </td>
                     <td>
                         <?php echo $item['counts'];?> <?php echo $item['unit_txt'];?> 
+                        </td>
+                    <td>
+                        <?php echo '$'.round($item['itemPrice']*$item['counts']*(100-$item['discount'])/100,2);?>
                     </td>
                 </tr>  
                 <?php endforeach; ?>
@@ -46,13 +52,16 @@
                         <td>
                             <?php echo '-'.$item['counts'];?> <?php echo $item['unit_txt'];?>
                         </td>
+                        <td>
+                            <?php echo '$'.round($item['itemPrice']*$item['counts']*(100-$item['discount'])/100,2);?>
+                        </td>
                     </tr>
                 <?php } ?>
             <?php } ?>
 <?php }?>
 
             <tr>
-                <td colspan="3" style="text-align:right;">
+                <td colspan="4" style="text-align:right;">
                     <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo number_format($nf['totalAmount'],2,'.',','); ?></span>
                 </td>
             <tr>
