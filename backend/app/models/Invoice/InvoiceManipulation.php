@@ -453,13 +453,25 @@ class InvoiceManipulation {
                 $q->status = "queued";
             $q->invoiceId = $invoice_id;
 
-            if($x->deliveryDate = strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12)
+            if($x->deliveryDate = strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12) {
                 $q->target_time = time();
-            else
+                $flag = true;
+            }else
                 $q->target_time = strtotime("tomorrow 3am");
-
             $q->created_by = $instructor;
             $q->save();
+
+            if($flag){
+
+                $jobs = PrintQueue::where('invoiceId', $invoice_id)->lists('invoiceId');
+
+                if($jobs){
+                    $j = new PrintQueueController();
+                    $j->mergeImage($jobs);
+                }
+
+            }
+
         }
 
 
