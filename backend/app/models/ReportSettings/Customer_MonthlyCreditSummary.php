@@ -30,7 +30,9 @@ class Customer_MonthlyCreditSummary {
     {
         
                 
-        Invoice::where('invoiceStatus', '20')->with('client', 'invoiceItem')->where('zoneId',$this->_zone)->OrderBy('deliveryDate')->chunk(50, function($invoices){
+        Invoice::leftJoin('Customer', function($join) {
+            $join->on('Invoice.customerId', '=', 'Customer.customerId');
+        })->where('paymentTermId',2)->with('client', 'invoiceItem')->where('zoneId',$this->_zone)->OrderBy('deliveryDate')->chunk(50, function($invoices){
             foreach($invoices as $invoice)
             {
                 $customerId = $invoice['client']->customerId;
@@ -153,7 +155,9 @@ class Customer_MonthlyCreditSummary {
         }
 
         for ($i = date('n'); $i>0; $i--){
-            $data[$i] = Invoice::whereBetween('deliveryDate',$times[$i])->where('invoiceStatus',20)->sum('amount');
+            $data[$i] = Invoice::whereBetween('deliveryDate',$times[$i])->leftJoin('Customer', function($join) {
+                $join->on('Invoice.customerId', '=', 'Customer.customerId');
+            })->where('paymentTermId',2)->sum('amount');
         }
      // pd($data);
 
@@ -167,7 +171,9 @@ class Customer_MonthlyCreditSummary {
         {
 
             for ($i = date('n'); $i>0; $i--){
-                $data[$i] = Invoice::whereBetween('deliveryDate',$times[$i])->where('invoiceStatus',20)->where('customerId',$client['customer']['customerId'])->sum('amount');
+                $data[$i] = Invoice::whereBetween('deliveryDate',$times[$i])->leftJoin('Customer', function($join) {
+                    $join->on('Invoice.customerId', '=', 'Customer.customerId');
+                })->where('paymentTermId',2)->where('customerId',$client['customer']['customerId'])->sum('amount');
             }
 
             $pdf->AddPage();
