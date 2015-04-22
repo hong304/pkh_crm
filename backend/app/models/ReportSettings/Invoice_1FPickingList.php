@@ -114,9 +114,12 @@ class Invoice_1FPickingList {
                    }
                    
                });
-               
-               
-       asort($this->goods['1F']);
+
+
+       ksort($this->goods['1F'],SORT_STRING);
+
+        pd($this->goods['1F']);
+
        $this->data = $this->goods;
         $this->data['version'] = $this->_version;
 
