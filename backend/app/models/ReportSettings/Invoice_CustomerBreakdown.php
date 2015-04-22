@@ -47,7 +47,7 @@ class Invoice_CustomerBreakdown {
         Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
-               ->chunk(100, function($invoicesQuery){
+               ->chunk(500, function($invoicesQuery){
                    
                    // first of all process all products
                    $productsQuery = array_pluck($invoicesQuery, 'products');
