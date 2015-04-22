@@ -453,7 +453,7 @@ class InvoiceManipulation {
                 $q->status = "queued";
             $q->invoiceId = $invoice_id;
 
-            if($x->deliveryDate = strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12) {
+            if($x->deliveryDate == strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12 && $x->invoiceStatus != '1') {
                 $q->target_time = time();
                 $q->status = "downloaded;passive";
                 $flag = true;
