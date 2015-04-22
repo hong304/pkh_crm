@@ -356,7 +356,8 @@ class InvoiceManipulation {
             $in->save();
 
     	    // prepare invoice image
-    	    $this->__queueInvoiceImage();
+            if($this->temp_invoice_information['print'])
+    	        $this->__queueInvoiceImage();
 
     	    return [
     	        'result' => $this->status,

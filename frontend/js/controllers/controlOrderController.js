@@ -58,6 +58,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		discount	:	'0',
 		update		:	false,
 		invoiceId	:	'',
+        print : 1,
 	};	
 	$scope.productStructure = {
 		dbid		:	'',
@@ -398,8 +399,15 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
 			if(e.keyCode == 121)
 			{
-				$scope.submitOrder();
+
+				$scope.submitOrder(1);
 			}
+
+            if(e.keyCode == 120)
+            {
+
+                $scope.submitOrder(0);
+            }
 			
 		}, false);
         
@@ -765,7 +773,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     }
     
-    $scope.submitOrder = function()
+    $scope.submitOrder = function(v)
     {
     	var generalError = false;
     	
@@ -802,11 +810,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         
         if(!generalError)
     	{
-
-//console.log($scope.order);
-         //   return false;
-
-
+            $scope.order.print = v;
         	$http.post(
             	endpoint + '/placeOrder.json', {
             	product : $scope.product,

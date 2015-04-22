@@ -81,7 +81,7 @@
 									<div class="col-md-6">
 										<select class="form-control" ng-model="order.status" ng-change="statusChange();">
 											<option value="1" selected="selected">1. 正常</option>
-                                            <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="98" selected="selected">2. 退貨單</option>
+                                            <option data-ng-fif="systemInfo.permission.customer_maintenance == true" value="98" selected="selected">2. 退貨單</option>
                                             <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="97" selected="selected">3. 退款單</option>
 										</select>
 									</div>
@@ -347,8 +347,9 @@
 					</table>
 					
 					<div class="form-actions text-right" ng-if="allowSubmission == true">
-						<button type="button" ng-click="submitOrder();" id="submitbutton" class="btn {{submitButtonColor}}">{{submitButtonText}}</button>
-						<!-- <button type="button" ng-click="" class="btn default">取消</button> -->
+                        <button type="button" ng-click="submitOrder(0);" id="submitbutton0" class="btn red">提交不列印(F9)</button>
+                        <button type="button" ng-click="submitOrder(1);" id="submitbutton" class="btn {{submitButtonColor}}">{{submitButtonText}}</button>
+                        <!-- <button type="button" ng-click="" class="btn default">取消</button> -->
 					</div>
 				</div>
 			</div>
