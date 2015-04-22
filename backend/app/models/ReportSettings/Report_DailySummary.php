@@ -83,7 +83,7 @@ class Report_DailySummary {
 
                        if($invoiceQ->return || $invoiceQ->invoiceStatus == '97'){
 
-                          if($invoiceQ['client']->paymentTermId == 2) {
+                          if($invoiceQ['client']->paymentTermId == 2  && $invoiceQ->paymentTerms == 2) {
                                $this->_sumcredit -= $invoiceQ->amount;
                            } else {
                                $this->_sumcod -= $invoiceQ->amount;
@@ -115,7 +115,7 @@ class Report_DailySummary {
                        }else{
                            $this->_invoices[] = $invoiceQ->invoiceId;
 
-                           if($invoiceQ['client']->paymentTermId == 2) {
+                           if($invoiceQ['client']->paymentTermId == 2 && $invoiceQ->paymentTerms == 2) {
                                $this->_sumcredit += $invoiceQ->amount;
                                $this->_countcredit += 1;
                            }
