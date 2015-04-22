@@ -47,7 +47,7 @@ class Invoice_CustomerBreakdown {
         Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
-               ->chunk(50, function($invoicesQuery){
+               ->chunk(100, function($invoicesQuery){
                    
                    // first of all process all products
                    $productsQuery = array_pluck($invoicesQuery, 'products');
@@ -127,12 +127,19 @@ class Invoice_CustomerBreakdown {
                                'discount' => $item->productDiscount,
                            ];
                            // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
+
+                           $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
+                           $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
+                           $this->goods['1F9F'][$customerId]['invoiceId'] = $invoiceQ->invoiceId;
+                           $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
+
                        }
+
+
+
+
                        }
-                       $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
-                       $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
-                       $this->goods['1F9F'][$customerId]['invoiceId'] = $invoiceQ->invoiceId;
-                       $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
+
 
                    }
 
