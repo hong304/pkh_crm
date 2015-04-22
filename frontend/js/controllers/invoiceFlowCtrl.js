@@ -8,10 +8,9 @@ app.controller('invoiceFlowCtrl', function($scope, $rootScope, $http, SharedServ
 	
 	$scope.nextStep = [];
 	
-    $scope.$on('$viewContentLoaded', function() {   
+    $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();        
         $scope.systeminfo = $rootScope.systeminfo;        
-        
     });
     
     $scope.$watch(function() {
@@ -32,7 +31,7 @@ app.controller('invoiceFlowCtrl', function($scope, $rootScope, $http, SharedServ
     		$scope.retrieval = res;
                 $scope.retrieval.invoiceStatus = parseInt($scope.retrieval.invoiceStatus);
                 $scope.retrieval.userRole = parseInt($scope.retrieval.userRole);
-    	
+
 
     		res.invoices.forEach(function(invoice){
     			$scope.nextStep[invoice.invoiceId] = invoice.nextStatus.default;

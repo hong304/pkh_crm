@@ -18,6 +18,15 @@
 			
 				
 				<!-- BEGIN NOTIFICATION DROPDOWN FOR APPROVAL -->
+
+                <li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="printjob_notification" data-ng-if="notification.open > 0">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown" id="printjob_notificationbtn" data-hover="dropdown" data-close-others="true">
+                        <i class="fa glyphicon glyphicon-ok"></i>
+                        <span class="badge badge-default">{{notification.printjobs}}</span>
+                    </a>
+
+                </li>
+                
 					<li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="printjob_notification" data-ng-if="notification.printjobs > 0">
 						<a href="/#/push-to-print" class="dropdown-toggle" data-toggle="dropdown" id="printjob_notificationbtn" data-hover="dropdown" data-close-others="true">
 						<i class="fa glyphicon glyphicon-print"></i>
@@ -25,6 +34,9 @@
 						</a>
 						
 					</li>
+
+
+
 					<li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="approval_notification" data-ng-if="notification.1.countInDataMart > 0">
 						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" id="approval_notification_btn" data-hover="dropdown" data-close-others="true">
 						<i class="fa glyphicon glyphicon-send"></i>
