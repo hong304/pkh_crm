@@ -118,7 +118,7 @@ class Invoice_1FPickingList {
 
        ksort($this->goods['1F'],SORT_STRING);
 
-        pd($this->goods['1F']);
+        //pd($this->goods['1F']);
 
        $this->data = $this->goods;
         $this->data['version'] = $this->_version;
