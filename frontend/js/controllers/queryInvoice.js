@@ -211,6 +211,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     		$scope.nowUnixTime = Math.round(+new Date()/1000);
     		
     		$scope.invoiceinfo = res;
+                $scope.invoiceinfo.invoiceStatus = parseInt($scope.invoiceinfo.invoiceStatus);
 
     		Metronic.unblockUI();
     		$("#productDetails").modal({backdrop: 'static'});
