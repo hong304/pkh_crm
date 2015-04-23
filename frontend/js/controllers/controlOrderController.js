@@ -866,7 +866,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             		}, false);
             		
             		$scope.counter = new $scope.Countdown({  
-            		    seconds:3,  // number of seconds to count down
+            		    seconds:1,  // number of seconds to count down
             		    onUpdateStatus: function(sec){
             		    	$scope.countdown = sec;
             		    }, // callback for each second

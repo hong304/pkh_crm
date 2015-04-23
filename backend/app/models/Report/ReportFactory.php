@@ -75,16 +75,38 @@ class ReportFactory{
                 $filename = $filenameUn . ".pdf";
                 
                 $path = storage_path() . '/report_archive/'.$this->_reportId.'/' . $filename;
-                
-                $archive = new ReportArchive();
-                $archive->id = $filenameUn;
-                $archive->report = $this->_reportId;
-                $archive->file = $path;
-                $archive->remark = $reportOutput['remark'];
-                $archive->created_by = Auth::user()->id;
-                $archive->associates = isset($reportOutput['associates']) ? json_encode($reportOutput['associates']) : false;
-                $archive->save();
-                 
+
+                if(ReportArchive::where('id',$filenameUn)->count() == 0){
+                    $archive = new ReportArchive();
+                    $archive->id = $filenameUn;
+                    $archive->report = $this->_reportId;
+                    $archive->file = $path;
+                    $archive->remark = $reportOutput['remark'];
+                    $archive->created_by = Auth::user()->id;
+                    $unid = explode("-",$reportOutput['uniqueId']);
+
+                    $neworder = json_decode($reportOutput['associates']);
+
+                    if($unid[1]>1){
+                        $unid[1] -= 1;
+                        $comma_separated = implode("-", $unid);
+                        $chre = ReportArchive::where('id',$comma_separated)->first();
+                       // pd($comma_separated);
+                        $invoiceIds = json_decode(json_decode($chre->associates, true, true));
+
+                        $neworder = array_diff($neworder,$invoiceIds);
+
+                    }
+                    $neworder = array_values($neworder);
+//pd($neworder);
+
+
+
+
+                    $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
+                    $archive->save();
+                }
+
                 $pdf = $reportOutput['pdf'];
                 $pdf->Output($path, "IF");
                 //$pdf->Code128(10,3,$filenameUn,150,5);
