@@ -63,7 +63,8 @@
                 <div class="md-col-12" style="margin-bottom:15px;">
                     <div class="radio-list">
                         <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="0" checked> 其他</label>
-                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="30"> 完成</label>
+                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="" value="30"> 完成</label>
+
                     </div>
                 </div>
             </div>
@@ -84,10 +85,10 @@
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
                     <div class="radio-list">
-                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" checked value="today"> 今天 </label>
+                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="today"> 今天 </label>
                         <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="tomorrow"> 明天 </label>
                         <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="coming-7-days" >未來  7 天 </label>
-                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-7-days" >過去  7 天 </label>
+                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" checked value="past-7-days" >過去  7 天 </label>
                         <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-30-days">過去 30 天 </label>
                         <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-180-days">過去 180 天 </label>
                         <!-- <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="custom"> 自訂日期 </label> -->
@@ -131,10 +132,10 @@
                             <table class="table table-striped table-bordered table-hover">
                                 <thead>
                                 <tr role="row" class="heading">
-                                    <th width="20%">
+                                    <th width="15%">
                                         訂單編號
                                     </th>
-                                    <th width="20%">
+                                    <th width="15%">
                                         送貨日期
                                     </th>
                                     <th width="5%">
@@ -151,8 +152,8 @@
                                     狀態
                                 </th>
 
-                                    <th width="10%">
-                                        完成
+                                    <th width="30%">
+                                        狀態
                                     </th>
 
 
@@ -169,17 +170,12 @@
                                     <td>{{i.client.customerName_chi}}</td>
                                     <td>{{i.amount}}</td>
                                     <td>{{i.invoiceStatusText}}</td>
-                                    <td><input type="checkbox" ng-model="invoicepaid[k]['paid']" ng-change="updateNumSum();" /></td>
+                                    <td ng-init="invoicepaid[k]['paid']=30">
+                                        <label><input type="radio" name="r1{{k}}" ng-model="invoicepaid[k]['paid']" value="20" />已收貨</label>
+                                        <label> <input type="radio" name="r1{{k}}" ng-model="invoicepaid[k]['paid']" value="30" />完成</label>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><b>HK$ {{invoicepaid.amount}}</b></td>
-                                    <td></td>
-                                    <td><b></v>HK$ {{invoicepaid.settle}}</b></td>
-                                </tr>
+
 
                             </table>
 

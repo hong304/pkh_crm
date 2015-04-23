@@ -34,14 +34,14 @@ class PaymentController extends BaseController {
         $mode = Input::get('mode');
 
         if($mode == 'posting'){
+
+
             $paid = Input::get('paid');
+
             foreach ($paid as $k=>$v){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
-                if($v['paid'] == 1 && $i->invoiceStatus != 30)
-                    $i->invoiceStatus = 30;
-                else if ($v['paid'] == 1 && $i->invoiceStatus == 30)
-                    $i->invoiceStatus = 2;
-
+                if($v['paid'] > 0)
+                    $i->invoiceStatus = $v['paid'];
                 $i->save();
             }
 
@@ -50,6 +50,7 @@ class PaymentController extends BaseController {
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');
+
 
             // start with date filter
             switch($filter['deliverydate'])
@@ -68,6 +69,10 @@ class PaymentController extends BaseController {
                     break;
                 case 'past-7-days' :
                     $dDateBegin = strtotime("7 days ago 00:00");
+                    $dDateEnd = strtotime("today 23:59");
+                    break;
+                case 'last day' :
+                    $dDateBegin = strtotime("1 days ago 00:00");
                     $dDateEnd = strtotime("today 23:59");
                     break;
                 case 'past-30-days' :
@@ -118,7 +123,7 @@ class PaymentController extends BaseController {
             {
                 $invoice->where('invoiceStatus', $filter['status']);
             }else{
-                $invoice->where('invoiceStatus','!=', 30);
+                $invoice->wherein('invoiceStatus',['20','30']);
             }
 
             if($filter['status'] == '99')

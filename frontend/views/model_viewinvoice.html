@@ -235,16 +235,17 @@
 				
 				<!-- Edit Invoice -->
 				<!-- Condition: Invoice Status = {1, 2, 3} -->
-				<button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus < 4" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
-				
-				<!-- Void Invoice -->
+				<button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus < 3" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
+                <button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus > 3 && systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
+
+                <!-- Void Invoice -->
 				<!-- Condition: Invoice Status = {1, 2, 3} && Permission = void_invoice-->
 				<button type="button" class="btn red" data-ng-if="(invoiceinfo.invoiceStatus < 4 || invoiceinfo.invoiceStatus == 98) && systemInfo.permission.void_invoice" data-ng-click="voidInvoice(invoiceinfo.invoiceId);">刪除</button>
 				
 				<!-- Unload Invoice -->
 				<!-- Condition: Invoice Status = {4} -->
-				<button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4 && systemInfo.permission.unload_invoice" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>
-				
+				<!--<button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4 && systemInfo.permission.unload_invoice" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>-->
+                <button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>
 				<!-- Reprint Invoice -->
 				<!-- Condition: Invoice Status = |{99} Permission = reprint_invoice -->
 				<button type="button" class="btn grey-cascade" data-ng-if="invoiceinfo.invoiceStatus != 99 && systemInfo.permission.reprint_invoice" data-ng-click="rePrintInvoice(invoiceinfo.invoiceId);">重印單據</button>

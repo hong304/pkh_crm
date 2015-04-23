@@ -282,7 +282,7 @@ class OrderController extends BaseController {
         $base = Invoice::where('invoiceId', $invoiceId);
         
         $invoice = Invoice::categorizePendingInvoice(Invoice::getFullInvoice($base));
-        //dd($invoice);
+
         $returnInformation = [
             'invoice' => array_values($invoice['categorized'])[0]['invoices'][0],
             'entrieinfo' => array_values($invoice['categorized'])[0]['zoneName'],

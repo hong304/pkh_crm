@@ -17,7 +17,8 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.invoicepaid = [];
     $scope.invoiceStructure = {
         'id' :'',
-        'paid' : ''
+        'paid' : '',
+        'collect': ''
     }
 
     $scope.filterData = {
@@ -25,7 +26,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         'clientId'		:	'0',
         'status'		:	'0',
         'zone'			:	'',
-        'deliverydate'	:	'toaday',
+        'deliverydate'	:	'last day',
         'created_by'	:	'0',
         'invoiceNumber' :	'',
     };
@@ -92,7 +93,8 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                 res.forEach(function(item) {
                     $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
                     $scope.invoicepaid[i]['id'] = item.invoiceId;
-                    $scope.invoicepaid[i]['paid'] = true;
+                    $scope.invoicepaid[i]['paid'] = 0;
+                    $scope.invoicepaid[i]['collect'] = 0;
                     $scope.invoicepaid.amount = $scope.invoicepaid.amount + Number(item.amount);
                     $scope.invoicepaid.settle = $scope.invoicepaid.amount;
                     i++;

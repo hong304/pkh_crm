@@ -306,7 +306,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         		
         		$scope.updatePaymentTerms();
         		
-        		if(inf.invoiceStatus > 3)
+        		if(inf.invoiceStatus == 99)
         		{
         			$scope.allowSubmission = false;
         			

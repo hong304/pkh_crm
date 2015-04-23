@@ -26,7 +26,7 @@ class InvoiceManipulation {
             // check if this invoice exists
             $this->im = Invoice::where('invoiceId', $invoiceId)->firstOrFail();
             
-            if($this->im->invoiceStatus > 3)
+            if($this->im->invoiceStatus == 99)
             {
                 
                 $this->status = false;
