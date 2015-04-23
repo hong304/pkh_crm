@@ -26,7 +26,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 		'clientId'		:	'0',
 		'status'		:	'0',
 		'zone'			:	'',
-		'deliverydate'	:	'coming-7-days',
+		'deliverydate'	:	'1daylr',
 		'created_by'	:	'0',
 		'invoiceNumber' :	'',
 	};
