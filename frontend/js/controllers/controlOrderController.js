@@ -291,8 +291,11 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         		$scope.order.clientId = res.customerId;
         		$scope.order.clientName = res.customerName_chi;
         		$scope.order.address = res.address_chi;
+                  
+                $scope.order.deliveryDate = inf.deliveryDate_date;
+                $scope.order.dueDate = inf.dueDateDate;
 
-                    $scope.order.zoneId = res.deliveryZone;
+                $scope.order.zoneId = res.deliveryZone;
         		$scope.order.zoneName = data.entrieinfo;
         		$scope.order.route = res.routePlanningPriority;
         		$scope.order.discount = inf.invoiceDiscount;
