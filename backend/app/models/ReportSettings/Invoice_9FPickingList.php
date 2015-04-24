@@ -296,27 +296,30 @@ class Invoice_9FPickingList {
                 $pdf->Cell(0, 0, sprintf("%s - %s (%s)", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi'], $o['customerInfo']['customerId']), 0, 0, "L");
                 
                 $pdf->SetFont('chi','',11);
-                $pdf->setXY($base_x + 56, $y);
+                //$pdf->setXY($base_x + 56, $y);
+                $pdf->setXY($base_x + 0, $y + 5);
                 $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");
                 
-                $pdf->SetFont('chi','',11);
+                $pdf->SetFont('chi','',10);
                  
-                $y += 5;
+                $y += 10;
                  
                 foreach($o['items'] as $itemUnitlv)
                 {
                     foreach($itemUnitlv as $item)
                     {
-                        $pdf->setXY($base_x + 0, $y);
+                        //$pdf->setXY($base_x + 0, $y);
+                        $pdf->setXY($base_x - 5, $y);
                         $pdf->Cell(0, 0, "    " . $item['name'], 0, 0, 'L');
                          
-                        $pdf->setXY($base_x + 50, $y);
+                        //$pdf->setXY($base_x + 50, $y);
+                        $pdf->setXY($base_x + 60, $y);
                         $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
         
-                        $pdf->setXY($base_x + 70, $y);
+                        $pdf->setXY($base_x + 78, $y);
                         $pdf->Cell(0, 0, "    " . sprintf("%s", $item['counts']), 0, 0, 'L');
                          
-                        $pdf->setXY($base_x + 75, $y);
+                        $pdf->setXY($base_x + 83, $y);
                         $pdf->Cell(0, 0, "    " . $item['unit_txt'], 0, 0, 'L');
                          
                         $y +=  5;
@@ -326,7 +329,7 @@ class Invoice_9FPickingList {
                 $y += 5;
         
                 $pdf->SetDash(1, 1);
-                $pdf->Line($base_x + 2, $y-5, $base_x + 85, $y-5);
+                $pdf->Line($base_x + 2, $y-5, $base_x + 92, $y-5);
             }
         
         
