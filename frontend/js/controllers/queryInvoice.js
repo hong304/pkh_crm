@@ -26,7 +26,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 		'clientId'		:	'0',
 		'status'		:	'0',
 		'zone'			:	'',
-		'deliverydate'	:	'coming-7-days',
+		'deliverydate'	:	'1daylr',
 		'created_by'	:	'0',
 		'invoiceNumber' :	'',
 	};
@@ -310,10 +310,10 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                 "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
 
                 "lengthMenu": [
-                    [10, 20, 50],
-                    [10, 20, 50] // change per page values here
+                    [20, 50],
+                    [20, 50] // change per page values here
                 ],
-                "pageLength": 20, // default record count per page
+                "pageLength": 50, // default record count per page
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
