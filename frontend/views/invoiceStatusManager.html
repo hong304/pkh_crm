@@ -17,7 +17,7 @@
 									<table class="table table-bordered table-hover" style="font-size:15px;">
 									    <thead>
 									        <tr role="row" class="heading">
-                                                <th width="8%">#</th>
+                                                <th width="2%">#</th>
 									            <th width="8%">訂單編號</th>
 									            <th width="8%">送貨日期</th>
 									            <th width="8%">車線</th>
@@ -29,7 +29,7 @@
 									    </thead>
 									    <tbody>									            
 								            <tr data-ng-repeat="i in retrieval.invoices">
-                                                <td>{{$index}}</td>
+                                                <td>{{$index+1}}</td>
 								                <td>{{i.invoiceId}}</td>
 								                <td>{{i.deliveryDate_date}}</td>
 								                <td>{{i.zone.zoneId}} ({{i.zone.zoneName}})</td>
