@@ -292,7 +292,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         		$scope.order.clientName = res.customerName_chi;
         		$scope.order.address = res.address_chi;
 
-                    $scope.order.zoneId = res.deliveryZone;
+                $scope.order.deliveryDate = inf.deliveryDate_date;
+                $scope.order.dueDate = inf.dueDateDate;
+
+                $scope.order.zoneId = res.deliveryZone;
         		$scope.order.zoneName = data.entrieinfo;
         		$scope.order.route = res.routePlanningPriority;
         		$scope.order.discount = inf.invoiceDiscount;
@@ -866,7 +869,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             		}, false);
             		
             		$scope.counter = new $scope.Countdown({  
-            		    seconds:3,  // number of seconds to count down
+            		    seconds:1,  // number of seconds to count down
             		    onUpdateStatus: function(sec){
             		    	$scope.countdown = sec;
             		    }, // callback for each second

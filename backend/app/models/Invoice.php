@@ -24,6 +24,7 @@ class Invoice extends Eloquent  {
             unset($invoice->zoneText);
             unset($invoice->invoiceTotalAmount);
             unset($invoice->backgroundcode);
+            unset($invoice->dueDateDate);
 
         });
 	    
@@ -205,7 +206,7 @@ class Invoice extends Eloquent  {
 	        
 	        // full deliveryDate
 	        $model->deliveryDate_date = date("Y-m-d", $model->deliveryDate);
-	        
+            $model->dueDateDate = date("Y-m-d", $model->dueDate);
 	        // full created_at
 	        $model->createdat_full = date("Y-m-d H:i:s", $model->created_at);
 	        
