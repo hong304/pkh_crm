@@ -85,19 +85,21 @@ class ReportFactory{
                     $archive->created_by = Auth::user()->id;
                     $unid = explode("-",$reportOutput['uniqueId']);
 
-                    $neworder = json_decode($reportOutput['associates']);
+                    if(isset($reportOutput['associates'])){
+                        $neworder = json_decode($reportOutput['associates']);
 
-                    if($unid[1]>1){
-                        $unid[1] -= 1;
-                        $comma_separated = implode("-", $unid);
-                        $chre = ReportArchive::where('id',$comma_separated)->first();
-                        if(count($chre)>0){
-                            $invoiceIds = json_decode(json_decode($chre->associates, true, true));
-                            $neworder = array_diff($neworder,$invoiceIds);
+                        if($unid[1]>1){
+                            $unid[1] -= 1;
+                            $comma_separated = implode("-", $unid);
+                            $chre = ReportArchive::where('id',$comma_separated)->first();
+                            if(count($chre)>0){
+                                $invoiceIds = json_decode(json_decode($chre->associates, true, true));
+                                $neworder = array_diff($neworder,$invoiceIds);
+                            }
+
                         }
-
+                        $neworder = array_values($neworder);
                     }
-                    $neworder = array_values($neworder);
 //pd($neworder);
 
 
