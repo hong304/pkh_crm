@@ -85,7 +85,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	$scope.order.invoiceDate = $scope.order.deliveryDate;
 	$scope.submitButtonText = '提交 (F10)';
 	$scope.submitButtonColor = 'blue';
-	$scope.countdown = "3";
+	$scope.countdown = "1";
 	$scope.timer = {
 		start		:	Date.now(),
 		selected_client	:	'',
