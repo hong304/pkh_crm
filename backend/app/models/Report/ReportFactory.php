@@ -91,10 +91,10 @@ class ReportFactory{
                         $unid[1] -= 1;
                         $comma_separated = implode("-", $unid);
                         $chre = ReportArchive::where('id',$comma_separated)->first();
-                       // pd($comma_separated);
-                        $invoiceIds = json_decode(json_decode($chre->associates, true, true));
-
-                        $neworder = array_diff($neworder,$invoiceIds);
+                        if(count($chre)>0){
+                            $invoiceIds = json_decode(json_decode($chre->associates, true, true));
+                            $neworder = array_diff($neworder,$invoiceIds);
+                        }
 
                     }
                     $neworder = array_values($neworder);
