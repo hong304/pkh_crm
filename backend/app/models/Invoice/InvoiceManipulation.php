@@ -414,22 +414,21 @@ class InvoiceManipulation {
        // syslog(LOG_DEBUG, print_r(['user'=>Auth::user(), 'server'=> $_SERVER, 'get'=>$_GET, 'post'=>$_POST], true));
         Auth::onceUsingId("27");
 
-        $pdf = new InvoicePdf(); //convert png to pdf
-        //$pdf_file = $pdf->generate(Input::get('invoiceId'))->save();
-        $pdf_file = $pdf->generate($invoice_id);
+       // $pdf = new InvoicePdf(); //convert png to pdf
+      //  $pdf_file = $pdf->generate($invoice_id);
 
 
 
         // update invoice entry
-        if($pdf_file['zoneId'] != "")
-        {
+       // if($pdf_file['zoneId'] != "")
+      //  {
             $x = Invoice::where('invoiceId', $invoice_id)->first();
-            $x->invoicePrintPDF = $pdf_file['path'];
-            $x->save();
+          //  $x->invoicePrintPDF = $pdf_file['path'];
+         //   $x->save();
 
 
 
-            $url = $_SERVER['backend'].substr($pdf_file['path'],-24);
+          //  $url = $_SERVER['backend'].substr($pdf_file['path'],-24);
 
             $oldQs = PrintQueue::where('invoiceId', $invoice_id)
                 ->wherein('status', ['queued', 'fast-track'])
@@ -442,11 +441,10 @@ class InvoiceManipulation {
                     $oldQ->save();
                 }
             }
-            $flag=false;
+           // $flag=false;
             $q = new PrintQueue();
-            $q->file_path = $url;
+            //$q->file_path = $url;
             $q->target_path = $x->zoneId;
-           // $q->target_route = $x->routePlanningPriority;
             $q->insert_time = time();
             if($x->invoiceStatus == '1'){
                 $q->status = "dead:regenerate";
@@ -454,25 +452,25 @@ class InvoiceManipulation {
                 $q->status = "queued";
             $q->invoiceId = $invoice_id;
 
-            if($x->deliveryDate == strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12 && $x->invoiceStatus != '1') {
+          /*  if($x->deliveryDate == strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12 && $x->invoiceStatus != '1') {
                 $q->target_time = time();
                 $q->status = "downloaded;passive";
                 $flag = true;
-            }else
+            }else*/
                 $q->target_time = strtotime("tomorrow 3am");
 
             $q->created_by = $instructor;
             $q->save();
 
-            if($flag){
+         /*   if($flag){
                 $jobs = PrintQueue::where('invoiceId', $invoice_id)->lists('invoiceId');
                 if($jobs){
                     $j = new PrintQueueController();
                     $j->mergeImage($jobs);
                 }
-            }
+            }*/
 
-        }
+      //  }
 
 
         // queue if instant print job

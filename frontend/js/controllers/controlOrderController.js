@@ -199,6 +199,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     	$http.post(target, {customerId: clientId})
     	.success(function(res, status, headers, config){     
     		$scope.lastinvoice = res;
+                console.log(res);
     	});
 	}
 
@@ -553,7 +554,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 				// qty
 				
 				//$scope.product[i].qty = linv.productQty;
-				
+
 				// price
 				$scope.product[i].unitprice = linv.productPrice;
 				$scope.checkPrice(i);
