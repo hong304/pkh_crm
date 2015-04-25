@@ -105,7 +105,9 @@ class OrderController extends BaseController {
         })
               ->where(function($query){
                 $query->where('Invoice.invoiceStatus','2')
-                    ->orwhere('Invoice.invoiceStatus','4');
+                    ->orwhere('Invoice.invoiceStatus','4')
+                    ->orwhere('Invoice.invoiceStatus','97')
+                    ->orwhere('Invoice.invoiceStatus','98');
             })->count();
 
         $summary['open'] = Invoice::where('invoiceStatus',2)->wherein('zoneId',explode(',', Auth::user()->temp_zone))->count();
