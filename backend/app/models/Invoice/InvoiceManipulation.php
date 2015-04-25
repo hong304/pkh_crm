@@ -447,7 +447,7 @@ class InvoiceManipulation {
             $q->target_path = $x->zoneId;
             $q->insert_time = time();
             if($x->invoiceStatus == '1'){
-                $q->status = "dead:regenerate";
+                $q->status = "dead:regenerated";
             }else
                 $q->status = "queued";
             $q->invoiceId = $invoice_id;
