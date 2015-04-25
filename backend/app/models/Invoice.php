@@ -25,9 +25,8 @@ class Invoice extends Eloquent  {
             unset($invoice->invoiceTotalAmount);
             unset($invoice->backgroundcode);
             unset($invoice->dueDateDate);
-
         });
-	    
+
 	    Invoice::updated(function($model)
 	    {
 	        foreach($model->getDirty() as $attribute => $value){
@@ -46,6 +45,7 @@ class Invoice extends Eloquent  {
 	                    $x->save();
 	            }
 	        }
+
 	    });
 	}
 

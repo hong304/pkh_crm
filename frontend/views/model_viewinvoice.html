@@ -227,7 +227,7 @@
 
 				<!-- Approve Invoice -->
 				<!-- Condition: Invoice Status = {1}  && Permission = approve_invoice && approver != creator-->
-				<button data-ng-if="systemInfo.permission.approve_invoice == true && invoiceinfo.invoiceStatus == 1 && systemInfo.user.id != invoiceinfo.created_by" type="button" class="btn blue" data-ng-click="manipulate('Approve', invoiceinfo.invoiceId);">批核</button>
+				<button data-ng-if="systemInfo.permission.approve_invoice == true && (invoiceinfo.invoiceStatus == 1 || (invoiceinfo.invoiceStatus == 4 && invoiceinfo.previous_status == '1'))&& systemInfo.user.id != invoiceinfo.created_by" type="button" class="btn blue" data-ng-click="manipulate('Approve', invoiceinfo.invoiceId);">批核</button>
 				
 				<!-- Disapprove Invoice -->
 				<!-- Condition: Inovice Status = {2} && Permission = approve_invoice && disapprover != creator -->

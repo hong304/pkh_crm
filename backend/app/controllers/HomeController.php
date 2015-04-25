@@ -78,7 +78,8 @@ class HomeController extends BaseController {
             }
 
 
-            $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->with('InvoiceItem')->update(array('invoiceStatus' => 4));
+            $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->with('InvoiceItem')
+                ->update(['previous_status'=>DB::raw('invoiceStatus'),'invoiceStatus' => 4]);
 
 
 
