@@ -99,7 +99,7 @@ class OrderController extends BaseController {
         }
         
         $jobscount = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->whereIn('status', ['queued','fast-track'])
-            ->where('insert_time', '>', strtotime("1 days ago"))
+            ->where('insert_time', '>', strtotime("2 days ago"))
             ->leftJoin('Invoice', function($join) {
             $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
         })

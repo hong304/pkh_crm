@@ -126,14 +126,16 @@ class PrintQueueController extends BaseController {
         }
 
         foreach(explode(',', Auth::user()->temp_zone) as $k => $v){
-            $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->where('insert_time', '>', strtotime("1 days ago"))
+            $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->where('insert_time', '>', strtotime("2 days ago"))
                 ->wherein('status', ['queued', 'fast-track'])
                 ->leftJoin('Invoice', function($join) {
                     $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
                 })
                 ->where(function($query){
                     $query->where('Invoice.invoiceStatus','2')
-                        ->orwhere('Invoice.invoiceStatus','4');
+                        ->orwhere('Invoice.invoiceStatus','4')
+                        ->orwhere('Invoice.invoiceStatus','97')
+                        ->orwhere('Invoice.invoiceStatus','98');
                 })
                 ->lists('Invoice.invoiceId');
 
