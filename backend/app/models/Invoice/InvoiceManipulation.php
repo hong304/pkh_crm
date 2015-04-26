@@ -459,7 +459,7 @@ class InvoiceManipulation {
             }else*/
                 $q->target_time = strtotime("tomorrow 3am");
 
-            $q->created_by = $instructor;
+           // $q->created_by = $instructor;
             $q->save();
 
          /*   if($flag){
