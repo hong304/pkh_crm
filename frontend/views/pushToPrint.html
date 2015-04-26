@@ -23,11 +23,12 @@
 									        <tr role="row" class="heading">
 									            <th width="5%">列印編號</th>
 									            <th width="10%">訂單編號</th>
+                                                <th width="15%">Customer name</th>
 									            <th width="5%">車號</th>
                                                 <th width="5%">車線</th>
 									            <th width="15%">建立時間</th>
                                                 <th width="10%">送貨日期</th>
-									            <th width="15%">最遲列印時間</th>
+
 									            <th width="10%">用戶</th>
 									            <th width="20%">現時狀態</th>
 									        </tr>
@@ -36,11 +37,12 @@
 								            <tr data-ng-repeat="q in queue">
 								                <td>{{q.job_id}}</td>
 								                <td>{{q.invoiceId}}</td>
+                                                <td>{{q.client.customerName_chi}}</td>
 								                <td>{{q.target_path}}</td>
                                                 <td>{{q.routePlanningPriority}}</td>
 								                <td>{{q.insert_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
                                                 <td>{{q.deliveryDate * 1000 | date: 'yyyy.MM.dd'}}</td>
-                       							<td>{{q.target_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
+
 								                <td>{{q.staff.username}}</td>
 								                <td>
 								                	<span data-ng-if="q.status == 'downloaded;passive'">
