@@ -88,7 +88,7 @@ class PrintQueueController extends BaseController {
       //  p(Auth::user()->temp_zone);
 
         $jobs = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
-                            ->where('insert_time', '>', strtotime("1 days ago"))
+                            ->where('insert_time', '>', strtotime("2 days ago"))
                             ->where('status','!=','dead:regenerated')
                             ->with('staff')->leftJoin('Invoice', function($join) {
                                     $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
