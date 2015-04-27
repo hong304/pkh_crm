@@ -21,6 +21,7 @@ class Invoice extends Eloquent  {
             unset($invoice->deliveryDate_date);
             unset($invoice->createdat_full);
             unset($invoice->invoiceStatusText);
+            unset($invoice->previous_statusText);
             unset($invoice->zoneText);
             unset($invoice->invoiceTotalAmount);
             unset($invoice->backgroundcode);
@@ -212,6 +213,7 @@ class Invoice extends Eloquent  {
 	        
 	        // status text
 	        $model->invoiceStatusText = Config::get('invoiceStatus.' . $model->invoiceStatus . '.descriptionChinese');
+            $model->previous_statusText = Config::get('invoiceStatus.' . $model->previous_status . '.descriptionChinese');
 
             //zone text
             $model->zoneText = Config::get('zoneName.'.$model->zoneId);

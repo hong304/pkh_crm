@@ -41,14 +41,15 @@ class InvoiceStatusManager {
                 
                 $item->save();
             }
+            $i->previous_status = $i->invoiceStatus;
             if($i->invoiceStatus == 1){
                 $i->invoiceStatus = '2';
-                $i->save();
             }
+            $i->save();
 
-            if($i->deliveryDate == strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12){
-                PrintQueue::where('invoiceId', $this->invoiceId)->update(['status'=>'queued']);
-            }
+           // if($i->deliveryDate == strtotime(date( "Y-m-d H:i:s",mktime(0, 0, 0))) && date('G') < 12){
+          //      PrintQueue::where('invoiceId', $this->invoiceId)->update(['status'=>'queued']);
+          //  }
 
             PrintQueue::where('invoiceId', $this->invoiceId)->update(['status'=>'queued']);
 

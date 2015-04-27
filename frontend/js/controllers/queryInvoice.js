@@ -343,6 +343,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                             { "data": "client.customerName_chi" },
                             { "data": "amount" },
                             { "data": "invoiceStatusText" },
+                             { "data": "previous_statusText" },
+
                             { "data": "staff.name" },
                             { "data": "createdat_full" },
                             { "data": "link" },
