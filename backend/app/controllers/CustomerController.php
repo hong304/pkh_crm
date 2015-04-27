@@ -12,26 +12,57 @@ class CustomerController extends BaseController {
     public function jsonCheckClient()
     {
        # Request
-       $time_start = microtime(true);
+      // $time_start = microtime(true);
        $keyword = Input::has('client_keyword') && Input::get('client_keyword') != '' ? Input::get('client_keyword') : 'na';
-       
+
+
+
+
        # Process
        if($keyword != 'na')
-       {           
-           $keyword = str_replace(array('?', '*'), '%', $keyword);
+       {
+
+
+           if(!isset($keyword['keyword']))
+               $keyword['keyword'] = '';
+           if(!isset($keyword['id']))
+               $keyword['id'] = '';
+           if(!isset($keyword['zone']['zoneId']))
+               $keyword['zone']['zoneId'] = '';
+
+          // $keyword = str_replace(array('?', '*'), '%', $keyword);
            $clientArray = Customer::select('customerId','remark', 'customerName_chi', 'address_chi', 'deliveryZone', 'phone_1', 'routePlanningPriority', 'paymentTermId', 'discount')
-                                   ->wherein('deliveryZone', explode(',', Auth::user()->temp_zone))
+
                                    ->where('status', '1')
                                    ->where(function($query) use($keyword)
                                    {
-                                       $query->where('customerName_chi', 'LIKE', '%'.$keyword.'%')
-                                       ->orwhere('phone_1', 'LIKE', '%'.$keyword.'%')
-                                       ->orwhere('customerId', 'LIKE', '%' . $keyword . '%');
-                                   })
-                                   ->with('Zone')
-                                   ->limit(50)
-                                   ->get();
-           
+                                       if($keyword['keyword'] !='' && $keyword['id'] !='') {
+                                           $query->where('customerName_chi', 'LIKE', '%'.$keyword['keyword'].'%')
+                                               ->orwhere('phone_1', 'LIKE', '%'.$keyword['keyword'].'%')
+                                               ->where('customerId', 'LIKE', '%' . $keyword['id'] . '%');
+                                       }
+                                       if($keyword['keyword']!=''){
+                                             $query->where('customerName_chi', 'LIKE', '%'.$keyword['keyword'].'%')
+                                             ->orwhere('phone_1', 'LIKE', '%'.$keyword['keyword'].'%');
+                                             }
+
+                                       if($keyword['id']!='') {
+                                           $query->where('customerId', 'LIKE', '%' . $keyword['id'] . '%');
+                                       }
+
+                                   });
+
+           if($keyword['zone']['zoneId'] != ''){
+               $clientArray->where('deliveryZone',$keyword['zone']['zoneId']);
+           }else{
+               $clientArray->wherein('deliveryZone',explode(',', Auth::user()->temp_zone));
+           }
+
+           $clientArray = $clientArray->with('Zone')
+           ->limit(50)
+           ->get();
+
+
        }
        else
        {
@@ -42,9 +73,9 @@ class CustomerController extends BaseController {
                                   ->get(); 
      
        }
-       $time_end = microtime(true);
-       $time = $time_end - $time_start;
-       syslog(LOG_INFO, "Search $keyword in $time seconds");
+      // $time_end = microtime(true);
+      // $time = $time_end - $time_start;
+      // syslog(LOG_INFO, "Search $keyword in $time seconds");
        return Response::json($clientArray);
        
     }

@@ -66,7 +66,11 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
         $('#selectclientmodel').on('hidden.bs.modal', function () {
             $('#productCode_1').focus();
         })
-    	$scope.keyword = "";
+    	$scope.keyword = {
+            'zone' :'',
+            'id' :'',
+            'keyword':''
+        };
     	$scope.searchClient("");
     	SharedService.setValue('clientId', c.customerId, 'handleCustomerUpdate');
     	SharedService.setValue('clientName', c.customerName_chi, 'handleCustomerUpdate');
@@ -122,11 +126,13 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	    		$scope.clientHeader = "搜尋結果";
 	    	}
 	    	//canceler.resolve();
+            console.log($scope.keyword);
+
 	    	$http(
 	    			{
 			    		method	:	"POST",
 			    		url		: 	endpoint + '/checkClient.json', 
-			        	data	:	{client_keyword: keyword},
+			        	data	:	{client_keyword: $scope.keyword},
 			        	cache	:	true,
 			        	//timeout: canceler.promise,
 			    	}        	
