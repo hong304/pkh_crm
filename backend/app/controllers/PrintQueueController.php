@@ -96,6 +96,7 @@ class PrintQueueController extends BaseController {
 
             ->where(function($query){
                 $query->where('Invoice.invoiceStatus','2')
+                    ->orwhere('Invoice.invoiceStatus','1')
                     ->orwhere('Invoice.invoiceStatus','4')
                     ->orwhere('Invoice.invoiceStatus','98')
                     ->orwhere('Invoice.invoiceStatus','97');

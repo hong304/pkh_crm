@@ -8,9 +8,9 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
-          var intervalPromise = $interval(function(){
+         /* var intervalPromise = $interval(function(){
                        $scope.updatePrintQueue();
-                   }, 10000);
+                   }, 15000);*/
 
     });
 
@@ -44,7 +44,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                     label: "確定",
                     className: "red",
                     callback: function() {
-                        $http.post(pushtarget, {})
+                        $http.get(pushtarget)
                             .success(function(res, status, headers, config){
                                $scope.updatePrintQueue();
                                 //alert('正在準備傳送至印表機...')

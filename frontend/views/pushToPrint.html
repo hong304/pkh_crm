@@ -48,14 +48,14 @@
 								                	<span data-ng-if="q.status == 'downloaded;passive'">
 								                		已下載至列印伺服器
 								                	</span>
-								                	<span data-ng-if="q.status == 'dead:regenerate'">
+								                	<span data-ng-if="q.status == 'dead:regenerated'">
 								                		被取代
+								                	</span>
+                                                    <span data-ng-if="q.status == 'dead:pending'">
+								                		等待批刻(不會列印)
 								                	</span>
 								                	<span data-ng-if="q.status == 'queued'">
 								                		等待下載
-								                	</span>
-                                                     <span data-ng-if="q.status == 'fast-track'">
-								                		已列印
 								                	</span>
 												</td>
 								            <tr>

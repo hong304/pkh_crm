@@ -194,12 +194,12 @@ $debug = 0;
             
            if($adv != null)
             {
-                $max_length = 30;
-                $adv_splits = str_split_unicode($adv->advertisement, $max_length);
-                $adv1 = implode("\n", $adv_splits);
+                $max_length = 32;
+              //  $adv_splits = str_split_unicode($adv->advertisement, $max_length);
+            //   $adv1 = implode("\n", $adv_splits);
 
 
-                $this->image[$p]->text($adv1, 400, 930, function($font) use($font_file) {
+                $this->image[$p]->text($adv->advertisement, 400, 930, function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(35);
                     $font->color('#000000');
