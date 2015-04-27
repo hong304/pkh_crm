@@ -130,10 +130,11 @@ class Invoice_CustomerBreakdown {
 
                            $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
                            $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
-                           $this->goods['1F9F'][$customerId]['invoiceId'] = $invoiceQ->invoiceId;
                            $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
 
                        }
+
+                           $this->goods['1F9F'][$customerId]['invoiceId'][] = $invoiceQ->invoiceId;
 
 
 
@@ -146,8 +147,175 @@ class Invoice_CustomerBreakdown {
                });
 
        $this->data = $this->goods;
-       // pd($this->data);
+        //pd($this->data);
        return $this->data;        
+    }
+
+    public function outputPDF()
+    {
+
+        $pdf = new PDF();
+        $i = 0;
+
+        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
+
+        // handle all 1F, 9F goods
+        $ninef = $this->data['1F9F'];
+        $consec = $j = 0;
+        // pd($ninef);
+
+        foreach($ninef as $c=>$nf)
+        {
+            $consec += (count($nf['items'])+5);
+            $nf['consec'] = $ninef[$c]['consec'] = $consec;
+
+            // we can have 20 items as most per section
+            if($j % 2 == 0){
+                if($consec > 40)
+                {
+                    $j++;
+                    $consec = 0;
+                }
+            }else{
+                if($consec > 28)
+                {
+                    $j++;
+                    $consec = 0;
+                }
+            }
+
+            $ninefproducts[$j][] = $nf;
+        }
+
+        // pd($ninefproducts);
+
+        foreach($ninefproducts as $index=>$order)
+        {
+            //dd($order);
+            // if it is in left section, add a new page
+            if($index % 2 == 0)
+            {
+
+                $pdf->AddPage();
+                $this->generateHeader($pdf);
+
+                /*  $pdf->SetFont('chi','',10);
+                  $pdf->setXY(10, $pdf->h-30);
+                  $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+                  $pdf->setXY(60, $pdf->h-30);
+                  $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+                  $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+                  $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);*/
+
+                $pdf->SetFont('chi','',10);
+                $pdf->setXY(110, $pdf->h-30);
+                $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+                $pdf->setXY(170, $pdf->h-30);
+                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+                $pdf->Line(110, $pdf->h-35, 150, $pdf->h-35);
+                $pdf->Line(170, $pdf->h-35, 210, $pdf->h-35);
+
+                $pdf->setXY(0, 0);
+
+                // add a straight line
+
+                $pdf->Line(105, 45, 105, 280);
+
+                $pdf->SetFont('chi','',10);
+                $pdf->setXY(500, $pdf->h-22);
+                // $pdf->setXY(500, $pdf->h-0);
+                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index/2+1, ceil(count($ninefproducts)/2)) , 0, 0, "R");
+            }
+
+            //$pdf->Cell(50, 50, "NA", 0, 0, "L");
+
+            // define left right position coordinate x differences
+            $y = 55;
+            if($index % 2 == 0)
+            {
+                $base_x = 10;
+            }
+            else
+            {
+                $base_x = 110;
+            }
+
+            foreach($order as $o)
+            {
+
+                $pdf->setXY($base_x + 0, $y);
+                $pdf->SetFont('chi','',10);
+                $pdf->Cell(0, 0, sprintf("%s (%s)", $o['customerInfo']['customerName_chi'], $o['customerInfo']['customerId']), 0, 0, "L");
+
+                $y += 5;
+
+                $pdf->SetFont('chi','',9);
+                $i = $base_x-20;
+                foreach($o['invoiceId'] as $v){
+                    $pdf->setXY($i += 25, $y);
+                    $pdf->Cell(0, 0, sprintf("%s", $v), 0, 0, "L");
+                }
+
+                $y += 5;
+                $pdf->setXY($base_x + 64, $y);
+                $pdf->Cell(20, 0, sprintf("TOTAL: HK$%s", $o['totalAmount']), 0, 0, "R");
+                $pdf->SetFont('chi','',9);
+
+                $y += 5;
+                foreach($o['items'] as $itemUnitlv)
+                {
+                    foreach($itemUnitlv as $item)
+                    {
+
+                        $pdf->setXY($base_x + 0, $y);
+                        $pdf->Cell(0, 0, "    " . $item['name'], 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 37, $y);
+                        $pdf->Cell(0, 0, "    $" . $item['itemPrice'], 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 53, $y);
+                        $pdf->Cell(0, 0, "x", 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 53, $y);
+                        $pdf->Cell(0, 0, "    " . sprintf("%s", $item['counts']), 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 66, $y);
+                        $pdf->Cell(0, 0, "" . $item['unit_txt'], 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 70, $y);
+                        $pdf->Cell(0, 0, "=", 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 72, $y);
+
+                        $pdf->Cell(0, 0, sprintf(" $%s", round($item['itemPrice']*$item['counts']*(100-$item['discount'])/100,2) ), 0, 0, 'L');
+
+                        if($item['discount']>0){
+                            $pdf->setXY($base_x + 85, $y);
+                            $pdf->Cell(0, 0, "(".$item['discount']."%)", 0, 0, 'L');
+                        }
+                        $y +=  5;
+                    }
+                }
+
+
+                $y += 5;
+                $pdf->SetDash(1, 1);
+                $pdf->Line($base_x + 2, $y-5, $base_x + 85, $y-5);
+            }
+
+
+        }
+
+        // output
+        return [
+            'pdf' => $pdf,
+            'remark' => sprintf("Customer Break Down Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
+            'uniqueId' => $this->_uniqueid,
+        ];
     }
     
     public function registerFilter()
@@ -240,168 +408,5 @@ class Invoice_CustomerBreakdown {
 
     }
     
-    public function outputPDF()
-    {
-        
-        $pdf = new PDF();
-        $i = 0;
 
-        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
-        
-        // handle all 1F, 9F goods
-        $ninef = $this->data['1F9F'];
-        $consec = $j = 0;
-       // pd($ninef);
-
-       foreach($ninef as $c=>$nf)
-        {
-            $consec += count($nf['items'])+3;
-            $nf['consec'] = $ninef[$c]['consec'] = $consec;
-        
-            // we can have 20 items as most per section
-            if($j % 2 == 0){
-                if($consec > 36)
-                {
-                    $j++;
-                    $consec = 0;
-                }
-            }else{
-                if($consec > 28)
-                {
-                    $j++;
-                    $consec = 0;
-                }
-            }
-
-            $ninefproducts[$j][] = $nf;
-        }
-
-       // pd($ninefproducts);
-
-        foreach($ninefproducts as $index=>$order)
-        {
-        //dd($order);   
-            // if it is in left section, add a new page
-            if($index % 2 == 0)
-            {
-        
-                $pdf->AddPage();
-                $this->generateHeader($pdf);
-        
-              /*  $pdf->SetFont('chi','',10);
-                $pdf->setXY(10, $pdf->h-30);
-                $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
-        
-                $pdf->setXY(60, $pdf->h-30);
-                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
-        
-                $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
-                $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);*/
-
-                $pdf->SetFont('chi','',10);
-                $pdf->setXY(110, $pdf->h-30);
-                $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
-
-                $pdf->setXY(170, $pdf->h-30);
-                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
-
-                $pdf->Line(110, $pdf->h-35, 150, $pdf->h-35);
-                $pdf->Line(170, $pdf->h-35, 210, $pdf->h-35);
-        
-                $pdf->setXY(0, 0);
-        
-                // add a straight line
-        
-                $pdf->Line(105, 45, 105, 280);
-        
-                $pdf->SetFont('chi','',10);
-               $pdf->setXY(500, $pdf->h-22);
-               // $pdf->setXY(500, $pdf->h-0);
-                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index/2+1, ceil(count($ninefproducts)/2)) , 0, 0, "R");
-            }
-        
-            //$pdf->Cell(50, 50, "NA", 0, 0, "L");
-        
-            // define left right position coordinate x differences
-            $y = 55;
-            if($index % 2 == 0)
-            {
-                $base_x = 10;
-            }
-            else
-            {
-                $base_x = 110;
-            }
-        
-            foreach($order as $o)
-            {
-
-                $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',10);
-                $pdf->Cell(0, 0, sprintf("%s (%s)", $o['customerInfo']['customerName_chi'], $o['customerInfo']['customerId']), 0, 0, "L");
-
-                $y += 5;
-                $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',9);
-                $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");
-                
-                $pdf->setXY($base_x + 64, $y);
-                $pdf->Cell(20, 0, sprintf("TOTAL: HK$%s", $o['totalAmount']), 0, 0, "R");
-                 
-                $pdf->SetFont('chi','',9);
-                 
-                $y += 5;
-                 
-                foreach($o['items'] as $itemUnitlv)
-                {
-                    foreach($itemUnitlv as $item)
-                    {
-
-                        $pdf->setXY($base_x + 0, $y);
-                        $pdf->Cell(0, 0, "    " . $item['name'], 0, 0, 'L');
-                         
-                        $pdf->setXY($base_x + 37, $y);
-                        $pdf->Cell(0, 0, "    $" . $item['itemPrice'], 0, 0, 'L');
-                        
-                        $pdf->setXY($base_x + 53, $y);
-                        $pdf->Cell(0, 0, "x", 0, 0, 'L');
-                        
-                        $pdf->setXY($base_x + 53, $y);
-                        $pdf->Cell(0, 0, "    " . sprintf("%s", $item['counts']), 0, 0, 'L');
-                         
-                        $pdf->setXY($base_x + 66, $y);
-                        $pdf->Cell(0, 0, "" . $item['unit_txt'], 0, 0, 'L');
-                         
-                        $pdf->setXY($base_x + 70, $y);
-                        $pdf->Cell(0, 0, "=", 0, 0, 'L');
-                        
-                        $pdf->setXY($base_x + 72, $y);
-
-                        $pdf->Cell(0, 0, sprintf(" $%s", round($item['itemPrice']*$item['counts']*(100-$item['discount'])/100,2) ), 0, 0, 'L');
-
-                        if($item['discount']>0){
-                            $pdf->setXY($base_x + 85, $y);
-                            $pdf->Cell(0, 0, "(".$item['discount']."%)", 0, 0, 'L');
-                        }
-                        $y +=  5;
-                    }
-                }
-                 
-                
-                $y += 5;
-        
-                $pdf->SetDash(1, 1);
-                $pdf->Line($base_x + 2, $y-5, $base_x + 85, $y-5);
-            }
-
-
-        }
-        
-        // output
-        return [
-            'pdf' => $pdf,
-            'remark' => sprintf("Customer Break Down Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
-            'uniqueId' => $this->_uniqueid,
-        ];
-    }
 }
