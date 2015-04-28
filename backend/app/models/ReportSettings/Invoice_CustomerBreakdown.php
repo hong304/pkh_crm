@@ -155,6 +155,7 @@ class Invoice_CustomerBreakdown {
     {
 
         $pdf = new PDF();
+        //$pdf->addPage("P", "A4");
         $i = 0;
 
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
@@ -166,28 +167,40 @@ class Invoice_CustomerBreakdown {
 
         foreach($ninef as $c=>$nf)
         {
-            $consec += (count($nf['items'])+5);
-            $nf['consec'] = $ninef[$c]['consec'] = $consec;
+            $consec = $consec + count($nf['items'])+4;
+            $nf['consec'] = $ninef[$c]['consec'] = count($nf['items']);
+            $nf['acccon'] = $consec;
 
             // we can have 20 items as most per section
+            $ninefproducts[$j][] = $nf;
             if($j % 2 == 0){
+                if($consec > 40)
+                {
+
+                   // p($ninefproducts[$j]);
+                    array_pop($ninefproducts[$j]);
+                    $nf['acccon'] = count($nf['items'])+4;
+                    $j++;
+                    $consec = $nf['acccon'];
+                    $ninefproducts[$j][] = $nf;
+                   // pd($ninefproducts[$j-1]);
+                }
+
+          }else{
                 if($consec > 38)
                 {
+                    array_pop($ninefproducts[$j]);
+                    $nf['acccon'] = count($nf['items'])+4;
                     $j++;
-                    $consec = 0;
-                }
-            }else{
-                if($consec > 28)
-                {
-                    $j++;
-                    $consec = 0;
+                    $consec = $nf['acccon'];
+                    $ninefproducts[$j][] = $nf;
                 }
             }
+            //p($consec);
 
-            $ninefproducts[$j][] = $nf;
         }
 
-        // pd($ninefproducts);
+    // pd($ninefproducts);
 
         foreach($ninefproducts as $index=>$order)
         {
@@ -196,7 +209,7 @@ class Invoice_CustomerBreakdown {
             if($index % 2 == 0)
             {
 
-                $pdf->AddPage();
+                $pdf->addPage("P", "A4");
                 $this->generateHeader($pdf);
 
                 /*  $pdf->SetFont('chi','',10);
@@ -248,7 +261,7 @@ class Invoice_CustomerBreakdown {
             {
 
                 $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',10);
+                $pdf->SetFont('chi','',9);
                 $pdf->Cell(0, 0, sprintf("%s (%s)", $o['customerInfo']['customerName_chi'], $o['customerInfo']['customerId']), 0, 0, "L");
 
                 $y += 5;

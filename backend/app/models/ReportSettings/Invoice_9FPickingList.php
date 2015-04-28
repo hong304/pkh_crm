@@ -232,15 +232,19 @@ class Invoice_9FPickingList {
         foreach($ninef as $c=>$nf)
         {
 
-            $consec += count($nf['items']);
-            $nf['consec'] = $ninef[$c]['consec'] = $consec;
+            $consec += count($nf['items'])+2;
+            $nf['consec'] = $ninef[$c]['consec'] = count($nf['items']);
+            $nf['acccon'] = $consec;
 
             // we can have 20 items as most per section
             $ninefproducts[$j][] = $nf;
-            if($consec > 20)
+            if($consec > 40)
             {
+                array_pop($ninefproducts[$j]);
+                $nf['acccon'] = count($nf['items'])+2;
                 $j++;
-                $consec = 0;
+                $consec = $nf['acccon'];
+                $ninefproducts[$j][] = $nf;
             }
         }
 
@@ -281,7 +285,7 @@ class Invoice_9FPickingList {
             $y = 55;
             if($index % 2 == 0)
             {
-                $base_x = 10;
+                $base_x = 5;
             }
             else
             {
@@ -316,7 +320,7 @@ class Invoice_9FPickingList {
                         $pdf->setXY($base_x + 70, $y);
                         $pdf->Cell(0, 0, "    " . sprintf("%s", $item['counts']), 0, 0, 'L');
 
-                        $pdf->setXY($base_x + 75, $y);
+                        $pdf->setXY($base_x + 77, $y);
                         $pdf->Cell(0, 0, "    " . $item['unit_txt'], 0, 0, 'L');
 
                         $y +=  5;
