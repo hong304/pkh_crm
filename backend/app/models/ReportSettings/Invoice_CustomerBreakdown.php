@@ -95,7 +95,7 @@ class Invoice_CustomerBreakdown {
                                     'unit_txt' => str_replace(' ', '', $item->productUnitName),
                                     'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
                                     'stdPrice' => $productDetail->productStdPrice[$unit],
-                                    'itemPrice' => $item->productPrice,
+                                    'itemPrice' => '-'.$item->productPrice,
                                     'discount' => $item->productDiscount,
                                 ];
                                 // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
@@ -133,17 +133,16 @@ class Invoice_CustomerBreakdown {
                            $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
 
                        }
-                           $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
+
+
+
                            $this->goods['1F9F'][$customerId]['invoiceId'][] = $invoiceQ->invoiceId;
 
-
-
-
                        }
-
+                       $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
 
                    }
-                  // pd($amount);
+
                });
 
        $this->data = $this->goods;
