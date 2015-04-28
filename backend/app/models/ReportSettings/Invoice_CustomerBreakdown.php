@@ -129,11 +129,11 @@ class Invoice_CustomerBreakdown {
                            // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
 
                            $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
-                           $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
+
                            $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
 
                        }
-
+                           $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
                            $this->goods['1F9F'][$customerId]['invoiceId'][] = $invoiceQ->invoiceId;
 
 
@@ -143,11 +143,11 @@ class Invoice_CustomerBreakdown {
 
 
                    }
-
+                  // pd($amount);
                });
 
        $this->data = $this->goods;
-        //pd($this->data);
+
        return $this->data;        
     }
 

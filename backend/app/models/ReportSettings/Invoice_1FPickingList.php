@@ -305,7 +305,7 @@ class Invoice_1FPickingList {
             // Notes part
             if($i == 0)
             {
-                for($note=0;$note<=4;$note++)
+                for($note=0;$note<=3;$note++)
                 {
                     $pdf->Line(10, $y, 27, $y);
                     $pdf->Line(40, $y, 100, $y);

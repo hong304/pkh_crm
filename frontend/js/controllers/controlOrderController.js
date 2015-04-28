@@ -295,6 +295,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
                 $scope.order.deliveryDate = inf.deliveryDate_date;
                 $scope.order.dueDate = inf.dueDateDate;
+                    $scope.order.status = inf.invoiceStatus;
 
                 $scope.order.zoneId = res.deliveryZone;
         		$scope.order.zoneName = data.entrieinfo;
