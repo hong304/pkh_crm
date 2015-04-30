@@ -530,7 +530,8 @@ console.log($scope.order.status);
 				//$("#unit_" + i).prepend('<option value="0">Carton</option>');
 				availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);		
 			}			 
-			$scope.product[i].availableunit = availableunit.reverse();
+			//$scope.product[i].availableunit = availableunit.reverse();
+            $scope.product[i].availableunit = availableunit;
 			$scope.product[i].unit = $scope.product[i].availableunit[0];
 			$scope.updateStandardPrice(i);
 
