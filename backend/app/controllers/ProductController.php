@@ -136,7 +136,7 @@ class ProductController extends BaseController {
         else
         {
             $keyword = str_replace('*', '%', $keyword); 
-            $productData = Product::where('productName_chi', 'LIKE', '%' . $keyword . '%')
+            $productData = Product::select('productName_chi','productId')->where('productName_chi', 'LIKE', '%' . $keyword . '%')
                                     ->orwhere('productId', 'LIKE', '%' . $keyword . '%')
                                     ->limit(30)->get();
              
