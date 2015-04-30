@@ -34,7 +34,7 @@ class Report_Archived {
             $reports = $reports->where('created_by', Auth::user()->id);
         }
 
-        $reports = $reports->orderby('id', 'desc')->paginate(30);;
+        $reports = $reports->orderby('created_at', 'desc')->paginate(30);;
         
         
         $this->data = $reports;

@@ -55,6 +55,17 @@ class HomeController extends BaseController {
 
             return Response::json($data);
         }
+
+        if($mode == 'check'){
+            $date = str_replace('-','',$info['info']['date']);
+            $id = $date.'%-'.$info['info']['f9_version'].'-9';
+            $result = ReportArchive::where('id','LIKE',$id)->first();
+            if($result)
+                return 1;
+            else
+                return 0;
+
+        }
         if($mode == 'post')
         {
 

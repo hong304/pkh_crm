@@ -69,6 +69,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
       $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
                     $scope.version = res;
+                    console.log($scope.version);
             });
 
         document.getElementById('shift').style.display='block';
@@ -91,6 +92,16 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
     }
 
     $scope.submitStaffForm = function(){
+
+
+
+        $http.post(iutarget, {info: $scope.version, mode : 'check'})
+            .success(function(res, status, headers, config){
+                    if(parseInt(res) == false){
+                        alert('產生備貨單前請列印之前的版本');
+                        return false;
+                    }
+            });
 
         $("#generalPickingModal").modal('hide');
 
