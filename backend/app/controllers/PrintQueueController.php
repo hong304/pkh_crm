@@ -12,7 +12,19 @@ class PrintQueueController extends BaseController {
 
     public $invoiceIds = [];
 
+    public function __construct()
+    {
+        $count = PrintQueue::select('invoiceId', DB::raw('count(*) as total'))->wherein('target_path', explode(',', Auth::user()->temp_zone))->wherein('status',['queued','fast-track'])
+            ->groupBy('invoiceId')->having('total','>',1)
+            ->get();
 
+        if($count){
+            foreach($count as $v){
+                $delete = PrintQueue::where('invoiceId',$v->invoiceId)->orderBy('insert_time','desc')->first();
+                $delete->delete();
+            }
+        }
+    }
     public function jsonGetUnprintJobs()
     {
         Auth::onceUsingId("27");
@@ -22,7 +34,7 @@ class PrintQueueController extends BaseController {
 
         if($action == 'update')
         {
-           Printlog::wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
+            Printlog::wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
         }
         else
         {
@@ -37,35 +49,35 @@ class PrintQueueController extends BaseController {
         return Response::json($returnCustom);
     }
 
-  /*  public function jsonGetUnprintJobs()
-    {
-        Auth::onceUsingId("27");
-        
-        $returnCustom = [];
-        $action = Input::get('action');
-        
-        if($action == 'update')
-        {
-            DB::table('PrintQueue')->wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
-        }
-        else
-        {
-       $jobs = PrintQueue::wherein('status', ['queued', 'fast-track'])->where('target_time', '<', time())->OrderBy('file_path','desc')->get();
-                        $returnCustom = [
-                            'currentTimeStamp' => time(),
-                            'jobs' => $jobs,
-                        ];
+    /*  public function jsonGetUnprintJobs()
+      {
+          Auth::onceUsingId("27");
 
-        }
+          $returnCustom = [];
+          $action = Input::get('action');
 
+          if($action == 'update')
+          {
+              DB::table('PrintQueue')->wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
+          }
+          else
+          {
+         $jobs = PrintQueue::wherein('status', ['queued', 'fast-track'])->where('target_time', '<', time())->OrderBy('file_path','desc')->get();
+                          $returnCustom = [
+                              'currentTimeStamp' => time(),
+                              'jobs' => $jobs,
+                          ];
 
+          }
 
 
 
 
 
-        return Response::json($returnCustom);
-    } */
+
+
+          return Response::json($returnCustom);
+      } */
 
     //queryInvoice - 列印記錄
     public function instantPrint()
@@ -74,26 +86,28 @@ class PrintQueueController extends BaseController {
         $job = PrintQueue::where('job_id', $jobId)->first();
         $job->target_time = time();
         $job->status = "downloaded;passive";
-       // $job->status = "fast-track";
+        // $job->status = "fast-track";
         $job->save();
 
         $jobs = PrintQueue::where('job_id', $jobId)->lists('invoiceId');
-        if($jobs)
+        if($jobs) {
             $this->mergeImage($jobs);
+            Invoice::wherein('invoiceId',$jobs)->update(['printed'=>1]);
+        }
     }
-    
+
     public function getAllPrintJobsWithinMyZone()
     {
         // list jobs that are created since 3 days ago. 
-      //  p(Auth::user()->temp_zone);
+        //  p(Auth::user()->temp_zone);
 
         $job = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
-                            ->where('insert_time', '>', strtotime("3 days ago"))
-                            ->where('status','!=','dead:regenerated')
-                             ->where('status','!=','downloaded;passive')
-                            ->with('staff')->with('client')->leftJoin('Invoice', function($join) {
-                                    $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
-                                })
+            ->where('insert_time', '>', strtotime("3 days ago"))
+            ->where('status','!=','dead:regenerated')
+            ->where('status','!=','downloaded;passive')
+            ->with('staff')->with('client')->leftJoin('Invoice', function($join) {
+                $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+            })
 
             ->where(function($query){
                 $query->where('Invoice.invoiceStatus','2')
@@ -102,8 +116,8 @@ class PrintQueueController extends BaseController {
                     ->orwhere('Invoice.invoiceStatus','98')
                     ->orwhere('Invoice.invoiceStatus','97');
             })
-                            ->orderBy('insert_time', 'desc')
-                            ->get();
+            ->orderBy('insert_time', 'desc')
+            ->get();
 
         $job1 = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
             ->where('insert_time', '>', strtotime("3 days ago"))
@@ -126,7 +140,7 @@ class PrintQueueController extends BaseController {
 
         $jobs['queued'] = $job;
         $jobs['printed'] = $job1;
-    //  pd($jobs);
+        //  pd($jobs);
 
         return Response::json($jobs);
     }
@@ -134,41 +148,77 @@ class PrintQueueController extends BaseController {
 
     public function printSelectedJobsWithinMyZone(){
 
-        $jobId = Input::get('print');
-        $newjobId[] = '';
-        foreach ($jobId as $k=>$v)
+
+        $mode = Input::get('mode');
+
+        if($mode == 'today'){
+
+            foreach(explode(',', Auth::user()->temp_zone) as $k => $v){
+                $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
+                    ->leftJoin('Invoice', function($join) {
+                        $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+                    })
+                    ->where(function($query){
+                        $query->where('Invoice.invoiceStatus','2')
+                            ->orwhere('Invoice.invoiceStatus','97')
+                            ->orwhere('Invoice.invoiceStatus','98');
+                    })->where('Invoice.deliveryDate',strtotime("00:00:00"))
+
+                    ->lists('Invoice.invoiceId');
+
+
+                if($result){
+                    $this->mergeImage($result);
+                    Invoice::wherein('invoiceId',$result)->update(['printed'=>1]);
+                }
+
+                $updatepqs = PrintQueue::where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
+                    ->leftJoin('Invoice', function($join) {
+                        $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+                    })
+                    ->where(function($query){
+                        $query->where('Invoice.invoiceStatus','2')
+                            ->orwhere('Invoice.invoiceStatus','97')
+                            ->orwhere('Invoice.invoiceStatus','98');
+                    })->where('Invoice.deliveryDate',strtotime("00:00:00"))->get();
+
+                foreach($updatepqs as $updatepq){
+                    $updatepq->target_time =time();
+                    $updatepq->status = 'downloaded;passive';
+                    $updatepq->save();
+                }
+
+            }
+
+
+        }
+
+        if($mode == 'selected'){
+            $ojobId = Input::get('print');
+            $jobId[] = '';
+            foreach ($ojobId as $k=>$v)
                 if($v['collect'])
-                    $newjobId[] =  $v['id'];
+                    $jobId[] =  $v['id'];
 
-        array_shift($newjobId);
+            array_shift($jobId);
 
-            PrintQueue::wherein('job_id', $newjobId)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
-
-
-            $jobs = PrintQueue::wherein('job_id', $newjobId)->lists('invoiceId');
-            if($jobs)
+            PrintQueue::wherein('job_id', $jobId)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
+            $jobs = PrintQueue::where('job_id', $jobId)->lists('invoiceId');
+            if($jobs) {
                 $this->mergeImage($jobs);
+                Invoice::wherein('invoiceId',$jobs)->update(['printed'=>1]);
+            }
+        }
+
 
 
     }
 
     public function printAllPrintJobsWithinMyZone()
     {
-        if(Auth::guest())
-            Auth::onceUsingId("46");
+        //    if(Auth::guest())
+        //      Auth::onceUsingId("46");
 
-
-
-        $count = PrintQueue::select('invoiceId', DB::raw('count(*) as total'))->wherein('target_path', explode(',', Auth::user()->temp_zone))->wherein('status',['queued','fast-track'])
-            ->groupBy('invoiceId')->having('total','>',1)
-            ->get();
-
-        if($count){
-            foreach($count as $v){
-                $delete = PrintQueue::where('invoiceId',$v->invoiceId)->orderBy('insert_time','desc')->first();
-                $delete->delete();
-            }
-        }
 
         foreach(explode(',', Auth::user()->temp_zone) as $k => $v){
             $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->where('insert_time', '>', strtotime("3 days ago"))
@@ -185,19 +235,19 @@ class PrintQueueController extends BaseController {
                 ->lists('Invoice.invoiceId');
 
 
-           if($result){
-               $this->mergeImage($result);
+            if($result){
+                $this->mergeImage($result);
                 Invoice::wherein('invoiceId',$result)->update(['printed'=>1]);
-           }
+            }
 
         }
-       PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
+        PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
             ->wherein('status', ['queued', 'fast-track'])
             ->update(['target_time'=>time(),'status'=>'downloaded;passive']);
 
-      // return Response::json(['affected'=>$affected_jobs]);
+        // return Response::json(['affected'=>$affected_jobs]);
     }
-    
+
     public function rePrint()
     {
         $invoiceId = Input::get('invoiceId');
@@ -208,12 +258,17 @@ class PrintQueueController extends BaseController {
 
     public function getInvoiceStatusMatchPrint(){
 
+        $mode = Input::get('mode');
+
         $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
             ->wherein('invoiceStatus', ['1', '3'])
             ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
-            ->groupBy('invoiceStatus', 'zoneId')
-            ->with('zone')
-            ->get();
+            ->groupBy('invoiceStatus', 'zoneId');
+
+            if($mode == 'today')
+                $invoices = $invoices->where('deliveryDate',strtotime('00:00:00'));
+
+        $invoices = $invoices->with('zone')->get();
 
         $summary['countInDataMart'] = 0;
 
@@ -298,13 +353,13 @@ class PrintQueueController extends BaseController {
 
         $pdf->Output($path, "F");
 
-            $print_log = new Printlog();
-            $print_log->file_path = $_SERVER['backend'].'/'.$filename;
-            $print_log->status = 'queued';
-            $print_log->target_path = $invoiceImage[0]->zoneId;
-            $print_log->invoiceIds = implode(',',$Ids);
-            $print_log->count = count($Ids);
-            $print_log->save();
+        $print_log = new Printlog();
+        $print_log->file_path = $_SERVER['backend'].'/'.$filename;
+        $print_log->status = 'queued';
+        $print_log->target_path = $invoiceImage[0]->zoneId;
+        $print_log->invoiceIds = implode(',',$Ids);
+        $print_log->count = count($Ids);
+        $print_log->save();
     }
-    
+
 }

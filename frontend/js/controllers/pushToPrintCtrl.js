@@ -28,11 +28,21 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     	//$interval.cancel(intervalPromise);
     });
 
+    $scope.printToday = function(){
+        $http({
+            method: 'POST',
+            url: printSelect,
+            data: {mode:'today'}
+        }).success(function () {
+            $scope.updatePrintQueue();
+        });
+    }
+
     $scope.printSelect = function(){
         $http({
             method: 'POST',
             url: printSelect,
-            data: {print:$scope.checkid}
+            data: {print:$scope.checkid,mode:'selected'}
         }).success(function () {
             $scope.updatePrintQueue();
         });
