@@ -204,14 +204,14 @@ class Invoice_9FPickingList {
     # PDF Section
     public function generateHeader($pdf)
     {
-        $this->_shift = ($this->_shift== 1)?'早班':'晚班';
+        $shift = ($this->_shift== 1)?'早班':'晚班';
         $pdf->SetFont('chi','',18);
         $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
         $pdf->Cell(0, 10,$this->_reportTitle,0,1,"C");
         $pdf->SetFont('chi','U',13);
         $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT), 0, 2, "L");
-        $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date)."(".$this->_shift.")", 0, 2, "L");
+        $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date)."(".$shift.")", 0, 2, "L");
         $pdf->setXY(0, 0);
         $pdf->SetFont('chi','', 9);
         $pdf->Code128(10,$pdf->h-15,$this->_uniqueid,50,10);
