@@ -20,7 +20,7 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
 
         if(e.keyCode == 38) // up
         {
-            e.preventDefault();
+           // e.preventDefault();
             $("#suggestion_row_" + suggestion).css('background', '');
             suggestion--;
             $("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
@@ -28,7 +28,7 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
         }
         if(e.keyCode == 40) //down
         {
-           e.preventDefault();
+           //e.preventDefault();
             $("#suggestion_row_" + suggestion).css('background', '');
             suggestion++;
             $("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
