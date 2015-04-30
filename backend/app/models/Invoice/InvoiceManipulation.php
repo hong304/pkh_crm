@@ -243,7 +243,7 @@ class InvoiceManipulation {
 	        $this->im->invoiceStatus = $this->determineStatus();
 
 
-            Invoice::where('invoiceId',$this->invoiceId)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);
+            Invoice::where('invoiceId',$this->invoiceId)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0])->where('version',true);
 
 	    }
 	}
