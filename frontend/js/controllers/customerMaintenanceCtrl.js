@@ -69,6 +69,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 			'paymentTermId'		:	'',
 			'routePlanningPriority':	'',
              'remark' : '',
+        'shift' : ''
 	};
 	
 	$scope.submitbtn = true;
@@ -122,6 +123,19 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         	$scope.customerInfo.status = $scope.statuscat[pos];
 
 
+                var statuscat1 = [];
+                statuscat1 = statuscat1.concat([{value: 1, label: "早班"}]);
+                statuscat1 = statuscat1.concat([{value: 2, label: "晚班"}]);
+                $scope.statuscat1 = statuscat1;
+
+                var pos = $scope.statuscat1.map(function(e) {
+
+                    return e.value;
+                }).indexOf(parseInt(res.shift));
+
+
+
+                $scope.customerInfo.shift = $scope.statuscat1[pos];
 
     		$("#customerFormModal").modal({backdrop: 'static'});
 
@@ -142,10 +156,18 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 		statuscat = statuscat.concat([{value: '1', label: "Normal"}]);
 		statuscat = statuscat.concat([{value: '2', label: "Suspended"}]);
     	$scope.statuscat = statuscat;
-    	
+
+        var statuscat1 = [];
+        statuscat1 = statuscat1.concat([{value: '1', label: "早班"}]);
+        statuscat1 = statuscat1.concat([{value: '2', label: "晚班"}]);
+        $scope.statuscat1 = statuscat1;
+
+    	//console.log($scope.statuscat );
+
     	$scope.submitbtn = true;
     	$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
     	$scope.customerInfo.status = $scope.statuscat[0];
+        $scope.customerInfo.shift =     $scope.statuscat1[0];
     	$("#customerFormModal").modal({backdrop: 'static'});
     	
     }
@@ -166,13 +188,8 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     $scope.submitCustomerForm = function()
     {
     	if(
-    			$scope.customerInfo.address_chi == "" ||
-    			$scope.customerInfo.customerName_chi == "" ||
-    			$scope.customerInfo.phone_1 == "" ||
-    			$scope.customerInfo.contactPerson_1 == "" ||
-    			$scope.customerInfo.routePlanningPriority == "" ||
-    			$scope.customerInfo.deliveryZone == "" ||
-    			$scope.customerInfo.paymentTermId == ""
+    			$scope.customerInfo.address_chi == ""
+
     	)
     	{
     		alert('請輸入所需資料');

@@ -6,6 +6,7 @@ class Invoice_CustomerBreakdown {
     private $_reportTitle = "";
     private $_date = "";
     private $_zone = "";
+    private $_shift = "";
     private $_invoices = [];
     private $_uniqueid = "";
     
@@ -20,7 +21,8 @@ class Invoice_CustomerBreakdown {
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-         
+         $this->_shift = $indata['filterData']['shift'];
+
         // check if user has clearance to view this zone        
         if(!in_array($this->_zone, $permittedZone))
         {
@@ -44,7 +46,7 @@ class Invoice_CustomerBreakdown {
         $this->goods = ['1F9F'=>[]];
         $this->returngoods = ['1F9F'=>[]];
 
-        Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->where('shift', $this->_shift)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
                ->chunk(500, function($invoicesQuery){

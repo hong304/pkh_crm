@@ -31,7 +31,7 @@ class CustomerController extends BaseController {
                $keyword['zone']['zoneId'] = '';
 
           // $keyword = str_replace(array('?', '*'), '%', $keyword);
-           $clientArray = Customer::select('customerId','remark', 'customerName_chi', 'address_chi', 'deliveryZone', 'phone_1', 'routePlanningPriority', 'paymentTermId', 'discount')
+           $clientArray = Customer::select('*')
 
                                    ->where('status', '1')
                                    ->where(function($query) use($keyword)

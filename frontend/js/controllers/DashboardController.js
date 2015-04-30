@@ -4,7 +4,8 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
 
     $scope.picking = {
         'date'	:	'',
-        'zone'	:	''
+        'zone'	:	'',
+        'shift' : '1'
     };
 
     var iutarget = $scope.endpoint + '/generalPickingStatus.json';
@@ -12,6 +13,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
     $scope.$on('$viewContentLoaded', function() {   
         // initialize core components
         Metronic.initAjax();
+
     });
     
     
@@ -58,22 +60,33 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
 
         $("#generalPickingModal").modal({backdrop: 'static'});
+
+
     }
 
     $scope.updateZone = function(){
-        $http.post(iutarget, {info: $scope.picking, mode: 'get'})
+
+      $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
-
                     $scope.version = res;
-
             });
+
+        document.getElementById('shift').style.display='block';
+        document.getElementById('datepicker').style.display='block';
+
     }
 
     $scope.updateDate = function(){
         $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
                 $scope.version = res;
+            });
+    }
 
+    $scope.updateShift = function(){
+        $http.post(iutarget, {info: $scope.picking, mode: 'get'})
+            .success(function(res, status, headers, config){
+                $scope.version = res;
             });
     }
 

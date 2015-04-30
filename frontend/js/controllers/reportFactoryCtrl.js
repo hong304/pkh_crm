@@ -11,7 +11,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     $scope.action = '';
 	$scope.report = "";
 	$scope.filterData = {
-			
+			'shift' : '1'
 	};
 	
     $scope.$on('$viewContentLoaded', function() {
@@ -47,12 +47,29 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     			res.filterOptions.forEach(function(options){
     				if(options.type == "date-picker")
     				{
+
+                       var today = new Date();
+                        var plus = today.getDay() == 6 ? 2 : 1;
+
+                        var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+                        if(today.getHours() < 12)
+                        {
+                            var nextDay = today;
+                        }
+                        else
+                        {
+                            var nextDay = currentDate;
+                        }
+                        var day = nextDay.getDate();
+                        var month = nextDay.getMonth() + 1;
+                        var year = nextDay.getFullYear();
+
     					$("#" + options.id).datepicker({
     	    	            rtl: Metronic.isRTL(),
     	    	            orientation: "left",
     	    	            autoclose: true
     	    	        });
-    					$("#" + options.id).datepicker( "setDate" , options.defaultValue );
+    					$("#" + options.id).datepicker( "setDate", year + '-' + month + '-' + day );
     				}
 
     				else if (options.type == "single-dropdown")
@@ -86,7 +103,6 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     		$scope.report = $sce.trustAsHtml(res);
 
     		Metronic.unblockUI();
-
 
 
                 $http.post(querytarget, {reportId: $location.search().id, filterData: $scope.filterData, output: "setting"})

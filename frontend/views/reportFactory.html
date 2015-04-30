@@ -108,7 +108,18 @@
 					</div>
 				</div>
 			</div>
-			
+
+            <div class="portlet-body" id="shift" data-ng-if="f.type == 'single-dropdown'">
+
+                <div class="md-col-12">
+                    <select class="form-control"
+                            ng-model="filterData.shift" >
+                        <option value='1'>早班</option>
+                        <option value='2'>晚班</option>
+                    </select>
+                </div>
+            </div>
+
 			<!-- date-picker -->
 			<div class="portlet-body" data-ng-if="f.type == 'date-picker'">				
 				<div class="md-col-12" style="margin-bottom:15px;">

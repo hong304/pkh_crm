@@ -76,7 +76,7 @@ class InvoiceManipulation {
         // updated on 2015.03.11 by Cyrus ref PKHC-18 to branch PKHC-18-allow-back-day-order
         
 	    $orderrules = [
-	        'clientId' => ['required', 'alpha_num', 'exists:Customer,customerId'],
+	        'clientId' => ['required', 'exists:Customer,customerId'],
 	        'invoiceDate' => ['required'],
 	        'deliveryDate' => ['required'],
 	        'dueDate' => ['required'],
@@ -219,6 +219,7 @@ class InvoiceManipulation {
 	        $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
 	        $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
 	        $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
+            $this->im->shift = $this->temp_invoice_information['shift'];
 	        $this->im->created_by = Auth::user()->id;
 	        $this->im->invoiceStatus = $this->determineStatus();
 	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount']; 
@@ -233,11 +234,17 @@ class InvoiceManipulation {
             $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
             $this->im->invoiceDiscount = $this->temp_invoice_information['discount'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
+            $this->im->shift = $this->temp_invoice_information['shift'];
+
 	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
 	        $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
 	        $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
 	        $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
 	        $this->im->invoiceStatus = $this->determineStatus();
+
+
+            Invoice::where('invoiceId',$this->invoiceId)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);
+
 	    }
 	}
 	

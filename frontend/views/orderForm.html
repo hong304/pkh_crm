@@ -80,9 +80,9 @@
 									</label>
 									<div class="col-md-6">
 										<select class="form-control" ng-model="order.status" ng-change="statusChange();">
-											<option value="1" selected="selected">1. 正常</option>
-                                            <option data-ng-fif="systemInfo.permission.customer_maintenance == true" value="98" selected="selected">2. 退貨單</option>
-                                            <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="97" selected="selected">3. 退款單</option>
+											<option value="2">1. 正常</option>
+                                            <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="98">2. 退貨單</option>
+                                            <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="97">3. 退款單</option>
 										</select>
 									</div>
 								</div>
@@ -91,11 +91,14 @@
 							<div class="col-md-3">
 								<div class="form-group">
 									<label class="col-md-5 control-label" style="text-align:left;">
-									員工
+									Shift
 									</label>
 									<div class="col-md-6">
-										<input type="text" ng-model="order.staff" class="form-control" value="{{systemInfo.realusername}} ({{systemInfo.username}})" disabled>
-									</div>
+                                        <select class="form-control" ng-model="order.shift" id="shift">
+                                            <option value="1">早班</option>
+                                            <option value="2">晚班</option>
+                                        </select>
+                                    </div>
 								</div>
 							</div>							
 						</div>

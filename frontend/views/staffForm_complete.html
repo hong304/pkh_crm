@@ -11,7 +11,7 @@
 					</div>
 					<div class="actions btn-set">
 						<button class="btn green-haze btn-circle" data-ng-click="saveProfile();"><i class="fa fa-check"></i>儲存</button>
-						
+
 					</div>
 				</div>
 				<div class="portlet-body">
@@ -86,27 +86,27 @@
 										* </span>
 										</label>
 										<div class="col-md-10">
-										<select class="form-control" 
-												ng-model="user.roles" 
-												data-ng-options="x.name for x in availableroles track by x.id" >											
+										<select class="form-control"
+												ng-model="user.roles"
+												data-ng-options="x.name for x in availableroles track by x.id" >
 										</select>
 											<span class="help-block">用戶將使用此密碼作登入用途, 留空為不更改預設密碼  </span>
 										</div>
 									</div>
-									
-									
+
+
 								</div>
 							</div>
 							<div class="tab-pane" id="tab_zone">
 								<div class="form-body">
 									<div class="form-group">
 										<div class="col-md-12">
-											<label data-ng-repeat="z in zones" class="col-md-2">											  
-												  <input type="checkbox" value="{{z.zoneId}}" ng-model="z.assigned"> {{z.zoneName}}<br/>											 
+											<label data-ng-repeat="z in zones" class="col-md-2">
+												  <input type="checkbox" value="{{z.zoneId}}" ng-model="z.assigned"> {{z.zoneName}}<br/>
 											</label>
 										</div>
 									</div>
-									
+
 								</div>
 							</div>
 							<div class="tab-pane" id="tab_loginrecord">
@@ -147,7 +147,7 @@
 									<td>
 										<span data-ng-if="lr.time_out > 1">{{lr.time_out * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</span>
 										<span data-ng-if="lr.time_out == false">NA</span>
-										
+
 									</td>
 									<td>
 										{{lr.mode}}
@@ -155,14 +155,14 @@
 									<td>
 										<button id="forcebtn_{{lr.hash}}" data-ng-click="logout(lr.hash);" data-ng-if="lr.time_out == false" class="btn btn-xs default btn-editable"><i class="fa fa-sign-out"></i> 登出及解鎖</button>
 									</td>
-									
+
 								</tr>
-								
+
 								</tbody>
 								</table>
 							</div>
-							
-							
+
+
 						</div>
 					</div>
 				</div>

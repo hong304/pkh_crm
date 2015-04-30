@@ -58,7 +58,7 @@ class Invoice_9FPickingList {
 
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], '9F'=>[]];
-        Invoice::select('*')->wherein('invoiceStatus', ['4'])->where('f9_picking_dl',false)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        Invoice::select('*')->where('version', true)->where('f9_picking_dl',false)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
             ->chunk(50, function($invoicesQuery){
@@ -106,20 +106,24 @@ class Invoice_9FPickingList {
                             ];
                             $this->goods['9F'][$customerId.$invoiceId]['customerInfo'] = $client->toArray();
                             $this->goods['9F'][$customerId.$invoiceId]['invoiceId'] = $invoiceId;
+
                         }
 
                     }
+                    if(isset($this->goods['9F'][$customerId.$invoiceId]))
+                        $this->goods['9F'][$customerId.$invoiceId]['revised'] = ($invoiceQ->revised == true)?"(修正)":'' ;
                 }
 
             });
 
-        usort($this->goods['9F'], function($elementA, $elementB) {
+      usort($this->goods['9F'], function($elementA, $elementB) {
             return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
         });
 
         $this->data = $this->goods;
         $this->data['version'] = $this->_version;
-        // pd($this->data);
+//pd($this->data);
+
         return $this->data;
     }
 
@@ -297,7 +301,7 @@ class Invoice_9FPickingList {
 
                 $pdf->setXY($base_x + 0, $y);
                 $pdf->SetFont('chi','',13);
-                $pdf->Cell(0, 0, sprintf("%s - %s (%s)", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi'], $o['customerInfo']['customerId']), 0, 0, "L");
+                $pdf->Cell(0, 0, sprintf("%s - %s %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi'],$o['revised']), 0, 0, "L");
 
                 $pdf->SetFont('chi','',11);
                 $pdf->setXY($base_x + 56, $y);

@@ -80,7 +80,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     	SharedService.setValue('clientRoute', c.routePlanningPriority, 'handleCustomerUpdate');
         SharedService.setValue('clientRemark', c.remark, 'handleCustomerUpdate');
     	SharedService.setValue('clientPaymentTermId', c.paymentTermId, 'handleCustomerUpdate');
-    	
+        SharedService.setValue('clientShift', c.shift, 'handleCustomerUpdate');
     	SharedService.setValue('clientDiscount', c.discount, 'handleCustomerUpdate');
     	
     	SharedService.setValue('clientSelectionCompleted', true, 'doneCustomerUpdate');

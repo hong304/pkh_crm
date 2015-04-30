@@ -4,10 +4,12 @@ class OrderController extends BaseController {
     
     public function jsonNewOrder()
     {
+
+
         $product = Input::get('product');
         $order = Input::get('order');
         $timer = Input::get('timer');
-        
+      //  pd($order);
         // Create the invoice
         $ci = new InvoiceManipulation($order['invoiceId']);
         $ci->setInvoice($order);
@@ -105,7 +107,7 @@ class OrderController extends BaseController {
         })
               ->where(function($query){
                 $query->where('Invoice.invoiceStatus','2')
-                    ->orwhere('Invoice.invoiceStatus','4')
+                    //->orwhere('Invoice.invoiceStatus','4')
                     ->orwhere('Invoice.invoiceStatus','97')
                     ->orwhere('Invoice.invoiceStatus','98');
             })->count();

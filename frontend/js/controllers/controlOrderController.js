@@ -44,7 +44,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	$scope.order = {
 		deliveryDate:	year + '-' + month + '-' + day,
 		dueDate		:	year + '-' + month + '-' + day,
-		status		:	'1',
+		status		:	'2',
 		referenceNumber	:	'',
 		zoneId		:	'',
         defaultZoneId : '',
@@ -59,6 +59,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		update		:	false,
 		invoiceId	:	'',
         print : 1,
+        shift : '',
 	};	
 	$scope.productStructure = {
 		dbid		:	'',
@@ -109,13 +110,13 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		$scope.order.route = SharedService.clientRoute;
         $scope.order.defaultRoute = SharedService.clientRoute;
 		$scope.order.discount = SharedService.clientDiscount;
+        $scope.order.shift = SharedService.clientShift;
         $scope.order.invoiceRemark = SharedService.clientRemark;
 		$scope.displayName = $scope.order.clientId + " (" + $scope.order.clientName + ")"; 
 		
 		$scope.order.paymentTerms = SharedService.clientPaymentTermId;
 		$scope.updatePaymentTerms();
 
-        $scope.getSameDayInvoice();
 
       //  console.log($scope.order);
 
@@ -181,7 +182,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		
 		// load last time invoice
 		$scope.getClientLastInvoice($scope.order.clientId);
-
+        $scope.getSameDayInvoice();
 		
 	});
 
@@ -295,14 +296,15 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
                 $scope.order.deliveryDate = inf.deliveryDate_date;
                 $scope.order.dueDate = inf.dueDateDate;
-                    $scope.order.status = inf.invoiceStatus;
-
+                $scope.order.status = inf.invoiceStatus;
+console.log($scope.order.status);
                 $scope.order.zoneId = res.deliveryZone;
         		$scope.order.zoneName = data.entrieinfo;
         		$scope.order.route = res.routePlanningPriority;
         		$scope.order.discount = inf.invoiceDiscount;
         		$scope.displayName = $scope.order.clientId + " (" + $scope.order.clientName + ")"; 
         		$scope.order.paymentTerms = inf.paymentTerms;
+                $scope.order.shift = inf.shift;
         		$scope.order.update = true;
         		$scope.order.invoiceNumber = inf.invoiceId;
         		$scope.order.invoiceId = inf.invoiceId;
@@ -1015,7 +1017,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     		var month = d.getMonth() + 1;
             month = ("0" + month).slice(-2);
     		$scope.order.dueDate = d.getFullYear() + '-' + month + '-' + d.getDate();  
-    		console.log(d, $scope.order.dueDate);
+    		//console.log(d, $scope.order.dueDate);
     	}
     }
     

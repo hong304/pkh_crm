@@ -4,6 +4,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 	
 	var querytarget = endpoint + "/getAllPrintJobsWithinMyZone.json";
 	var pushtarget = endpoint + "/printAllPrintJobsWithinMyZone.json";
+    var checkstatus = endpoint + "/getInvoiceStatusMatchPrint.json";
 	
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
@@ -23,36 +24,67 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     {    	
     	$http.get(querytarget)
     	.success(function(res){
-    		$scope.queue = res;    		
-    	});
+    		$scope.queue = res['queued'];
+            $scope.printed = res['printed'];
+            });
     }
     
     $scope.pushPrintQueue = function()
     {
-        bootbox.dialog({
-            message: "列印發票後將不能復原，確定要列印發票嗎？",
-            title: "列印發票",
-            buttons: {
-                success: {
-                    label: "取消",
-                    className: "green",
-                    callback: function() {
+        $http.get(checkstatus)
+            .success(function(res, status, headers, config){
+                if(res.countInDataMart>0) {
 
-                    }
-                },
-                danger: {
-                    label: "確定",
-                    className: "red",
-                    callback: function() {
-                        $http.get(pushtarget)
-                            .success(function(res, status, headers, config){
-                               $scope.updatePrintQueue();
-                                //alert('正在準備傳送至印表機...')
-                            });
-                    }
+
+                        var  reject = res['3'].countInDataMart;
+
+                       var pending = res['1'].countInDataMart;
+
+
+
+
+                    bootbox.dialog({
+                        message: reject+"張單被拒絕,處理完才可列印<br>"+pending+"張單等待批刻,處理完才可列印",
+                        title: "Error!!!",
+                        buttons: {
+                            success: {
+                                label: "取消",
+                                className: "green",
+                                callback: function() {
+
+                                }
+                            }
+                        }
+                    });
+                }else{
+                    bootbox.dialog({
+                        message: "列印發票後將不能復原，確定要列印發票嗎？",
+                        title: "列印發票",
+                        buttons: {
+                            success: {
+                                label: "取消",
+                                className: "green",
+                                callback: function() {
+
+                                }
+                            },
+                            danger: {
+                                label: "確定",
+                                className: "red",
+                                callback: function() {
+                                    $http.get(pushtarget)
+                                        .success(function(res, status, headers, config){
+                                            $scope.updatePrintQueue();
+                                            // alert('正在準備傳送至印表機...')
+                                        });
+                                }
+                            }
+                        }
+                    });
                 }
-            }
-        });
+            });
+
+
 
     }
     

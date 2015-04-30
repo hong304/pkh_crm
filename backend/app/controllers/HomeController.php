@@ -47,9 +47,14 @@ class HomeController extends BaseController {
         $mode = Input::get('mode');
         $info = Input::get('info');
 
-        if($mode == 'get')
-            $data = pickingListVersionControl::where('zone',$info['zone']['zoneId'])->where('date',$info['date'])->first();
+        if($mode == 'get'){
+            $data['info'] = pickingListVersionControl::where('zone',$info['zone']['zoneId'])->where('date',$info['date'])->where('shift',$info['shift'])->first();
+            $data['pending'] = Invoice::where('zoneId',$info['zone']['zoneId'])->where('deliveryDate',strtotime($info['date']))->where('shift',$info['shift'])->where('invoiceStatus',1)->where('version',false)->count();
+            $data['normal'] = Invoice::where('zoneId',$info['zone']['zoneId'])->where('deliveryDate',strtotime($info['date']))->where('shift',$info['shift'])->where('invoiceStatus',2)->where('version',false)->count();
+            $data['rejected'] = Invoice::where('zoneId',$info['zone']['zoneId'])->where('deliveryDate',strtotime($info['date']))->where('shift',$info['shift'])->where('invoiceStatus',3)->where('version',false)->count();
 
+            return Response::json($data);
+        }
         if($mode == 'post')
         {
 
@@ -57,9 +62,13 @@ class HomeController extends BaseController {
             $f9 = false;
             $deliveryDate = strtotime($info['date']);
 
-            Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',4)->update(['f9_picking_dl'=>1]);
+           // Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',4)->update(['f9_picking_dl'=>1]);
+            Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->where('version',true)->update(['f9_picking_dl'=>1]);
 
-            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
+
+           // $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
+            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->whereIn('invoiceStatus',[1,2])
+                ->where('f9_picking_dl','!=',1)->get();
 
             foreach($info_data as $v){
                  $q[]= $v->invoiceId;
@@ -78,12 +87,14 @@ class HomeController extends BaseController {
             }
 
 
-            $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->with('InvoiceItem')
-                ->update(['previous_status'=>DB::raw('invoiceStatus'),'invoiceStatus' => 4]);
+         //   $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->with('InvoiceItem')
+         //       ->update(['previous_status'=>DB::raw('invoiceStatus'),'invoiceStatus' => 4]);
 
+            Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->where('shift',$info['shift'])->with('InvoiceItem')
+             ->update(['previous_status'=>DB::raw('invoiceStatus'),'version' => true]);
 
+            $user = pickingListVersionControl::where('date',$info['date'])->where('zone',$info['zone']['zoneId'])->where('shift',$info['shift'])->first();
 
-            $user = pickingListVersionControl::where('date',$info['date'])->where('zone',$info['zone']['zoneId'])->first();
             if($user == null){
                 $newp =  new pickingListVersionControl();
                 if($f1)
@@ -92,6 +103,7 @@ class HomeController extends BaseController {
                     $newp->f9_version = 1;
                 $newp->date = $info['date'];
                 $newp->zone = $info['zone']['zoneId'];
+                $newp->shift = $info['shift'];
                 $newp->save();
             }else{
                 if($f1)
@@ -102,7 +114,7 @@ class HomeController extends BaseController {
             }
 
         }
-        return Response::json($data);
+       //
 
     }
 

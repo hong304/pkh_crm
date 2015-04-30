@@ -62,7 +62,7 @@ class Invoice_1FPickingList {
         
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], 'version'=>[]];
-        Invoice::select('*')->wherein('invoiceStatus', ['4'])->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        Invoice::select('*')->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productId')->orderBy('productQtyUnit');
         }])->with('products', 'client')
                ->chunk(50, function($invoicesQuery){
