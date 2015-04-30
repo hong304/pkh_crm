@@ -6,6 +6,7 @@ class Invoice_1FPickingList {
     private $_reportTitle = "";
     private $_date = "";
     private $_zone = "";
+    private $_shift = "";
     private $_invoices = [];
     private $_uniqueid = "";
     private $_version = '';
@@ -19,7 +20,8 @@ class Invoice_1FPickingList {
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        
+        $this->_shift = $indata['filterData']['shift'];
+
         // check if user has clearance to view this zone        
         if(!in_array($this->_zone, $permittedZone))
         {
@@ -62,10 +64,10 @@ class Invoice_1FPickingList {
         
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], 'version'=>[]];
-        Invoice::select('*')->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        Invoice::select('*')->where('version', true)->where('zoneId', $zone)->where('shift',$this->_shift)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productId')->orderBy('productQtyUnit');
         }])->with('products', 'client')
-               ->chunk(50, function($invoicesQuery){
+               ->chunk(150, function($invoicesQuery){
                    
                    // first of all process all products
                    $productsQuery = array_pluck($invoicesQuery, 'products');
@@ -201,14 +203,14 @@ class Invoice_1FPickingList {
     # PDF Section
     public function generateHeader($pdf)
     {
-    
+        $this->_shift = ($this->_shift== 1)?'早班':'晚班';
         $pdf->SetFont('chi','',18);
         $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
         $pdf->Cell(0, 10,$this->_reportTitle,0,1,"C");
         $pdf->SetFont('chi','U',13);
         $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT), 0, 2, "L");
-        $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date), 0, 2, "L");
+        $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date)."(".$this->_shift.")", 0, 2, "L");
         $pdf->setXY(0, 0);
         $pdf->SetFont('chi','', 9);
         $pdf->Code128(10,$pdf->h-15,$this->_uniqueid,50,10);
