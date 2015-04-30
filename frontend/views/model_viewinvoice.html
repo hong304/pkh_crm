@@ -232,11 +232,14 @@
 				<!-- Disapprove Invoice -->
 				<!-- Condition: Inovice Status = {2} && Permission = approve_invoice && disapprover != creator -->
 				<button data-ng-if="systemInfo.permission.approve_invoice == true && invoiceinfo.invoiceStatus == 1 && systemInfo.user.id != invoiceinfo.created_by" type="button" class="btn yellow" data-ng-click="manipulate('Reject', invoiceinfo.invoiceId);">拒絕</button>
-				
-				<!-- Edit Invoice -->
+
+                <button data-ng-if="systemInfo.permission.restore_invoice == true && invoiceinfo.invoiceStatus == 99" type="button" class="btn yellow" data-ng-click="manipulate('Restore', invoiceinfo.invoiceId);">Restore</button>
+
+
+                <!-- Edit Invoice -->
 				<!-- Condition: Invoice Status = {1, 2, 3} -->
 				<button type="button" class="btn green" data-ng-if="(invoiceinfo.invoiceStatus < 4 && invoiceinfo.printed != true) || systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
-                <button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus > 3 && systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
+               <!-- <button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus > 3 && systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>-->
 
                 <!-- Void Invoice -->
 				<!-- Condition: Invoice Status = {1, 2, 3} && Permission = void_invoice-->

@@ -136,6 +136,8 @@ class OrderController extends BaseController {
         elseif($status == 'Reject')
         {
             $ismanager->reject();
+        }elseif($status == 'Restore'){
+                      $ismanager->Restore();
         }
         
         
