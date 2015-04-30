@@ -57,9 +57,14 @@ class HomeController extends BaseController {
         }
 
         if($mode == 'check'){
+
+        if($info['info'] == null)
+            return 1;
+
             $date = str_replace('-','',$info['info']['date']);
             $id = $date.'%-'.$info['info']['f9_version'].'-9';
             $result = ReportArchive::where('id','LIKE',$id)->first();
+
             if($result)
                 return 1;
             else

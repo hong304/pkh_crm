@@ -99,17 +99,18 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
             .success(function(res, status, headers, config){
                     if(parseInt(res) == false){
                         alert('產生備貨單前請列印之前的版本');
-                        return false;
+                    }else{
+                        $("#generalPickingModal").modal('hide');
+
+                        $http.post(iutarget, {info: $scope.picking, mode : 'post'})
+                            .success(function(res, status, headers, config){
+                                $scope.version = res;
+                                $scope.picking = true;
+                            });
                     }
             });
 
-        $("#generalPickingModal").modal('hide');
 
-        $http.post(iutarget, {info: $scope.picking, mode : 'post'})
-            .success(function(res, status, headers, config){
-                $scope.version = res;
-                $scope.picking = true;
-            });
     }
 
     
