@@ -5,7 +5,15 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 	var querytarget = endpoint + "/getAllPrintJobsWithinMyZone.json";
 	var pushtarget = endpoint + "/printAllPrintJobsWithinMyZone.json";
     var checkstatus = endpoint + "/getInvoiceStatusMatchPrint.json";
-	
+    var printSelect = endpoint + "/printSelectedJobsWithinMyZone.json";
+
+
+    $scope.prints = {
+        'id' : '',
+        'collect' : ''
+    }
+    $scope.checkid = [];
+
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
@@ -17,14 +25,37 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
     $scope.$on('$destroy', function () {
-    	$interval.cancel(intervalPromise);
+    	//$interval.cancel(intervalPromise);
     });
-    
+
+    $scope.printSelect = function(){
+        $http({
+            method: 'POST',
+            url: printSelect,
+            data: {print:$scope.checkid}
+        }).success(function () {
+            $scope.updatePrintQueue();
+        });
+
+    }
+
     $scope.updatePrintQueue = function()
     {    	
     	$http.get(querytarget)
     	.success(function(res){
     		$scope.queue = res['queued'];
+
+
+                var i = 0;
+                res['queued'].forEach(function(item) {
+                    $scope.checkid[i] = $.extend(true, {}, $scope.prints);
+                    $scope.checkid[i]['id'] = item.job_id;
+                    $scope.checkid[i]['collect'] = 0;
+
+                    i++;
+                });
+
+
             $scope.printed = res['printed'];
             });
     }

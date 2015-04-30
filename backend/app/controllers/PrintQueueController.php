@@ -130,7 +130,28 @@ class PrintQueueController extends BaseController {
 
         return Response::json($jobs);
     }
-    
+
+
+    public function printSelectedJobsWithinMyZone(){
+
+        $jobId = Input::get('print');
+        $newjobId[] = '';
+        foreach ($jobId as $k=>$v)
+                if($v['collect'])
+                    $newjobId[] =  $v['id'];
+
+        array_shift($newjobId);
+
+            PrintQueue::wherein('job_id', $newjobId)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
+
+
+            $jobs = PrintQueue::wherein('job_id', $newjobId)->lists('invoiceId');
+            if($jobs)
+                $this->mergeImage($jobs);
+
+
+    }
+
     public function printAllPrintJobsWithinMyZone()
     {
         if(Auth::guest())
@@ -282,6 +303,7 @@ class PrintQueueController extends BaseController {
             $print_log->status = 'queued';
             $print_log->target_path = $invoiceImage[0]->zoneId;
             $print_log->invoiceIds = implode(',',$Ids);
+            $print_log->count = count($Ids);
             $print_log->save();
     }
     

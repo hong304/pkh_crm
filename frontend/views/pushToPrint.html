@@ -14,8 +14,15 @@
                     </div>
                     <div class="actions">
                         <div class="btn-group">
+                            <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="printSelect();">
+                                <i class="fa fa-print"></i> Print only selected </a>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <div class="btn-group">
                             <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="pushPrintQueue();">
-                                <i class="fa fa-print"></i> 全部立即列印 </a>
+                                <i class="fa fa-print"></i> 全部立即列印 </a>&nbsp;
                         </div>
                     </div>
                 </div>
@@ -53,10 +60,11 @@
 
                                         <th width="10%">用戶</th>
                                         <th width="20%">現時狀態</th>
+                                        <th width="5%">選取</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr data-ng-repeat="q in queue">
+                                    <tr data-ng-repeat="(k,q) in queue">
                                         <td>{{q.job_id}}</td>
                                         <td>{{q.invoiceId}}</td>
                                         <td>{{q.client.customerName_chi}}</td>
@@ -80,6 +88,7 @@
                                                             等待下載
                                                         </span>
                                         </td>
+                                        <td><input type="checkbox" data-ng-model="checkid[k]['collect']" /></td>
                                     <tr>
 
                                     </tbody>
