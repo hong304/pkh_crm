@@ -410,7 +410,7 @@ console.log($scope.order.status);
 				$scope.submitOrder(1);
 			}
 
-            if(e.keyCode == 120)
+            if(e.keyCode == 117)
             {
 
                 $scope.submitOrder(0);
