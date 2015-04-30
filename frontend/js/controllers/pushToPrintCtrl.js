@@ -89,13 +89,35 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     }
 
     $scope.printSelect = function(){
-        $http({
-            method: 'POST',
-            url: printSelect,
-            data: {print:$scope.checkid,mode:'selected'}
-        }).success(function () {
-            $scope.updatePrintQueue();
+
+        bootbox.dialog({
+            message: "列印發票後將不能復原，確定要列印發票嗎？",
+            title: "列印發票",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+
+                    }
+                },
+                danger: {
+                    label: "確定",
+                    className: "red",
+                    callback: function() {
+                        $http({
+                            method: 'POST',
+                            url: printSelect,
+                            data: {print:$scope.checkid,mode:'selected'}
+                        }).success(function () {
+                            $scope.updatePrintQueue();
+                        });
+                    }
+                }
+            }
         });
+
+
 
     }
 
