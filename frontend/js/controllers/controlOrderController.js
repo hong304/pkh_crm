@@ -181,7 +181,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         */
 		
 		// load last time invoice
-		$scope.getClientLastInvoice($scope.order.clientId);
+		//$scope.getClientLastInvoice($scope.order.clientId);
         $scope.getSameDayInvoice();
 		
 	});
@@ -193,7 +193,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             $scope.order.route = $scope.order.defaultRoute;
     }
 
-	$scope.getClientLastInvoice = function(clientId)
+	/*$scope.getClientLastInvoice = function(clientId)
 	{
 		var target = endpoint + '/getClientLastInvoice.json';
     	
@@ -202,14 +202,22 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     		$scope.lastinvoice = res;
                 console.log(res);
     	});
-	}
+	}*/
 
-    $scope.getLastItem = function(productId,clientId){
+    $scope.getLastItem = function(productId,clientId,i){
 
             var target = endpoint + '/getLastItem.json';
             $http.post(target, {productId: productId, customerId: clientId})
                 .success(function (res, status, headers, config) {
                     $scope.lastitem = res;
+                    if(res.productQty > 0){
+                        $scope.product[i].unitprice = res.productPrice;
+                        var pos = $scope.product[i]['availableunit'].map(function(e) {
+                            return e.value;
+                        }).indexOf(res.productQtyUnit);
+                        $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
+                        $scope.checkPrice(i);
+                    }
                 });
 
     }
@@ -535,34 +543,34 @@ console.log($scope.order.status);
 			$scope.product[i].unit = $scope.product[i].availableunit[0];
 			$scope.updateStandardPrice(i);
 
-            $scope.getLastItem(code,$scope.order.clientId);
+            $scope.getLastItem(code,$scope.order.clientId,i);
 
-           // console.log($scope.lastitem);
+          // console.log($scope.lastitem);
 
            // $scope.lastItemUnit = '5';
 
 			//--  check if last time invoice
-			if($scope.lastinvoice[code.toUpperCase()])
+		/*	if($scope.lastinvoice[code.toUpperCase()])
 			{
 				
-				var linv = $scope.lastinvoice[code.toUpperCase()][0];
+				//var linv = $scope.lastinvoice[code.toUpperCase()][0];
 				
 				// unit
 				
-				var pos = $scope.product[i]['availableunit'].map(function(e) { 
-					return e.value; 
-				  }).indexOf(linv.productQtyUnit);
+				//var pos = $scope.product[i]['availableunit'].map(function(e) {
+				//	return e.value;
+				//  }).indexOf(linv.productQtyUnit);
 				
-				$scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
+				//$scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
 			
 				// qty
 				
 				//$scope.product[i].qty = linv.productQty;
 
 				// price
-				$scope.product[i].unitprice = linv.productPrice;
-				$scope.checkPrice(i);
-			}
+				//$scope.product[i].unitprice = linv.productPrice;
+				//$scope.checkPrice(i);
+			}*/
 					
 			// -- check if last time invoice
 			

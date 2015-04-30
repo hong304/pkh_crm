@@ -319,7 +319,7 @@ class OrderController extends BaseController {
 
     public function jsonGetLastItem()
     {
-        $items = '';
+
         $customerId = Input::get('customerId');
         $productId = Input::get('productId');
         $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE customerId = '".$customerId."' AND ii.productId = '".$productId."' order by ii.invoiceItemId desc";
