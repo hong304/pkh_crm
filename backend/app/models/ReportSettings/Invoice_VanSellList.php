@@ -12,7 +12,9 @@ class Invoice_VanSellList {
     
     public function __construct($indata)
     {
-        
+
+
+
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
         
@@ -44,7 +46,7 @@ class Invoice_VanSellList {
         
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], '9F'=>[]];
-        Invoice::select('*')->where('invoiceStatus', '4')->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
+        Invoice::select('*')->where('invoiceStatus', '2')->where('version',true)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
                ->chunk(50, function($invoicesQuery){
 
 

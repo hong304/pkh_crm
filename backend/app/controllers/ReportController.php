@@ -31,11 +31,23 @@ class ReportController extends BaseController {
 
         $reportId = Input::get('reportId');
         $data = Input::all();
+
+
+
         $factory = new ReportFactory($reportId,$data);
         $factory->run();
         
         
     }
+
+
+public function loadvanSellReport(){
+    $data = Input::all();
+    $data['reportId'] = 'vanselllist';
+    $factory = new ReportFactory('vanselllist',$data);
+    $factory->run();
+}
+
     
     public function viewArchivedReport()
     {

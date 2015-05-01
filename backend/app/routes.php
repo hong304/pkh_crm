@@ -64,10 +64,12 @@ Route::group(array('before' => 'auth'), function()
     // Report Factory
     Route::any('/getAvailableReportsType.json', 'ReportController@loadAvailableReports');
     Route::any('/getReport.json', 'ReportController@loadReport');
-    
+
     Route::any('/viewArchivedReport', 'ReportController@viewArchivedReport');
     
-    
+    // Van sell
+    Route::any('/getVansellreport.json', 'VanSellController@loadvanSellReport');
+
     // Picking List
     Route::any('/generatePickingList.json', 'DeliveryController@jsonGeneratePickingList');
     

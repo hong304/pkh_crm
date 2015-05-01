@@ -140,9 +140,11 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     			reportId	:	$location.search().id,
     			output		:	type,
     	};
+
     	var queryString = $.param( queryObject );
-    	
-    	var realFileDisplay = window.open(endpoint + "/getReport.json?" + queryString);
+        console.log(queryObject);
+
+        var realFileDisplay = window.open(endpoint + "/getReport.json?" + queryString);
     }
 
     $scope.searchProductByField = function(keyword){

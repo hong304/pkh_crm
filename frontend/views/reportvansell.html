@@ -1,0 +1,132 @@
+<form class="form-horizontal" role="form" id="queryInfo">
+
+
+
+
+
+	<div class="col-md-2">
+
+		<div class="portlet light" data-ng-if="setting.downloadOptions != false">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-red-sunglo bold uppercase">列印/下載</span>
+				</div>
+			</div>
+			<div class="portlet-body">				
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<button class="btn  blue-steel btn-block" data-ng-click="sendFile(d);" data-ng-repeat="d in setting.downloadOptions">{{d.name}}</button>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="portlet light" data-ng-repeat="f in setting.filterOptions">
+
+			<!--  single-dropdown -->
+			<div class="portlet-body" data-ng-if="f.type == 'single-dropdown'">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<div class="input-group">
+						<select class="form-control"
+							ng-model="filterData[f.model]" 
+							data-ng-options="x.label for x in f.optionList track by x.value" >								
+						</select>
+					</div>
+				</div>
+			</div>
+
+            <div class="portlet-body" id="shift" data-ng-if="f.type == 'single-dropdown'">
+
+                <div class="md-col-12">
+                    <select class="form-control"
+                            ng-model="filterData.shift" >
+                        <option value='1'>早班</option>
+                        <option value='2'>晚班</option>
+                    </select>
+                </div>
+            </div>
+
+			<!-- date-picker -->
+			<div class="portlet-body" data-ng-if="f.type == 'date-picker'">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<div class="input-group  date " id="{{f.id}}" data-date-format="yyyy-mm-dd" data-date-start-date="-5d">
+						<input type="text" class="form-control" readonly ng-model="filterData[f.model]">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="col-md-10">
+		<div class="row">
+
+			<div class="col-md-12">
+				<div class="portlet light">
+
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">{{setting.title}}</span>
+						</div>
+
+					</div>
+
+                                <div class="portlet-body">
+
+
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                        <tr role="row" class="heading">
+                                            <th width="20%">
+                                                貨品編號
+                                            </th>
+                                            <th width="60%">
+                                                貨品名稱
+                                            </th>
+                                            <th width="10%">
+                                                數量
+                                            </th>
+                                            <th width="10%">
+                                                預載數
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <tr data-ng-repeat="(k,i) in report" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+
+                                            <td>
+                                                {{i.productId}}
+                                            </td>
+                                            <td>{{i.name}}</td>
+                                            <td>{{i.org_qty}} {{i.unit}}</td>
+                                            <td><input type="text" data-ng-model="qty[k]['value']"></td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+
+
+
+
+                                </div>
+
+
+				</div>
+				<!-- END EXAMPLE TABLE PORTLET-->
+			</div>
+
+
+		</div>
+		
+	</form>
+	
+</div>
+
+<!-- Customer Maintenance Form -->
+<div ng-include="'/views/ipfForm.html'"></div>

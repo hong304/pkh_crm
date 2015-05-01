@@ -522,7 +522,29 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }]
         }
     })
-    
+
+
+        .state('reportvansell', {
+            url: "/reportvansell",
+            templateUrl: "views/reportvansell.html",
+            data: {pageTitle: '預載單', pageSubTitle: ''},
+            controller: "reportvansellCtrl",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            'js/controllers/reportvansellCtrl.js',
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
     // -- push to print function
     .state('pushToPrint', {
         url: "/push-to-print",

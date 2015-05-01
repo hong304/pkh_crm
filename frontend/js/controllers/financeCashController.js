@@ -99,6 +99,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     $scope.invoicepaid.settle = $scope.invoicepaid.amount;
                     i++;
                 });
+
             });
     }
 
