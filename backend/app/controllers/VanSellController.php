@@ -361,8 +361,8 @@ class VanSellController extends BaseController {
         if($this->_output == 'setting')
         {
             $returnInfo = [
-                'title' => $this->registerTitle(),
-                'filterOptions' => $this->_reportTitle,
+                'title' => $this->_reportTitle,
+                'filterOptions' => $this->registerFilter(),
                 'downloadOptions' => $this->registerDownload(),
             ];
 
