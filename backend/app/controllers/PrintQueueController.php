@@ -14,14 +14,17 @@ class PrintQueueController extends BaseController {
 
     public function __construct()
     {
-        $count = PrintQueue::select('invoiceId', DB::raw('count(*) as total'))->wherein('target_path', explode(',', Auth::user()->temp_zone))->wherein('status',['queued','fast-track'])
-            ->groupBy('invoiceId')->having('total','>',1)
-            ->get();
 
-        if($count){
-            foreach($count as $v){
-                $delete = PrintQueue::where('invoiceId',$v->invoiceId)->orderBy('insert_time','desc')->first();
-                $delete->delete();
+        if(isset(Auth::user()->temp_zone)){
+            $count = PrintQueue::select('invoiceId', DB::raw('count(*) as total'))->wherein('target_path', explode(',', Auth::user()->temp_zone))->wherein('status',['queued','fast-track'])
+                ->groupBy('invoiceId')->having('total','>',1)
+                ->get();
+
+            if($count){
+                foreach($count as $v){
+                    $delete = PrintQueue::where('invoiceId',$v->invoiceId)->orderBy('insert_time','desc')->first();
+                    $delete->delete();
+                }
             }
         }
     }
