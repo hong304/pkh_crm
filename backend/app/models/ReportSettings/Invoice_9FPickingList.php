@@ -109,11 +109,12 @@ class Invoice_9FPickingList {
                             $this->goods['9F'][$customerId.$invoiceId]['customerInfo'] = $client->toArray();
                             $this->goods['9F'][$customerId.$invoiceId]['invoiceId'] = $invoiceId;
 
+                            if(isset($this->goods['9F'][$customerId.$invoiceId]))
+                                $this->goods['9F'][$customerId.$invoiceId]['revised'] = ($invoiceQ->revised == true)?"(修正)":'' ;
                         }
 
                     }
-                    if(isset($this->goods['9F'][$customerId.$invoiceId]))
-                        $this->goods['9F'][$customerId.$invoiceId]['revised'] = ($invoiceQ->revised == true)?"(修正)":'' ;
+
                 }
 
             });
