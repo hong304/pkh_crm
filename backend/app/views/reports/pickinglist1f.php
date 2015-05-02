@@ -11,9 +11,7 @@
             <th width="10%">
                 數量
             </th>
-            <th width="10%">
-                總數
-            </th>
+
         </tr>
     </thead>
     <tbody>
@@ -31,9 +29,7 @@
                 <td>
                     <?php echo $ff['counts'];?> <?php echo $ff['unit_txt'];?> 
                 </td>
-                <td>
-                    <input type="text" id="<?=$ff['productId']?>"
-                </td>
+ 
             </tr>  
             <?php endforeach; ?> 
         <?php endforeach; ?> 
