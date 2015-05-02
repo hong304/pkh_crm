@@ -249,7 +249,7 @@ class VanSellController extends BaseController {
 
 
                 $pdf->setXY(10, $y);
-                $pdf->Cell(0, 0, $id, 0, 0, "L");
+                $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
 
                 $pdf->setXY(40, $y);
                 $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
@@ -394,7 +394,6 @@ class VanSellController extends BaseController {
           if($this->_output == 'pdf'){
 
               $this->compileResults();
-              $function = "outputPDF";
               $reportOutput = $this->outputPDF();
 
               //$filenameUn = $this->_reportId . '-' . str_random(10) . '-' . date("YmdHis");

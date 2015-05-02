@@ -130,24 +130,21 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
     
     $scope.sendRealFile = function()
     {
-        console.log($scope.qty);
 
         $http.post(querytarget, {reportId: 'vanselllist', output: "create", filterData: $scope.filterData,data:$scope.qty})
             .success(function(res, status, headers, config){
-              //  $scope.report = res;
-
-                var queryObject = {
-                    filterData	:	$scope.filterData,
-                    reportId	:	'vanselllist',
-                    output		:	'pdf'
-                };
-
-                var queryString = $.param( queryObject );
-                console.log(queryObject);
-
-               window.open(endpoint + "/getVansellreport.json?" + queryString);
-                Metronic.unblockUI();
             });
+
+
+        var queryObject = {
+            filterData	:	$scope.filterData,
+            reportId	:	'vanselllist',
+            output		:	'pdf'
+        };
+
+        var queryString = $.param( queryObject );
+
+        window.open(endpoint + "/getVansellreport.json?" + queryString);
 
     }
 
