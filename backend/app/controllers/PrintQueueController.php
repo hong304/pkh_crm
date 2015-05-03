@@ -16,6 +16,7 @@ class PrintQueueController extends BaseController {
     {
 
         if(isset(Auth::user()->temp_zone)){
+
             $count = PrintQueue::select('invoiceId', DB::raw('count(*) as total'))->wherein('target_path', explode(',', Auth::user()->temp_zone))->wherein('status',['queued','fast-track'])
                 ->groupBy('invoiceId')->having('total','>',1)
                 ->get();

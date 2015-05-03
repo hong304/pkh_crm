@@ -7,13 +7,14 @@ class ProductManipulation {
     private $_departmentid = '';
     private $_groupid = '';
     
-    public function __construct($productId = false, $group)
+    public function __construct($productId = false, $group, $productNewId)
     {
         $this->action = $productId ? 'update' : 'create';
                 
         if($this->action == 'create')
         {
-            $this->generateId($group);
+           // $this->generateId($group);
+            $this->_productId = $productNewId;
             $this->im = new Product();
             
         }
@@ -28,7 +29,10 @@ class ProductManipulation {
     
     public function generateId($group)
 	{
-	    $length = 6;
+
+
+
+        $length = 6;
 	    
 	//    $prefix = $group;
 

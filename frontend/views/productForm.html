@@ -11,6 +11,16 @@
 			<div class="modal-body">
 				<form action="javascript:;" class="form-horizontal">
 					<div class="form-body">
+                        <div class="form-group" data-ng-if="info.productId == ''">
+                            <label class="col-md-2 control-label">產品編號*</label>
+                            <div class="col-md-2">
+                                <input type="text" ng-model="info.productnewId" class="form-control" placeholder="Enter text" ng-change="checkIdexist()">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label" data-ng-if="productIdused == true"><span style="color: red">產品編號已被使用</span></label>
+                            </div>
+                        </div>
+
 						<div class="form-group">
 							<label class="col-md-2 control-label">名稱 (中) *</label>
 							<div class="col-md-10">
@@ -18,12 +28,7 @@
 							</div>
 						</div>
 						
-						<div class="form-group">
-							<label class="col-md-2 control-label">名稱 (英)</label>
-							<div class="col-md-10">
-								<input type="text" ng-model="info.productName_eng" class="form-control" placeholder="Enter text">
-							</div>
-						</div>
+
 						
 						<div class="form-group">
 							<label class="col-md-2 control-label">貨品位置 * (1/9)</label>
@@ -108,19 +113,19 @@
 							</tr>
 							<!-- Standard Price -->
 							<tr>
-								<td><label>售價</label></td>
+								<td><label>最低售價</label></td>
 								<td><input type="text" ng-model="info.productStdPrice_carton" class="form-control" style="width:80%;" placeholder=""> </td>
 								<td><input type="text" ng-model="info.productStdPrice_inner" class="form-control" style="width:80%;" placeholder=""></td>
 								<td><input type="text" ng-model="info.productStdPrice_unit" class="form-control" style="width:80%;" placeholder=""></td>
 							</tr>
 							
 							<!-- Min Price -->
-							<tr>
+							<!--<tr>
 								<td><label>最低售價</label></td>
 								<td><input type="text" ng-model="info.productMinPrice_carton" class="form-control" style="width:80%;" placeholder=""> </td>
 								<td><input type="text" ng-model="info.productMinPrice_inner" class="form-control" style="width:80%;" placeholder=""></td>
 								<td><input type="text" ng-model="info.productMinPrice_unit" class="form-control" style="width:80%;" placeholder=""></td>
-							</tr>
+							</tr>-->
 						</table>
 						
 						

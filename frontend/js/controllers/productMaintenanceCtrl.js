@@ -48,10 +48,10 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'group'	:	'',
 			'keyword'	:	'',
 		};
-	
+    $scope.submit = true;
 	$scope.info_def = {
 			'group'	:	false,
-			'productId' : false,
+			'productId' : '',
 			'productLocation' : '',
 			'productStatus'	:	'',
 			'productPacking_carton' : '',
@@ -73,6 +73,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'productCost_unit'	:	'',
 			'productName_chi' : '',
 			'productName_eng' : '',
+
+        'productnewId' :''
 	};
 	
 	$scope.submitbtn = true;
@@ -106,6 +108,19 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 
 
 
+
+    }
+    $scope.checkIdexist = function(){
+
+        $http.post(querytarget, {mode: "checkId", productId: $scope.info.productnewId})
+            .success(function(res, status, headers, config){
+                $scope.productIdused = res;
+                   if($scope.productIdused == 1){
+                       $scope.submit = false;
+                   }else
+                       $scope.submit = true;
+
+            });
 
     }
 
@@ -154,7 +169,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	
     }
     
-    $scope.addProduct = function()
+ $scope.addProduct = function()
     {
     	$scope.info = $.extend(true, {}, $scope.info_def);
     	$scope.newId = "";
@@ -178,10 +193,12 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     $scope.submitProductForm = function()
     {
 
-    	if(
+        if(!$scope.submit)
+            alert('產品編號不能用');
+    	else if(
     			$scope.info.productLocation == "" ||
     			$scope.info.productName_chi == ""  ||
-    			(!$scope.info.productId && !$scope.info.group)
+    			(!$scope.info.productId && !$scope.info.group) || (!$scope.info.productId && !$scope.info.productnewId)
     	)
     	{
     		alert('請輸入所需資料');

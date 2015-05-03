@@ -160,7 +160,7 @@ class ProductController extends BaseController {
 
         $i = Input::get('info');
 
-        $cm = new ProductManipulation($i['productId'], (isset($i['group']['groupid']) ? $i['group']['groupid'] : false));
+        $cm = new ProductManipulation($i['productId'], (isset($i['group']['groupid']) ? $i['group']['groupid'] : false), (isset($i['productnewId']) ? $i['productnewId']: false));
       //  $cm = new ProductManipulation($i['productId'], (isset($i['productId']) ? false : $i['group']['groupid']));
         $id = $cm->save($i);
         
@@ -224,6 +224,9 @@ public function jsonQueryProduct()
         elseif($mode == 'single')
         {
             $product = Product::where('productId', Input::get('productId'))->first();
+        }elseif($mode == 'checkId'){
+            $product = Product::select('productId')->where('productId', Input::get('productId'))->first();
+            $product = count($product);
         }
     
         return Response::json($product);
