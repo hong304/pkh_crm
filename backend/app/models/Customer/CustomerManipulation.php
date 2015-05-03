@@ -4,13 +4,14 @@
 class CustomerManipulation {
 
     private $_customerId = '';
-    public function __construct($customerId = false)
+    public function __construct($customerId = false,$productNewId)
     {
         $this->action = $customerId ? 'update' : 'create';
                 
         if($this->action == 'create')
         {
-            $this->generateId();
+           // $this->generateId();
+            $this->_customerId = $productNewId;
             $this->im = new Customer();
             $this->im->created_by = Auth::user()->id;
             

@@ -107,7 +107,7 @@ class CustomerController extends BaseController {
         }
 
         $i = Input::get('customerInfo');
-        $cm = new CustomerManipulation($i['customerId']);
+        $cm = new CustomerManipulation($i['customerId'], (isset($i['productnewId']) ? $i['productnewId']: false));
         $id = $cm->save($i);
         
         return Response::json(['mode'=>($i['customerId'] == $id ? 'update' : 'create'), 'id'=>$id]);
@@ -184,6 +184,9 @@ class CustomerController extends BaseController {
         elseif($mode == 'single')
         {
             $customer = Customer::where('customerId', Input::get('customerId'))->first();
+        }elseif($mode == 'checkId'){
+            $customer = Customer::select('customerId')->where('customerId', Input::get('customerId'))->first();
+            $customer = count($customer);
         }
         
         return Response::json($customer);

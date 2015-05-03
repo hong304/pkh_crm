@@ -47,7 +47,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 			'clientId'		:	'0',
 			'zone'			:	'',
 	};
-	
+    $scope.submit = true;
 	$scope.customerInfo_def = {
 			'address_chi'		:	'', 
 			'address_eng'		:	'',
@@ -69,7 +69,8 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 			'paymentTermId'		:	'',
 			'routePlanningPriority':	'',
              'remark' : '',
-        'shift' : ''
+        'shift' : '',
+        'productnewId' :''
 	};
 	
 	$scope.submitbtn = true;
@@ -149,7 +150,21 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	
     	
     }
-    
+
+    $scope.checkIdexist = function(){
+
+        $http.post(querytarget, {mode: "checkId", customerId: $scope.customerInfo.productnewId})
+            .success(function(res, status, headers, config){
+                $scope.productIdused = res;
+                if($scope.productIdused == 1){
+                    $scope.submit = false;
+                }else
+                    $scope.submit = true;
+
+            });
+
+    }
+
     $scope.addCustomer = function()
     {
 		var statuscat = [];
@@ -187,8 +202,10 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 
     $scope.submitCustomerForm = function()
     {
-    	if(
-    			$scope.customerInfo.address_chi == ""
+        if(!$scope.submit)
+            alert('客户編號不能用');
+        else if(
+    			$scope.customerInfo.address_chi == ""  || (!$scope.customerInfo.customerId && !$scope.customerInfo.productnewId)
 
     	)
     	{
