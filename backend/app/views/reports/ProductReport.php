@@ -61,7 +61,7 @@ $last_year = date('Y')-1;
                 </td>
                 <td>     <?php
                     if($data[13][$last_year]['highest_single'] == $ff[$last_year]['amount']/$ff[$last_year]['qty'])
-                        echo "<span style='color:red'>HK$ ".number_format($ff[$last_year]['amount']/$ff[$last_year]['qty'])."</span>";
+                        echo "<span style='color:red'>HK$ ".number_format($ff[$last_year]['amount']/$ff[$last_year]['qty'], 2, '.', ',')."</span>";
                     else
                         echo "HK$ ". number_format($ff[$last_year]['amount']/$ff[$last_year]['qty'], 2, '.', ',');?>
                 </td>

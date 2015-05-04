@@ -54,12 +54,16 @@
                 <div class="form-body">
                     <div class="">
                         <div class="form-group ">
+
+
                             <div class="col-md-12 alert alert-success alert-borderless">
                                 <div class="input-icon right">
                                     <i class="icon-exclamation-sign"></i>
                                     <input autofocus="autofocus" autocomplete="off" name="productSearchField" id="productSearchField" ng-model="keyword" type="text" placeholder="產品編號或產品名稱 " class="form-control" ng-change="searchProductByField(keyword)"/>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -81,7 +85,19 @@
                             <div class="col-md-12 alert alert-success alert-borderless">
                                 <div class="input-icon right">
                                     <i class="icon-exclamation-sign"></i>
-                                    <input autofocus="autofocus" autocomplete="off" name="searchClientField" id="searchClientField" ng-model="keyword" type="text" placeholder="客戶編號或客戶名稱 " class="form-control" ng-change="searchClient(keyword)"/>
+                                    <input autocomplete="off" ng-model="keyword.id" debounce="500" immediate="true"  id="keywordId"
+                                           type="text" placeholder="客戶編號" class="form-control" ng-change="searchClient(keyword)"
+                                            />
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-12 alert alert-success alert-borderless">
+                                <div class="input-icon right">
+                                    <i class="icon-exclamation-sign"></i>
+                                    <input autocomplete="off" ng-model="keyword.keyword" debounce="500" immediate="true"  id="keyword"
+                                           type="text" placeholder="名稱 或 電話號碼 " class="form-control" ng-change="searchClient(keyword)"
+                                            />
                                 </div>
                             </div>
                         </div>
