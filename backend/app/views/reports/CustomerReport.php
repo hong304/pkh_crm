@@ -8,7 +8,7 @@ $last_year = date('Y')-1;
 
     <?php
     if ($data[13] == null){
-        echo "No Data";
+        echo " <div class='col-md-12'>No Data!!</div>";
         die;
     }
     ?>
