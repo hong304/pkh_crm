@@ -163,7 +163,7 @@ if(Input::get('query.action') == 'yearend')
     $this->data = $accu;
         else
         $this->data = $a_data;
-
+//pd($this->data);
        return $this->data;        
     }
     

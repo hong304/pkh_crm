@@ -44,7 +44,7 @@ $last_year = date('Y')-1;
                 <?php echo ($k != '13')?$k:'';?>
             </td>
 
-            <?php if( isset($ff[$last_year])){?>
+            <?php if( isset($ff[$last_year]) && $ff[$last_year]['qty'] > 0){?>
                 <td>
                     <?php
                     if($data[13][$last_year]['highest_amount'] == $ff[$last_year]['amount'])
@@ -72,7 +72,7 @@ $last_year = date('Y')-1;
                 <td>HK$ 0</td>
             <?php }?>
             <td></td>
-            <?php if( isset($ff[$current_year])){?>
+            <?php if( isset($ff[$current_year]) && $ff[$current_year]['qty'] > 0){?>
                 <td>
                     <?php
                     if($data[13][$current_year]['highest_amount'] == $ff[$current_year]['amount'] and $k !=13)
