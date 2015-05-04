@@ -8,7 +8,7 @@ app.controller('reportSelectionCtrl', function($scope, $http, SharedService, $ti
         
         var querytarget = endpoint + "/getAvailableReportsType.json";
         
-        $http.get(querytarget, {})
+        $http.get(querytarget)
     	.success(function(res, status, headers, config){
 
     		$scope.reports = res;

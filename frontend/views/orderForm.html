@@ -254,18 +254,23 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="portlet light bordered">
+
 				<div class="portlet-title">
+
 					<div class="caption font-green-sharp">
 						<i class="icon-speech font-green-sharp"></i> <span
 							class="caption-subject bold uppercase">訂單貨品</span> <label data-ng-if="displayName != ''" style="color: #ff0000">[{{displayName}}]</label>
                             <span class="caption-helper"></span>
 					</div>
+
 					<div class="actions">
 						<a href="#" ng-click="showRecentPurchases();" class="btn btn-lg btn-circle btn-default"><i class="fa fa-question"> </i><span class="hidden-480"> 最近下單貨品 </span></a>
 						<a href="#" ng-click="addRows();" class="btn btn-lg btn-circle btn-default"><i class="fa fa-plus"> </i><span class="hidden-480"> 增加項數 </span></a>
 						<a href="#" id="productsFullScreen" class="btn btn-circle btn-default btn-icon-only fullscreen"></a>
 					</div>
+
 				</div>
+
 				<div class="portlet-body" id="orderportletbody">
                     <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.productQty > 0" >訂單日期:{{lastitem.created_at}} 數量:{{lastitem.productQty}} 售價:{{lastitem.productPrice}} 折扣:{{lastitem.productDiscount}}% 總數:{{lastitem.productQty*lastitem.productPrice*(100-lastitem.productDiscount)/100|number:1 }}</p>
                     <br />
@@ -311,16 +316,17 @@
 									</label>
 								</td>
 								<td>
+
 									<label>
-									
-										 <select class="form-control" 
+										 <select class="form-control"
 												id="unit_{{i}}" 
 												ng-model="product[i]['unit']" 
 												data-ng-options="x.label for x in product[i]['availableunit'] track by x.value" 
 												data-ng-change="updateUnit(i);">
-											
 										</select>
 									</label>
+
+
 								</td>
 								<td>
 									<div class="">

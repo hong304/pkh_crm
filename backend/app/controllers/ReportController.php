@@ -22,6 +22,9 @@ class ReportController extends BaseController {
             $reportCustom[$report->group]['reports'][] = $report;
             $reportCustom[$report->group]['groupName'] = $report->group;
         }
+
+      asort($reportCustom);
+
         return Response::json($reportCustom);
     }
     

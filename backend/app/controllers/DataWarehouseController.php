@@ -68,7 +68,7 @@ class DataWarehouseController extends BaseController {
                     $save->save();
                 }
 
-                  echo $v1->customerId."<br>";
+                  echo $v1->customer_id."<br>";
             }else{
                 echo "no data";
             }
