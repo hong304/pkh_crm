@@ -80,7 +80,7 @@ class DataWarehouseController extends BaseController {
 
  // update datawarehouse_product table;
 
-
+/*
  foreach($times as $k=>$v){
 
                $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,product_id FROM data_invoiceitems WHERE data_invoice_id IN (SELECT id FROM data_invoices WHERE deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY product_id'));
@@ -102,7 +102,7 @@ class DataWarehouseController extends BaseController {
         }
 
 
-
+*/
 
 
 //update invoice amount to invoices table;
