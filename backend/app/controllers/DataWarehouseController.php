@@ -44,9 +44,9 @@ class DataWarehouseController extends BaseController {
         set_time_limit(0);
 
         $times  = array();
-        for($month = 2; $month <= 3; $month++) {
-            $first_minute = mktime(0, 0, 0, $month, 1,2014);
-            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),2014);
+        for($month = 1; $month <= 4; $month++) {
+            $first_minute = mktime(0, 0, 0, $month, 1,2015);
+            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),2015);
             $times[$month] = array($first_minute, $last_minute);
         }
 
@@ -68,7 +68,9 @@ class DataWarehouseController extends BaseController {
                     $save->save();
                 }
 
-                //  echo $v2->customerId."<br>";
+                  echo $v1->customerId."<br>";
+            }else{
+                echo "no data";
             }
 
         }
