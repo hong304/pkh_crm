@@ -38,8 +38,6 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
             if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true)
                 $("#suggestion_row1_" + suggestion).click();
 
-
-
             suggestion = -1;
 
         }
