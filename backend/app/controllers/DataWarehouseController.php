@@ -53,7 +53,7 @@ class DataWarehouseController extends BaseController {
       //  pd ($times);
 
         // update datawarehouse_custoemr table.
-        foreach($times as $k=>$v){
+      /*  foreach($times as $k=>$v){
 
             $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customer_id FROM data_invoices WHERE deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customer_id'));
 
@@ -68,19 +68,19 @@ class DataWarehouseController extends BaseController {
                     $save->save();
                 }
 
-                  echo $v1->customer_id."<br>";
+                  echo $month."<br>";
             }else{
                 echo "no data";
             }
 
-        }
+        }*/
 
 //end of update datawarehouse_customer table
 
 
  // update datawarehouse_product table;
 
- /*
+
  foreach($times as $k=>$v){
 
                $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,product_id FROM data_invoiceitems WHERE data_invoice_id IN (SELECT id FROM data_invoices WHERE deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY product_id'));
@@ -99,7 +99,7 @@ class DataWarehouseController extends BaseController {
                 //  echo $v2->customerId."<br>";
             }
 
-        } */
+        }
 
 
 
