@@ -34,9 +34,14 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
         {
             e.preventDefault();
             $("#suggestion_row1_" + suggestion).css('background', '');
-            $("#suggestion_row1_" + suggestion).click();
+
+            if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true)
+                $("#suggestion_row1_" + suggestion).click();
+
+
+
             suggestion = -1;
-            console.log(suggestion);
+
         }
 
 
@@ -65,6 +70,8 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     	$('#selectclientmodel').modal('hide');
         $('#selectclientmodel').on('hidden.bs.modal', function () {
             $('#productCode_1').focus();
+
+
         })
     	$scope.keyword = {
             'zone' :'',
@@ -89,36 +96,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     
     $scope.searchClient = function(keyword)
     {   
-    	/*
-    	if(!$scope.lock)
-    	{
-    		$scope.lock = true;
-	    	if(keyword != "")
-	    	{
-	    		$scope.clientHeader = "搜尋結果";
-	    	}
-	    	
-	    	$http(
-	    			{
-			    		method	:	"POST",
-			    		url		: 	endpoint + '/checkClient.json', 
-			        	data	:	{client_keyword: keyword},
-			        	cache	:	true,
-			    	}        	
-	        ).
-	        success(function(res, status, headers, config) {
-	        	$scope.clientSuggestion = res;
-	        	//$timeout($scope.openSelectionModal, 1000);
-	        	$scope.openSelectionModal();
-	        	$scope.lock = false;
-	        }).
-	        error(function(res, status, headers, config) {
-	          // called asynchronously if an error occurs
-	          // or server returns response with an error status.
-	        	$scope.lock = false;
-	        });
-    	}
-    	*/
+
     	$timeout.cancel(fetchDataTimer);
     	fetchDataTimer = $timeout(function () {
 	    	if(keyword != "")
