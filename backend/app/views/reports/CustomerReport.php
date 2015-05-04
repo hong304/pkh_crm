@@ -6,7 +6,12 @@ $last_year = date('Y')-1;
 
 <div class="row">
 
-
+    <?php
+    if ($data[13] == null){
+        echo "No Data";
+        die;
+    }
+    ?>
 
 <h3 class="font-red-sunglo" style="display: inline-block;margin-left: 15px;"><?=$data[13][$current_year]['product_name']?> (<?=$data[13][$current_year]['product_id']?>)</h3> <span style="font-size: 15px"><?=$data[13][$current_year]['address']?> (<?=$data[13][$current_year]['contact']?>)</span>
 

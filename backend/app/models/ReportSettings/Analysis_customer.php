@@ -254,6 +254,9 @@ class Analysis_customer {
 
     public function outputPreview()
     {
+
+       // pd($this->data);
+
         if(Input::get('query.action') == 'yearend')
             return View::make('reports/CustomerReportYearEnd')->with('data', $this->data)->render();
         else

@@ -2,7 +2,12 @@
 $current_year = date('Y');
 $last_year = date('Y')-1;
 ?>
-
+<?php
+if ($data[13] == null){
+    echo "No Data";
+    die;
+}
+?>
 <h3 class="font-red-sunglo"><?=$data[13][$current_year]['product_name']?> (<?=$data[13][$current_year]['product_id']?>)</h3>
 
 <table class="table table-bordered table-hover" style="text-align: right">
