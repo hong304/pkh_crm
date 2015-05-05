@@ -58,17 +58,41 @@ class HomeController extends BaseController {
 
         if($mode == 'check'){
 
-        if($info['info'] == null)
-            return 1;
-
-            $date = str_replace('-','',$info['info']['date']);
-            $id = $date.'%-'.$info['info']['f9_version'].'-9';
-            $result = ReportArchive::where('id','LIKE',$id)->first();
-
-            if($result)
+            if($info['info'] == null)
                 return 1;
-            else
-                return 0;
+
+
+
+            $f9 = false;
+            $deliveryDate = strtotime($info['info']['date']);
+            // $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
+            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['info']['zone'])->where('shift',$info['info']['shift'])->whereIn('invoiceStatus',[1,2])
+                ->where('f9_picking_dl','!=',1)->where('version',true)->get();
+
+   
+                if(count($info_data) == 0)
+                    return 1;
+
+            foreach($info_data as $v){
+                $q[]= $v->invoiceId;
+            }
+
+            $ii = InvoiceItem::wherein('invoiceId',$q)->get();
+
+            foreach ($ii as $v){
+                if($v->productLocation == 9){
+                    $f9 = true;
+                }
+            }
+
+                $date = str_replace('-','',$info['info']['date']);
+                $id = $date.'%-'.$info['info']['f9_version'].'-9';
+                $result = ReportArchive::where('id','LIKE',$id)->first();
+
+                if($result || !$f9)
+                    return 1;
+                else
+                    return 0;
 
         }
         if($mode == 'post')
@@ -84,7 +108,7 @@ class HomeController extends BaseController {
 
            // $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
             $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->whereIn('invoiceStatus',[1,2])
-                ->where('f9_picking_dl','!=',1)->get();
+                ->where('version',false)->get();
 
             foreach($info_data as $v){
                  $q[]= $v->invoiceId;
