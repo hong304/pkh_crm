@@ -9,6 +9,7 @@ class Invoice_CustomerBreakdown {
     private $_shift = "";
     private $_invoices = [];
     private $_uniqueid = "";
+    private $_newway = [];
     
     public function __construct($indata)
     {
@@ -104,28 +105,32 @@ class Invoice_CustomerBreakdown {
                                 $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
 
                                 $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
+
+                                $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
+
                             }
+
                            $this->goods['1F9F'][$customerId]['invoiceId'][] = $invoiceQ->invoiceId;
 
                        } else {
 
                        $amount[$client->customerId] += $invoiceQ->amount;
 
-                         //  $i = 0;
-
+                           $i = 0;
+                           $customerIds = [];
                        // second, separate 1F goods and 9F goods
                        foreach ($invoiceQ['invoiceItem'] as $item) {
-                         //  $i++;
+                         $i++;
                            // determin its product location
                            $productId = $item->productId;
 
                            $productDetail = $products[$productId];
                            $unit = $item->productQtyUnit;
-                      //  $j = floor($i/35);
-                        //    if($i> 35){
-                         //       $customerId = "'" .$client->customerId. "-".$j."'";
-
-                         //   }else
+                  /*   $j = floor($i/20);
+                         if($i> 20){
+                               $customerId = "'" .$client->customerId. "-".$j."'";
+                               $customerIds[$j] = $customerId;
+                         }else*/
                                $customerId = $client->customerId;
 
                            // .  (isset($this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]) ? "(-".$this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]['counts'].")" : '') ,
@@ -139,7 +144,7 @@ class Invoice_CustomerBreakdown {
                                'stdPrice' => $productDetail->productStdPrice[$unit],
                                'itemPrice' => $item->productPrice,
                                'discount' => $item->productDiscount,
-                               'flag' => $customerId
+
                            ];
                            // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
 
@@ -147,21 +152,60 @@ class Invoice_CustomerBreakdown {
 
                            $this->goods['1F9F'][$customerId]['invoiceStatusText'] = $invoiceQ->invoiceStatusText;
 
+                           $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
+
+                           if(count($customerIds)>0)
+                               foreach($customerIds as $vv)
+                                   $this->goods['1F9F'][$vv]['totalAmount'] =  $amount[$client->customerId];
                        }
 
-                           $this->goods['1F9F'][$customerId]['invoiceId'][] = $invoiceQ->invoiceId;
+                           $this->goods['1F9F'][$client->customerId]['invoiceId'][] = $invoiceQ->invoiceId;
 
 
 
                        }
-                       $this->goods['1F9F'][$customerId]['totalAmount'] =  $amount[$client->customerId];
+
+
 
                    }
 
                });
 
        $this->data = $this->goods;
+//pd($this->data);
 
+        $ninef = $this->data['1F9F'];
+$newway = [];
+
+        foreach($ninef as $k => $v){
+
+            $temp = array_chunk($v['items'],30,true);
+            if(count($temp)>1){
+                foreach($temp as $kk => $vv){
+                    if($kk == 0){
+                        $newway[$k]['items'] = $vv;
+                        $newway[$k]['customerInfo'] = $v['customerInfo'];
+                        $newway[$k]['invoiceStatusText'] = $v['invoiceStatusText'];
+                        $newway[$k]['totalAmount'] = $v['totalAmount'];
+                        $newway[$k]['invoiceId'] = $v['invoiceId'];
+
+                    }else{
+                        $newway[$k."-".$kk]['items'] = $vv;
+                        $newway[$k."-".$kk]['customerInfo'] = $v['customerInfo'];
+                        $newway[$k."-".$kk]['invoiceStatusText'] = $v['invoiceStatusText'];
+                        $newway[$k."-".$kk]['totalAmount'] = $v['totalAmount'];
+                        $newway[$k."-".$kk]['invoiceId'] = $v['invoiceId'];
+                    }
+                }
+            }else{
+                $newway[$k]['items'] = $v['items'];
+                $newway[$k]['customerInfo'] = $v['customerInfo'];
+                $newway[$k]['invoiceStatusText'] = $v['invoiceStatusText'];
+                $newway[$k]['totalAmount'] = $v['totalAmount'];
+                $newway[$k]['invoiceId'] = $v['invoiceId'];
+            }
+        }
+      $this->_newway = $newway;
        return $this->data;        
     }
 
@@ -175,11 +219,11 @@ class Invoice_CustomerBreakdown {
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
 
         // handle all 1F, 9F goods
-        $ninef = $this->data['1F9F'];
+     //   $ninef = $this->data['1F9F'];
         $consec = $j = 0;
-        // pd($ninef);
 
-        foreach($ninef as $c=>$nf)
+
+        foreach($this->_newway as $c=>$nf)
         {
             $consec = $consec + count($nf['items'])+4;
             $nf['consec'] = $ninef[$c]['consec'] = count($nf['items']);
@@ -214,7 +258,7 @@ class Invoice_CustomerBreakdown {
 
         }
 
-    // pd($ninefproducts);
+
 
         foreach($ninefproducts as $index=>$order)
         {
@@ -278,19 +322,26 @@ class Invoice_CustomerBreakdown {
                 $pdf->SetFont('chi','',9);
                 $pdf->Cell(0, 0, sprintf("%s (%s)", $o['customerInfo']['customerName_chi'], $o['customerInfo']['customerId']), 0, 0, "L");
 
-                $y += 5;
 
-                $pdf->SetFont('chi','',9);
-                $i = $base_x-20;
-                foreach($o['invoiceId'] as $v){
-                    $pdf->setXY($i += 25, $y);
-                    $pdf->Cell(0, 0, sprintf("%s", $v), 0, 0, "L");
+
+                if(isset($o['invoiceId'])){
+                    $y += 5;
+
+                    $pdf->SetFont('chi','',9);
+                    $i = $base_x-20;
+
+                    foreach($o['invoiceId'] as $v){
+                        $pdf->setXY($i += 25, $y);
+                        $pdf->Cell(0, 0, sprintf("%s", $v), 0, 0, "L");
+                    }
                 }
 
-                $y += 5;
-                $pdf->setXY($base_x + 64, $y);
-                $pdf->Cell(20, 0, sprintf("TOTAL: HK$%s", $o['totalAmount']), 0, 0, "R");
-                $pdf->SetFont('chi','',9);
+                if(isset($o['totalAmount'])){
+                    $y += 5;
+                    $pdf->setXY($base_x + 64, $y);
+                    $pdf->Cell(20, 0, sprintf("TOTAL: HK$%s", $o['totalAmount']), 0, 0, "R");
+                    $pdf->SetFont('chi','',9);
+                }
 
                 $y += 5;
                 foreach($o['items'] as $itemUnitlv)
