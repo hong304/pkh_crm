@@ -69,7 +69,7 @@ class HomeController extends BaseController {
             $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['info']['zone'])->where('shift',$info['info']['shift'])->whereIn('invoiceStatus',[1,2])
                 ->where('f9_picking_dl','!=',1)->where('version',true)->get();
 
-   
+
                 if(count($info_data) == 0)
                     return 1;
 
