@@ -1,5 +1,7 @@
-<?php if(count($data['1F9F']>0)) foreach($data['1F9F'] as $nf):?>
-<h4 class="font-green-sharp"><?php echo $nf['customerInfo']['customerName_chi']; ?> (<?php echo $nf['customerInfo']['customerId'];?>)</h4>
+<?php if(count($data['1F9F']>0)) foreach($data['1F9F'] as $nf):
+
+    ?>
+<h4 class="font-green-sharp"><?php echo isset($nf['customerInfo']['customerName_chi'])?$nf['customerInfo']['customerName_chi']:''; ?> (<?php echo isset($nf['customerInfo']['customerId'])?$nf['customerInfo']['customerId']:'';?>)</h4>
 
 <table class="table table-bordered table-hover" style="font-size:15px;">
     <thead>
