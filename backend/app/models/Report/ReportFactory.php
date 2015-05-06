@@ -88,7 +88,7 @@ class ReportFactory{
                     if(isset($reportOutput['associates'])){
                         $neworder = json_decode($reportOutput['associates']);
 
-                        if($unid[1]>1){
+                        if(isset($unid[1]) && $unid[1]>1){
                             $unid[1] -= 1;
                             $comma_separated = implode("-", $unid);
                             $chre = ReportArchive::where('id',$comma_separated)->first();
