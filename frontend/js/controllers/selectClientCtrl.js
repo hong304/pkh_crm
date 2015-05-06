@@ -16,32 +16,32 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
         var e = window.event || evt;
         var key = e.which || e.keyCode;
 
-        if(e.keyCode == 36) // up
-        {
-            e.preventDefault();
-            $("#suggestion_row1_" + suggestion).css('background', '');
-            suggestion--;
-            $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
-            console.log(suggestion);
-        }else if(e.keyCode == 35) //down
-        {
-            e.preventDefault();
-            $("#suggestion_row1_" + suggestion).css('background', '');
-            suggestion++;
-            $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
-            console.log(suggestion);
-        }else if(e.keyCode == 34)
-        {
-            e.preventDefault();
-            $("#suggestion_row1_" + suggestion).css('background', '');
+        if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true) {
+            if (e.keyCode == 38) // up
+            {
+                e.preventDefault();
+                $("#suggestion_row1_" + suggestion).css('background', '');
+                suggestion--;
+                $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
 
-            if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true)
+            } else if (e.keyCode == 40) //down
+            {
+                e.preventDefault();
+                $("#suggestion_row1_" + suggestion).css('background', '');
+                suggestion++;
+                $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
+
+            } else if (e.keyCode == 39) {
+
+
+                e.preventDefault();
+                $("#suggestion_row1_" + suggestion).css('background', '');
                 $("#suggestion_row1_" + suggestion).click();
 
-            suggestion = -1;
+                suggestion = -1;
 
+            }
         }
-
 
     }, false);
 
