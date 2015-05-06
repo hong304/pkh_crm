@@ -9,7 +9,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	
 	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
-    var suggestion = -1;
+    var csuggestion = -1;
 
 
     document.addEventListener('keydown', function(evt) {
@@ -20,26 +20,24 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
             if (e.keyCode == 38) // up
             {
                 e.preventDefault();
-                $("#suggestion_row1_" + suggestion).css('background', '');
-                suggestion--;
-                $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
-
+                $("#suggestion_row1_" + csuggestion).css('background', '');
+                csuggestion--;
+                $("#suggestion_row1_" + csuggestion).css('background', '#E6FFE6');
+                console.log(csuggestion);
             } else if (e.keyCode == 40) //down
             {
                 e.preventDefault();
-                $("#suggestion_row1_" + suggestion).css('background', '');
-                suggestion++;
-                $("#suggestion_row1_" + suggestion).css('background', '#E6FFE6');
-
+                $("#suggestion_row1_" + csuggestion).css('background', '');
+                csuggestion++;
+                $("#suggestion_row1_" + csuggestion).css('background', '#E6FFE6');
+                console.log(csuggestion);
             } else if (e.keyCode == 39) {
-
-
                 e.preventDefault();
-                $("#suggestion_row1_" + suggestion).css('background', '');
-                $("#suggestion_row1_" + suggestion).click();
-
-                suggestion = -1;
-
+                $("#suggestion_row1_" + csuggestion).css('background', '');
+                $("#suggestion_row1_" + csuggestion).click();
+                console.log(csuggestion);
+                csuggestion = -1;
+                console.log(csuggestion);
             }
         }
 

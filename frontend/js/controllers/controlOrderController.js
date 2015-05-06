@@ -633,7 +633,6 @@ console.log($scope.order.status);
 
         $('#selectProduct').on('hidden.bs.modal', function () {
             $("#qty_" + $scope.currentSelectProductRow).focus().select();
-
         })
     });
 

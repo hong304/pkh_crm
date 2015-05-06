@@ -31,11 +31,9 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 		'invoiceNumber' :	'',
 	};
 	
-    $scope.$on('$viewContentLoaded', function() {   
+    $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();        
         $scope.systeminfo = $rootScope.systeminfo;              
-        
-        
     });
     
     $scope.clearCustomerSearch = function()
