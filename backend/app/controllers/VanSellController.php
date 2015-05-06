@@ -403,38 +403,17 @@ class VanSellController extends BaseController {
 
               $path = storage_path() . '/report_archive/'.$this->_reportId.'/' . $filename;
 
-              /*    if(ReportArchive::where('id',$filenameUn)->count() == 0){
+                  if(ReportArchive::where('id',$filenameUn)->count() == 0){
                       $archive = new ReportArchive();
                       $archive->id = $filenameUn;
                       $archive->report = $this->_reportId;
                       $archive->file = $path;
                       $archive->remark = $reportOutput['remark'];
                       $archive->created_by = Auth::user()->id;
-                      $unid = explode("-",$reportOutput['uniqueId']);
-
-                      if(isset($reportOutput['associates'])){
-                          $neworder = json_decode($reportOutput['associates']);
-
-                          if($unid[1]>1){
-                              $unid[1] -= 1;
-                              $comma_separated = implode("-", $unid);
-                              $chre = ReportArchive::where('id',$comma_separated)->first();
-                              if(count($chre)>0){
-                                  $invoiceIds = json_decode(json_decode($chre->associates, true, true));
-                                  $neworder = array_diff($neworder,$invoiceIds);
-                              }
-
-                          }
-                          $neworder = array_values($neworder);
-                      }
-
-
-
-
-
+                      $neworder = json_decode($reportOutput['associates']);
                       $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
                       $archive->save();
-                  }*/
+                  }
 
               $pdf = $reportOutput['pdf'];
               $pdf->Output($path, "IF");
