@@ -76,13 +76,13 @@
                                     <tr data-ng-repeat="(k,q) in queue">
                                         <td>{{q.job_id}}</td>
                                         <td>{{q.invoiceId}}</td>
-                                        <td>{{q.client.customerName_chi}}</td>
-                                        <td>{{q.target_path}}</td>
+                                        <td>{{q.customerName_chi}}</td>
+                                        <td>{{q.zoneId}}</td>
                                         <td>{{q.routePlanningPriority}}</td>
-                                        <td>{{q.insert_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
+                                        <td>{{q.updated_at  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
                                         <td>{{q.deliveryDate * 1000 | date: 'yyyy.MM.dd'}}</td>
+                                        <td>{{q.name}}</td>
 
-                                        <td>{{q.staff.username}}</td>
                                         <td>
                                                         <span data-ng-if="q.status == 'downloaded;passive'">
                                                             已下載至列印伺服器
@@ -128,13 +128,12 @@
                                     <tr data-ng-repeat="q in printed">
                                         <td>{{q.job_id}}</td>
                                         <td>{{q.invoiceId}}</td>
-                                        <td>{{q.client.customerName_chi}}</td>
-                                        <td>{{q.target_path}}</td>
+                                        <td>{{q.customerName_chi}}</td>
+                                        <td>{{q.zoneId}}</td>
                                         <td>{{q.routePlanningPriority}}</td>
-                                        <td>{{q.insert_time  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
+                                        <td>{{q.updated_at  * 1000 | date: 'yyyy.MM.dd hh:mm:ss a'}}</td>
                                         <td>{{q.deliveryDate * 1000 | date: 'yyyy.MM.dd'}}</td>
-
-                                        <td>{{q.staff.username}}</td>
+                                        <td>{{q.name}}</td>
                                         <td>
                                                         <span data-ng-if="q.status == 'downloaded;passive'">
                                                             已下載至列印伺服器

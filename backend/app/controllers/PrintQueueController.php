@@ -105,12 +105,16 @@ class PrintQueueController extends BaseController {
         // list jobs that are created since 3 days ago. 
         //  p(Auth::user()->temp_zone);
 
-        $job = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
+        $job =  PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','Invoice.updated_at','deliveryDate','name','PrintQueue.status')->wherein('target_path', explode(',', Auth::user()->temp_zone))
             ->where('insert_time', '>', strtotime("3 days ago"))
-            ->where('status','!=','dead:regenerated')
-            ->where('status','!=','downloaded;passive')
-            ->with('staff')->with('client')->leftJoin('Invoice', function($join) {
+            ->where('PrintQueue.status','!=','dead:regenerated')
+            ->where('PrintQueue.status','!=','downloaded;passive')
+            ->leftJoin('Invoice', function($join) {
                 $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+            })->leftJoin('users', function($join) {
+                $join->on('users.id', '=', 'Invoice.created_by');
+            })->leftJoin('Customer', function($join) {
+                $join->on('Customer.customerId', '=', 'Invoice.customerId');
             })
 
             ->where(function($query){
@@ -123,11 +127,17 @@ class PrintQueueController extends BaseController {
             ->orderBy('insert_time', 'desc')
             ->get();
 
-        $job1 = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))
+
+
+        $job1 = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','Invoice.updated_at','deliveryDate','name','PrintQueue.status')->wherein('target_path', explode(',', Auth::user()->temp_zone))
             ->where('insert_time', '>', strtotime("3 days ago"))
-            ->where('status','downloaded;passive')
-            ->with('staff')->with('client')->leftJoin('Invoice', function($join) {
+            ->where('PrintQueue.status','downloaded;passive')
+            ->leftJoin('Invoice', function($join) {
                 $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+            })->leftJoin('users', function($join) {
+                $join->on('users.id', '=', 'Invoice.created_by');
+            })->leftJoin('Customer', function($join) {
+                $join->on('Customer.customerId', '=', 'Invoice.customerId');
             })
 
             ->where(function($query){
