@@ -14,6 +14,10 @@ class ProductManipulation {
         if($this->action == 'create')
         {
            // $this->generateId($group);
+            $groupid =  substr($group, 0, -1);
+            $pieces = explode("-",$groupid);
+            $this->_departmentid = $pieces[0];
+            $this->_groupid = $pieces[1];
             $this->_productId = $productNewId;
             $this->im = new Product();
             
