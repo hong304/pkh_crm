@@ -13,11 +13,10 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
     var suggestion = -1;
 
 
-
-    document.addEventListener('keydown', function(evt) {
+    document.addEventListener('keyup', function(evt) {
         var e = window.event || evt;
-        var key = e.which || e.keyCode;
-        
+        //  var key = e.which || e.keyCode;
+
         if(($("#selectProduct").data('bs.modal') || {}).isShown == true) {
             if (e.keyCode == 38) // up
             {
@@ -47,7 +46,12 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
 
     }, false);
 
-    $scope.$on('$viewContentLoaded', function() {   
+
+    $scope.$on('$viewContentLoaded', function() {
+
+
+
+
         // initialize core components
         Metronic.initAjax();
         
@@ -86,6 +90,7 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
 	        ).
 	        success(function(res, status, headers, config) {
 	        	$scope.productSearchResult = res;
+                    suggestion = -1;
 	        	//$timeout($scope.openSelectionModal, 1000);
 	        	//$scope.openSelectionModal();
 	        }).

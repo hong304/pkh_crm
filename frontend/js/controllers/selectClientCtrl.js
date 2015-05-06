@@ -11,10 +11,9 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     var fetchDataTimer;
     var csuggestion = -1;
 
-
-    document.addEventListener('keydown', function(evt) {
+    document.addEventListener('keyup', function(evt) {
         var e = window.event || evt;
-        var key = e.which || e.keyCode;
+        //var key = e.which || e.keyCode;
 
         if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true) {
             if (e.keyCode == 38) // up
@@ -42,6 +41,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
         }
 
     }, false);
+
 
     $scope.$on('$viewContentLoaded', function() {   
         // initialize core components
@@ -113,7 +113,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	        ).
 	        success(function(res, status, headers, config) {
 	        	$scope.clientSuggestion = res;
-
+                    csuggestion = -1;
 	        	//$timeout($scope.openSelectionModal, 1000);
 	        	//$scope.openSelectionModal();
 	        }).
