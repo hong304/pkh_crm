@@ -40,7 +40,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
             }
         }
 
-    }, false);
+    }, true);
 
 
     $scope.$on('$viewContentLoaded', function() {   
@@ -66,8 +66,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     	$('#selectclientmodel').modal('hide');
         $('#selectclientmodel').on('hidden.bs.modal', function () {
             $('#productCode_1').focus();
-
-
+            csuggestion = -1;
         })
     	$scope.keyword = {
             'zone' :'',
