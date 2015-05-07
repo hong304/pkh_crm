@@ -11,11 +11,20 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     var fetchDataTimer;
     var csuggestion = -1;
 
-    document.addEventListener('keyup', function(evt) {
-        var e = window.event || evt;
-        //var key = e.which || e.keyCode;
 
+   /* var isCtrl = false;$(document).keyup(function (e) {
+        if(e.which == 17) isCtrl=false;
+    }).keydown(function (e) {
+        if(e.which == 17) isCtrl=true;
+        if(e.which == 83 && isCtrl == true) {
+            alert('Keyboard shortcuts + JQuery are even more cool!');
+            return false;
+        }
+    });*/
+
+    $(document).keydown(function (e) {
         if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true) {
+
             if (e.keyCode == 38) // up
             {
                 e.preventDefault();
@@ -40,7 +49,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
             }
         }
 
-    }, true);
+    });
 
 
     $scope.$on('$viewContentLoaded', function() {   

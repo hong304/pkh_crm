@@ -18,6 +18,7 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
         //  var key = e.which || e.keyCode;
 
         if(($("#selectProduct").data('bs.modal') || {}).isShown == true) {
+
             if (e.keyCode == 38) // up
             {
                 // e.preventDefault();
