@@ -24,7 +24,7 @@ class InvoiceItem extends Eloquent  {
 	        foreach($model->getDirty() as $attribute => $value){
 	            $original= $model->getOriginal($attribute);
 	            //echo "Changed $attribute from '$original' to '$value'<br/>";
-	            if(!in_array($attribute, array('created_by', 'created_at', 'updated_at')))
+	            if(!in_array($attribute, array('created_by', 'created_at', 'updated_at','productStandardPrice')))
 	            {
     	            $x = new TableAudit();
     	            $x->referenceKey = $model->invoiceId;
