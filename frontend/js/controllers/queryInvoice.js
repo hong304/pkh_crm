@@ -312,7 +312,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
             dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options 
 
                 
-                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
+                "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
 
                 "lengthMenu": [
                     [20, 50],
