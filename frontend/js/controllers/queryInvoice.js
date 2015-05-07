@@ -38,8 +38,15 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     
     $scope.clearCustomerSearch = function()
     {
-    	$scope.filterData.displayName = "";
-    	$scope.filterData.clientId = "";
+        $scope.filterData = {
+            'displayName'	:	'',
+            'clientId'		:	'0',
+            'status'		:	'0',
+            'zone'			:	'',
+            'deliverydate'	:	'1daylr',
+            'created_by'	:	'0',
+            'invoiceNumber' :	'',
+        };
     	$scope.updateDataSet();
     }
     
