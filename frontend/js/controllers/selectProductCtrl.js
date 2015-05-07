@@ -44,13 +44,13 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
         }
 
 
-    }, false);
+    }, true);
 
 
     $scope.$on('$viewContentLoaded', function() {
 
 
-
+        suggestion = -1
 
         // initialize core components
         Metronic.initAjax();
