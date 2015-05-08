@@ -11,20 +11,8 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     var fetchDataTimer;
     var csuggestion = -1;
 
-
-   /* var isCtrl = false;$(document).keyup(function (e) {
-        if(e.which == 17) isCtrl=false;
-    }).keydown(function (e) {
-        if(e.which == 17) isCtrl=true;
-        if(e.which == 83 && isCtrl == true) {
-            alert('Keyboard shortcuts + JQuery are even more cool!');
-            return false;
-        }
-    });*/
-
-    $(document).keydown(function (e) {
+    $("#selectclientmodel").keydown(function (e) {
         if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true) {
-
             if (e.keyCode == 38) // up
             {
                 e.preventDefault();
@@ -42,7 +30,8 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
             } else if (e.keyCode == 39) {
                 e.preventDefault();
                 $("#suggestion_row1_" + csuggestion).css('background', '');
-                $("#suggestion_row1_" + csuggestion).click();
+                if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true)
+                    $("#suggestion_row1_" + csuggestion).click();
                 console.log(csuggestion);
                 csuggestion = -1;
                 console.log(csuggestion);
@@ -50,6 +39,17 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
         }
 
     });
+   /* var isCtrl = false;$(document).keyup(function (e) {
+        if(e.which == 17) isCtrl=false;
+    }).keydown(function (e) {
+        if(e.which == 17) isCtrl=true;
+        if(e.which == 83 && isCtrl == true) {
+            alert('Keyboard shortcuts + JQuery are even more cool!');
+            return false;
+        }
+    });*/
+
+
 
 
     $scope.$on('$viewContentLoaded', function() {   
@@ -86,8 +86,8 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     	SharedService.setValue('clientId', c.customerId, 'handleCustomerUpdate');
     	SharedService.setValue('clientName', c.customerName_chi, 'handleCustomerUpdate');
     	SharedService.setValue('clientAddress', c.address_chi, 'handleCustomerUpdate');
-    	SharedService.setValue('clientZoneId', c.zone.zoneId, 'handleCustomerUpdate');
-    	SharedService.setValue('clientZoneName', c.zone.zoneName, 'handleCustomerUpdate');
+    	SharedService.setValue('clientZoneId', c.deliveryZone, 'handleCustomerUpdate');
+    	SharedService.setValue('clientZoneName', c.zoneText, 'handleCustomerUpdate');
     	SharedService.setValue('clientRoute', c.routePlanningPriority, 'handleCustomerUpdate');
         SharedService.setValue('clientRemark', c.remark, 'handleCustomerUpdate');
     	SharedService.setValue('clientPaymentTermId', c.paymentTermId, 'handleCustomerUpdate');
@@ -121,7 +121,9 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	        ).
 	        success(function(res, status, headers, config) {
 	        	$scope.clientSuggestion = res;
-                    csuggestion = -1;
+                  csuggestion = -1;
+
+
 	        	//$timeout($scope.openSelectionModal, 1000);
 	        	//$scope.openSelectionModal();
 	        }).

@@ -54,7 +54,7 @@ class Customer extends Eloquent  {
             else if ($model->paymentTermId == 2)
                 $model->paymentTermText = 'Credit';
 
-            $model->zoneText = Config::get('zoneName.'.$model->zoneId);
+            $model->zoneText = Config::get('zoneName.'.$model->deliveryZone);
 
             $model->created_atText = date("Y-m-d H:i:s", $model->created_at);
 

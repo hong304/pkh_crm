@@ -31,7 +31,7 @@ class CustomerController extends BaseController {
                $keyword['zone']['zoneId'] = '';
 
           // $keyword = str_replace(array('?', '*'), '%', $keyword);
-           $clientArray = Customer::select('*')
+           $clientArray = Customer::select('deliveryZone','phone_1','customerName_chi','customerId','address_chi','routePlanningPriority','remark','paymentTermId','shift','discount')
 
                                    ->where('status', '1')
                                    ->where(function($query) use($keyword)
@@ -58,17 +58,18 @@ class CustomerController extends BaseController {
                $clientArray->wherein('deliveryZone',explode(',', Auth::user()->temp_zone));
            }
 
-           $clientArray = $clientArray->with('Zone')
-           ->limit(50)
+          $clientArray = $clientArray->limit(30)
            ->get();
 
 
        }
        else
        {
-           $clientArray = Customer::where('deliveryZone', Session::get('zone'))
+           $clientArray = Customer::select('deliveryZone','phone_1','customerName_chi','customerId','address_chi','routePlanningPriority','remark','paymentTermId','shift','discount')
+
+           ->where('deliveryZone', Session::get('zone'))
                                   ->where('status', '1')
-                                  ->with('Zone')
+                                  //->with('Zone')
                                   ->limit(15)
                                   ->get(); 
      

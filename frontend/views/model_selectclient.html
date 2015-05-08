@@ -73,7 +73,7 @@
                                         <tr data-ng-repeat="client in clientSuggestion" ng-click="selectClient(client)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
                                             <td>{{client.customerId}}</td>
                                             <td>{{client.customerName_chi}} ({{client.phone_1}})</td>
-                                            <td>{{client.zone.zoneId}} - {{client.zone.zoneName}}</td>
+                                            <td>{{client.deliveryZone}} - {{client.zoneText}}</td>
                                             <td>{{client.address_chi}}</td>
                                         </tr>
                                         </tbody>
