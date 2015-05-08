@@ -210,7 +210,7 @@ class InvoiceManipulation {
 	        $this->im->customerId = $this->temp_invoice_information['clientId'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
 	        $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
-            if($this->temp_invoice_information['status'] == '98')
+            if($this->temp_invoice_information['status'] == '98' || $this->temp_invoice_information['status'] == '97')
                 $this->im->return = 1;
 	        $this->im->deliveryTruckId = 0;
 	        $this->im->invoiceCurrency = 'HKD';
