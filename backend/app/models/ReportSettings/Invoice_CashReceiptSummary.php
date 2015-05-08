@@ -54,7 +54,7 @@ class Invoice_CashReceiptSummary {
 
 
         Invoice::select('*')->whereIn('invoiceStatus',['2','98','97'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
-               ->chunk(50, function($invoicesQuery) {
+               ->chunk(5000, function($invoicesQuery) {
                    $acc = 0;
                    foreach($invoicesQuery as $invoiceQ)
                    {
