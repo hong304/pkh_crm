@@ -202,7 +202,7 @@ class Invoice_CashReceiptSummary {
 
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
 
-        $datamart = array_chunk($this->data, 25, true);
+        $datamart = array_chunk($this->data, 30, true);
 
 
         foreach($datamart as $i=>$f)
@@ -257,21 +257,25 @@ class Invoice_CashReceiptSummary {
     
                 $pdf->setXY(160, $y);
                 $pdf->Cell(0, 0, sprintf("HK$ %s", $e['accumulator']), 0, 0, "L");
-    
+                $lt = $e['accumulator'];
                 $y += 6;
                
             }
-        
-            $y += 10;
+
+
+
+          //  $y += 10;
             
         
         }
-        
+        $pdf->Line(10, $y, 190, $y);
+        $pdf->setXY(152, $y+6);
+        $pdf->Cell(0, 0, sprintf("總數 HK$ %s", $lt), 0, 0, "L");
         // output
         return [
             'pdf' => $pdf,
             'remark' => sprintf("Cash Receipt Summary Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
-            'associates' => $this->_invoices,
+            'associates' => json_encode($this->_invoices),
             'uniqueId' => $this->_uniqueid,
         ];
     }
