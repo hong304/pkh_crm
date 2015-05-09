@@ -254,7 +254,7 @@ class VanSellController extends BaseController
                     $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
 
 
-                    $pdf->setXY(130, $y);
+                    $pdf->setXY(131, $y);
                     $pdf->SetFont('chi','',13);
                     $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
 
