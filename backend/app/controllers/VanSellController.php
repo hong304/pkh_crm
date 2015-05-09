@@ -271,8 +271,11 @@ class VanSellController extends BaseController
 
                 $d = substr(current($f)['productId'], 0, 1);
                 $nd = substr(next($f)['productId'], 0, 1);
+//p($d);
+//p($nd);
+//echo "<br>";
 
-                if (isset($nd))
+                if ($nd!='')
                     if ($nd != $d) {
                         $pdf->Line(10, $y, 190, $y);
                         $y += 7;
