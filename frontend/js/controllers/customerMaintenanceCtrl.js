@@ -279,7 +279,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
                     [10, 20, 50],
                     [10, 20, 50] // change per page values here
                 ],
-                "pageLength": 10, // default record count per page
+                "pageLength": 50, // default record count per page
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
