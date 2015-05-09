@@ -13,18 +13,28 @@
                         <span class="caption-subject font-green-sharp bold uppercase">訂單列印 (Push-to-Print)</span>
                     </div>
                     <div class="actions">
+                            <div class="btn-group">
+                                <select class="form-control"
+                                        ng-model="zone"
+                                        data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
+                                        data-ng-change="updateZone();">
+                                    <option value=''>檢視全部</option>
+                                </select>
+                            </div>
+                     </div>
+                    <div class="actions">
                         <div class="btn-group">
                             <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="printToday();">
                                 <i class="fa fa-print"></i> 列印當天訂單 </a>&nbsp;
                         </div>
                     </div>
 
-                    <div class="actions">
+                  <!--  <div class="actions">
                         <div class="btn-group">
                             <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="pushPrintQueue();">
                                 <i class="fa fa-print"></i> 列印全部 </a>&nbsp;
                         </div>
-                    </div>
+                    </div>-->
 
                     <div class="actions">
                         <div class="btn-group">

@@ -11,13 +11,19 @@
 class PrintQueueController extends BaseController {
 
     public $invoiceIds = [];
+    private $zone = '';
+   // private $temp = [];
 
     public function __construct()
     {
 
         if(isset(Auth::user()->temp_zone)){
-
-            $count = PrintQueue::select('invoiceId', DB::raw('count(*) as total'))->wherein('target_path', explode(',', Auth::user()->temp_zone))->wherein('status',['queued','fast-track'])
+            $this->zone = Auth::user()->temp_zone;
+            $filter = Input::get('zone');
+            if(isset($filter) && $filter != ''){
+                $this->zone = $filter['zoneId'];
+            }
+            $count = PrintQueue::select('invoiceId', DB::raw('count(*) as total'))->wherein('target_path', explode(',', $this->zone))->wherein('status',['queued','fast-track'])
                 ->groupBy('invoiceId')->having('total','>',1)
                 ->get();
 
@@ -103,10 +109,11 @@ class PrintQueueController extends BaseController {
     public function getAllPrintJobsWithinMyZone()
     {
         // list jobs that are created since 3 days ago. 
-        //  p(Auth::user()->temp_zone);
 
-        $job =  PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','Invoice.updated_at','deliveryDate','name','PrintQueue.status')->wherein('target_path', explode(',', Auth::user()->temp_zone))
-            ->where('insert_time', '>', strtotime("3 days ago"))
+
+
+        $job =  PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','Invoice.updated_at','deliveryDate','name','PrintQueue.status')
+            ->wherein('target_path',explode(',', $this->zone))->where('insert_time', '>', strtotime("3 days ago"))
             ->where('PrintQueue.status','!=','dead:regenerated')
             ->where('PrintQueue.status','!=','downloaded;passive')
             ->leftJoin('Invoice', function($join) {
@@ -129,7 +136,8 @@ class PrintQueueController extends BaseController {
 
 
 
-        $job1 = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','Invoice.updated_at','deliveryDate','name','PrintQueue.status')->wherein('target_path', explode(',', Auth::user()->temp_zone))
+        $job1 = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','Invoice.updated_at','deliveryDate','name','PrintQueue.status')
+            ->wherein('target_path', explode(',', $this->zone))
             ->where('insert_time', '>', strtotime("3 days ago"))
             ->where('PrintQueue.status','downloaded;passive')
             ->leftJoin('Invoice', function($join) {
@@ -166,8 +174,7 @@ class PrintQueueController extends BaseController {
         $mode = Input::get('mode');
 
         if($mode == 'today'){
-
-            foreach(explode(',', Auth::user()->temp_zone) as $k => $v){
+            foreach(explode(',', $this->zone) as $k => $v){
                 $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
                     ->leftJoin('Invoice', function($join) {
                         $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
@@ -201,10 +208,7 @@ class PrintQueueController extends BaseController {
                     $updatepq->status = 'downloaded;passive';
                     $updatepq->save();
                 }
-
             }
-
-
         }
 
         if($mode == 'selected'){
@@ -228,13 +232,13 @@ class PrintQueueController extends BaseController {
 
     }
 
-    public function printAllPrintJobsWithinMyZone()
+   /* public function printAllPrintJobsWithinMyZone()
     {
         //    if(Auth::guest())
         //      Auth::onceUsingId("46");
 
 
-        foreach(explode(',', Auth::user()->temp_zone) as $k => $v){
+        foreach(explode(',', $this->zone) as $k => $v){
             $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->where('insert_time', '>', strtotime("3 days ago"))
                 ->wherein('status', ['queued', 'fast-track'])
                 ->leftJoin('Invoice', function($join) {
@@ -260,7 +264,7 @@ class PrintQueueController extends BaseController {
             ->update(['target_time'=>time(),'status'=>'downloaded;passive']);
 
         // return Response::json(['affected'=>$affected_jobs]);
-    }
+    }*/
 
     public function rePrint()
     {
@@ -276,7 +280,7 @@ class PrintQueueController extends BaseController {
 
         $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
             ->wherein('invoiceStatus', ['1', '3'])
-            ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
+            ->wherein('zoneId', explode(',', $this->zone))
             ->groupBy('invoiceStatus', 'zoneId');
 
             if($mode == 'today')

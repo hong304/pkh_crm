@@ -3,7 +3,7 @@
 app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeout, $location, $interval) {
 	
 	var querytarget = endpoint + "/getAllPrintJobsWithinMyZone.json";
-	var pushtarget = endpoint + "/printAllPrintJobsWithinMyZone.json";
+//	var pushtarget = endpoint + "/printAllPrintJobsWithinMyZone.json";
     var checkstatus = endpoint + "/getInvoiceStatusMatchPrint.json";
     var printSelect = endpoint + "/printSelectedJobsWithinMyZone.json";
 
@@ -12,6 +12,9 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
         'id' : '',
         'collect' : ''
     }
+
+    $scope.zone = '';
+
     $scope.checkid = [];
 
     $scope.$on('$viewContentLoaded', function() {
@@ -34,7 +37,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
         $http({
             method: 'POST',
             url: checkstatus,
-            data: {mode:'today'}
+            data: {mode:'today',zone:$scope.zone}
         }).success(function (res) {
             if(res.countInDataMart>0) {
 
@@ -74,7 +77,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                                 $http({
                                     method: 'POST',
                                     url: printSelect,
-                                    data: {mode:'today'}
+                                    data: {mode:'today',zone:$scope.zone}
                                 }).success(function(res, status, headers, config){
                                         $scope.updatePrintQueue();
                                         // alert('正在準備傳送至印表機...')
@@ -108,7 +111,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                         $http({
                             method: 'POST',
                             url: printSelect,
-                            data: {print:$scope.checkid,mode:'selected'}
+                            data: {print:$scope.checkid,mode:'selected',zone:$scope.zone}
                         }).success(function () {
                             $scope.updatePrintQueue();
                         });
@@ -120,14 +123,18 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
     }
+    $scope.updateZone = function(){
+        $scope.updatePrintQueue();
+    }
 
     $scope.updatePrintQueue = function()
-    {    	
-    	$http.get(querytarget)
-    	.success(function(res){
+    {
+        $http({
+            method: 'POST',
+            url: querytarget,
+            data: {zone:$scope.zone}
+        }).success(function(res){
     		$scope.queue = res['queued'];
-
-
                 var i = 0;
                 res['queued'].forEach(function(item) {
                     $scope.checkid[i] = $.extend(true, {}, $scope.prints);
@@ -141,7 +148,8 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
             $scope.printed = res['printed'];
             });
     }
-    
+
+   /*
     $scope.pushPrintQueue = function()
     {
         $http.get(checkstatus)
@@ -200,6 +208,6 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
     }
-    
+    */
     
 });
