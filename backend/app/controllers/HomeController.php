@@ -102,8 +102,7 @@ class HomeController extends BaseController {
             $f9 = false;
             $deliveryDate = strtotime($info['date']);
 
-           // Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',4)->update(['f9_picking_dl'=>1]);
-            Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->where('version',true)->update(['f9_picking_dl'=>1]);
+
 
 
            // $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
@@ -126,6 +125,10 @@ class HomeController extends BaseController {
                 }
             }
 
+            if($f9){
+                // Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',4)->update(['f9_picking_dl'=>1]);
+                Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->where('version',true)->update(['f9_picking_dl'=>1]);
+            }
 
          //   $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->with('InvoiceItem')
          //       ->update(['previous_status'=>DB::raw('invoiceStatus'),'invoiceStatus' => 4]);
