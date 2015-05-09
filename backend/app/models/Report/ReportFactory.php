@@ -86,6 +86,7 @@ class ReportFactory{
                     $unid = explode("-",$reportOutput['uniqueId']);
 
                     if(isset($reportOutput['associates'])){
+
                         $neworder = json_decode($reportOutput['associates']);
 
                         if(isset($unid[1]) && $unid[1]>1){

@@ -133,18 +133,19 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
 
         $http.post(querytarget, {reportId: 'vanselllist', output: "create", filterData: $scope.filterData,data:$scope.qty})
             .success(function(res, status, headers, config){
+
+                var queryObject = {
+                    filterData	:	$scope.filterData,
+                    reportId	:	'vanselllist',
+                    output		:	'pdf'
+                };
+                var queryString = $.param( queryObject );
+
+                window.open(endpoint + "/getVansellreport.json?" + queryString);
+
             });
 
 
-        var queryObject = {
-            filterData	:	$scope.filterData,
-            reportId	:	'vanselllist',
-            output		:	'pdf'
-        };
-
-        var queryString = $.param( queryObject );
-
-        window.open(endpoint + "/getVansellreport.json?" + queryString);
 
     }
 
