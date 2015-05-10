@@ -53,7 +53,7 @@ class Invoice_CashReceiptSummary {
             });
 
 
-        Invoice::select('*')->whereIn('invoiceStatus',['2','98','97'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
+        Invoice::select('*')->whereIn('invoiceStatus',['2','98','97'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
                ->chunk(5000, function($invoicesQuery) {
                    $acc = 0;
                    foreach($invoicesQuery as $invoiceQ)
