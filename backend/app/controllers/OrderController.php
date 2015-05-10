@@ -169,8 +169,8 @@ class OrderController extends BaseController {
                     $dDateEnd = strtotime("+1 week");
                     break;
                 case '1daylr' :
-                    $dDateBegin = strtotime("1 days ago 00:00");
-                    $dDateEnd = strtotime("tomorrow 23:59");
+                    $dDateBegin = strtotime("2 days ago 00:00");
+                    $dDateEnd = strtotime("+2 day");
                     break;
                 case 'past-7-days' :
                     $dDateBegin = strtotime("7 days ago 00:00");
