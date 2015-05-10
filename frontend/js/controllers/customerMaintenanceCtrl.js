@@ -83,8 +83,10 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     $scope.$on('$viewContentLoaded', function() {   
     	
         Metronic.initAjax();        
-        $scope.systeminfo = $rootScope.systeminfo;   
+        $scope.systeminfo = $rootScope.systeminfo;
+        $('#keywordId').focus();
         $scope.updateDataSet();
+
     });
     
     $scope.$watch(function() {

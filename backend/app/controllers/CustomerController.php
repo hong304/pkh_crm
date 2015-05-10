@@ -182,12 +182,14 @@ class CustomerController extends BaseController
                 else
                     $c->status = '暫停';
 
-                if ($c->deleted_at != '')
+                if ($c->deleted_at != '') {
                     $c->delete = '';
-                else
+                    $c->link = '';
+                } else {
                     $c->delete = '<span onclick="delCustomer(\'' . $c->customerId . '\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+                    $c->link = '<span onclick="editCustomer(\'' . $c->customerId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                }
 
-                $c->link = '<span onclick="editCustomer(\'' . $c->customerId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
             }
         } elseif ($mode == 'single') {
             $customer = Customer::where('customerId', Input::get('customerId'))->first();
