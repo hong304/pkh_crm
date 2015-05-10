@@ -85,14 +85,14 @@ class Customer_MonthlyCreditSummary {
                 'optionList' => $availablezone,
                 'defaultValue' => $this->_zone,
             ],
-            [
+          /*  [
                 'id' => 'year',
                 'type' => 'single-dropdown',
                 'label' => '年份',
                 'model' => 'year',
                 'optionList' => [date("Y")-1 => date("Y")-1, date("Y") => date("Y"), date("Y")+1 => date("Y")+1],
                 'defaultValue' => date("Y"),
-            ],
+            ],*/
         ];
         
         return $filterSetting;

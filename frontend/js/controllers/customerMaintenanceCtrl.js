@@ -38,13 +38,14 @@ function delCustomer(id)
 }
 
 app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
-	
+    var fetchDataTimer;
 	var querytarget = endpoint + '/queryCustomer.json';
 	var iutarget = endpoint + '/manipulateCustomer.json';
 	
 	$scope.filterData = {
-			'displayName'	:	'',
-			'clientId'		:	'0',
+			'name'	:	'',
+			'id'		:	'',
+        'phone' : '',
 			'zone'			:	'',
 	};
     $scope.submit = true;
@@ -91,13 +92,13 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
   		$scope.systeminfo = $rootScope.systeminfo;  		
   	}, true);
     
-    $scope.$on('handleCustomerUpdate', function(){
+  /*  $scope.$on('handleCustomerUpdate', function(){
     	
-		$scope.filterData.clientId = SharedService.clientId;
-		$scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")"; 
-		$scope.filterData.zone = '';
+		//$scope.filterData.clientId = SharedService.clientId;
+		//$scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
+	//	$scope.filterData.zone = '';
 		$scope.updateDataSet();
-	});
+	});*/
     
     $scope.editCustomer = function(customerId)
     {
@@ -239,16 +240,21 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	$scope.updateDataSet();
     }
     
-    $scope.clearCustomerSearch = function()
+
+    $scope.searchClient = function()
     {
-    	$scope.filterData.displayName = "";
-    	$scope.filterData.clientId = "";
-    	$scope.updateDataSet();
+        $scope.updateDataSet();
     }
-    
+
     $scope.updateDataSet = function()
     {
-    	
+
+
+
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+
+
     	var grid = new Datatable();
     	    	
     	//var info = grid.page.info();
@@ -273,7 +279,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
             dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options 
 
                 
-                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
+                "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
 
                 "lengthMenu": [
                     [10, 20, 50],
@@ -322,6 +328,9 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
             }
         });
 
+        },500);
     }
+
+
     
 });

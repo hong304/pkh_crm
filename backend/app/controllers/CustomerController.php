@@ -123,19 +123,31 @@ class CustomerController extends BaseController {
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');
+
+
+            if(!isset($filter['zone']['zoneId']))
+                $filter['zone']['zoneId'] = '';
+
             Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-            $customer = Customer::select('*')->where('deleted',false);
+            $customer = Customer::select('*');
             
-            // client id
-            if($filter['clientId'])
+
+               // $customer->where('customerId', $filter['clientId']);
+
+                $customer->where(function($query) use($filter)
             {
-                $customer->where('customerId', $filter['clientId']);
-            }
+                    $query
+                        ->orwhere('customerName_chi', 'LIKE', '%'.$filter['name'].'%')
+                        ->orwhere('phone_1', 'LIKE', '%'.$filter['phone'].'%')
+                        ->orwhere('customerId', 'LIKE', '%' . $filter['id'] . '%');
+            });
+
+
             
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
             
-            if($filter['zone'] != '')
+            if($filter['zone']['zoneId'] != '')
             {
                 // check if zone is within permission
                 if(!in_array($filter['zone']['zoneId'], $permittedZone))
@@ -152,7 +164,16 @@ class CustomerController extends BaseController {
             {
                 $customer->wherein('deliveryZone', $permittedZone);
             }
-            
+
+
+            $customer->where(function($query) use($filter)
+            {
+                $query
+                    ->where('customerName_chi', 'LIKE', '%'.$filter['name'].'%')
+                    ->where('phone_1', 'LIKE', '%'.$filter['phone'].'%')
+                    ->where('customerId', 'LIKE', '%' . $filter['id'] . '%');
+            });
+
             // query
             
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
@@ -189,7 +210,7 @@ class CustomerController extends BaseController {
             $customer = Customer::select('customerId')->where('customerId', Input::get('customerId'))->first();
             $customer = count($customer);
         }
-        
+
         return Response::json($customer);
     }
  

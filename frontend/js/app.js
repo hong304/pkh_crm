@@ -580,8 +580,6 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 						assets + '/global/plugins/datatables/all.min.js',
 						assets + '/global/scripts/datatable.js',
                         assets + '/global/plugins/bootbox/bootbox.min.js',
-
-                        'js/controllers/selectClientCtrl.js',
                         'js/controllers/customerMaintenanceCtrl.js',
                     ] 
                 });
