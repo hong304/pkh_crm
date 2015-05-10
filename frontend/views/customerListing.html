@@ -46,7 +46,26 @@
 
         </div>
 
+        <!-- Status -->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">狀態</span>
+                </div>
 
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="radio-list">
+                        <label><input ng-model="filterData.status"  type="radio" name="status" id="status" value="100" checked> 全部</label>
+                        <label><input ng-model="filterData.status"  type="radio" name="status" id="status" value="1"> 正常</label>
+                        <label><input ng-model="filterData.status"  type="radio" name="status" id="status" value="2"> 暫停 </label>
+                        <label><input ng-model="filterData.status"  type="radio" name="status" id="status" value="99"> 已刪除 </label>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Zone -->
         <div class="portlet light">

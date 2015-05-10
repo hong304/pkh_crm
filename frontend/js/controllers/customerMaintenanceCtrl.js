@@ -47,6 +47,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 			'id'		:	'',
         'phone' : '',
 			'zone'			:	'',
+        'status' : '100',
 	};
     $scope.submit = true;
 	$scope.customerInfo_def = {
@@ -91,7 +92,11 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
   	}, function() {
   		$scope.systeminfo = $rootScope.systeminfo;  		
   	}, true);
-    
+
+    $scope.$watch('filterData.status', function() {
+        $scope.updateDataSet();
+    }, true);
+
   /*  $scope.$on('handleCustomerUpdate', function(){
     	
 		//$scope.filterData.clientId = SharedService.clientId;

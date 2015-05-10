@@ -1,15 +1,18 @@
 <?php
-
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 class Customer extends Eloquent  {
-
+    protected $primaryKey = 'customerId';
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
+    use SoftDeletingTrait;
+
+    protected $dates = ['deleted_at'];
 	protected $table = 'Customer';
 	
-	protected $primaryKey = 'customerId';
+
 
     public static function boot()
     {
