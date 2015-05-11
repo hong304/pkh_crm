@@ -136,10 +136,15 @@ class ProductController extends BaseController {
         else
         {
             $keyword = str_replace('*', '%', $keyword); 
-            $productData = Product::select('productName_chi','productId')->where('productName_chi', 'LIKE', '%' . $keyword . '%')
-                                    ->orwhere('productId', 'LIKE', '%' . $keyword . '%')
+            $productData = Product::select('productName_chi','productId')
+                ->where(function ($query) use ($keyword) {
+                    $query->where('productName_chi', 'LIKE', '%' . $keyword . '%')
+                        ->orwhere('productId', 'LIKE', '%' . $keyword . '%');
+                })
+
+
                                     ->where('productStatus','o')
-                                    ->limit(30)->get();
+                                    ->limit(1)->get();
              
         }
         
