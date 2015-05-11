@@ -141,8 +141,6 @@ class ProductController extends BaseController {
                     $query->where('productName_chi', 'LIKE', '%' . $keyword . '%')
                         ->orwhere('productId', 'LIKE', '%' . $keyword . '%');
                 })
-
-
                                     ->where('productStatus','o')
                                     ->limit(30)->get();
              

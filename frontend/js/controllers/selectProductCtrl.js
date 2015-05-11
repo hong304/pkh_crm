@@ -8,12 +8,12 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
 	$scope.productSearchResult = [];
 	$scope.customerId = '0';
 	
-	var fetchDataDelay = 250;   // milliseconds
+	var fetchDataDelay = 500;   // milliseconds
     var fetchDataTimer;
     var suggestion = -1;
 
 
-    document.addEventListener('keyup', function(evt) {
+    document.addEventListener('keydown', function(evt) {
         var e = window.event || evt;
         //  var key = e.which || e.keyCode;
 
