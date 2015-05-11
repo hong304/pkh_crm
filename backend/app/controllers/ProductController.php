@@ -144,7 +144,7 @@ class ProductController extends BaseController {
 
 
                                     ->where('productStatus','o')
-                                    ->limit(1)->get();
+                                    ->limit(30)->get();
              
         }
         
