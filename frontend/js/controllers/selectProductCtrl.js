@@ -11,42 +11,40 @@ app.controller('selectProductCtrl', function($scope, $http, SharedService, $time
 	var fetchDataDelay = 500;   // milliseconds
     var fetchDataTimer;
     var suggestion = -1;
+    var customerTableKeyDownExist = false;
 
 
-    document.addEventListener('keydown', function(evt) {
-        var e = window.event || evt;
-        //  var key = e.which || e.keyCode;
+    if(customerTableKeyDownExist == false) {
+        $("#selectProduct").keydown(function (e) {
+            if (($("#selectProduct").data('bs.modal') || {}).isShown == true) {
 
-        if(($("#selectProduct").data('bs.modal') || {}).isShown == true) {
-
-            if (e.keyCode == 38) // up
-            {
-                // e.preventDefault();
-                $("#suggestion_row_" + suggestion).css('background', '');
-                suggestion--;
-                $("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
-                console.log(suggestion);
+                if (e.keyCode == 38) // up
+                {
+                    // e.preventDefault();
+                    $("#suggestion_row_" + suggestion).css('background', '');
+                    suggestion--;
+                    $("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
+                    console.log(suggestion);
+                }
+                if (e.keyCode == 40) //down
+                {
+                    //e.preventDefault();
+                    $("#suggestion_row_" + suggestion).css('background', '');
+                    suggestion++;
+                    $("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
+                    console.log(suggestion);
+                }
+                if (e.keyCode == 39) {
+                    e.preventDefault();
+                    $("#suggestion_row_" + suggestion).css('background', '');
+                    $("#suggestion_row_" + suggestion).click();
+                    suggestion = -1;
+                    console.log(suggestion);
+                }
             }
-            if (e.keyCode == 40) //down
-            {
-                //e.preventDefault();
-                $("#suggestion_row_" + suggestion).css('background', '');
-                suggestion++;
-                $("#suggestion_row_" + suggestion).css('background', '#E6FFE6');
-                console.log(suggestion);
-            }
-            if (e.keyCode == 39) {
-                e.preventDefault();
-                $("#suggestion_row_" + suggestion).css('background', '');
-                $("#suggestion_row_" + suggestion).click();
-                suggestion = -1;
-                console.log(suggestion);
-            }
-        }
-
-
-    }, true);
-
+            customerTableKeyDownExist = true;
+        });
+    }
 
     $scope.$on('$viewContentLoaded', function() {
 

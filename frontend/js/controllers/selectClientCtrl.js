@@ -10,7 +10,10 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	var fetchDataDelay = 500;   // milliseconds
     var fetchDataTimer;
     var csuggestion = -1;
+    var customerTableKeyDownExist = false;
 
+
+    if(customerTableKeyDownExist == false) {
     $("#selectclientmodel").keydown(function (e) {
         if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true) {
             if (e.keyCode == 38) // up
@@ -38,16 +41,19 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
             }
         }
 
+        customerTableKeyDownExist = true;
     });
-   /* var isCtrl = false;$(document).keyup(function (e) {
-        if(e.which == 17) isCtrl=false;
-    }).keydown(function (e) {
-        if(e.which == 17) isCtrl=true;
-        if(e.which == 83 && isCtrl == true) {
-            alert('Keyboard shortcuts + JQuery are even more cool!');
-            return false;
-        }
-    });*/
+}
+
+/* var isCtrl = false;$(document).keyup(function (e) {
+     if(e.which == 17) isCtrl=false;
+ }).keydown(function (e) {
+     if(e.which == 17) isCtrl=true;
+     if(e.which == 83 && isCtrl == true) {
+         alert('Keyboard shortcuts + JQuery are even more cool!');
+         return false;
+     }
+ });*/
 
 
 
