@@ -499,7 +499,7 @@ console.log($scope.order.status);
     
     $scope.searchProduct = function(i, code) {
 
-        if(($scope.order.status != '97') && (code =='120401')){
+        if(($scope.order.status != '97') && (code =='Z002')){
             return false;
         }
 		var input = $("#productCode_" + i);
