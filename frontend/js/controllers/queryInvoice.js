@@ -78,7 +78,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 			  }).indexOf($location.search().zone);
 	    	 
 	    	$scope.filterData.zone = $scope.systeminfo.availableZone[pos];
-	    	console.log("LOG ZONE" + $scope.filterData.zone);
+	    	//console.log("LOG ZONE" + $scope.filterData.zone);
 	    }
     }
     

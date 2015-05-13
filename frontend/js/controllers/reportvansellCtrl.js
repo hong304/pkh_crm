@@ -22,14 +22,28 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
         Metronic.initAjax();
         $scope.loadSetting();
         $scope.loadReport();
-    });  
-    
+    });
+
+
+
 	$scope.$watch(function() {
-	  return $scope.filterData;
+	  //return $scope.filterData;
 	}, function() {
-	  $scope.loadReport();
+	 // $scope.loadReport();
 	}, true);
-    
+
+    $scope.updateZone = function(){
+        $scope.loadReport();
+    }
+
+    $scope.updateShift = function(){
+        $scope.loadReport();
+    }
+
+    $scope.updateDate = function(){
+        $scope.loadReport();
+    }
+
     $scope.loadSetting = function()
     {
     	
@@ -91,6 +105,8 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
     
     $scope.loadReport = function()
     {
+        console.log($scope.filterData);
+
     	$http.post(querytarget, {reportId: 'vanselllist', output: "preview", filterData: $scope.filterData})
             .success(function(res){
     		$scope.report = res;
