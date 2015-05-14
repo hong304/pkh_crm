@@ -18,17 +18,17 @@ app.controller('reportPrintlogCtrl', function($scope, $http, SharedService, $tim
 	};
 
     var today = new Date();
-    var plus = today.getDay() == 6 ? 2 : 1;
+   // var plus = today.getDay() == 6 ? 2 : 1;
 
-    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-    if(today.getHours() < 12)
-    {
+   // var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+   // if(today.getHours() < 12)
+   // {
         var nextDay = today;
-    }
-    else
-    {
-        var nextDay = currentDate;
-    }
+   // }
+   // else
+  //  {
+   //     var nextDay = currentDate;
+   // }
     var day = nextDay.getDate();
     var month = nextDay.getMonth() + 1;
     var year = nextDay.getFullYear();
