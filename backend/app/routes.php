@@ -64,6 +64,7 @@ Route::group(array('before' => 'auth'), function()
     // Report Factory
     Route::any('/getAvailableReportsType.json', 'ReportController@loadAvailableReports');
     Route::any('/getReport.json', 'ReportController@loadReport');
+    Route::any('/getPrintLog.json', 'ReportController@getPrintLog');
 
     Route::any('/viewArchivedReport', 'ReportController@viewArchivedReport');
     

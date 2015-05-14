@@ -230,7 +230,7 @@ class Invoice_1FPickingList {
         
         
         $pdf = new PDF();
-        $i = 0;
+
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
         // handle 1F goods
         $firstF = array_chunk($this->data['1F'], 25, true);
@@ -239,8 +239,8 @@ class Invoice_1FPickingList {
         {
             // for first Floor
             $pdf->AddPage();
-            
-        
+
+
             $this->generateHeader($pdf);
         
             $pdf->SetFont('chi','',10);

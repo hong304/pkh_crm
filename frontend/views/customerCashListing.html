@@ -1,53 +1,13 @@
 <form class="form-horizontal" role="form" id="queryInfo">
     <div class="col-md-2">
         <!-- Client -->
-        <div class="portlet light">
-            <div class="portlet-title">
-                <div class="caption">
-                    <i class="fa fa-cogs font-green-sharp"></i>
-                    <span class="caption-subject font-green-sharp bold uppercase">搜索</span>
-                </div>
-                <div class="actions">
-                    <a href="javascript:;" ng-click="clearCustomerSearch();" class="btn btn-default btn-circle">
-                        <i class="fa fa-times"></i>
-                        <span class="hidden-480"> 清除 </span> </a>
-                </div>
+        <div ng-include="'/views/module/search_client.html'" ></div>
 
-            </div>
-
-            <div class="portlet-body">
-                <div class="md-col-12" style="margin-bottom:15px;">
-                    <div class="input-group">
-                        <input id="client" class="form-control" type="text" disabled name="client" placeholder="選擇客戶" data-ng-model="filterData.displayName")/>
-						<span class="input-group-btn">
-							<a href="#" accesskey="c" data-target="#selectclientmodel" data-toggle="modal"  id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
-						</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <!--invoice-->
+        <div ng-include="'/views/module/search_invoice.html'" ></div>
 
         <!-- Zone -->
-        <div class="portlet light">
-            <div class="portlet-title">
-                <div class="caption">
-                    <i class="fa fa-cogs font-green-sharp"></i>
-                    <span class="caption-subject font-green-sharp bold uppercase">車號</span>
-                </div>
-
-            </div>
-            <div class="portlet-body">
-                <div class="md-col-12" style="margin-bottom:15px;">
-                    <select class="form-control"
-                            ng-model="filterData.zone"
-                            data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
-                            data-ng-change="updateZone();">
-                        <option value=''>檢視全部</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+        <div ng-include="'/views/module/search_zone.html'" ></div>
 
 
         <!-- Status -->
@@ -85,10 +45,10 @@
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
                     <div class="radio-list">
-                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="today"> 今天 </label>
-                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="tomorrow"> 明天 </label>
+                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate"  value="today">今天 </label>
+                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" checked value="last day">昨天 </label>
                         <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="coming-7-days" >未來  7 天 </label>
-                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" checked value="past-7-days" >過去  7 天 </label>
+                        <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate"  value="past-7-days" >過去  7 天 </label>
                         <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-30-days">過去 30 天 </label>
                         <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-180-days">過去 180 天 </label>
                         <!-- <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="custom"> 自訂日期 </label> -->
@@ -170,7 +130,7 @@
                                     <td>{{i.client.customerName_chi}}</td>
                                     <td>{{i.amount}}</td>
                                     <td>{{i.invoiceStatusText}}</td>
-                                    <td ng-init="invoicepaid[k]['paid']=30">
+                                    <td ng-init="invoicepaid[k]['paid']=20">
                                         <label><input type="radio" name="r1{{k}}" ng-model="invoicepaid[k]['paid']" value="20" />已收貨</label>
                                         <label> <input type="radio" name="r1{{k}}" ng-model="invoicepaid[k]['paid']" value="30" />完成</label>
                                     </td>

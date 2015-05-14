@@ -12,7 +12,7 @@ function viewInvoice(invoiceId)
 
 app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 	
-	var fetchDataDelay = 1000;   // milliseconds
+	var fetchDataDelay = 500;   // milliseconds
     var fetchDataTimer;
     var querytarget = endpoint + '/queryInvoice.json';
     var reprint = endpoint + '/rePrint.json';

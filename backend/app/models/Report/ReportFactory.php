@@ -85,6 +85,7 @@ class ReportFactory{
                     $archive->created_by = Auth::user()->id;
                     $unid = explode("-",$reportOutput['uniqueId']);
 
+
                     if(isset($reportOutput['associates'])){
 
                         $neworder = json_decode($reportOutput['associates']);

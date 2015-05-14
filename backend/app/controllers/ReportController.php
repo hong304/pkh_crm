@@ -27,7 +27,76 @@ class ReportController extends BaseController {
 
         return Response::json($reportCustom);
     }
-    
+
+    public function getPrintLog(){
+
+
+            $mode = Input::get('mode');
+
+
+        if($mode == 'reprint'){
+            $update = Printlog::where('job_id',Input::get('filterData'))->first()->toArray();
+            unset($update['job_id']);
+            unset($update['created_at']);
+            unset($update['updated_at']);
+
+            $update['status'] = 'queued';
+            $update['created_at'] = new \DateTime;
+            $update['updated_at'] = new \DateTime;
+
+            DB::table('printlogs')->insert(
+                $update
+            );
+        }
+            if($mode == 'collection')
+            {
+                Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+
+                $filter = Input::get('filterData');
+
+
+                $Printlogs = Printlog::select('*')->where('updated_at','LIKE',$filter['onedate'].'%');
+
+                // zone
+                $permittedZone = explode(',', Auth::user()->temp_zone);
+
+                if($filter['zone'] != '')
+                {
+                    // check if zone is within permission
+                    if(!in_array($filter['zone']['zoneId'], $permittedZone))
+                    {
+                        // *** status code to be updated
+                        App::abort(404);
+                    }
+                    else
+                    {
+                        $Printlogs->where('target_path', $filter['zone']['zoneId']);
+                    }
+                }
+                else
+                {
+                    $Printlogs->wherein('target_path', $permittedZone);
+                }
+
+                // created by
+                   $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+                $Printlogs = $Printlogs->with('zone')->orderBy('updated_at','desc')->paginate($page_length);
+
+                foreach($Printlogs as $v)
+                {
+                    $v->view = '<a href="'.$v->file_path.'" target="_blank">View</a>';
+                    $v->link = '<span onclick="reprint(\''.$v->job_id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 重印</span>';
+                }
+
+                return Response::json($Printlogs);
+            }
+
+
+
+
+        }
+
+
     
     public function loadReport()
     {

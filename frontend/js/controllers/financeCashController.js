@@ -12,6 +12,9 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     var month = today.getMonth() + 1;
     var year = today.getFullYear();
 
+    var fetchDataTimer;
+    var fetchDataDelay = 500;
+
     $scope.payment = [];
     $scope.discount = [];
     $scope.invoicepaid = [];
@@ -66,11 +69,16 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     });
 
 
-
+    $scope.updateInvoiceNumber = function()
+    {
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+            $scope.updateDataSet();
+        }, fetchDataDelay);
+    }
 
     $scope.autoPost = function(){
         var data = $scope.invoicepaid;
-
      $http({
             method: 'POST',
             url: query,
@@ -89,6 +97,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                 $scope.invoiceinfo = res;
                 $scope.invoicepaid.amount = 0;
                 $scope.invoicepaid.settle = 0;
+                $scope.invoicepaid = [];
                 var i = 0;
                 res.forEach(function(item) {
                     $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
@@ -99,7 +108,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     $scope.invoicepaid.settle = $scope.invoicepaid.amount;
                     i++;
                 });
-
+                console.log($scope.invoicepaid);
             });
     }
 
@@ -136,8 +145,15 @@ var i =0;
 
     $scope.clearCustomerSearch = function()
     {
-        $scope.filterData.displayName = "";
-        $scope.filterData.clientId = "";
+        $scope.filterData = {
+            'displayName'	:	'',
+            'clientId'		:	'0',
+            'status'		:	'0',
+            'zone'			:	'',
+            'deliverydate'	:	'last day',
+            'created_by'	:	'0',
+            'invoiceNumber' :	'',
+        };
         $scope.updateDataSet();
     }
 

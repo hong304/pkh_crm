@@ -15,6 +15,103 @@ class VanSellController extends BaseController
     private $_data = [];
     private $_output = '';
 
+    public function loadvanSellReport()
+    {
+        $indata = Input::all();
+        $indata['reportId'] = 'vanselllist';
+
+        $this->_reportTitle = '預載單';
+
+
+        $permittedZone = explode(',', Auth::user()->temp_zone);
+
+
+        $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
+        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
+        $this->_shift = $indata['filterData']['shift'];
+        $lastid = pickingListVersionControl::where('zone', $this->_zone)->where('date', date("Y-m-d", $this->_date))->where('shift', $this->_shift)->first();
+
+        //  $lastid = @explode('-', $lastid->id);
+
+        $this->_version = isset($lastid->f1_version) ? $lastid->f1_version : '';
+
+        if ($this->_version)
+            $this->_reportTitle = sprintf("%s - v%s", $this->_reportTitle, $this->_version);
+        else
+            $this->_reportTitle = sprintf("%s", $this->_reportTitle);
+
+        // check if user has clearance to view this zone
+        if (!in_array($this->_zone, $permittedZone)) {
+            App::abort(401, "Unauthorized Zone");
+        }
+        $this->_uniqueid = microtime(true);
+
+        $this->_output = Input::get('output');
+
+        if ($this->_output == 'setting') {
+            $returnInfo = [
+                'title' => $this->_reportTitle,
+                'filterOptions' => $this->registerFilter(),
+                'downloadOptions' => $this->registerDownload(),
+            ];
+
+            echo json_encode($returnInfo);
+            exit;
+        }
+
+        if ($this->_output == 'preview') {
+            $this->compileResults();
+            return Response::json($this->_data);
+        }
+
+        if ($this->_output == 'create') {
+
+            $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('version', $this->_version)->orderBy('productId', 'asc')->get();
+            $inv = [];
+            foreach (Input::get('data') as $v) {
+                $inv[$v['productId']] = $v['value'];
+            }
+
+            foreach ($vansells as $v) {
+                $v->qty = $inv[$v->productId];
+                $v->save();
+            }
+
+        }
+
+        if ($this->_output == 'pdf') {
+
+            $this->compileResults();
+            $reportOutput = $this->outputPDF();
+
+            //$filenameUn = $this->_reportId . '-' . str_random(10) . '-' . date("YmdHis");
+            //$filenameUn = microtime(true);
+            $filenameUn = $reportOutput['uniqueId'];
+            $filename = $filenameUn . ".pdf";
+
+            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+
+            if (ReportArchive::where('id', $filenameUn)->count() == 0) {
+                $archive = new ReportArchive();
+                $archive->id = $filenameUn;
+                $archive->report = $this->_reportId;
+                $archive->file = $path;
+                $archive->remark = $reportOutput['remark'];
+                $archive->created_by = Auth::user()->id;
+                $neworder = json_decode($reportOutput['associates']);
+                $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
+                $archive->save();
+            }
+
+            $pdf = $reportOutput['pdf'];
+            $pdf->Output($path, "IF");
+            //$pdf->Code128(10,3,$filenameUn,150,5);
+
+            exit;
+        }
+
+
+    }
 
     public function registerFilter()
     {
@@ -337,105 +434,6 @@ class VanSellController extends BaseController
         }
         return Response::json($reportCustom);
     }
-
-    public function loadvanSellReport()
-    {
-        $indata = Input::all();
-        $indata['reportId'] = 'vanselllist';
-
-        $this->_reportTitle = '預載單';
-
-
-        $permittedZone = explode(',', Auth::user()->temp_zone);
-
-
-        $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
-        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        $this->_shift = $indata['filterData']['shift'];
-        $lastid = pickingListVersionControl::where('zone', $this->_zone)->where('date', date("Y-m-d", $this->_date))->where('shift', $this->_shift)->first();
-
-        //  $lastid = @explode('-', $lastid->id);
-
-        $this->_version = isset($lastid->f1_version) ? $lastid->f1_version : '';
-
-        if ($this->_version)
-            $this->_reportTitle = sprintf("%s - v%s", $this->_reportTitle, $this->_version);
-        else
-            $this->_reportTitle = sprintf("%s", $this->_reportTitle);
-
-        // check if user has clearance to view this zone
-        if (!in_array($this->_zone, $permittedZone)) {
-            App::abort(401, "Unauthorized Zone");
-        }
-        $this->_uniqueid = microtime(true);
-
-        $this->_output = Input::get('output');
-
-        if ($this->_output == 'setting') {
-            $returnInfo = [
-                'title' => $this->_reportTitle,
-                'filterOptions' => $this->registerFilter(),
-                'downloadOptions' => $this->registerDownload(),
-            ];
-
-            echo json_encode($returnInfo);
-            exit;
-        }
-
-        if ($this->_output == 'preview') {
-            $this->compileResults();
-            return Response::json($this->_data);
-        }
-
-        if ($this->_output == 'create') {
-
-            $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('version', $this->_version)->orderBy('productId', 'asc')->get();
-            $inv = [];
-            foreach (Input::get('data') as $v) {
-                $inv[$v['productId']] = $v['value'];
-            }
-
-            foreach ($vansells as $v) {
-                $v->qty = $inv[$v->productId];
-                $v->save();
-            }
-
-        }
-
-        if ($this->_output == 'pdf') {
-
-            $this->compileResults();
-            $reportOutput = $this->outputPDF();
-
-            //$filenameUn = $this->_reportId . '-' . str_random(10) . '-' . date("YmdHis");
-            //$filenameUn = microtime(true);
-            $filenameUn = $reportOutput['uniqueId'];
-            $filename = $filenameUn . ".pdf";
-
-            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
-
-            if (ReportArchive::where('id', $filenameUn)->count() == 0) {
-                $archive = new ReportArchive();
-                $archive->id = $filenameUn;
-                $archive->report = $this->_reportId;
-                $archive->file = $path;
-                $archive->remark = $reportOutput['remark'];
-                $archive->created_by = Auth::user()->id;
-                $neworder = json_decode($reportOutput['associates']);
-                $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
-                $archive->save();
-            }
-
-            $pdf = $reportOutput['pdf'];
-            $pdf->Output($path, "IF");
-            //$pdf->Code128(10,3,$filenameUn,150,5);
-
-            exit;
-        }
-
-
-    }
-
 
     public function viewArchivedReport()
     {

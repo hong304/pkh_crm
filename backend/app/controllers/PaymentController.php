@@ -63,9 +63,9 @@ class PaymentController extends BaseController {
                     $dDateBegin = strtotime("today 00:00");
                     $dDateEnd = strtotime("+1 week");
                     break;
-                case 'tomorrow' :
-                    $dDateBegin = strtotime("tomorrow 00:00");
-                    $dDateEnd = strtotime("tomorrow 23:59");
+                case 'last day' :
+                    $dDateBegin = strtotime("1 day ago 00:00");
+                    $dDateEnd = strtotime("1 day ago 23:59");
                     break;
                 case 'past-7-days' :
                     $dDateBegin = strtotime("7 days ago 00:00");
@@ -123,7 +123,7 @@ class PaymentController extends BaseController {
             {
                 $invoice->where('invoiceStatus', $filter['status']);
             }else{
-                $invoice->wherein('invoiceStatus',['20','30']);
+                $invoice->wherein('invoiceStatus',['2','20','30']);
             }
 
             if($filter['status'] == '99')

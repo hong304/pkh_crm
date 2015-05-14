@@ -7,10 +7,10 @@ class Invoice_CashReceiptSummary {
     private $_date = "";
     private $_zone = "";
     private $_invoices = [];
-    
-    private $_accumulator = 0;
+
+    private $data = [];
     private $_account = [];
-    private $_rturnaccount = [];
+    private $_backaccount = [];
     private $_uniqueid = "";
     
     public function __construct($indata)
@@ -46,24 +46,19 @@ class Invoice_CashReceiptSummary {
         
         // get invoice from that date and that zone
 
-        Invoice::select('*')->whereIn('invoiceStatus',['1','2','98'])->where('return',true)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
+     /*   Invoice::select('*')->whereIn('invoiceStatus',['1','2','98'])->where('return',true)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
             ->chunk(5000, function($invoicesQuery) {
                 foreach($invoicesQuery as $invoiceQ)
                     $this->_returnaccount[$invoiceQ['client']->customerId] = $invoiceQ->amount;
-            });
+            });*/
 
 
-        Invoice::select('*')->whereIn('invoiceStatus',['2','98','97'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
-               ->chunk(5000, function($invoicesQuery) {
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','98','97'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')->get();
+
                    $acc = 0;
                    foreach($invoicesQuery as $invoiceQ)
                    {
-
-                      // if(!$invoiceQ->return)
-
-
                        $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
-
 
                            $this->_invoices[] = $invoiceQ->invoiceId;
                            $this->_zoneName = $invoiceQ->zone->zoneName;
@@ -78,13 +73,39 @@ class Invoice_CashReceiptSummary {
                                'name' => $client->customerName_chi,
                                'invoiceNumber' => $invoiceId,
                                'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
-
-                                      'accumulator' =>number_format($acc,2,'.',','),
-                                    'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+                               'accumulator' =>number_format($acc,2,'.',','),
+                                'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
                            ];
                       }
 
-               });
+
+        $invoicesQuery = Invoice::where('invoiceStatus','20')->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')->get();
+
+                 $acc = 0;
+                foreach($invoicesQuery as $invoiceQ)
+                {
+                    $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+
+
+                    $this->_invoices[] = $invoiceQ->invoiceId;
+                    $this->_zoneName = $invoiceQ->zone->zoneName;
+
+                    // first, store all invoices
+                    $invoiceId = $invoiceQ->invoiceId;
+                    $invoices[$invoiceId] = $invoiceQ;
+                    $client = $invoiceQ['client'];
+
+                    $this->_backaccount[] = [
+                        'customerId' => $client->customerId,
+                        'name' => $client->customerName_chi,
+                        'invoiceNumber' => $invoiceId,
+                        'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
+                        'accumulator' =>number_format($acc,2,'.',','),
+                        'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+                    ];
+                }
+
+
 
 //pd($this->_account);
 
@@ -97,11 +118,10 @@ class Invoice_CashReceiptSummary {
 
         }*/
 
-       // pd($this->_account);
 
        $this->data = $this->_account;
 
-       return $this->data;        
+       return $this->data;
     }
     
     public function registerFilter()
@@ -170,9 +190,7 @@ class Invoice_CashReceiptSummary {
     
     public function outputPreview()
     {
-
-        return View::make('reports/CashReceiptSummary')->with('data', $this->data)->render();
-        
+        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->render();
     }
     
     

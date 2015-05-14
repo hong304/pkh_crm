@@ -15,6 +15,11 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 	};
 	
     $scope.$on('$viewContentLoaded', function() {
+
+        if ($location.search().id =='printlog')
+            $location.url('/reportPrintlog');
+
+
         if($location.search().product == null)
             $location.search().product = '100';
         if($location.search().client == null)

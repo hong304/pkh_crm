@@ -166,26 +166,28 @@ class Customer_MonthlyCreditSummary {
 
 
 
-        $i = 0;
-        foreach($this->data as $client)
-        {
 
-            for ($i = date('n'); $i>0; $i--){
-                $data[$i] = Invoice::whereBetween('deliveryDate',$times[$i])->leftJoin('Customer', function($join) {
-                    $join->on('Invoice.customerId', '=', 'Customer.customerId');
-                })->where('paymentTermId',2)->where('Invoice.customerId',$client['customer']['customerId'])->sum('amount');
-            }
+
+        foreach($this->data as $client) {
+
+
+
+                for ($i = date('n'); $i > 0; $i--) {
+                    $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->leftJoin('Customer', function ($join) {
+                        $join->on('Invoice.customerId', '=', 'Customer.customerId');
+                    })->where('paymentTermId', 2)->where('Invoice.customerId', $client['customer']['customerId'])->sum('amount');
+                }
 
             $pdf->AddPage();
             $this->generateHeader($pdf);
-            
-            $pdf->SetFont('chi','',12);
+
+            $pdf->SetFont('chi', '', 12);
             $pdf->setXY(15, 35);
             $pdf->Cell(0, 0, "M/S", 0, 0, "L");
-            
+
             $pdf->setXY(30, 35);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['customerName']), 0, 0, "L");
-            
+
             $pdf->setXY(30, 40);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['customerAddress']), 0, 0, "L");
 
@@ -209,104 +211,122 @@ class Customer_MonthlyCreditSummary {
             $pdf->Cell(0, 0, '列印日期:', 0, 0, "L");
 
             $pdf->setXY(155, 35);
-            $pdf->Cell(0, 0, date('Y-m-d',time()), 0, 0, "L");
+            $pdf->Cell(0, 0, date('Y-m-d', time()), 0, 0, "L");
 
             $pdf->setXY(130, 40);
             $pdf->Cell(0, 0, '由日期:', 0, 0, "L");
 
             $pdf->setXY(155, 40);
-            $pdf->Cell(0, 0, date('Y-m-d',$client['breakdown'][0]['invoiceDate']), 0, 0, "L");
+            $pdf->Cell(0, 0, date('Y-m-d', $client['breakdown'][0]['invoiceDate']), 0, 0, "L");
 
-            $pdf->setXY(500, $pdf->h-30);
-            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i+1, count($this->data)) , 0, 0, "R");
+            $pdf->setXY(500, $pdf->h - 30);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i + 1, count($this->data)), 0, 0, "R");
 
 
             $pdf->setXY(130, 45);
             $pdf->Cell(0, 0, '至日期:', 0, 0, "L");
 
             $pdf->setXY(155, 45);
-            $pdf->Cell(0, 0, date('Y-m-d',$client['breakdown'][sizeof($client['breakdown'])-1]['invoiceDate']), 0, 0, "L");
+            $pdf->Cell(0, 0, date('Y-m-d', $client['breakdown'][sizeof($client['breakdown']) - 1]['invoiceDate']), 0, 0, "L");
 
 
             $pdf->Line(10, 63, 190, 63);
 
             $y = 70;
-            $amount =0;
+            $amount = 0;
             $paid = 0;
-            foreach($client['breakdown'] as $v){
 
-                $pdf->setXY(10, $y);
-                $pdf->Cell(0, 0, date('Y-m-d',$v['invoiceDate']), 0, 0, "L");
+            $bd = array_chunk($client['breakdown'],30,true);
 
-                $pdf->setXY(40, $y);
-                $pdf->Cell(0, 0, $v['invoice'], 0, 0, "L");
+            foreach ($bd as $k => $g) {
+               // $pdf->AddPage();
 
-                $pdf->setXY(100, $y);
-                $pdf->Cell(10, 0, sprintf("%s", $v['invoiceAmount']), 0, 0, "R");
+                if($k > 0) {
+                    $pdf->AddPage();
+                    $y = 20;
+                }
 
-                $pdf->setXY(140, $y);
-                $pdf->Cell(10, 0, $v['paid'], 0, 0, "R");
+                foreach ($g as $v) {
 
-                $pdf->setXY(165, $y);
-                $pdf->Cell(20, 0, $v['accumulator'], 0, 0, "R");
+                    $pdf->setXY(10, $y);
+                    $pdf->Cell(0, 0, date('Y-m-d', $v['invoiceDate']), 0, 0, "L");
 
-                $amount += $v['invoiceAmount'];
-                $paid += $v['paid'];
-                $accu = $v['accumulator'];
+                    $pdf->setXY(40, $y);
+                    $pdf->Cell(0, 0, $v['invoice'], 0, 0, "L");
 
-                $y += 6;
+                    $pdf->setXY(100, $y);
+                    $pdf->Cell(10, 0, sprintf("%s", $v['invoiceAmount']), 0, 0, "R");
 
+                    $pdf->setXY(140, $y);
+                    $pdf->Cell(10, 0, $v['paid'], 0, 0, "R");
+
+                    $pdf->setXY(165, $y);
+                    $pdf->Cell(20, 0, $v['accumulator'], 0, 0, "R");
+
+                    $amount += $v['invoiceAmount'];
+                    $paid += $v['paid'];
+                    $accu = $v['accumulator'];
+
+                    $y += 6;
+
+                }
             }
-
             $pdf->Line(10, $y, 190, $y);
 
-            $pdf->setXY(40, $y+6);
+            $pdf->setXY(40, $y + 6);
             $pdf->Cell(0, 0, '未清付發票總金額(HKD):', 0, 0, "L");
 
-            $pdf->setXY(100, $y+6);
+            $pdf->setXY(100, $y + 6);
             $pdf->Cell(10, 0, $amount, 0, 0, "R");
 
-            $pdf->setXY(140, $y+6);
+            $pdf->setXY(140, $y + 6);
             $pdf->Cell(10, 0, $paid, 0, 0, "R");
 
-            $pdf->setXY(165, $y+6);
+            $pdf->setXY(165, $y + 6);
             $pdf->Cell(20, 0, $accu, 0, 0, "R");
 
-            $pdf->Line(10, $y+12, 190, $y+12);
+            $pdf->Line(10, $y + 12, 190, $y + 12);
 
-            $pdf->setXY(10, $y+18);
-            $pdf->Cell(0, 0, 'The outstanding balance is aged by invoice date as '.date('Y-m-d',time()).' below:', 0, 0, "L");
+            $pdf->setXY(10, $y + 18);
+            $pdf->Cell(0, 0, 'The outstanding balance is aged by invoice date as ' . date('Y-m-d', time()) . ' below:', 0, 0, "L");
 
-            $pdf->setXY(10, $y+24);
-            $pdf->Cell(0, 0, date('Y').'/'.date('n'), 0, 0, "L");
+            $pdf->setXY(10, $y + 24);
+            $pdf->Cell(0, 0, date('Y') . '/' . date('n'), 0, 0, "L");
 
-            $pdf->setXY(10, $y+30);
-            $pdf->Cell(0, 0,  '$'.$data[date('n')], 0, 0, "L");
+            $pdf->setXY(10, $y + 30);
+            $pdf->Cell(0, 0, '$' . $data[date('n')], 0, 0, "L");
 
-            $pdf->setXY(40, $y+24);
-            $pdf->Cell(0, 0, date('Y').'/'.(date('m')-1), 0, 0, "L");
+            $pdf->setXY(40, $y + 24);
+            $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 1), 0, 0, "L");
 
-            $pdf->setXY(40, $y+30);
-            $pdf->Cell(0, 0,  '$'.$data[date('n')-1], 0, 0, "L");
+            $pdf->setXY(40, $y + 30);
+            $pdf->Cell(0, 0, '$' . $data[date('n') - 1], 0, 0, "L");
 
-            $pdf->setXY(70, $y+24);
-            $pdf->Cell(0, 0, date('Y').'/'.(date('m')-2), 0, 0, "L");
+            $pdf->setXY(70, $y + 24);
+            $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 2), 0, 0, "L");
 
-            $pdf->setXY(70, $y+30);
-            $pdf->Cell(0, 0,  '$'.$data[date('n')-2], 0, 0, "L");
+            $pdf->setXY(70, $y + 30);
+            $pdf->Cell(0, 0, '$' . $data[date('n') - 2], 0, 0, "L");
 
-            $pdf->setXY(100, $y+24);
-            $pdf->Cell(0, 0, date('Y').'/'.(date('m')-3), 0, 0, "L");
+            $pdf->setXY(100, $y + 24);
+            $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 3), 0, 0, "L");
 
-            $pdf->setXY(100, $y+30);
-            $pdf->Cell(0, 0,  '$'.$data[date('n')-3], 0, 0, "L");
+            $pdf->setXY(100, $y + 30);
+            $pdf->Cell(0, 0, '$' . $data[date('n') - 3], 0, 0, "L");
 
-            $pdf->setXY(10, $y+36);
-            $pdf->Cell(0, 0,  'Payment received after statement date not included', 0, 0, "L");
+            $pdf->setXY(10, $y + 36);
+            $pdf->Cell(0, 0, 'Payment received after statement date not included', 0, 0, "L");
+
+
         }
-        $pdf->Output();exit;
         // output
         return [
+            'pdf' => $pdf,
+            'remark' => '',
+            'uniqueId' => $this->_uniqueid,
+            'associates' => null,
         ];
+
+
     }
 }

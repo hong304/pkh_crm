@@ -1,20 +1,21 @@
 <form class="form-horizontal" role="form" id="queryInfo" data-ng-init="checkParm();updateDataSet();">
-	<div class="col-md-2">
+
+    <div class="col-md-2">
 		<!-- Client -->
 		<div class="portlet light">
 			<div class="portlet-title">
 				<div class="caption">
 					<i class="fa fa-cogs font-green-sharp"></i>
 					<span class="caption-subject font-green-sharp bold uppercase">客戶</span>
-				</div>		
+				</div>
 				<div class="actions">
 					<a href="javascript:;" ng-click="clearCustomerSearch();" class="btn btn-default btn-circle">
 					<i class="fa fa-times"></i>
-					<span class="hidden-480"> 清除 </span> </a>					
-				</div>			
+					<span class="hidden-480"> 清除 </span> </a>
+				</div>
 			</div>
-			
-			<div class="portlet-body">				
+
+			<div class="portlet-body">
 				<div class="md-col-12" style="margin-bottom:15px;">
 					<div class="input-group">
 						<input id="client" class="form-control" type="text" disabled name="client" placeholder="選擇客戶" data-ng-model="filterData.displayName")/>
@@ -25,7 +26,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="portlet light">
 			<div class="portlet-title">
 				<div class="caption">
@@ -86,16 +87,16 @@
 		</div>			
 		
 		<!-- Delivery Date -->
-		
+
 			<div class="portlet light">
 			<div class="portlet-title">
 				<div class="caption">
 					<i class="fa fa-cogs font-green-sharp"></i>
 					<span class="caption-subject font-green-sharp bold uppercase">送貨日期</span>
 				</div>
-				
+
 			</div>
-			<div class="portlet-body">				
+			<div class="portlet-body">
 				<div class="md-col-12" style="margin-bottom:15px;">
 				<div class="radio-list">
 						<label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" checked value="1daylr"> +/- 2 day </label>
@@ -105,7 +106,7 @@
 						<label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-30-days">過去 30 天 </label>
 						<label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-180-days">過去 180 天 </label>
 						<!-- <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="custom"> 自訂日期 </label> -->
-						
+
 					</div>
 					<div class="input-group input-medium date date-picker" data-date-format="dd-mm-yyyy" style="display:none;" id="customDeliveryDate">
 						<input type="text" class="form-control" data-ng-change="updateDelvieryDate();" ng-model="filterData.customDeliveryDate"  readonly>
@@ -117,6 +118,7 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="col-md-10">
 		<div class="row">
 			<div class="col-md-12">
@@ -179,11 +181,8 @@
 				<!-- END EXAMPLE TABLE PORTLET-->
 			</div>
 		</div>
-		
-	</form>
-	
-</div>
-
+    </div>
+</form>
 <!-- Select Client Modal -->
 <div ng-include="'/views/model_selectclient.html'"></div>
 <!-- Display Items Modal -->
