@@ -1,5 +1,6 @@
 'use strict';
 
+
 app.controller('financeCashController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state,$stateParams) {
 
     var query = endpoint + '/querryCashCustomer.json';
@@ -7,10 +8,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
 
     $scope.invoice = [];
-    var today = new Date();
-    var day = today.getDate();
-    var month = today.getMonth() + 1;
-    var year = today.getFullYear();
 
     var fetchDataTimer;
     var fetchDataDelay = 500;
@@ -21,7 +18,8 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.invoiceStructure = {
         'id' :'',
         'paid' : '',
-        'collect': ''
+        'collect': '',
+        'date' : ''
     }
 
     $scope.filterData = {
@@ -35,16 +33,22 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     };
 
 
+    var today = new Date();
+    var nextDay = today;
+
+    var day = nextDay.getDate();
+    var month = nextDay.getMonth() + 1;
+    if (month < 10) { month = '0' + month; }
+    var year = nextDay.getFullYear();
+
+
+
+
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
 
-
-             $scope.updateDataSet();
-
-
-
-
+           //  $scope.updateDataSet();
     });
 
 
@@ -79,6 +83,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.autoPost = function(){
         var data = $scope.invoicepaid;
+
      $http({
             method: 'POST',
             url: query,
@@ -94,6 +99,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         $http.post(query, {mode:'collection', filterData: $scope.filterData})
             .success(function(res, status, headers, config){
 
+
                 $scope.invoiceinfo = res;
                 $scope.invoicepaid.amount = 0;
                 $scope.invoicepaid.settle = 0;
@@ -103,6 +109,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
                     $scope.invoicepaid[i]['id'] = item.invoiceId;
                     $scope.invoicepaid[i]['paid'] = 0;
+                    $scope.invoicepaid[i]['date'] = year + '-' + month + '-' + day;
                     $scope.invoicepaid[i]['collect'] = 0;
                     $scope.invoicepaid.amount = $scope.invoicepaid.amount + Number(item.amount);
                     $scope.invoicepaid.settle = $scope.invoicepaid.amount;

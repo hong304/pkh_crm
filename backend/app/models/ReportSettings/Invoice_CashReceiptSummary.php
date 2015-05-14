@@ -11,6 +11,7 @@ class Invoice_CashReceiptSummary {
     private $data = [];
     private $_account = [];
     private $_backaccount = [];
+    private $_paidInvoice = [];
     private $_uniqueid = "";
     
     public function __construct($indata)
@@ -105,7 +106,32 @@ class Invoice_CashReceiptSummary {
                     ];
                 }
 
+        $invoicesQuery = Invoice::where('invoiceStatus','30')->where('paid_date',date('Y-m-d',$date))->where('paymentTerms',1)->where('zoneId', $zone)->with('invoiceItem', 'client')->get();
 
+        $acc = 0;
+        foreach($invoicesQuery as $invoiceQ)
+        {
+            $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+
+
+            $this->_invoices[] = $invoiceQ->invoiceId;
+            $this->_zoneName = $invoiceQ->zone->zoneName;
+
+            // first, store all invoices
+            $invoiceId = $invoiceQ->invoiceId;
+            $invoices[$invoiceId] = $invoiceQ;
+            $client = $invoiceQ['client'];
+
+            $this->_paidInvoice[] = [
+                'customerId' => $client->customerId,
+                'name' => $client->customerName_chi,
+                'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
+                'invoiceNumber' => $invoiceId,
+                'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
+                'accumulator' =>number_format($acc,2,'.',','),
+                'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+            ];
+        }
 
 //pd($this->_account);
 
@@ -190,7 +216,7 @@ class Invoice_CashReceiptSummary {
     
     public function outputPreview()
     {
-        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->render();
+        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->with('paidInvoice',$this->_paidInvoice)->render();
     }
     
     

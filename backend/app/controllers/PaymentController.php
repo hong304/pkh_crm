@@ -42,6 +42,8 @@ class PaymentController extends BaseController {
                 $i = Invoice::where('invoiceId',$v['id'])->first();
                 if($v['paid'] > 0)
                     $i->invoiceStatus = $v['paid'];
+                if($v['paid'] == 30)
+                    $i->paid_date = $v['date'];
                 $i->save();
             }
 
@@ -145,7 +147,7 @@ class PaymentController extends BaseController {
 
             // created by
 
-            $invoices = $invoice->with('invoiceItem', 'client', 'staff')->orderby('invoiceId', 'desc')->get();
+            $invoices = $invoice->orderby('invoiceId', 'desc')->get();
 
 
             return Response::json($invoices);
@@ -220,7 +222,7 @@ class PaymentController extends BaseController {
             $paid = Input::get('paid');
 
             $cheque_id = Input::get('cheque_id');
-            $p =Payment::find($cheque_id);
+            $p = Payment::find($cheque_id);
             $p->used = 1;
             $p->save();
 

@@ -95,27 +95,29 @@
                                     <th width="15%">
                                         訂單編號
                                     </th>
-                                    <th width="15%">
+                                    <th width="10%">
                                         送貨日期
                                     </th>
                                     <th width="5%">
                                         車線
                                     </th>
-                                    <th width="25%">
+                                    <th width="20%">
                                         客戶
                                     </th>
-                                    <th width="10%">
+                                    <th width="5%">
                                         金額
                                     </th>
 
-                                    <th width="10%">
+                                    <th width="8%">
                                     狀態
                                 </th>
 
-                                    <th width="30%">
+                                    <th width="15%">
                                         狀態
                                     </th>
+                                    <th width="20%">
 
+                                    </th>
 
                                 </tr>
 
@@ -133,6 +135,10 @@
                                     <td ng-init="invoicepaid[k]['paid']=20">
                                         <label><input type="radio" name="r1{{k}}" ng-model="invoicepaid[k]['paid']" value="20" />已收貨</label>
                                         <label> <input type="radio" name="r1{{k}}" ng-model="invoicepaid[k]['paid']" value="30" />完成</label>
+                                    </td>
+
+                                    <td>
+                                        <input type="text" ng-model="invoicepaid[k]['date']" ng-if="invoicepaid[k]['paid'] == '30'" value=" {{invoicepaid[k]['date'] | date: 'yyyy-MM-dd"}}">
                                     </td>
                                 </tr>
 
