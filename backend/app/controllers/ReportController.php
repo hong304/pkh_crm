@@ -44,7 +44,7 @@ class ReportController extends BaseController {
             $update['created_at'] = new \DateTime;
             $update['updated_at'] = new \DateTime;
 
-            DB::table('printlogs')->insert(
+            DB::table('Printlogs')->insert(
                 $update
             );
         }
