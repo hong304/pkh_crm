@@ -439,7 +439,7 @@ class InvoiceManipulation {
           //  $url = $_SERVER['backend'].substr($pdf_file['path'],-24);
 
             $oldQs = PrintQueue::where('invoiceId', $invoice_id)
-                ->wherein('status', ['queued', 'fast-track'])
+                ->wherein('status', ['queued', 'fast-track','dead:pending'])
                 ->get();
             if($oldQs)
             {
