@@ -143,7 +143,7 @@ class PrintQueueController extends BaseController {
             ->leftJoin('Invoice', function($join) {
                 $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
             })->leftJoin('users', function($join) {
-                $join->on('users.id', '=', 'Invoice.created_by');
+                $join->on('users.id', '=', 'Invoice.updated_by');
             })->leftJoin('Customer', function($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
             })

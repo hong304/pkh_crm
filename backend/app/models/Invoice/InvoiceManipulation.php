@@ -261,7 +261,8 @@ class InvoiceManipulation {
 	    
 	    if($isBackdayOrder)
 	    {
-	        switch($this->temp_invoice_information['paymentTerms'])
+            return '2';
+	      /*  switch($this->temp_invoice_information['paymentTerms'])
 	        {
 	            case '1':
 	                return '30';
@@ -271,7 +272,7 @@ class InvoiceManipulation {
 	                break;
 	            default :
 	                return '0';
-	        }
+	        }*/
 	    } else{
 	        return $this->approval ? '1' : '2';
 	         }
