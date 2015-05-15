@@ -70,9 +70,9 @@
                             <label class="col-md-2 control-label">發票數量:</label>
                             <div class="col-md-5">
                                 <div class="control-label pull-left" data-ng-if="version.normal > 0">正常: {{version.normal}},</div>
-                                <div class="control-label pull-left" data-ng-if="version.rejected > 1">被拒: {{version.rejected}},</div>
-                                <div class="control-label pull-left" data-ng-if="version.pending > 1">等待批刻: {{version.pending}}</div>
-
+                                <div class="control-label pull-left" data-ng-if="version.rejected > 0">被拒: {{version.rejected}},</div>
+                                <div class="control-label pull-left" data-ng-if="version.pending > 0">等待批刻: {{version.pending}},</div>
+                                <div class="control-label pull-left" data-ng-if="version.replenishment > 0">補貨單: {{version.replenishment}}</div>
                             </div>
                         </div>
 

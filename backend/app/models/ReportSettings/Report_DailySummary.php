@@ -5,6 +5,7 @@ class Report_DailySummary {
     
     private $_reportTitle = "";
     private $_date = "";
+    private $_date1 = "";
     private $_zone = "";
     private $_invoices = [];
     private $_uniqueid = "";
@@ -30,6 +31,7 @@ class Report_DailySummary {
 
         $this->_output = $indata['output'];
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
+        $this->_date1 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
         
         // check if user has clearance to view this zone        
@@ -54,7 +56,7 @@ class Report_DailySummary {
         // get invoice from that date and that zone
        $this->goods = [];
 
-        Invoice::select('*')->whereIn('invoiceStatus', ['1','2','4','11','20','21','22','23','30','98','97'])->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'products', 'client')
+        Invoice::select('*')->whereIn('invoiceStatus', ['1','2','4','11','20','21','22','23','30','98','97','96'])->where('zoneId', $zone)->whereBetween('deliveryDate', [$date, $this->_date1])->with('invoiceItem', 'products', 'client')
                ->chunk(5000, function($invoicesQuery) {
 
 
@@ -131,6 +133,17 @@ class Report_DailySummary {
                                $productDetail = $products[$productId];
                                $unit = $item->productQtyUnit;
 
+
+                               if($invoiceQ->invoiceStatus == '96'){
+                                   $this->goods[$productId.'(補貨)'][$unit] = [
+                                       'productId' => $productId.'(補貨)',
+                                       'name' => $productDetail->productName_chi,
+                                       'productPrice' => $item->productPrice,
+                                       'unit' => $unit,
+                                       'unit_txt' => $item->productUnitName,
+                                       'counts' => (isset($this->goods[$productId.'(補貨)'][$unit]) ? $this->goods[$productId.'(補貨)'][$unit]['counts'] : 0) + $item->productQty,
+                                   ];
+                               }else
                                $this->goods[$productId][$unit] = [
                                    'productId' => $productId,
                                    'name' => $productDetail->productName_chi,
@@ -139,6 +152,8 @@ class Report_DailySummary {
                                    'unit_txt' => $item->productUnitName,
                                    'counts' => (isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) + $item->productQty,
                                ];
+
+
                            }
 
 
@@ -205,11 +220,17 @@ class Report_DailySummary {
             ],
             [
                 'id' => 'deliveryDate',
-                'type' => 'date-picker',
+                'type' => 'date-picker1',
                 'label' => '送貨日期',
                 'model' => 'deliveryDate',
-                'defaultValue' => date("Y-m-d", $this->_date),
+
+
+                'id1' => 'deliveryDate2',
+
+                'model1' => 'deliveryDate2',
+
             ],
+
         ];
         
         return $filterSetting;

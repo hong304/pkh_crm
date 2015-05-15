@@ -82,14 +82,21 @@ return [
         'statusCode'            => '98',
         'descriptionEnglish'    => 'returned',
         'descriptionChinese'    => '退貨',
-        'explaination'          => 'All items in the invoice has been returned.',
+        'explanation'          => 'All items in the invoice has been returned.',
         'triggered_by'          => 'SA+',
     ],
     '97' => [
         'statusCode'            => '97',
         'descriptionEnglish'    => 'credit note',
         'descriptionChinese'    => '退款',
-        'explaination'          => 'This is credit note',
+        'explanation'          => 'This is credit note',
+        'triggered_by'          => 'SA+',
+    ],
+    '96' => [
+        'statusCode'            => '96',
+        'descriptionEnglish'    => 'replenishment',
+        'descriptionChinese'    => '補貨',
+        'explanation'          => 'This is replenish order',
         'triggered_by'          => 'SA+',
     ],
 
@@ -97,7 +104,7 @@ return [
         'statusCode'            => '',
         'descriptionEnglish'    => '',
         'descriptionChinese'    => '',
-        'explaination'          => '',
+        'explanation'          => '',
         'triggered_by'          => '',
     ],
 ];

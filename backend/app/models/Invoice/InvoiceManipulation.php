@@ -256,6 +256,8 @@ class InvoiceManipulation {
             return '98';
         else if($this->temp_invoice_information['status'] == '97')
             return '97';
+        else if($this->temp_invoice_information['status'] == '96')
+            return '96';
         
 	    $isBackdayOrder = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']) <= strtotime("today 00:00")-1;
 	    

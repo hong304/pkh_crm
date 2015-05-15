@@ -52,7 +52,7 @@ class HomeController extends BaseController {
             $data['pending'] = Invoice::where('zoneId',$info['zone']['zoneId'])->where('deliveryDate',strtotime($info['date']))->where('shift',$info['shift'])->where('invoiceStatus',1)->where('version',false)->count();
             $data['normal'] = Invoice::where('zoneId',$info['zone']['zoneId'])->where('deliveryDate',strtotime($info['date']))->where('shift',$info['shift'])->where('invoiceStatus',2)->where('version',false)->count();
             $data['rejected'] = Invoice::where('zoneId',$info['zone']['zoneId'])->where('deliveryDate',strtotime($info['date']))->where('shift',$info['shift'])->where('invoiceStatus',3)->where('version',false)->count();
-
+            $data['replenishment'] = Invoice::where('zoneId',$info['zone']['zoneId'])->where('deliveryDate',strtotime($info['date']))->where('shift',$info['shift'])->where('invoiceStatus',96)->where('version',false)->count();
             return Response::json($data);
         }
 
@@ -66,7 +66,7 @@ class HomeController extends BaseController {
             $f9 = false;
             $deliveryDate = strtotime($info['info']['date']);
             // $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
-            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['info']['zone'])->where('shift',$info['info']['shift'])->whereIn('invoiceStatus',[1,2])
+            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['info']['zone'])->where('shift',$info['info']['shift'])->whereIn('invoiceStatus',[1,2,96])
                 ->where('f9_picking_dl','!=',1)->where('version',true)->get();
 
 
@@ -106,7 +106,7 @@ class HomeController extends BaseController {
 
 
            // $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
-            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->whereIn('invoiceStatus',[1,2])
+            $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->whereIn('invoiceStatus',[1,2,96])
                 ->where('version',false)->get();
 
             foreach($info_data as $v){
@@ -133,7 +133,7 @@ class HomeController extends BaseController {
          //   $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->with('InvoiceItem')
          //       ->update(['previous_status'=>DB::raw('invoiceStatus'),'invoiceStatus' => 4]);
 
-            Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->where('shift',$info['shift'])->with('InvoiceItem')
+            Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2,96])->where('shift',$info['shift'])->with('InvoiceItem')
              ->update(['previous_status'=>DB::raw('invoiceStatus'),'version' => true]);
 
             $user = pickingListVersionControl::where('date',$info['date'])->where('zone',$info['zone']['zoneId'])->where('shift',$info['shift'])->first();

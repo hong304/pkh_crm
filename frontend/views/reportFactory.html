@@ -128,7 +128,6 @@
 			</div>
 
             <div class="portlet-body" id="shift" data-ng-if="f.type == 'single-dropdown'">
-
                 <div class="md-col-12">
                     <select class="form-control"
                             ng-model="filterData.shift" >
@@ -139,16 +138,26 @@
             </div>
 
 			<!-- date-picker -->
-			<div class="portlet-body" data-ng-if="f.type == 'date-picker'">				
+			<div class="portlet-body" data-ng-if="f.type == 'date-picker1'">
 				<div class="md-col-12" style="margin-bottom:15px;">
-					<div class="input-group  date " id="{{f.id}}" data-date-format="yyyy-mm-dd" data-date-start-date="-5d">
+					<div class="input-group  date " id="{{f.id}}" data-date-format="yyyy-mm-dd" data-date-start-date="">
 						<input type="text" class="form-control" readonly ng-model="filterData[f.model]">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
 					</div>
+至
+                    <div class="input-group  date " id="{{f.id1}}" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData[f.model1]">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                    </div>
+
 				</div>
 			</div>
+
+
 		</div>
 	</div>
 

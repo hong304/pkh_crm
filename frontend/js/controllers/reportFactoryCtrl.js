@@ -77,6 +77,41 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     					$("#" + options.id).datepicker( "setDate", year + '-' + month + '-' + day );
     				}
 
+                    if(options.type == "date-picker1")
+                    {
+
+                        var today = new Date();
+                        var plus = today.getDay() == 6 ? 2 : 1;
+
+                        var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+                        if(today.getHours() < 12)
+                        {
+                            var nextDay = today;
+                        }
+                        else
+                        {
+                            var nextDay = currentDate;
+                        }
+                        var day = nextDay.getDate();
+                        var month = nextDay.getMonth() + 1;
+                        var year = nextDay.getFullYear();
+
+                        $("#" + options.id).datepicker({
+                            rtl: Metronic.isRTL(),
+                            orientation: "left",
+                            autoclose: true
+                        });
+                        $("#" + options.id).datepicker( "setDate", year + '-' + month + '-' + day );
+
+                        $("#" + options.id1).datepicker({
+                            rtl: Metronic.isRTL(),
+                            orientation: "left",
+                            autoclose: true
+                        });
+                        $("#" + options.id1).datepicker( "setDate", year + '-' + month + '-' + day );
+
+                    }
+
     				else if (options.type == "single-dropdown")
     				{
     					/*
