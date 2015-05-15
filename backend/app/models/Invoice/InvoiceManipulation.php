@@ -221,6 +221,7 @@ class InvoiceManipulation {
 	        $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
             $this->im->shift = $this->temp_invoice_information['shift'];
 	        $this->im->created_by = Auth::user()->id;
+            $this->im->updated_by = Auth::user()->id;
 	        $this->im->invoiceStatus = $this->determineStatus();
 	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount']; 
 	        $this->im->created_at = time();
@@ -241,7 +242,7 @@ class InvoiceManipulation {
 	        $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
 	        $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
 	        $this->im->invoiceStatus = $this->determineStatus();
-
+            $this->im->updated_by = Auth::user()->id;
 
             Invoice::where('invoiceId',$this->invoiceId)->where('version',true)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);
 
