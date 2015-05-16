@@ -28,7 +28,7 @@ class VanSellController extends BaseController
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        $this->_shift = $indata['filterData']['shift'];
+        $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift'] : '1');
         $lastid = pickingListVersionControl::where('zone', $this->_zone)->where('date', date("Y-m-d", $this->_date))->where('shift', $this->_shift)->first();
 
         //  $lastid = @explode('-', $lastid->id);

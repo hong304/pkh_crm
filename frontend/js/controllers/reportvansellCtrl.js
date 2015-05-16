@@ -7,7 +7,9 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
 
 	$scope.report = "";
 	$scope.filterData = {
-			'shift' : '1'
+			'shift' : '1',
+            deliveryDate : ''
+
 	};
     $scope.qty = [];
 
@@ -21,7 +23,8 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.loadSetting();
-        $scope.loadReport();
+        if($scope.filterData.deliveryDate != '')
+            $scope.loadReport();
     });
 
 
@@ -105,7 +108,7 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
     
     $scope.loadReport = function()
     {
-        console.log($scope.filterData);
+        console.log($scope.filterData.deliveryDate);
 
     	$http.post(querytarget, {reportId: 'vanselllist', output: "preview", filterData: $scope.filterData})
             .success(function(res){
@@ -119,8 +122,6 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
                     $scope.qty[i]['value'] = item.qty;
                    i++;
                });
-
-
     		Metronic.unblockUI();
     	});
     }
