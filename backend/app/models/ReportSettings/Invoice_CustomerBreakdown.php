@@ -6,6 +6,7 @@ class Invoice_CustomerBreakdown {
     private $_reportTitle = "";
     private $_date = "";
     private $_zone = "";
+    private $_customer = '';
     private $_shift = "";
     private $_invoices = [];
     private $_uniqueid = "";
@@ -23,9 +24,11 @@ class Invoice_CustomerBreakdown {
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
          $this->_shift = $indata['filterData']['shift'];
-
-        // check if user has clearance to view this zone        
-        if(!in_array($this->_zone, $permittedZone))
+$this->_customer = (isset($indata['filterData']['customer']) ? $indata['filterData']['customer'] : '');
+        // check if user has clearance to view this zone
+        //
+        if($this->_zone != '-1')
+      if(!in_array($this->_zone, $permittedZone))
         {
             App::abort(401, "Unauthorized Zone");
         }
@@ -41,13 +44,17 @@ class Invoice_CustomerBreakdown {
     public function compileResults()
     {
         $date = $this->_date;
-        $zone = $this->_zone;
+      //  $zone = $this->_zone;
         
         // get invoice from that date and that zone
         $this->goods = ['1F9F'=>[]];
         $this->returngoods = ['1F9F'=>[]];
 
-        Invoice::select('*')->where('zoneId', $zone)->where('deliveryDate', $date)->where('shift', $this->_shift)->with(['invoiceItem'=>function($query){
+        $hi = Invoice::select('*');
+        if($this->_zone != '-1'){
+         $hi ->    where('zoneId', $this->_zone);
+        }
+        $hi->where('deliveryDate', $date)->where('shift', $this->_shift)->where('customerId','LIKE','%'.$this->_customer.'%')->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
                ->chunk(500, function($invoicesQuery){
@@ -168,7 +175,6 @@ class Invoice_CustomerBreakdown {
         $newway = [];
 
         foreach($ninef as $k => $v){
-
             $temp = array_chunk($v['items'],30,true);
             if(count($temp)>1){
                 foreach($temp as $kk => $vv){
@@ -404,8 +410,20 @@ class Invoice_CustomerBreakdown {
                 'value' => $zone->zoneId,
                 'label' => $zone->zoneName,
             ];
-        }        
+        }
+
+
+        array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
+        //pd($availablezone);
         $filterSetting = [
+
+            [
+                'id' => 'customer',
+                'type' => 'search_customer',
+                'label' => '客戶編號',
+                'model' => 'customer',
+            ],
+
             [
                 'id' => 'zoneId',
                 'type' => 'single-dropdown',
@@ -414,6 +432,7 @@ class Invoice_CustomerBreakdown {
                 'optionList' => $availablezone,
                 'defaultValue' => $this->_zone,
             ],
+
             [
                 'id' => 'deliveryDate',
                 'type' => 'date-picker',
@@ -421,6 +440,9 @@ class Invoice_CustomerBreakdown {
                 'model' => 'deliveryDate',
                 'defaultValue' => date("Y-m-d", $this->_date),
             ],
+
+
+
         ];
         
         return $filterSetting;

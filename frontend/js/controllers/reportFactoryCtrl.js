@@ -42,7 +42,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
         $http.post(querytarget, {reportId: $location.search().id, filterData: $scope.filterData, output: "setting"})
     	.success(function(res, status, headers, config){
-              //  console.log(res);
+              console.log(res);
 
     		$scope.setting = res;
     		Metronic.unblockUI();
@@ -135,6 +135,8 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     
     $scope.loadReport = function()
     {
+
+        console.log($scope.filterData);
     	$http.post(querytarget, {reportId: $location.search().id, output: "preview", filterData: $scope.filterData, query:$location.search()})
     	.success(function(res, status, headers, config){
 

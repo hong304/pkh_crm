@@ -49,6 +49,9 @@
 
 			</div>
 
+
+
+
             <div class="portlet-body"  data-ng-if="f.type == 'search_product'">
 
                 <div class="form-body">
@@ -115,13 +118,30 @@
                 </div>
             </div>
 
+
+            <!--  single-dropdown -->
+            <div class="portlet-body" data-ng-if="f.type == 'search_customer'">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group">
+                        <div class="col-md-12 alert alert-success alert-borderless">
+                            <div class="input-icon right">
+                                <i class="icon-exclamation-sign"></i>
+                                <input autocomplete="off" ng-model="filterData[f.model]" debounce="500" immediate="true"  id="keywordId"
+                                       type="text" placeholder="客戶編號" class="form-control"
+                                        />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 			<!--  single-dropdown -->
 			<div class="portlet-body" data-ng-if="f.type == 'single-dropdown'">				
 				<div class="md-col-12" style="margin-bottom:15px;">
 					<div class="input-group">
 						<select class="form-control"
-							ng-model="filterData[f.model]" 
-							data-ng-options="x.label for x in f.optionList track by x.value" >								
+							ng-model="filterData[f.model]"
+							data-ng-options="x.label for x in f.optionList track by x.value" >
 						</select>
 					</div>
 				</div>
@@ -201,9 +221,9 @@
 
 		</div>
 		
-	</form>
+
 	
 </div>
-
+</form>
 <!-- Customer Maintenance Form -->
 <div ng-include="'/views/ipfForm.html'"></div>

@@ -833,12 +833,10 @@ console.log($scope.order.status);
             	timer	:	$scope.timer,
             }).
             success(function(res, status, headers, config) {
-console.log(res);
+                    console.log(res);
             	if(res.result == true)
             	{
                     $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
-
-
             		if(res.status == 2)
             		{
             			
@@ -914,12 +912,8 @@ console.log(res);
                 	    closeInSeconds: 0, // auto close after defined seconds
                 	    icon: 'warning' // put icon before the message
                 	});
-
             		$scope.allowSubmission = true;
-            		
             	}
-
-
             	//$("#selectProduct").animate({ scrollTop: 0 }, "slow");
             }).
             error(function(res, status, headers, config) {
