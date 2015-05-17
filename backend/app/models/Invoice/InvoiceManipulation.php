@@ -372,6 +372,7 @@ class InvoiceManipulation {
     	        $this->__queueInvoiceImage();
 
     	    return [
+                'action' => $this->action,
     	        'result' => $this->status,
     	        'status' => $this->im->invoiceStatus,
     	        'invoiceNumber' => $this->invoiceId,

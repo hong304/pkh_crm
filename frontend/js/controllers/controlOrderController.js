@@ -833,11 +833,12 @@ console.log($scope.order.status);
             	timer	:	$scope.timer,
             }).
             success(function(res, status, headers, config) {
-            	
-            	$scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
-            	
+console.log(res);
             	if(res.result == true)
             	{
+                    $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
+
+
             		if(res.status == 2)
             		{
             			
@@ -868,34 +869,37 @@ console.log($scope.order.status);
                     	    icon: 'warning' // put icon before the message
                     	});
             		}
-            		
-            		$("#successModal").modal('toggle');
 
-            	    document.addEventListener('keydown', function(evt) {
-            			var e = window.event || evt;
-            			var key = e.which || e.keyCode;
-            			if(key == 27)
-        				{
-            				$scope.counter.stop();
-        				}
-            		}, false);
-            		
-            		$scope.counter = new $scope.Countdown({  
-            		    seconds:1,  // number of seconds to count down
-            		    onUpdateStatus: function(sec){
-            		    	$scope.countdown = sec;
-            		    }, // callback for each second
-            		    onCounterEnd: function(){
-            		    	// $window.location.reload();
-            		    	//consolg.log('123');
-            		    	$state.go("newOrder", {}, {reload: true}); 
-            		    } // final action
-            		});
+                    if(res.action == 'update')
+                        $scope.sm_goto('myinvoice');
+            		else{
+                        $("#successModal").modal('toggle');
 
-            		$scope.counter.start();
-            		
-            		$scope.order.invoiceNumber = res.invoiceNumber;
-            		
+                        document.addEventListener('keydown', function(evt) {
+                            var e = window.event || evt;
+                            var key = e.which || e.keyCode;
+                            if(key == 27)
+                            {
+                                $scope.counter.stop();
+                            }
+                        }, false);
+
+                        $scope.counter = new $scope.Countdown({
+                            seconds:1,  // number of seconds to count down
+                            onUpdateStatus: function(sec){
+                                $scope.countdown = sec;
+                            }, // callback for each second
+                            onCounterEnd: function(){
+                                // $window.location.reload();
+                                //consolg.log('123');
+                                $state.go("newOrder", {}, {reload: true});
+                            } // final action
+                        });
+
+                        $scope.counter.start();
+
+                        $scope.order.invoiceNumber = res.invoiceNumber;
+                    }
             	}
             	else if(res.result == false)
             	{
@@ -910,10 +914,12 @@ console.log($scope.order.status);
                 	    closeInSeconds: 0, // auto close after defined seconds
                 	    icon: 'warning' // put icon before the message
                 	});
+
             		$scope.allowSubmission = true;
             		
             	}
-            	
+
+
             	//$("#selectProduct").animate({ scrollTop: 0 }, "slow");
             }).
             error(function(res, status, headers, config) {
@@ -944,7 +950,6 @@ console.log($scope.order.status);
 	          // or server returns response with an error status.
 	        });
     	}
-    	
     	$("#recentProductModal").modal('toggle');
     }
     
