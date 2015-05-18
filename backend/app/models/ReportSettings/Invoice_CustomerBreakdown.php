@@ -24,7 +24,7 @@ class Invoice_CustomerBreakdown {
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
          $this->_shift = $indata['filterData']['shift'];
-$this->_customer = (isset($indata['filterData']['customer']) ? $indata['filterData']['customer'] : '');
+        $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
         // check if user has clearance to view this zone
         //
         if($this->_zone != '-1')
@@ -43,6 +43,9 @@ $this->_customer = (isset($indata['filterData']['customer']) ? $indata['filterDa
     
     public function compileResults()
     {
+
+
+
         $date = $this->_date;
       //  $zone = $this->_zone;
         
@@ -54,11 +57,23 @@ $this->_customer = (isset($indata['filterData']['customer']) ? $indata['filterDa
         if($this->_zone != '-1'){
          $hi ->    where('zoneId', $this->_zone);
         }
-        $hi->where('deliveryDate', $date)->where('shift', $this->_shift)->where('customerId','LIKE','%'.$this->_customer.'%')->with(['invoiceItem'=>function($query){
+        $hi->where('deliveryDate', $date)->where('Invoice.shift', $this->_shift)
+            ->leftJoin('Customer', function($join) {
+                $join->on('Customer.customerId', '=', 'Invoice.customerId');
+            })->leftJoin('customer_groups', function($join) {
+                $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
+            });
+
+        if($this->_group != '')
+            $hi->where('customer_groups.name','LIKE','%'.$this->_group.'%');
+
+
+            $hi->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
                ->chunk(500, function($invoicesQuery){
-                   
+
+
                    // first of all process all products
                    $productsQuery = array_pluck($invoicesQuery, 'products');
                    foreach($productsQuery as $productQuery)
@@ -202,6 +217,7 @@ $this->_customer = (isset($indata['filterData']['customer']) ? $indata['filterDa
             }
         }
       $this->_newway = $newway;
+       // pd($this->data);
        return $this->data;        
     }
 
@@ -418,10 +434,10 @@ $this->_customer = (isset($indata['filterData']['customer']) ? $indata['filterDa
         $filterSetting = [
 
             [
-                'id' => 'customer',
-                'type' => 'search_customer',
-                'label' => '客戶編號',
-                'model' => 'customer',
+                'id' => 'group',
+                'type' => 'search_group',
+                'label' => '集團名稱',
+                'model' => 'group',
             ],
 
             [

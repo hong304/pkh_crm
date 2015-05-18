@@ -462,6 +462,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                             assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
 
                             'js/controllers/queryProductCtrl.js',
+
                         ]
                     });
                 }]
@@ -634,6 +635,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 						assets + '/global/scripts/datatable.js',
                         assets + '/global/plugins/bootbox/bootbox.min.js',
                         'js/controllers/customerMaintenanceCtrl.js',
+                        'js/controllers/selectGroupCtrl.js',
                     ] 
                 });
             }]

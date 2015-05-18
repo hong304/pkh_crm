@@ -72,7 +72,8 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 			'routePlanningPriority':	'',
              'remark' : '',
         'shift' : '',
-        'productnewId' :''
+        'productnewId' :'',
+        'customer_group_id' : '',
 	};
 	
 	$scope.submitbtn = true;
@@ -98,6 +99,13 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     $scope.$watch('filterData.status', function() {
         $scope.updateDataSet();
     }, true);
+
+
+    $scope.$on('handleCustomerUpdate', function(){
+        // received client selection broadcast. update to the invoice portlet
+        $scope.customerInfo.customer_group_id = SharedService.GroupId;
+        $scope.filterData.GroupName = SharedService.GroupName;
+    });
 
   /*  $scope.$on('handleCustomerUpdate', function(){
     	
@@ -173,6 +181,11 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 
     }
 
+    $scope.showselectgroup = function()
+    {
+        $("#selectGroupmodel").modal({backdrop: 'static'});
+    }
+
     $scope.addCustomer = function()
     {
 		var statuscat = [];
@@ -191,6 +204,8 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
     	$scope.customerInfo.status = $scope.statuscat[0];
         $scope.customerInfo.shift =     $scope.statuscat1[0];
+
+
     	$("#customerFormModal").modal({backdrop: 'static'});
     	
     }
@@ -210,6 +225,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 
     $scope.submitCustomerForm = function()
     {
+
         if(!$scope.submit)
             alert('客户編號不能用');
         else if(

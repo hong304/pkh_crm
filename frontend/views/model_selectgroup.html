@@ -1,11 +1,11 @@
-<div class="modal fade bs-modal-lg" id="selectclientmodel" data-ng-init="searchClient('');" data-ng-controller="selectClientCtrl" tabindex="-1" role="dailog" aria-hidden="false">
+<div class="modal fade bs-modal-lg" id="selectGroupmodel" data-ng-init="searchGroup('');" data-ng-controller="selectGroupCtrl" tabindex="-1" role="dailog" aria-hidden="false">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true"></button>
 				
-				<h4 class="modal-title">查找客戶</h4>
+				<h4 class="modal-title">查找集團</h4>
 			</div>
 			<div class="modal-body">
 			
@@ -13,26 +13,11 @@
 					<div class="form-body">
 						<div class="">
 							<div class="form-group ">
-
-
-
-
-
-                                <div class="col-md-2">
-                                    <select class="form-control"
-                                            ng-model="keyword.zone"
-                                            data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
-                                            data-ng-change="searchClient();">
-                                        <option value=''>檢視全部</option>
-                                    </select>
-                                </div>
-
-
 								<div class="col-md-5">
 									<div class="input-icon right">
 										<i class="icon-exclamation-sign"></i> 
 										<input autocomplete="off" ng-model="keyword.id" debounce="500" immediate="true"  id="keywordId"
-										type="text" placeholder="客戶編號" class="form-control" ng-change="searchClient(keyword)"
+										type="text" placeholder="集團編號" class="form-control" ng-change="search()"
 										/>
                          			</div>
 								</div>
@@ -42,7 +27,7 @@
                                     <div class="input-icon right">
                                         <i class="icon-exclamation-sign"></i>
                                         <input autocomplete="off" ng-model="keyword.keyword" debounce="500" immediate="true"  id="keyword"
-                                               type="text" placeholder="名稱 或 電話號碼 " class="form-control" ng-change="searchClient(keyword)"
+                                               type="text" placeholder="名稱 或 電話號碼 " class="form-control" ng-change="search()"
                                                 />
                                     </div>
                                 </div>
@@ -59,22 +44,19 @@
                                         <thead>
                                         <tr>
                                             <th style="width:10%;">#</th>
-                                            <th style="width:40%;">客戶</th>
-                                            <th style="width:10%;">車線</th>
-                                            <th style="width:40%;">地址</th>
+                                            <th style="width:40%;">名稱</th>
+
                                         </tr>
                                         </thead>
                                         <tbody data-ng-if="!clientSuggestion">
                                         <tr>
-                                            <td>未有找到客戶資料</td>
+                                            <td>未有找到集團資料</td>
                                         </tr>
                                         </tbody>
                                         <tbody>
-                                        <tr data-ng-repeat="client in clientSuggestion" ng-click="selectClient(client)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
-                                            <td>{{client.customerId}}</td>
-                                            <td>{{client.customerName_chi}} ({{client.phone_1}})</td>
-                                            <td>{{client.deliveryZone}} - {{client.zoneText}}</td>
-                                            <td>{{client.address_chi}}</td>
+                                        <tr data-ng-repeat="client in clientSuggestion" ng-click="select(client)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
+                                            <td>{{client.id}}</td>
+                                            <td>{{client.name}}</td>
                                         </tr>
                                         </tbody>
                                     </table>

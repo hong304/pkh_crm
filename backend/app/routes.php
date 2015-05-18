@@ -36,7 +36,10 @@ Route::group(array('before' => 'auth'), function()
     // Client Information
     Route::any('/checkClient.json', 'CustomerController@jsonCheckClient');
     Route::post('/findClientById.json', 'CustomerController@jsonFindClientById');
-    
+
+    //Group Information
+    Route::any('/checkGroup.json', 'GroupController@checkGroup');
+
     // Product Information
     Route::any('/getAllProduct.json', 'ProductController@jsonGetAllProduct');
     Route::get('/getProductGroups.json', 'ProductController@jsonGetProductGroups');

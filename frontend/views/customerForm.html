@@ -1,4 +1,4 @@
-<div class="modal fade bs-modal-lg " id="customerFormModal" data-ng-init="" tabindex="-1" role="basic" aria-hidden="true">
+<div class="modal fade bs-modal-lg " id="customerFormModal" data-ng-init="" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -21,10 +21,24 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">集團<span class="required">
+										* </span>
+                            </label>
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <input id="client" class="form-control" type="text" disabled name="client" placeholder="自動填上, 請按鍵選擇" data-ng-model="filterData.GroupName")/>
+											<span class="input-group-btn">
+												<a data-ng-click="showselectgroup();" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
+											</span>
+                                </div>
+                            </div>
+                        </div>
+
 						<div class="form-group">
 							<label class="col-md-2 control-label">名稱 (中) *</label>
 							<div class="col-md-10">
-								<input type="text" ng-model="customerInfo.customerName_chi" class="form-control" placeholder="Enter text">
+								<input type="text" id="address_cht" ng-model="customerInfo.customerName_chi" class="form-control" placeholder="Enter text">
 							</div>
 						</div>
 						
@@ -38,7 +52,7 @@
 						<div class="form-group">
 							<label class="col-md-2 control-label">地址 (中) *</label>
 							<div class="col-md-10">
-								<input type="text" ng-model="customerInfo.address_chi" class="form-control" placeholder="Enter text">
+								<input type="text"  ng-model="customerInfo.address_chi" class="form-control" placeholder="Enter text">
 							</div>
 						</div>
 						
@@ -146,3 +160,4 @@
 		<!-- /.modal-dialog -->
 	</div>
 </div>
+
