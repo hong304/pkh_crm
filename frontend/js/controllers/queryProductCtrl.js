@@ -1,7 +1,7 @@
 'use strict';
 app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 
-    var querytarget = endpoint + '/queryProduct.json';
+    var querytarget = endpoint + '/queryProductwithItem.json';
     var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
 
@@ -12,7 +12,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
        'phone' : '',
        'customerId' :'',
        'product' : '',
-       'product_name' : '',
+       'product_name' : ''
     };
 
 

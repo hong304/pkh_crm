@@ -81,7 +81,7 @@ Route::group(array('before' => 'auth'), function()
     // Product Maintenance
     Route::post('/queryProduct.json', 'ProductController@jsonQueryProduct');
     Route::post('/manipulateProduct.json', 'ProductController@jsonManiulateProduct');
-    Route::post('/queryProduct.json', 'ProductController@queryProduct');
+    Route::post('/queryProductwithItem.json', 'ProductController@queryProduct');
 
 
     
