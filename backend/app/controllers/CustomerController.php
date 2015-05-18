@@ -126,13 +126,6 @@ class CustomerController extends BaseController
 
             // $customer->where('customerId', $filter['clientId']);
 
-            $customer->where(function ($query) use ($filter) {
-                $query
-                    ->orwhere('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
-                    ->orwhere('phone_1', 'LIKE', '%' . $filter['phone'] . '%')
-                    ->orwhere('customerId', 'LIKE', '%' . $filter['id'] . '%');
-            });
-
             if ($filter['status'] == 99) {
                 $customer->onlyTrashed();
             } else if ($filter['status'] != 100) {

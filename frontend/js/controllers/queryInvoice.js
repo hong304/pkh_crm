@@ -341,18 +341,19 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                     }
                 },
                 "columns": [
-                            { "data": "invoiceId" },
-                            { "data": "deliveryDate_date" },
-                            { "data": "zoneId" },
-                            { "data": "routePlanningPriority" },
-                            { "data": "client.customerName_chi" },
-                            { "data": "amount" },
-                            { "data": "invoiceStatusText" },
-                             { "data": "version" },
-                            { "data": "shiftText" },
-                            { "data": "staff.name" },
-                            { "data": "createdat_full" },
-                            { "data": "link" },
+                    { "data": "invoiceId" },
+                    { "data": "deliveryDate_date" },
+                    { "data": "zoneId" },
+                    { "data": "routePlanningPriority" },
+                    { "data": "client.customerName_chi" },
+                    { "data": "amount" },
+                    { "data": "invoiceStatusText" },
+                    { "data": "version" },
+                    { "data": "shiftText" },
+                    { "data": "staff.name" },
+                    { "data": "createdat_full" },
+                    { "data": "link" }
+
                             
                 ],           
                 

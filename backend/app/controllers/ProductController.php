@@ -33,6 +33,48 @@ class ProductController extends BaseController {
         
         return Response::json($products);
     }
+
+    public function queryProduct(){
+
+        $filter = Input::get('filterData');
+
+        Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+
+        $zone = (isset($filter['zone']['zoneId']))?$filter['zone']['zoneId']:false;
+        $data1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
+        $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
+
+        $invoices =  Invoice::leftJoin('InvoiceItem', function($join) {
+                $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
+            }) ->leftJoin('Customer', function($join) {
+                $join->on('Invoice.customerId', '=', 'Customer.customerId');
+            }) ->leftJoin('Product', function($join) {
+                $join->on('InvoiceItem.productId', '=', 'Product.productId');
+            });
+        if($zone != false)
+         $invoices-> where('zoneId', $zone);
+
+        $invoices->where(function ($query) use ($filter) {
+            $query
+                ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
+                ->where('phone_1', 'LIKE', '%' . $filter['phone'] . '%')
+                ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
+        });
+
+        $invoices->where(function ($query) use ($filter) {
+            $query
+                ->where('Product.productId', 'LIKE', '%' . $filter['product'] . '%')
+                ->where('productName_chi', 'LIKE', '%' . $filter['product_name'] . '%');
+        });
+
+       $invoices->whereBetween('Invoice.deliveryDate', [$data1,$data2]);
+        $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+
+        $invoices = $invoices->paginate($page_length);
+
+        return Response::json($invoices);
+
+    }
     
     public function jsonGetProductsfromGroup()
     {
