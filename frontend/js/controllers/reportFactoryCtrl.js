@@ -13,6 +13,9 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 	$scope.filterData = {
 			'shift' : '1'
 	};
+    $scope.setting = {
+        'setting' : false
+    };
 	
     $scope.$on('$viewContentLoaded', function() {
 
@@ -27,7 +30,8 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
         Metronic.initAjax();        
         $scope.loadSetting();
-        $scope.loadReport();
+        if($scope.setting.setting == true)
+            $scope.loadReport();
     });  
     
 	$scope.$watch(function() {

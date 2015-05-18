@@ -50,6 +50,7 @@ class ReportFactory{
                 'title' => $this->_title,
                 'filterOptions' => $this->_filter,
                 'downloadOptions' => $this->_download,
+                'setting' => true
             ];
             
             echo json_encode($returnInfo);
