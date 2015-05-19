@@ -12,6 +12,7 @@ class PrintQueueController extends BaseController {
 
     public $invoiceIds = [];
     private $zone = '';
+    private $shift = '';
    // private $temp = [];
 
     public function __construct()
@@ -20,6 +21,7 @@ class PrintQueueController extends BaseController {
         if(isset(Auth::user()->temp_zone)){
             $this->zone = Auth::user()->temp_zone;
             $filter = Input::get('zone');
+            $this->shift = Input::get('shift');
             if(isset($filter) && $filter != ''){
                 $this->zone = $filter['zoneId'];
             }
@@ -155,6 +157,7 @@ class PrintQueueController extends BaseController {
                     ->orwhere('Invoice.invoiceStatus','98')
                     ->orwhere('Invoice.invoiceStatus','97');
             })
+            ->where('Invoice.shift',$this->shift);
             ->orderBy('insert_time', 'desc')
             ->get();
 
@@ -184,7 +187,7 @@ class PrintQueueController extends BaseController {
                             ->orwhere('Invoice.invoiceStatus','97')
                             ->orwhere('Invoice.invoiceStatus','98');
                     })->where('Invoice.deliveryDate',strtotime("00:00:00"))
-
+                    ->where('Invoice.shift',$this->shift)
                     ->lists('Invoice.invoiceId');
 
 
@@ -281,6 +284,7 @@ class PrintQueueController extends BaseController {
 
         $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
             ->wherein('invoiceStatus', ['1', '3'])
+            ->where('shift',$this->shift)
             ->wherein('zoneId', explode(',', $this->zone))
             ->groupBy('invoiceStatus', 'zoneId');
 

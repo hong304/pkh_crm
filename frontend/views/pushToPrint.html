@@ -22,6 +22,20 @@
                                 </select>
                             </div>
                      </div>
+
+
+                    <div class="actions">
+
+                        <div class="btn-group">
+                            <select class="form-control"
+                                    ng-model="shift"
+                                    data-ng-change="updateShift();">
+                                <option value='1'>早班</option>
+                                <option value='2'>晚班</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="actions">
                         <div class="btn-group">
                             <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="printToday();">

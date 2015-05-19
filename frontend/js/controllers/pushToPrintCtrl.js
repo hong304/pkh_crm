@@ -14,7 +14,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     }
 
     $scope.zone = '';
-
+    $scope.shift = '1';
     $scope.checkid = [];
 
     $scope.$on('$viewContentLoaded', function() {
@@ -37,8 +37,10 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
         $http({
             method: 'POST',
             url: checkstatus,
-            data: {mode:'today',zone:$scope.zone}
+            data: {mode:'today',zone:$scope.zone,shift:$scope.shift}
         }).success(function (res) {
+            console.log(res);
+
             if(res.countInDataMart>0) {
 
                 var  reject = res['3'].countInDataMart;
@@ -79,6 +81,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                                     url: printSelect,
                                     data: {mode:'today',zone:$scope.zone}
                                 }).success(function(res, status, headers, config){
+
                                         $scope.updatePrintQueue();
                                         // alert('正在準備傳送至印表機...')
                                     });
@@ -124,6 +127,10 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
     }
     $scope.updateZone = function(){
+        $scope.updatePrintQueue();
+    }
+
+    $scope.updateShift = function(){
         $scope.updatePrintQueue();
     }
 
