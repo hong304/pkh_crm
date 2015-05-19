@@ -157,7 +157,7 @@ class PrintQueueController extends BaseController {
                     ->orwhere('Invoice.invoiceStatus','98')
                     ->orwhere('Invoice.invoiceStatus','97');
             })
-            ->where('Invoice.shift',$this->shift);
+            ->where('Invoice.shift',$this->shift)
             ->orderBy('insert_time', 'desc')
             ->get();
 
