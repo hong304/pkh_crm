@@ -103,7 +103,7 @@ class Invoice_9FPickingList {
                                 'name' => $productDetail->productName_chi,
                                 'unit' => $unit,
                                 'unit_txt' => $item->productUnitName,
-                                'counts' => (isset($this->goods['9F'][$productId][$unit]) ? $this->goods['9F'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                'counts' => (isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
                                 'stdPrice' => $productDetail->productStdPrice[$unit],
                             ];
                             $this->goods['9F'][$customerId.$invoiceId]['customerInfo'] = $client->toArray();
