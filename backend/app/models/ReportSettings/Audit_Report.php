@@ -1,7 +1,7 @@
 <?php
 
 
-class Invoice_CashReceiptSummary {
+class Audit_Report {
     
     private $_reportTitle = "";
     private $_date = "";
