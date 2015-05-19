@@ -52,7 +52,9 @@ class ProductController extends BaseController {
                 $join->on('InvoiceItem.productId', '=', 'Product.productId');
             });
         if($zone != false)
-         $invoices-> where('zoneId', $zone);
+            $invoices-> where('zoneId', $zone);
+        else
+            $invoices-> wherein('zoneId', explode(',', Auth::user()->temp_zone));
 
         $invoices->where(function ($query) use ($filter) {
             $query
