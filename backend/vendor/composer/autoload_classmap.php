@@ -13,6 +13,7 @@ return array(
     'Batch' => $baseDir . '/app/models/Batch.php',
     'BatchController' => $baseDir . '/app/controllers/BatchController.php',
     'CashReceiptSummary' => $baseDir . '/app/models/ReportSettings/superseed/CashReceiptSummary.php',
+    'Cost_Price_Report' => $baseDir . '/app/models/ReportSettings/Cost_Price_Report.php',
     'Customer' => $baseDir . '/app/models/Customer.php',
     'CustomerController' => $baseDir . '/app/controllers/CustomerController.php',
     'CustomerManipulation' => $baseDir . '/app/models/Customer/CustomerManipulation.php',

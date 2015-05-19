@@ -3,6 +3,22 @@ Metronic.unblockUI();
 
 app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $timeout, $location, $sce) {
 
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 2 : 1;
+
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    if(today.getHours() < 12)
+    {
+        var nextDay = today;
+    }
+    else
+    {
+        var nextDay = currentDate;
+    }
+    var day = nextDay.getDate();
+    var month = nextDay.getMonth() + 1;
+    var year = nextDay.getFullYear();
+
     var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
 
@@ -14,7 +30,9 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 			'shift' : '1',
             'name' : '',
             'customerId' : '',
-            'phone' : ''
+            'phone' : '',
+             deliveryDate : year+'-'+month+'-'+day,
+             deliveryDate2 : year+'-'+month+'-'+day,
 	};
     $scope.setting = {
         'setting' : false
