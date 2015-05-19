@@ -58,7 +58,7 @@
 
             <tr>
                 <td colspan="6" style="text-align:right;">
-                    <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo number_format($z['amount'],2,'.',','); ?>, <?php echo number_format($z['amount_qty'],0,'.',','); ?></span>
+                    <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo number_format($z['amount'],2,'.',','); ?>, <?php echo number_format($z['amount_qty'],0,'.',','); $z['unit']?></span>
                 </td>
             <tr>
     </tbody>
