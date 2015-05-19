@@ -722,7 +722,16 @@ console.log($scope.order.status);
     }
 
     $scope.updateQty = function(i)
-    { 
+    {
+//var org_qty = $scope.product[i]['qty'];
+        // check if number
+        var qty = $scope.product[i]['qty'];
+
+        if(isNaN(qty))
+        {
+            $scope.product[i]['qty'] = 1;
+        }
+
     	/*
     	var code = $scope.product[i]['code'];
     	var item = $scope.retrievedProduct[code];
@@ -765,10 +774,10 @@ console.log($scope.order.status);
     	var unit = $scope.product[i]['unit']['value'];
     	var qty = $scope.product[i]['qty'];
     	
-    	if(isNaN(qty))
+    	/*if(isNaN(qty))
 		{
-    		$scope.product[i]['qty'] = '1'; 
-		}
+    		$scope.product[i]['qty'] = 1;
+		}*/
     	
     	var interval = $scope.retrievedProduct[code]['productPackingInterval'][unit];
     	// console.log(interval, qty);
