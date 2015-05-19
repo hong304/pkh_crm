@@ -90,7 +90,7 @@ class Cost_Price_Report
 
             foreach ($invoiceQ['InvoiceItem'] as $it) {
                 $amount_qty[$it->productId][$it->productUnitName] += $it->productQty;
-                $amount[$it->productId][$it->productUnitName] += $it->productPrice;
+                $amount[$it->productId][$it->productUnitName] += ($it->productPrice*$it->productQty);
                 $this->_account[$it->productId][$it->productUnitName]['invoice'][] = [
                     'customerId' => $client->customerId,
                     'name' => $client->customerName_chi,

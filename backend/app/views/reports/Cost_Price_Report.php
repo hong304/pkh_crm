@@ -48,7 +48,7 @@
                     <?php echo $item['qty'];?>
                 </td>
                 <td>
-                    <?php echo $item['price'];?>
+                    <?php echo 'HK$'.$item['price'];?>
                 </td>
 
             </tr>
