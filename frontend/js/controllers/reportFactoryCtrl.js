@@ -11,7 +11,10 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     $scope.action = '';
 	$scope.report = "";
 	$scope.filterData = {
-			'shift' : '1'
+			'shift' : '1',
+            'name' : '',
+            'customerId' : '',
+            'phone' : ''
 	};
     $scope.setting = {
         'setting' : false

@@ -5,7 +5,10 @@ class Audit_Report {
     
     private $_reportTitle = "";
     private $_date = "";
+    private $_date1 = "";
+    private $_date2 = "";
     private $_zone = "";
+    private $_indata = [];
     private $_invoices = [];
 
     private $data = [];
@@ -19,19 +22,15 @@ class Audit_Report {
         
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
+        $this->_indata = $indata;
         
-        
-        $permittedZone = explode(',', Auth::user()->temp_zone);
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
-        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        
+        $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
+        $this->_date1 = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
+        $this->_date2 = (isset($indata['filterData']['deliveryDate1']) ? strtotime($indata['filterData']['deliveryDate1']) : strtotime("today"));
         // check if user has clearance to view this zone        
-        if(!in_array($this->_zone, $permittedZone))
-        {
-            App::abort(401, "Unauthorized Zone");
-        }
-        
+
         $this->_uniqueid = microtime(true);
     }
     
@@ -43,18 +42,27 @@ class Audit_Report {
     public function compileResults()
     {
         $date = $this->_date;
-        $zone = $this->_zone;
-        
-        // get invoice from that date and that zone
+        $filter = $this->_indata['filterData'];
 
-     /*   Invoice::select('*')->whereIn('invoiceStatus',['1','2','98'])->where('return',true)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
-            ->chunk(5000, function($invoicesQuery) {
-                foreach($invoicesQuery as $invoiceQ)
-                    $this->_returnaccount[$invoiceQ['client']->customerId] = $invoiceQ->amount;
-            });*/
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','98','97'])
+            ->leftJoin('Customer', function($join) {
+                $join->on('Customer.customerId', '=', 'Invoice.customerId');
+            })->leftJoin('customer_groups', function($join) {
+                $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
+            })->whereBetween('Invoice.deliveryDate', [$this->_date1,$this->_date2]);
 
+        if($this->_group != '')
+            $invoicesQuery->where('customer_groups.name','LIKE','%'.$this->_group.'%');
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','98','97'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')->get();
+        $invoicesQuery->where(function ($query) use ($filter) {
+            $query
+                ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
+                ->where('phone_1', 'LIKE', '%' . $filter['phone'] . '%')
+                ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
+        });
+
+        $invoicesQuery = $invoicesQuery->with('client')->get();
+
 
                    $acc = 0;
                    foreach($invoicesQuery as $invoiceQ)
@@ -79,59 +87,6 @@ class Audit_Report {
                            ];
                       }
 
-
-        $invoicesQuery = Invoice::where('invoiceStatus','20')->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')->get();
-
-                 $acc = 0;
-                foreach($invoicesQuery as $invoiceQ)
-                {
-                    $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
-
-
-                    $this->_invoices[] = $invoiceQ->invoiceId;
-                    $this->_zoneName = $invoiceQ->zone->zoneName;
-
-                    // first, store all invoices
-                    $invoiceId = $invoiceQ->invoiceId;
-                    $invoices[$invoiceId] = $invoiceQ;
-                    $client = $invoiceQ['client'];
-
-                    $this->_backaccount[] = [
-                        'customerId' => $client->customerId,
-                        'name' => $client->customerName_chi,
-                        'invoiceNumber' => $invoiceId,
-                        'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
-                        'accumulator' =>number_format($acc,2,'.',','),
-                        'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
-                    ];
-                }
-
-        $invoicesQuery = Invoice::where('invoiceStatus','30')->where('paid_date',date('Y-m-d',$date))->where('paymentTerms',1)->where('zoneId', $zone)->with('invoiceItem', 'client')->get();
-
-        $acc = 0;
-        foreach($invoicesQuery as $invoiceQ)
-        {
-            $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
-
-
-            $this->_invoices[] = $invoiceQ->invoiceId;
-            $this->_zoneName = $invoiceQ->zone->zoneName;
-
-            // first, store all invoices
-            $invoiceId = $invoiceQ->invoiceId;
-            $invoices[$invoiceId] = $invoiceQ;
-            $client = $invoiceQ['client'];
-
-            $this->_paidInvoice[] = [
-                'customerId' => $client->customerId,
-                'name' => $client->customerName_chi,
-                'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
-                'invoiceNumber' => $invoiceId,
-                'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
-                'accumulator' =>number_format($acc,2,'.',','),
-                'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
-            ];
-        }
 
 //pd($this->_account);
 
@@ -171,19 +126,26 @@ class Audit_Report {
         }        
         $filterSetting = [
             [
-                'id' => 'zoneId',
-                'type' => 'single-dropdown',
-                'label' => '車號',
-                'model' => 'zone',
-                'optionList' => $availablezone,
-                'defaultValue' => $this->_zone,
+                'id' => 'group',
+                'type' => 'search_group',
+                'label' => '集團名稱',
+                'model' => 'group',
             ],
+
+            [
+                'id' => 'customer',
+                'type' => 'search_customer',
+                'label' => '客户資料',
+                'model' => 'customer',
+            ],
+
             [
                 'id' => 'deliveryDate',
-                'type' => 'date-picker',
+                'type' => 'date-picker1',
                 'label' => '送貨日期',
                 'model' => 'deliveryDate',
-                'defaultValue' => date("Y-m-d", $this->_date),
+                'id1' => 'deliveryDate2',
+                'model1' => 'deliveryDate2',
             ],
         ];
         
@@ -216,7 +178,7 @@ class Audit_Report {
     
     public function outputPreview()
     {
-        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->with('paidInvoice',$this->_paidInvoice)->render();
+        return View::make('reports/Audit_Report')->with('data', $this->_account)->render();
     }
     
     
@@ -228,13 +190,25 @@ class Audit_Report {
         $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
         $pdf->Cell(0, 10,$this->_reportTitle,0,1,"C");
-        $pdf->SetFont('chi','U',13);
-        $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT) . ' (' . $this->_zoneName .')', 0, 2, "L");
-        $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date), 0, 2, "L");
+        $pdf->SetFont('chi','U',12);
+        $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date1), 0, 2, "L");
+        $pdf->Cell(0, 5, "至: " . date("Y-m-d", $this->_date2), 0, 2, "L");
+
         $pdf->setXY(0, 0);
         $pdf->SetFont('chi','', 9);
         $pdf->Code128(10,$pdf->h-15,$this->_uniqueid,50,10);
         $pdf->Cell(0, 10, sprintf("報告編號: %s", $this->_uniqueid), 0, 2, "R");
+
+        $pdf->setXY(160, 30);
+        $pdf->SetFont('chi','', 9);
+        $pdf->Cell(0, 10, sprintf("集團: %s", $this->_group), 0, 2, "L");
+
+        $pdf->setXY(160, 35);
+        $pdf->SetFont('chi','', 9);
+        $pdf->Cell(0, 10, sprintf("客户: %s", $this->_indata['filterData']['name']), 0, 2, "L");
+        $pdf->setXY(168, 40);
+        $pdf->SetFont('chi','', 9);
+        $pdf->Cell(0, 10, sprintf("%s", $this->_indata['filterData']['customerId']), 0, 2, "L");
 
     }
     

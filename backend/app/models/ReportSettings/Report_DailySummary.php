@@ -223,12 +223,8 @@ class Report_DailySummary {
                 'type' => 'date-picker1',
                 'label' => '送貨日期',
                 'model' => 'deliveryDate',
-
-
                 'id1' => 'deliveryDate2',
-
                 'model1' => 'deliveryDate2',
-
             ],
 
         ];
