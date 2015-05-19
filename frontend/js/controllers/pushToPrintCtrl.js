@@ -139,7 +139,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
         $http({
             method: 'POST',
             url: querytarget,
-            data: {zone:$scope.zone}
+            data: {zone:$scope.zone,shift:$scope.shift}
         }).success(function(res){
     		$scope.queue = res['queued'];
                 var i = 0;
