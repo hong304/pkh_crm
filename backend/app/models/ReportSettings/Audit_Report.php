@@ -57,7 +57,7 @@ class Audit_Report {
         $invoicesQuery->where(function ($query) use ($filter) {
             $query
                 ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
-                ->where('phone_1', 'LIKE', '%' . $filter['phone'] . '%')
+                ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
         });
 
