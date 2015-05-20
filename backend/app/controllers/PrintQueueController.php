@@ -188,7 +188,6 @@ class PrintQueueController extends BaseController {
                             ->orwhere('Invoice.invoiceStatus','97')
                             ->orwhere('Invoice.invoiceStatus','98');
                     })->where('Invoice.deliveryDate',strtotime("00:00:00"))
-                    ->where('Invoice.shift',$this->shift)
                     ->lists('Invoice.invoiceId');
 
 
