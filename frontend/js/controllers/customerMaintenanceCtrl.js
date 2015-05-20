@@ -74,6 +74,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         'shift' : '',
         'productnewId' :'',
         'customer_group_id' : '',
+
 	};
 	
 	$scope.submitbtn = true;
@@ -104,7 +105,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     $scope.$on('handleCustomerUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
         $scope.customerInfo.customer_group_id = SharedService.GroupId;
-        $scope.filterData.GroupName = SharedService.GroupName;
+        $scope.customerInfo.groupname = SharedService.GroupName;
     });
 
   /*  $scope.$on('handleCustomerUpdate', function(){
@@ -122,6 +123,8 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	.success(function(res, status, headers, config){    
     		$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
     		$scope.customerInfo = res;
+                if(res.group)
+                    $scope.customerInfo.groupname = $scope.customerInfo.group.name;
 
 
 
@@ -223,6 +226,10 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         });
     }
 
+    $scope.clearGroup = function(){
+        $scope.customerInfo.customer_group_id = '';
+        $scope.customerInfo.groupname = '';
+    }
     $scope.submitCustomerForm = function()
     {
 
@@ -239,7 +246,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	{
     		$http.post(iutarget, {customerInfo: $scope.customerInfo})
         	.success(function(res, status, headers, config){    
-        		    		
+        		    		console.log($scope.customerInfo);
         		$scope.submitbtn = false;
 
         		if(res.mode == 'update')

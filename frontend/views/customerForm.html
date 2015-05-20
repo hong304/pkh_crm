@@ -26,11 +26,23 @@
 										* </span>
                             </label>
                             <div class="col-md-5">
-                                <div class="input-group">
-                                    <input id="client" class="form-control" type="text" disabled name="client" placeholder="自動填上, 請按鍵選擇" data-ng-model="filterData.GroupName")/>
-											<span class="input-group-btn">
-												<a data-ng-click="showselectgroup();" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
-											</span>
+
+                                    <div class="input-group">
+                                        <input id="client" class="form-control" type="text" disabled name="client" placeholder="自動填上, 請按鍵選擇" data-ng-model="customerInfo.groupname")/>
+                                                <span class="input-group-btn">
+                                                    <a data-ng-click="showselectgroup();" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
+                                                </span>
+                                    </div>
+
+
+                            </div>
+                            <div class="col-md-3">
+
+
+                                <div class="actions">
+                                    <a href="javascript:;" ng-click="clearGroup();" class="btn btn-default btn-circle">
+                                        <i class="fa fa-times"></i>
+                                        <span class="hidden-480"> 清除 </span> </a>
                                 </div>
                             </div>
                         </div>

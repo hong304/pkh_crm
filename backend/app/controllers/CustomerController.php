@@ -156,7 +156,7 @@ class CustomerController extends BaseController
             });
 
             // query
-
+            $customer->with('group');
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
             $customer = $customer->paginate($page_length);
 
@@ -185,8 +185,8 @@ class CustomerController extends BaseController
 
             }
         } elseif ($mode == 'single') {
-            $customer = Customer::where('customerId', Input::get('customerId'))->first();
-        } elseif ($mode == 'checkId') {
+            $customer = Customer::where('customerId', Input::get('customerId'))->with('group')->first();
+          } elseif ($mode == 'checkId') {
             $customer = Customer::select('customerId')->where('customerId', Input::get('customerId'))->first();
             $customer = count($customer);
         }

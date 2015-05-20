@@ -42,6 +42,11 @@ class Customer extends Eloquent  {
 	    return $this->hasOne('Zone', 'zoneId', 'deliveryZone');
 	}
 
+    public function group()
+    {
+        return $this->hasOne('customerGroup','id','customer_group_id');
+    }
+
     public function data_invoice(){
         return $this->hasMany('data_invoice','customer_id','customerId');
     }
