@@ -188,29 +188,32 @@ class PrintQueueController extends BaseController {
                             ->orwhere('Invoice.invoiceStatus','97')
                             ->orwhere('Invoice.invoiceStatus','98');
                     })->where('Invoice.deliveryDate',strtotime("00:00:00"))
+                    ->where('Invoice.shift',$this->shift)
                     ->lists('Invoice.invoiceId');
 
 
                 if($result){
                     $this->mergeImage($result);
                     Invoice::wherein('invoiceId',$result)->update(['printed'=>1]);
+
+                    $updatepqs = PrintQueue::where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
+                        ->leftJoin('Invoice', function($join) {
+                            $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+                        })
+                        ->where(function($query){
+                            $query->where('Invoice.invoiceStatus','2')
+                                ->orwhere('Invoice.invoiceStatus','97')
+                                ->orwhere('Invoice.invoiceStatus','98');
+                        })->where('Invoice.deliveryDate',strtotime("00:00:00"))->get();
+
+                    foreach($updatepqs as $updatepq){
+                        $updatepq->target_time =time();
+                        $updatepq->status = 'downloaded;passive';
+                        $updatepq->save();
+                    }
                 }
 
-                $updatepqs = PrintQueue::where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
-                    ->leftJoin('Invoice', function($join) {
-                        $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
-                    })
-                    ->where(function($query){
-                        $query->where('Invoice.invoiceStatus','2')
-                            ->orwhere('Invoice.invoiceStatus','97')
-                            ->orwhere('Invoice.invoiceStatus','98');
-                    })->where('Invoice.deliveryDate',strtotime("00:00:00"))->get();
 
-                foreach($updatepqs as $updatepq){
-                    $updatepq->target_time =time();
-                    $updatepq->status = 'downloaded;passive';
-                    $updatepq->save();
-                }
             }
         }
 
@@ -223,12 +226,13 @@ class PrintQueueController extends BaseController {
 
             array_shift($jobId);
 
-            PrintQueue::wherein('job_id', $jobId)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
+
             $jobs = PrintQueue::wherein('job_id', $jobId)->lists('invoiceId');
             //pd($jobId);
             if($jobs) {
                 $this->mergeImage($jobs);
                 Invoice::wherein('invoiceId',$jobs)->update(['printed'=>1]);
+                PrintQueue::wherein('job_id', $jobId)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
             }
         }
 

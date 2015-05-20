@@ -79,7 +79,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                                 $http({
                                     method: 'POST',
                                     url: printSelect,
-                                    data: {mode:'today',zone:$scope.zone}
+                                    data: {mode:'today',zone:$scope.zone,shift:$scope.shift}
                                 }).success(function(res, status, headers, config){
 
                                         $scope.updatePrintQueue();
@@ -156,65 +156,5 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
             });
     }
 
-   /*
-    $scope.pushPrintQueue = function()
-    {
-        $http.get(checkstatus)
-            .success(function(res, status, headers, config){
-                if(res.countInDataMart>0) {
-
-
-                        var  reject = res['3'].countInDataMart;
-
-                       var pending = res['1'].countInDataMart;
-
-
-
-
-                    bootbox.dialog({
-                        message: reject+"張單被拒絕,處理完才可列印<br>"+pending+"張單等待批刻,處理完才可列印",
-                        title: "Error!!!",
-                        buttons: {
-                            success: {
-                                label: "取消",
-                                className: "green",
-                                callback: function() {
-
-                                }
-                            }
-                        }
-                    });
-                }else{
-                    bootbox.dialog({
-                        message: "列印發票後將不能復原，確定要列印發票嗎？",
-                        title: "列印發票",
-                        buttons: {
-                            success: {
-                                label: "取消",
-                                className: "green",
-                                callback: function() {
-
-                                }
-                            },
-                            danger: {
-                                label: "確定",
-                                className: "red",
-                                callback: function() {
-                                    $http.get(pushtarget)
-                                        .success(function(res, status, headers, config){
-                                            $scope.updatePrintQueue();
-                                            // alert('正在準備傳送至印表機...')
-                                        });
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-
-
-
-    }
-    */
     
 });
