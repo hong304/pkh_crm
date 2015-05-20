@@ -641,7 +641,28 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }]
         }
     })
-    
+
+        .state('groupMaintenance', {
+            url: "/groupMaintenance",
+            templateUrl: "views/groupListing.html",
+            data: {pageTitle: '集團設定', pageSubTitle: ''},
+            controller: "groupMaintenanceCtrl",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+                            'js/controllers/groupMaintenanceCtrl.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
     .state('productMaintenance', {
         url: "/productMaintenance",
         templateUrl: "views/productListing.html",            

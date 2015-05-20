@@ -1,0 +1,98 @@
+<div class="modal fade bs-modal-lg " id="GroupFormModal" data-ng-init="" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+				<h4 class="modal-title">集團管理</h4>
+			</div>
+			<div class="modal-body">
+				<form action="javascript:;" class="form-horizontal">
+					<div class="form-body">
+
+						<div class="form-group">
+							<label class="col-md-2 control-label">名稱*</label>
+							<div class="col-md-10">
+								<input type="text" id="address_cht" ng-model="GroupInfo.name" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-2 control-label">地址</label>
+							<div class="col-md-10">
+								<input type="text"  ng-model="GroupInfo.address" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+
+
+						<div class="form-group">
+							<label class="col-md-2 control-label">聯絡人 (1)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="GroupInfo.contact_1" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">聯絡人 (2)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="GroupInfo.contact_2" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">電話 (1)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="GroupInfo.phone_1" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">電話 (2)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="GroupInfo.phone_2" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">電郵</label>
+                            <div class="col-md-10">
+                                <input type="text" ng-model="GroupInfo.email" class="form-control" placeholder="Enter text">
+                            </div>
+                        </div>
+
+						<div class="form-group">
+							<label class="col-md-2 control-label">狀態*</label>
+							<div class="col-md-10">
+								<select class="form-control" 
+									ng-model="GroupInfo.status"
+									data-ng-options="x.label for x in statuscat track by x.value" >								
+								</select>
+							</div>
+						</div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">說明 </label>
+                            <div class="col-md-10">
+                                <textarea class="form-control" placeholder="" id="description" cols="50"  ng-model="GroupInfo.description">{{GroupInfo.remark}}</textarea>
+                            </div>
+                        </div>
+
+
+                    </div>
+				</form>
+				
+			</div>
+						<div class="modal-footer">
+					<h2>{{newId}}</h2>
+					<button type="button" class="btn blue" data-ng-if="submitbtn == true" data-ng-click="submitGroupForm();">提交</button>
+					<button type="button" class="btn default" data-ng-if="submitbtn == true" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>
+

@@ -80,7 +80,11 @@ Route::group(array('before' => 'auth'), function()
     // Customer Maintenance
     Route::post('/queryCustomer.json', 'CustomerController@jsonQueryCustomer');
     Route::post('/manipulateCustomer.json', 'CustomerController@jsonManiulateCustomer');
-    
+
+    // Group Maintenance
+    Route::post('/queryGroup.json', 'GroupController@jsonQueryGroup');
+    Route::post('/manipulateGroup.json', 'GroupController@jsonManiulateGroup');
+
     // Product Maintenance
     Route::post('/queryProduct.json', 'ProductController@jsonQueryProduct');
     Route::post('/manipulateProduct.json', 'ProductController@jsonManiulateProduct');
