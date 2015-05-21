@@ -19,19 +19,24 @@ class Invoice_CustomerBreakdown {
         $this->_reportTitle = $report->name;
         
         
-        $permittedZone = explode(',', Auth::user()->temp_zone);
-
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
-        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
+
+        if(isset( $indata['filterData']['zone']) && $indata['filterData']['zone']['value'] != '-1'){
+
+            $this->_zone =  $indata['filterData']['zone']['value'];
+            if(!in_array($this->_zone, explode(',', Auth::user()->temp_zone)))
+            {
+                App::abort(401, "Unauthorized Zone");
+            }
+        }else{
+            $this->_zone =  Auth::user()->temp_zone;
+        }
          $this->_shift = $indata['filterData']['shift'];
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
         // check if user has clearance to view this zone
         //
-        if($this->_zone != '-1')
-      if(!in_array($this->_zone, $permittedZone))
-        {
-            App::abort(401, "Unauthorized Zone");
-        }
+
+
         
         $this->_uniqueid = microtime(true);
     }
@@ -54,10 +59,8 @@ class Invoice_CustomerBreakdown {
         $this->returngoods = ['1F9F'=>[]];
 
         $hi = Invoice::select('*');
-        if($this->_zone != '-1'){
-         $hi ->    where('zoneId', $this->_zone);
-        }
-        $hi->where('deliveryDate', $date)->where('Invoice.shift', $this->_shift)
+
+         $hi->wherein('zoneId',explode(',', $this->_zone))->where('deliveryDate', $date)->where('Invoice.shift', $this->_shift)
             ->leftJoin('Customer', function($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
             })->leftJoin('customer_groups', function($join) {

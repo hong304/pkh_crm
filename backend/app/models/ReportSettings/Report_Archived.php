@@ -12,7 +12,8 @@ class Report_Archived {
         
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
-        
+        $permittedZone = explode(',', Auth::user()->temp_zone);
+        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
         
         $this->_uniqueid = microtime(true);
     }
@@ -52,9 +53,28 @@ class Report_Archived {
         * single-selection
         * multiple-selection
         * text
-        */     
+        */
+        $zones = Zone::wherein('zoneId', explode(',', Auth::user()->temp_zone))->get();
+        foreach($zones as $zone)
+        {
+            $availablezone[] = [
+                'value' => $zone->zoneId,
+                'label' => $zone->zoneName,
+            ];
+        }
+        array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
         $filterSetting = [
+            [
+                'id' => 'zoneId',
+                'type' => 'single-dropdown',
+                'label' => '車號',
+                'model' => 'zone',
+                'optionList' => $availablezone,
+                'defaultValue' => $this->_zone,
+            ],
         ];
+
+        return $filterSetting;
         
         return $filterSetting;
     }
