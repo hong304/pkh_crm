@@ -297,6 +297,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
                             { "data": "productId" },
                             { "data": "productName_chi" },
                             { "data": "productStatus" },
+                    { "data": "hasCommission" },
                             { "data": "productStdPrice_carton" },
                             { "data": "productStdPrice_inner" },
                             { "data": "productStdPrice_unit" },  
