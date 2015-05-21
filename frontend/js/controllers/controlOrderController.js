@@ -543,7 +543,8 @@ console.log($scope.order.status);
 			$scope.product[i].unit = $scope.product[i].availableunit[0];
 			$scope.updateStandardPrice(i);
 
-            $scope.getLastItem(code,$scope.order.clientId,i);
+            if(!$location.search().invoiceId)
+                $scope.getLastItem(code,$scope.order.clientId,i);
 
           // console.log($scope.lastitem);
 
