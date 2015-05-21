@@ -4,8 +4,7 @@ class OrderController extends BaseController {
     
     public function jsonNewOrder()
     {
-
-
+        $itemIds = [];
         $product = Input::get('product');
         $order = Input::get('order');
         $timer = Input::get('timer');
@@ -13,7 +12,26 @@ class OrderController extends BaseController {
         // Create the invoice
         $ci = new InvoiceManipulation($order['invoiceId']);
         $ci->setInvoice($order);
-        
+
+        //pd($product);
+
+        foreach($product as $p)
+        {
+            if($p['dbid'] != '' && $p['deleted'] == 0)
+                $itemIds[] = $p['dbid'];
+        }
+
+ if($order['invoiceId'] != ''){
+     if(count($itemIds)==0)
+         return [
+             'result' => false,
+             'status' => 0,
+             'invoiceNumber' => 0,
+             'invoiceItemIds' => 0,
+             'message' => '未有下單貨品',
+         ];
+       InvoiceItem::whereNotIn('invoiceItemId',$itemIds)->where('invoiceId',$order['invoiceId'])->delete();
+ }
         foreach($product as $p)
         {
             $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'],$p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted']);

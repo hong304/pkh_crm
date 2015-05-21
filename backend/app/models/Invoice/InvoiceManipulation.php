@@ -1,7 +1,5 @@
 ﻿<?php
 
-//use google\appengine\api\taskqueue\PushTask;
-
 class InvoiceManipulation {
 
     public $invoiceId = "";
@@ -339,8 +337,6 @@ class InvoiceManipulation {
                     $productMap->save();
                 }
 
-
-
     	        $item->invoiceId = $this->invoiceId;
     	        $item->productId = $i['productId'];
     	        $item->productQtyUnit = $i['productQtyUnit']['value'];
@@ -352,12 +348,14 @@ class InvoiceManipulation {
     	        $item->productStandardPrice = $i['productStandardPrice'];
     	        $item->productUnitName = $i['productUnitName'];
     	        $item->approvedSupervisorId = $i['approvedSupervisorId'];
-    	       
-    	        if($i['dbid'] && $i['deleted'] == '1')
+
+    	       /* if($i['dbid'] && $i['deleted'] == '1')
     	        {
     	            $item->delete();
     	        }
-    	        elseif($i['deleted'] == '0')
+    	        else
+    	       */
+    	       if($i['deleted'] == '0')
     	        {
     	            $item->save();
     	        }

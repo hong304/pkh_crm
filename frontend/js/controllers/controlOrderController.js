@@ -835,6 +835,8 @@ console.log($scope.order.status);
         
         if(!generalError)
     	{
+
+
             $scope.order.print = v;
         	$http.post(
             	endpoint + '/placeOrder.json', {
