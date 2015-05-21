@@ -84,7 +84,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">有佣</label>
                             <div class="col-md-10">
-                               <input type="checkbox" ng-model="info.hasCommission" value="1" ng-checked="info.hasCommission==1">
+                               <input type="checkbox" ng-model="hasCommission" ng-true-value="yes" ng-false-value="no" ng-checked="hasCommission==1" ng-change="selectCom(hasCommission);">
 
                             </div>
                         </div>

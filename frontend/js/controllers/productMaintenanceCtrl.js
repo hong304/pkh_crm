@@ -48,6 +48,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'group'	:	'',
 			'keyword'	:	'',
 		};
+    $scope.hasCommission = '';
     $scope.submit = true;
 	$scope.info_def = {
 			'group'	:	false,
@@ -132,8 +133,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	.success(function(res, status, headers, config){    
     		$scope.info = $.extend(true, {}, $scope.info_def);
     		$scope.info = res;
-
-    		console.log($scope.info);
+            $scope.hasCommission = res.hasCommission;
+    		//console.log($scope.info);
 
     		var floorcat = [];
         	floorcat = floorcat.concat([{value: '1', label: "1F"}]);
@@ -191,7 +192,12 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	$("#productFormModal").modal({backdrop: 'static'});
     	
     }
-    
+    $scope.selectCom = function(i){
+        if(i == 'yes')
+        $scope.info.hasCommission= 1;
+        else
+            $scope.info.hasCommission= 0;
+    }
     $scope.submitProductForm = function()
     {
 
@@ -207,7 +213,6 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	}
     	else
     	{
-
     		$scope.submitbtn = false;
     		 $http.post(iutarget, {info: $scope.info})
         	.success(function(res, status, headers, config){    
