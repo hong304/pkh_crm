@@ -73,8 +73,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'productCost_unit'	:	'',
 			'productName_chi' : '',
 			'productName_eng' : '',
-
-        'productnewId' :''
+            'productnewId' :'',
+            'hasCommission' : ''
 	};
 	
 	$scope.submitbtn = true;
@@ -132,7 +132,9 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	.success(function(res, status, headers, config){    
     		$scope.info = $.extend(true, {}, $scope.info_def);
     		$scope.info = res;
-    		
+
+    		console.log($scope.info);
+
     		var floorcat = [];
         	floorcat = floorcat.concat([{value: '1', label: "1F"}]);
         	floorcat = floorcat.concat([{value: '9', label: "9F"}]);
