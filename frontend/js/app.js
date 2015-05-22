@@ -470,6 +470,32 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
         })
 
 
+        .state('queryCommission', {
+            url: "/queryCommission",
+            templateUrl: "views/queryCommission.html",
+            data: {pageTitle: '產品檢索系統', pageSubTitle: ''},
+            controller: "queryCommissionCtrl",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+                            'js/controllers/queryCommissionCtrl.js',
+
+                        ]
+                    });
+                }]
+            }
+        })
+
     // - update invoice via barcode
     .state('updateStatusViaReportId', {
         url: "/updateStatusViaReportId",

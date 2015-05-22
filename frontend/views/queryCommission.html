@@ -1,0 +1,112 @@
+<form class="form-horizontal" role="form" id="queryInfo" data-ng-init="updateDataSet();">
+
+    <div class="col-md-2">
+
+        <!--export excel-->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-red-sunglo bold uppercase">匯出Excel CSV</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <button class="btn  blue-steel btn-block" data-ng-click="sendRealFile();">匯出</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!--pick Date range-->
+        <div class="portlet light">
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group  date " id="deliveryDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliveryDate">
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                    </div>
+                    至
+                    <div class="input-group  date " id="deliveryDate1" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliveryDate1">
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                    </div>
+
+                </div>
+            </div>
+		</div>
+		<!-- Zone -->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">車號</span>
+				</div>
+				
+			</div>
+			<div class="portlet-body">				
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<select class="form-control" 
+						ng-model="filterData.zone" 
+						data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId" 
+						data-ng-change="updateZone();">
+						<option value=''>檢視全部</option>
+					
+					</select>
+				</div>
+			</div>
+		</div>			
+		
+	</div>
+
+	<div class="col-md-10">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">搜索結果</span>
+						</div>
+						
+					</div>
+					<div class="portlet-body">
+						<table class="table table-striped table-bordered table-hover" id="datatable_ajax">
+						<thead>
+							<tr role="row" class="heading">
+								<th width="5%">
+									產品編號
+								</th>
+								<th width="20%">
+                                    名稱
+								</th>
+								<th width="10%">
+									數量
+								</th>
+                                <th width="10%">
+                                    單位
+                                </th>
+
+							</tr>
+							
+						</thead>
+						<tbody>
+						</tbody>
+					</table>						
+					</div>
+				</div>
+				<!-- END EXAMPLE TABLE PORTLET-->
+			</div>
+		</div>
+    </div>
+</form>
+<!-- Select Client Modal -->
+<div ng-include="'/views/model_selectclient.html'"></div>
+<!-- Display Items Modal -->
+<div data-ng-include="'views/model_viewinvoice.html'"> </div>
+<!-- Unload Invoice Modal -->
+<div data-ng-include="'views/model_unloadinvoice.html'">  </div>

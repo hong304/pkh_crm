@@ -40,7 +40,7 @@ class ProductController extends BaseController {
 
         Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
 
-        $zone = (isset($filter['zone']['zoneId']))?$filter['zone']['zoneId']:false;
+        $zone = (isset($filter['zone']['zoneId']))?$filter['zone']['zoneId']:'-1';
         $data1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
         $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
 
@@ -51,7 +51,7 @@ class ProductController extends BaseController {
             }) ->leftJoin('Product', function($join) {
                 $join->on('InvoiceItem.productId', '=', 'Product.productId');
             });
-        if($zone != false)
+        if($zone != '-1')
             $invoices-> where('zoneId', $zone);
         else
             $invoices-> wherein('zoneId', explode(',', Auth::user()->temp_zone));

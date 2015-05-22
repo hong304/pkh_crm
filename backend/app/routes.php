@@ -32,7 +32,11 @@ Route::group(array('before' => 'auth'), function()
     // Page Level Information
     Route::get('/dashboard.json', 'HomeController@jsonDashboard'); 
    
-    
+    //Commission
+    Route::any('/queryCommission.json', 'CommissionController@queryCommission');
+  //  Route::get('/getExcel', 'CommissionController@queryCommission');
+
+
     // Client Information
     Route::any('/checkClient.json', 'CustomerController@jsonCheckClient');
     Route::post('/findClientById.json', 'CustomerController@jsonFindClientById');
