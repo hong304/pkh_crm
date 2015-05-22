@@ -23,6 +23,8 @@ app.controller('reportSelectionCtrl', function($scope, $http, SharedService, $ti
 
         if(id == 'vanselllist'){
             $location.url('/reportvansell');
+        }else if(id == 'commission'){
+            $location.url('/reportvansell');
         }else
             $location.url('/reportFactory?id=' + id);
 
