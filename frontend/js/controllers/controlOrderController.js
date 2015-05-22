@@ -815,7 +815,8 @@ console.log($scope.order.status);
         
         $scope.allowSubmission = false;
         
-        
+        console.log($scope.order);
+
         if(!$scope.order.invoiceDate || !$scope.order.deliveryDate || !$scope.order.dueDate || !$scope.order.status || !$scope.order.address || !$scope.order.clientId)
     	{
         	Metronic.alert({
@@ -832,7 +833,8 @@ console.log($scope.order.status);
         	generalError = true;
         	$scope.allowSubmission = true;
     	}
-        
+
+
         if(!generalError)
     	{
 
@@ -846,6 +848,7 @@ console.log($scope.order.status);
             }).
             success(function(res, status, headers, config) {
                     console.log(res);
+
             	if(res.result == true)
             	{
                     $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
@@ -880,9 +883,9 @@ console.log($scope.order.status);
                     	});
             		}
 
-                    if(res.action == 'update')
-                        $state.go("queryInvoice", {}, {reload: true});
-            		else{
+                    if(res.action == 'update'){
+                       $state.go("queryInvoice", {}, {reload: true});
+                    }else{
                         $("#successModal").modal('toggle');
 
                         document.addEventListener('keydown', function(evt) {
@@ -902,7 +905,7 @@ console.log($scope.order.status);
                             onCounterEnd: function(){
                                 // $window.location.reload();
                                 //consolg.log('123');
-                                $state.go("newOrder", {}, {reload: true});
+                              $state.go("newOrder", {}, {reload: true});
                             } // final action
                         });
 
