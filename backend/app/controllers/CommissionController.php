@@ -12,7 +12,7 @@ class CommissionController extends BaseController {
         $data1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
         $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
 
-        $invoices =  Invoice::select(DB::raw('SUM(productQty) AS productQtys'),'productName_chi','InvoiceItem.productId','productUnitName')->leftJoin('InvoiceItem', function($join) {
+        $invoices =  Invoice::select(DB::raw('SUM(productQty) AS productQtys'),'productName_chi','InvoiceItem.productId','productUnitName','productQtyUnit','productPacking_carton','productPacking_inner','productPacking_unit','productPackingName_carton')->leftJoin('InvoiceItem', function($join) {
             $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
         }) ->leftJoin('Product', function($join) {
             $join->on('InvoiceItem.productId', '=', 'Product.productId');
@@ -27,8 +27,48 @@ class CommissionController extends BaseController {
 
 
         if(Input::get('mode') == 'csv') {
-            $invoices = $invoices->get();
-           return $this->exportCsv($invoices);
+            $invoices = $invoices->get()->toArray();
+
+foreach($invoices as &$v){
+
+    if($v['productQtyUnit'] == 'carton'){
+        $v['commissionUnit'] = $v['productQtys'];
+    }
+
+    if($v['productQtyUnit'] == 'unit'){
+        $v['commissionUnit'] = ( $v['productQtys'] / (($v['productPacking_carton'])?$v['productPacking_carton']:'1' * ($v['productPacking_inner'])?$v['productPacking_inner']:'1' * ($v['productPacking_unit'])?$v['productPacking_unit']:'1'));
+    }
+
+    if($v['productQtyUnit'] == 'inner'){
+        $v['commissionUnit'] = ( ($v['productQtys'] * ($v['productPacking_unit'])?$v['productPacking_unit']:'1') / (($v['productPacking_carton'])?$v['productPacking_carton']:'1' * ($v['productPacking_inner'])?$v['productPacking_inner']:'1' * ($v['productPacking_unit'])?$v['productPacking_unit']:'1'));
+    }
+}
+            $a = [];
+            foreach($invoices as $u){
+                $a[$u['productId']][] = $u;
+            }
+
+
+
+            foreach( $a as &$g){
+
+                $cc =0;
+
+                foreach($g as $z){
+                   $cc += $z['commissionUnit'];
+                }
+
+                foreach($g as &$h){
+
+                        $h['productQtyUnit_final'] = $cc;
+
+                }
+
+
+            }
+
+
+           return $this->exportCsv($a);
         }  else {
             Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
@@ -43,11 +83,13 @@ class CommissionController extends BaseController {
 
         $csv = 'Product ID,Name,Total Qty,Unit' . "\r\n";
         foreach ($invoices as $item) {
-            $csv .= '"' . $item->productId . '",';
-            $csv .= '"' . $item->productName_chi . '",';
-            $csv .= '"' . $item->productQtys . '",';
-            $csv .= '"' . $item->productUnitName . '",';
-            $csv .= "\r\n";
+
+                    $csv .= '"' . $item[0]['productId'] . '",';
+                    $csv .= '"' . $item[0]['productName_chi'] . '",';
+                    $csv .= '"' . $item[0]['productQtyUnit_final'] . '",';
+                    $csv .= '"' . $item[0]['productPackingName_carton'] . '",';
+                    $csv .= "\r\n";
+
         }
         echo "\xEF\xBB\xBF";
         $headers = array(
