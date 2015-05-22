@@ -7,7 +7,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	
 	$scope.lock = false;
 	
-	var fetchDataDelay = 500;   // milliseconds
+	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
     var csuggestion = -1;
     var customerTableKeyDownExist = false;
