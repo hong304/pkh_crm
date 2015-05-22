@@ -881,7 +881,7 @@ console.log($scope.order.status);
             		}
 
                     if(res.action == 'update')
-                        $scope.sm_goto('myinvoice');
+                        $state.go("queryInvoice", {}, {reload: true});
             		else{
                         $("#successModal").modal('toggle');
 

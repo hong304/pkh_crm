@@ -10,6 +10,17 @@ function viewInvoice(invoiceId)
     });
 }
 
+document.addEventListener('keydown', function(evt) {
+    var e = window.event || evt;
+    var key = e.which || e.keyCode;
+
+    if(e.keyCode == 115)
+    {
+        window.location.replace("/#/newOrder");
+    }
+
+}, false);
+
 app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 	
 	var fetchDataDelay = 500;   // milliseconds
@@ -35,7 +46,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         Metronic.initAjax();        
         $scope.systeminfo = $rootScope.systeminfo;              
     });
-    
+
     $scope.clearCustomerSearch = function()
     {
         $scope.filterData = {
