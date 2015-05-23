@@ -97,11 +97,10 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
 
         $http.post(iutarget, {info: $scope.version, mode : 'check'})
             .success(function(res, status, headers, config){
-                    if(parseInt(res) == false){
+                    if(parseInt(res) == 0){
                         alert('產生備貨單前請列印之前的版本');
                     }else{
                         $("#generalPickingModal").modal('hide');
-
                         $http.post(iutarget, {info: $scope.picking, mode : 'post'})
                             .success(function(res, status, headers, config){
                                 $scope.version = res;

@@ -3,8 +3,26 @@
 Metronic.unblockUI();
 
 app.controller('controlOrderController', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state) {
-	
-	
+
+
+    /* Register shortcut key */
+    var customerTableKeyDownExist = false;
+    var repeatSubmit = false;
+
+    if(customerTableKeyDownExist == false) {
+        $('#orderinfo').keydown(function (e) {
+            if (e.keyCode == 121) {
+                $scope.submitOrder(1);
+            }
+
+            if (e.keyCode == 117) {
+                $scope.submitOrder(0);
+
+            }
+            customerTableKeyDownExist = true;
+        });
+    }
+
 	var today = new Date();	
 	var plus = today.getDay() == 6 ? 2 : 1; 
 	
@@ -97,7 +115,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	// product: select, change_qty, change_unit
 
 
-	
+
+
 	$scope.$on('handleCustomerUpdate', function(){
 		// received client selection broadcast. update to the invoice portlet
 		
@@ -305,7 +324,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 $scope.order.deliveryDate = inf.deliveryDate_date;
                 $scope.order.dueDate = inf.dueDateDate;
                 $scope.order.status = inf.invoiceStatus;
-console.log($scope.order.status);
+
                 $scope.order.zoneId = res.deliveryZone;
         		$scope.order.zoneName = data.entrieinfo;
         		$scope.order.route = res.routePlanningPriority;
@@ -407,24 +426,7 @@ console.log($scope.order.status);
             });*/
         }
         
-        /* Register shortcut key */
-        document.addEventListener('keydown', function(evt) {
-			var e = window.event || evt;
-			var key = e.which || e.keyCode;
 
-			if(e.keyCode == 121)
-			{
-
-				$scope.submitOrder(1);
-			}
-
-            if(e.keyCode == 117)
-            {
-
-                $scope.submitOrder(0);
-            }
-			
-		}, false);
         
     });
     
@@ -815,7 +817,6 @@ console.log($scope.order.status);
         
         $scope.allowSubmission = false;
         
-        console.log($scope.order);
 
         if(!$scope.order.invoiceDate || !$scope.order.deliveryDate || !$scope.order.dueDate || !$scope.order.status || !$scope.order.address || !$scope.order.clientId)
     	{
@@ -838,7 +839,6 @@ console.log($scope.order.status);
         if(!generalError)
     	{
 
-
             $scope.order.print = v;
         	$http.post(
             	endpoint + '/placeOrder.json', {
@@ -847,7 +847,6 @@ console.log($scope.order.status);
             	timer	:	$scope.timer,
             }).
             success(function(res, status, headers, config) {
-                    console.log(res);
 
             	if(res.result == true)
             	{
