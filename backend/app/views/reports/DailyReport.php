@@ -30,7 +30,7 @@
                     <?php echo $ff['counts'];?> <?php echo $ff['unit_txt'];?> 
                 </td> 
             </tr>  
-          
+
         <?php endforeach; ?>
         <tr>
 

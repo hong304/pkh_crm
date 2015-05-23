@@ -58,6 +58,7 @@ class HomeController extends BaseController {
 
         if($mode == 'check'){
 
+            //by pass checking due to first time general picking list
             if($info['info'] == null)
                 return 1;
 
@@ -69,16 +70,15 @@ class HomeController extends BaseController {
             $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['info']['zone'])->where('shift',$info['info']['shift'])->whereIn('invoiceStatus',[1,2,96])
                 ->where('f9_picking_dl','!=',1)->where('version',true)->get();
 
-
+            //user deleted or revised all invoices after general picking list, then return no data
                 if(count($info_data) == 0)
                     return 1;
 
+            //have data but only contain 1F items then return 1
             foreach($info_data as $v){
                 $q[]= $v->invoiceId;
             }
-
             $ii = InvoiceItem::wherein('invoiceId',$q)->get();
-
             foreach ($ii as $v){
                 if($v->productLocation == 9){
                     $f9 = true;
