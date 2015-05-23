@@ -55,11 +55,9 @@ class Report_DailySummary {
 
         // get invoice from that date and that zone
        $this->goods = [];
-
-        Invoice::select('*')->whereIn('invoiceStatus', ['1','2','4','11','20','21','22','23','30','98','97','96'])->where('zoneId', $zone)->whereBetween('deliveryDate', [$date, $this->_date1])->with('invoiceItem', 'products', 'client')
+        DB::disableQueryLog();
+        Invoice::select('*')->whereIn('invoiceStatus', ['1','2','4','11','20','21','22','23','30','98','97','96'])->where('zoneId', $zone)->whereBetween('deliveryDate', [$date, $this->_date1])
                ->chunk(5000, function($invoicesQuery) {
-
-
 
                  //  $this->_count = sizeof($invoicesQuery);
                    // first of all process all products
@@ -170,6 +168,8 @@ class Report_DailySummary {
                    }
                    
                });
+
+
         if(count($this->goods)>0)
             ksort($this->goods,SORT_STRING);
 
