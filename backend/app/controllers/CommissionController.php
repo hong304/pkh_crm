@@ -37,7 +37,7 @@ class CommissionController extends BaseController
                 }
 
                 if ($v['productQtyUnit'] == 'unit') {
-                    $v['commissionUnit'] = ($v['productQtys'] / (($v['productPacking_carton']) ? $v['productPacking_carton'] : '1' * ($v['productPacking_inner']) ? $v['productPacking_inner'] : '1' * ($v['productPacking_unit']) ? $v['productPacking_unit'] : '1'));
+                    $v['commissionUnit'] = ($v['productQtys'] / (($v['productPacking_carton'] == false) ? 1:$v['productPacking_carton'] * ($v['productPacking_inner']==false) ? 1:$v['productPacking_inner'] * ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit']));
                 }
 
                 if ($v['productQtyUnit'] == 'inner') {
@@ -55,7 +55,7 @@ class CommissionController extends BaseController
                     $cc += $z['commissionUnit'];
                 }
                 foreach ($g as &$h) {
-                    $h['productQtyUnit_final'] = $cc;
+                    $h['productQtyUnit_final'] = floor($cc);
                 }
             }
             return $this->exportCsv($a);
@@ -74,13 +74,13 @@ class CommissionController extends BaseController
 
         $csv = 'Product ID,Name,Total Qty,Unit' . "\r\n";
         foreach ($invoices as $item) {
-
-            $csv .= '"' . $item[0]['productId'] . '",';
-            $csv .= '"' . $item[0]['productName_chi'] . '",';
-            $csv .= '"' . $item[0]['productQtyUnit_final'] . '",';
-            $csv .= '"' . $item[0]['productPackingName_carton'] . '",';
-            $csv .= "\r\n";
-
+            if($item[0]['productQtyUnit_final'] != false){
+                $csv .= '"' . $item[0]['productId'] . '",';
+                $csv .= '"' . $item[0]['productName_chi'] . '",';
+                $csv .= '"' . $item[0]['productQtyUnit_final'] . '",';
+                $csv .= '"' . $item[0]['productPackingName_carton'] . '",';
+                $csv .= "\r\n";
+            }
         }
         echo "\xEF\xBB\xBF";
         $headers = array(
