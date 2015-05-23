@@ -45,13 +45,14 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var day = nextDay.getDate();
     var month = nextDay.getMonth() + 1;
     var year = nextDay.getFullYear();
-	
+
+    var yday = nextDay.getDate()-1
 	$scope.filterData = {
 		'displayName'	:	'',
 		'clientId'		:	'0',
 		'status'		:	'0',
 		'zone'			:	'',
-        deliverydate : year+'-'+month+'-'+day,
+        deliverydate : year+'-'+month+'-'+yday,
         deliverydate2 : year+'-'+month+'-'+day,
 		'created_by'	:	'0',
 		'invoiceNumber' :	''
@@ -66,7 +67,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
             orientation: "left",
             autoclose: true
         });
-        $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + day);
+        $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + yday);
 
         $("#deliverydate2").datepicker({
             rtl: Metronic.isRTL(),
