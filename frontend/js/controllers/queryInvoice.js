@@ -29,22 +29,52 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var reprint = endpoint + '/rePrint.json';
 	
 	$scope.firstload = true;
-	
-	
+
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 2 : 1;
+
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    if(today.getHours() < 12)
+    {
+        var nextDay = today;
+    }
+    else
+    {
+        var nextDay = currentDate;
+    }
+    var day = nextDay.getDate();
+    var month = nextDay.getMonth() + 1;
+    var year = nextDay.getFullYear();
 	
 	$scope.filterData = {
 		'displayName'	:	'',
 		'clientId'		:	'0',
 		'status'		:	'0',
 		'zone'			:	'',
-		'deliverydate'	:	'1daylr',
+        deliverydate : year+'-'+month+'-'+day,
+        deliverydate2 : year+'-'+month+'-'+day,
 		'created_by'	:	'0',
-		'invoiceNumber' :	'',
+		'invoiceNumber' :	''
 	};
 	
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();        
-        $scope.systeminfo = $rootScope.systeminfo;              
+        $scope.systeminfo = $rootScope.systeminfo;
+
+        $("#deliverydate").datepicker({
+            rtl: Metronic.isRTL(),
+            orientation: "left",
+            autoclose: true
+        });
+        $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + day);
+
+        $("#deliverydate2").datepicker({
+            rtl: Metronic.isRTL(),
+            orientation: "left",
+            autoclose: true
+        });
+        $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
     });
 
     $scope.clearCustomerSearch = function()
@@ -54,7 +84,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
             'clientId'		:	'0',
             'status'		:	'0',
             'zone'			:	'',
-            'deliverydate'	:	'1daylr',
+            deliverydate : year+'-'+month+'-'+day,
+            deliverydate2 : year+'-'+month+'-'+day,
             'created_by'	:	'0',
             'invoiceNumber' :	'',
         };
@@ -70,13 +101,13 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         	if(scope == "pendingOrder")
         	{
         		$scope.filterData.status = 1;
-        		$scope.filterData.deliverydate = 'extensible-180-180';
+        		$scope.filterData.deliverydate1 = '-1';
         		$scope.filterData.zone = '';
         	}
         	else if(scope == "rejectedOrders")
         	{
         		$scope.filterData.status = 3;
-        		$scope.filterData.deliverydate = 'extensible-180-180';
+        		$scope.filterData.deliverydate1 = '-1';
         		$scope.filterData.zone = '';
         	}
         }
@@ -139,7 +170,12 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     {
     	$scope.updateDataSet();
     }
-    
+
+    $scope.updateDelvieryDate2 = function()
+    {
+        $scope.updateDataSet();
+    }
+
     $scope.updateStatus = function()
     {
     	$scope.updateDataSet();

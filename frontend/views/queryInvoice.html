@@ -96,26 +96,29 @@
 				</div>
 
 			</div>
-			<div class="portlet-body">
-				<div class="md-col-12" style="margin-bottom:15px;">
-				<div class="radio-list">
-						<label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" checked value="1daylr"> +/- 2 day </label>
 
-						<label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="coming-7-days" >未來  7 天 </label>
-						<label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-7-days" >過去  7 天 </label>
-						<label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-30-days">過去 30 天 </label>
-						<label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="past-180-days">過去 180 天 </label>
-						<!-- <label><input ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();" type="radio" name="deliverydate" id="deliverydate" value="custom"> 自訂日期 </label> -->
-
-					</div>
-					<div class="input-group input-medium date date-picker" data-date-format="dd-mm-yyyy" style="display:none;" id="customDeliveryDate">
-						<input type="text" class="form-control" data-ng-change="updateDelvieryDate();" ng-model="filterData.customDeliveryDate"  readonly>
+                <!-- date-picker -->
+                <div class="portlet-body">
+                    <div class="md-col-12" style="margin-bottom:15px;">
+                        <div class="input-group  date " id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                            <input type="text" class="form-control" readonly ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
-					</div>
-				</div>
-			</div>
+                        </div>
+                        至
+                        <div class="input-group  date " id="deliverydate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                            <input type="text" class="form-control" readonly ng-model="filterData.deliverydate2" data-ng-change="updateDelvieryDate2();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
 		</div>
 	</div>
 

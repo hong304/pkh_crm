@@ -175,7 +175,7 @@ class OrderController extends BaseController
             $filter = Input::get('filterData');
 
             // start with date filter
-            switch ($filter['deliverydate']) {
+         /*   switch ($filter['deliverydate']) {
                 case 'today' :
                     $dDateBegin = strtotime("today 00:00");
                     $dDateEnd = strtotime("today 23:59");
@@ -208,11 +208,15 @@ class OrderController extends BaseController
                     $dDateBegin = strtotime("today 00:00");
                     $dDateEnd = strtotime("today 23:59");
                     break;
-            }
-
+            }*/
+            $dDateBegin = strtotime($filter['deliverydate']);
+            $dDateEnd = strtotime($filter['deliverydate2']);
             //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
 
-            $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
+            if(isset($filter['deliverydate1']))
+                $invoice = Invoice::select('*');
+            else
+                $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);

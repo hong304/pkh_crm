@@ -32,7 +32,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
             'customerId' : '',
             'phone' : '',
              deliveryDate : year+'-'+month+'-'+day,
-             deliveryDate2 : year+'-'+month+'-'+day,
+             deliveryDate2 : year+'-'+month+'-'+day
 	};
     $scope.setting = {
         'setting' : false
