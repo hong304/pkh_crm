@@ -17,8 +17,8 @@
         <?php
         //pd($data);
         if(count($data['items']>0))
-        foreach($data['items'] as $ffbu):?>
-            <?php foreach($ffbu as $ff): ?>
+        foreach($data['items'] as $ff):?>
+
             <tr>
                 <td>
                     <?php echo $ff['productId'];?>
@@ -30,7 +30,7 @@
                     <?php echo $ff['counts'];?> <?php echo $ff['unit_txt'];?> 
                 </td> 
             </tr>  
-            <?php endforeach; ?> 
+          
         <?php endforeach; ?>
         <tr>
 
