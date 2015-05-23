@@ -21,7 +21,7 @@ class Report_DailySummary {
 
     public function __construct($indata)
     {
-
+        ini_set("memory_limit", "-1");
 
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
@@ -60,8 +60,7 @@ class Report_DailySummary {
                ->chunk(5000, function($invoicesQuery) {
 
 
-                   pd($invoicesQuery);
-
+  
                  //  $this->_count = sizeof($invoicesQuery);
                    // first of all process all products
                    $productsQuery = array_pluck($invoicesQuery, 'products');
