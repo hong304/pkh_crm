@@ -86,7 +86,7 @@ class HomeController extends BaseController {
             }
 
                 $date = str_replace('-','',$info['info']['date']);
-                $id = $date.'%-'.$info['info']['f9_version'].'-9';
+                $id = $date.$info['info']['zone'].'-'.$info['info']['f9_version'].'-9';
                 $result = ReportArchive::where('id','LIKE',$id)->where('shift',$info['info']['shift'])->first();
 
                 if($result || !$f9)
