@@ -6,10 +6,15 @@ class ReportController extends BaseController {
     
     public function loadAvailableReports()
     {
-
+        /*
+        2 = SA
+        3 = Manager
+        4 = Sales
+        5 = Supervisor
+        */
 
         if (Auth::user()->role[0]->id == 4){
-            $filter = ['productReport','customerReport'];
+            $filter = ['productReport','customerReport','commission'];
             $reports = Report::select('*')->orderBy('id', 'asc')->whereNotIn('id',$filter)->get();
         }else{
             $reports = Report::select('*')->orderBy('id', 'asc')->get();
