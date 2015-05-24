@@ -4,7 +4,7 @@
 class Report_Archived { 
     
     private $_reportTitle = "";
-
+    private $data = '';
     private $_uniqueid = "";
      
     public function __construct($indata)
@@ -12,8 +12,16 @@ class Report_Archived {
         
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
-        $permittedZone = explode(',', Auth::user()->temp_zone);
-        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
+        if(isset( $indata['filterData']['zone']) && $indata['filterData']['zone']['value'] != '-1'){
+
+            $this->_zone =  $indata['filterData']['zone']['value'];
+            if(!in_array($this->_zone, explode(',', Auth::user()->temp_zone)))
+            {
+                App::abort(401, "Unauthorized Zone");
+            }
+        }else{
+            $this->_zone =  Auth::user()->temp_zone;
+        }
         
         $this->_uniqueid = microtime(true);
     }
@@ -28,7 +36,7 @@ class Report_Archived {
         
         // get invoice from that date and that zone
 
-        $reports = ReportArchive::select('*');
+        $reports = ReportArchive::select('*')->wherein('zoneId',explode(',', $this->_zone));
         
         if(!Auth::user()->can('view_global_reportarchive'))
         {
@@ -74,8 +82,6 @@ class Report_Archived {
             ],
         ];
 
-        return $filterSetting;
-        
         return $filterSetting;
     }
     

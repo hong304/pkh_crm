@@ -69,9 +69,6 @@ class ReportFactory{
             {
                 $function = "outputPDF";
                 $reportOutput = $this->_module->outputPDF();
-                
-                //$filenameUn = $this->_reportId . '-' . str_random(10) . '-' . date("YmdHis");
-                //$filenameUn = microtime(true);
                 $filenameUn = $reportOutput['uniqueId'];
                 $filename = $filenameUn . ".pdf";
                 
@@ -83,14 +80,14 @@ class ReportFactory{
                     $archive->report = $this->_reportId;
                     $archive->file = $path;
                     $archive->remark = $reportOutput['remark'];
+                    if(isset($reportOutput['zoneId']))
+                        $archive->zoneId = $reportOutput['zoneId'];
                     $archive->created_by = Auth::user()->id;
                     $unid = explode("-",$reportOutput['uniqueId']);
 
 
                     if(isset($reportOutput['associates'])){
-
                         $neworder = json_decode($reportOutput['associates']);
-
                         if(isset($unid[1]) && $unid[1]>1){
                             $unid[1] -= 1;
                             $comma_separated = implode("-", $unid);
@@ -99,15 +96,10 @@ class ReportFactory{
                                 $invoiceIds = json_decode(json_decode($chre->associates, true, true));
                                 $neworder = array_diff($neworder,$invoiceIds);
                             }
-
                         }
                         $neworder = array_values($neworder);
                     }
 //pd($neworder);
-
-
-
-
                     $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
                     $archive->save();
                 }

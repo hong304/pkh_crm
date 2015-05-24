@@ -329,6 +329,7 @@ class Invoice_1FPickingList {
         return [
             'pdf' => $pdf,
             'remark' => sprintf("Picking List Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
+            'zoneId' => $this->_zone,
             'uniqueId' => $this->_uniqueid,
             'associates' => json_encode($this->_invoices),
         ];
