@@ -67,14 +67,22 @@ class ReportFactory{
             }
             elseif($output == 'pdf')
             {
-                $function = "outputPDF";
                 $reportOutput = $this->_module->outputPDF();
                 $filenameUn = $reportOutput['uniqueId'];
                 $filename = $filenameUn . ".pdf";
-                
-                $path = storage_path() . '/report_archive/'.$this->_reportId.'/' . $filename;
+                $shift = '';
+                if(isset($reportOutput['shift'])) {
+                    $shift = $reportOutput['shift'];
+                    if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift']))
+                        mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'], 0777, true);
+                    $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'] . '/' . $filename;
+                }else {
+                    if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift']))
+                        mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'], 0777, true);
+                    $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+                }
+                if(ReportArchive::where('id',$filenameUn)->where('shift',$shift)->count() == 0){
 
-                if(ReportArchive::where('id',$filenameUn)->count() == 0){
                     $archive = new ReportArchive();
                     $archive->id = $filenameUn;
                     $archive->report = $this->_reportId;
@@ -82,6 +90,8 @@ class ReportFactory{
                     $archive->remark = $reportOutput['remark'];
                     if(isset($reportOutput['zoneId']))
                         $archive->zoneId = $reportOutput['zoneId'];
+                    if(isset($reportOutput['shift']))
+                        $archive->shift = $reportOutput['shift'];
                     $archive->created_by = Auth::user()->id;
                     $unid = explode("-",$reportOutput['uniqueId']);
 
@@ -99,7 +109,6 @@ class ReportFactory{
                         }
                         $neworder = array_values($neworder);
                     }
-//pd($neworder);
                     $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
                     $archive->save();
                 }

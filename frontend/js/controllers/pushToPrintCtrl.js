@@ -114,7 +114,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                         $http({
                             method: 'POST',
                             url: printSelect,
-                            data: {print:$scope.checkid,mode:'selected',zone:$scope.zone}
+                            data: {print:$scope.checkid,mode:'selected',zone:$scope.zone,shift:$scope.shift}
                         }).success(function () {
                             $scope.updatePrintQueue();
                         });

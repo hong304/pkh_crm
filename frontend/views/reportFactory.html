@@ -175,13 +175,12 @@
 					</div>
 				</div>
 			</div>
-
-            <div class="portlet-body" id="shift" data-ng-if="f.type == 'single-dropdown'">
+            <div class="portlet-body" id="shift" data-ng-if="f.type1 == 'shift'">
                 <div class="md-col-12">
                     <select class="form-control"
-                            ng-model="filterData.shift" >
-                        <option value='1'>早班</option>
-                        <option value='2'>晚班</option>
+                            ng-model="filterData.shift"
+                            data-ng-options="x.label for x in f.optionList1 track by x.value"
+                            >
                     </select>
                 </div>
             </div>

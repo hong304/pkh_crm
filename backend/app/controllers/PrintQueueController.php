@@ -388,6 +388,7 @@ class PrintQueueController extends BaseController {
         $print_log->target_path = $invoiceImage[0]->zoneId;
         $print_log->invoiceIds = implode(',',$Ids);
         $print_log->count = count($Ids);
+        $print_log->shift = $this->shift;
         $print_log->save();
     }
 

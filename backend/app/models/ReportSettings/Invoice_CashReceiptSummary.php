@@ -25,7 +25,7 @@ class Invoice_CashReceiptSummary {
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        
+        $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift']['value'] : '-1');
         // check if user has clearance to view this zone        
         if(!in_array($this->_zone, $permittedZone))
         {
@@ -54,7 +54,12 @@ class Invoice_CashReceiptSummary {
             });*/
 
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','98','97'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')->get();
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','98','97'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
+                if($this->_shift != '-1')
+                    $invoicesQuery->where('shift',$this->_shift);
+
+        $invoicesQuery = $invoicesQuery->with('invoiceItem', 'client')->get();
+
 
                    $acc = 0;
                    foreach($invoicesQuery as $invoiceQ)
@@ -80,8 +85,10 @@ class Invoice_CashReceiptSummary {
                       }
 
 
-        $invoicesQuery = Invoice::where('invoiceStatus','20')->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')->get();
-
+        $invoicesQuery = Invoice::where('invoiceStatus','20')->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
+        if($this->_shift != '-1')
+            $invoicesQuery->where('shift',$this->_shift);
+        $invoicesQuery = $invoicesQuery->with('invoiceItem', 'client')->get();
                  $acc = 0;
                 foreach($invoicesQuery as $invoiceQ)
                 {
@@ -106,7 +113,10 @@ class Invoice_CashReceiptSummary {
                     ];
                 }
 
-        $invoicesQuery = Invoice::where('invoiceStatus','30')->where('paid_date',date('Y-m-d',$date))->where('paymentTerms',1)->where('zoneId', $zone)->with('invoiceItem', 'client')->get();
+        $invoicesQuery = Invoice::where('invoiceStatus','30')->where('paid_date',date('Y-m-d',$date))->where('paymentTerms',1)->where('zoneId', $zone);
+        if($this->_shift != '-1')
+            $invoicesQuery->where('shift',$this->_shift);
+        $invoicesQuery = $invoicesQuery->with('invoiceItem', 'client')->get();
 
         $acc = 0;
         foreach($invoicesQuery as $invoiceQ)
@@ -168,7 +178,8 @@ class Invoice_CashReceiptSummary {
                 'value' => $zone->zoneId,
                 'label' => $zone->zoneName,
             ];
-        }        
+        }
+        $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
         $filterSetting = [
             [
                 'id' => 'zoneId',
@@ -177,6 +188,11 @@ class Invoice_CashReceiptSummary {
                 'model' => 'zone',
                 'optionList' => $availablezone,
                 'defaultValue' => $this->_zone,
+
+                'type1' => 'shift',
+                'model1' => 'shift',
+                'optionList1' => $ashift,
+                'defaultValue1' => $this->_shift,
             ],
             [
                 'id' => 'deliveryDate',

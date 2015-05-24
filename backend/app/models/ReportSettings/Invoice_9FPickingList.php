@@ -20,7 +20,7 @@ class Invoice_9FPickingList {
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        $this->_shift = $indata['filterData']['shift'];
+        $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'1';
 
         // check if user has clearance to view this zone        
         if(!in_array($this->_zone, $permittedZone))
@@ -35,7 +35,7 @@ class Invoice_9FPickingList {
 
           $this->_version = isset($lastid[1]) ? $lastid[1]+1 : '1';
  */
-        $lastid = pickingListVersionControl::where('zone',$this->_zone)->where('date',date("Y-m-d",$this->_date))->first();
+        $lastid = pickingListVersionControl::where('zone',$this->_zone)->where('date',date("Y-m-d",$this->_date))->where('shift',$this->_shift)->first();
 
 
 
@@ -149,6 +149,9 @@ class Invoice_9FPickingList {
                 'label' => $zone->zoneName,
             ];
         }
+
+        $ashift =[['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
+
         $filterSetting = [
             [
                 'id' => 'zoneId',
@@ -157,6 +160,11 @@ class Invoice_9FPickingList {
                 'model' => 'zone',
                 'optionList' => $availablezone,
                 'defaultValue' => $this->_zone,
+
+                'type1' => 'shift',
+                'model1' => 'shift',
+                'optionList1' => $ashift,
+                'defaultValue1' => $this->_shift,
             ],
             [
                 'id' => 'deliveryDate',
@@ -345,9 +353,10 @@ class Invoice_9FPickingList {
         // output
         return [
             'pdf' => $pdf,
-            'remark' => sprintf("Picking List Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
+            'remark' => sprintf("9F Picking List, DeliveryDate = %s", date("Y-m-d", $this->_date)),
             'zoneId' => $this->_zone,
             'uniqueId' => $this->_uniqueid,
+            'shift' => $this->_shift,
             'associates' => json_encode($this->_invoices),
         ];
     }

@@ -33,6 +33,7 @@ class Report_DailySummary
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_date1 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
+        $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift']['value'] : '-1');
 
         // check if user has clearance to view this zone        
         if (!in_array($this->_zone, $permittedZone)) {
@@ -55,7 +56,12 @@ class Report_DailySummary
         // get invoice from that date and that zone
         $this->goods = [];
 
-        Invoice::select('*')->whereIn('invoiceStatus', ['1', '2', '4', '11', '20', '21', '22', '23', '30', '98', '97', '96'])->where('zoneId', $zone)->whereBetween('deliveryDate', [$date, $this->_date1])->with('invoiceItem', 'products', 'client')
+        $hi = Invoice::select('*')->whereIn('invoiceStatus', ['1', '2', '4', '11', '20', '21', '22', '23', '30', '98', '97', '96'])->where('zoneId', $zone)->whereBetween('deliveryDate', [$date, $this->_date1]);
+
+        if($this->_shift != '-1')
+            $hi->where('shift',$this->_shift);
+
+          $hi->with('invoiceItem', 'products', 'client')
             ->chunk(5000, function ($invoicesQuery) {
 
 
@@ -205,6 +211,7 @@ class Report_DailySummary
                 'label' => $zone->zoneName,
             ];
         }
+        $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
         $filterSetting = [
             [
                 'id' => 'zoneId',
@@ -213,6 +220,11 @@ class Report_DailySummary
                 'model' => 'zone',
                 'optionList' => $availablezone,
                 'defaultValue' => $this->_zone,
+
+                'type1' => 'shift',
+                'model1' => 'shift',
+                'optionList1' => $ashift,
+                'defaultValue1' => $this->_shift,
             ],
             [
                 'id' => 'deliveryDate',

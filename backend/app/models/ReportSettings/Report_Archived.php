@@ -12,6 +12,7 @@ class Report_Archived {
         
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
+        $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'-1';
         if(isset( $indata['filterData']['zone']) && $indata['filterData']['zone']['value'] != '-1'){
 
             $this->_zone =  $indata['filterData']['zone']['value'];
@@ -43,7 +44,10 @@ class Report_Archived {
             $reports = $reports->where('created_by', Auth::user()->id);
         }
 
-        $reports = $reports->orderby('created_at', 'desc')->paginate(30);;
+        if($this->_shift != '-1')
+            $reports->where('shift',$this->_shift);
+
+        $reports = $reports->orderby('created_at', 'desc')->with('zone')->paginate(30);;
         
         
         $this->data = $reports;
@@ -71,6 +75,7 @@ class Report_Archived {
             ];
         }
         array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
+        $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
         $filterSetting = [
             [
                 'id' => 'zoneId',
@@ -79,6 +84,11 @@ class Report_Archived {
                 'model' => 'zone',
                 'optionList' => $availablezone,
                 'defaultValue' => $this->_zone,
+
+                'type1' => 'shift',
+                'model1' => 'shift',
+                'optionList1' => $ashift,
+                'defaultValue1' => $this->_shift,
             ],
         ];
 

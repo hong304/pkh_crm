@@ -18,7 +18,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     var day = nextDay.getDate();
     var month = nextDay.getMonth() + 1;
     var year = nextDay.getFullYear();
-
+    var yday = nextDay.getDate()-1;
     var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
 
@@ -27,11 +27,10 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     $scope.action = '';
 	$scope.report = "";
 	$scope.filterData = {
-			'shift' : '1',
             'name' : '',
             'customerId' : '',
             'phone' : '',
-             deliveryDate : year+'-'+month+'-'+day,
+             deliveryDate : year+'-'+month+'-'+yday,
              deliveryDate2 : year+'-'+month+'-'+day
 	};
     $scope.setting = {
@@ -67,7 +66,6 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
         $http.post(querytarget, {reportId: $location.search().id, filterData: $scope.filterData, output: "setting"})
     	.success(function(res, status, headers, config){
-              console.log(res);
 
     		$scope.setting = res;
     		Metronic.unblockUI();
@@ -77,23 +75,6 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     			res.filterOptions.forEach(function(options){
     				if(options.type == "date-picker")
     				{
-
-                       var today = new Date();
-                        var plus = today.getDay() == 6 ? 2 : 1;
-
-                        var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-                        if(today.getHours() < 12)
-                        {
-                            var nextDay = today;
-                        }
-                        else
-                        {
-                            var nextDay = currentDate;
-                        }
-                        var day = nextDay.getDate();
-                        var month = nextDay.getMonth() + 1;
-                        var year = nextDay.getFullYear();
-
     					$("#" + options.id).datepicker({
     	    	            rtl: Metronic.isRTL(),
     	    	            orientation: "left",
@@ -105,28 +86,12 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
                     if(options.type == "date-picker1")
                     {
 
-                        var today = new Date();
-                        var plus = today.getDay() == 6 ? 2 : 1;
-
-                        var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-                        if(today.getHours() < 12)
-                        {
-                            var nextDay = today;
-                        }
-                        else
-                        {
-                            var nextDay = currentDate;
-                        }
-                        var day = nextDay.getDate();
-                        var month = nextDay.getMonth() + 1;
-                        var year = nextDay.getFullYear();
-
                         $("#" + options.id).datepicker({
                             rtl: Metronic.isRTL(),
                             orientation: "left",
                             autoclose: true
                         });
-                        $("#" + options.id).datepicker( "setDate", year + '-' + month + '-' + day );
+                        $("#" + options.id).datepicker( "setDate", year + '-' + month + '-' + yday );
 
                         $("#" + options.id1).datepicker({
                             rtl: Metronic.isRTL(),
@@ -152,6 +117,12 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     					*/
     					$scope.filterData[options.model] = options.optionList[0];
     				}
+
+                    if (options.type1 == "shift")
+                    {
+                        $scope.filterData[options.model1] = options.optionList1[0];
+                    }
+
     			});
     		});
 

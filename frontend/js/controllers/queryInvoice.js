@@ -46,7 +46,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var month = nextDay.getMonth() + 1;
     var year = nextDay.getFullYear();
 
-    var yday = nextDay.getDate()-1
+    var yday = nextDay.getDate()-1;
 	$scope.filterData = {
 		'displayName'	:	'',
 		'clientId'		:	'0',

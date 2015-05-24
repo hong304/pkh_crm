@@ -11,13 +11,15 @@ class Customer_MonthlyCreditSummary {
      
     public function __construct($indata)
     {
+
+
         
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
         
         $permittedZone = explode(',', Auth::user()->temp_zone);
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        
+        $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift']['value'] : '-1');
         $this->_uniqueid = microtime(true);
     }
     
@@ -30,9 +32,14 @@ class Customer_MonthlyCreditSummary {
     {
         
                 
-        Invoice::leftJoin('Customer', function($join) {
+        $invoices = Invoice::leftJoin('Customer', function($join) {
             $join->on('Invoice.customerId', '=', 'Customer.customerId');
-        })->where('paymentTermId',2)->with('client', 'invoiceItem')->where('zoneId',$this->_zone)->OrderBy('deliveryDate')->chunk(50, function($invoices){
+        });
+
+if($this->_shift != '-1')
+    $invoices->where('Invoice.shift',$this->_shift);
+
+        $invoices->where('paymentTermId',2)->with('client', 'invoiceItem')->where('zoneId',$this->_zone)->OrderBy('deliveryDate')->chunk(50, function($invoices){
             foreach($invoices as $invoice)
             {
                 $customerId = $invoice['client']->customerId;
@@ -75,7 +82,8 @@ class Customer_MonthlyCreditSummary {
                 'value' => $zone->zoneId,
                 'label' => $zone->zoneName,
             ];
-        }        
+        }
+        $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
         $filterSetting = [
             [
                 'id' => 'zoneId',
@@ -84,6 +92,11 @@ class Customer_MonthlyCreditSummary {
                 'model' => 'zone',
                 'optionList' => $availablezone,
                 'defaultValue' => $this->_zone,
+
+                'type1' => 'shift',
+                'model1' => 'shift',
+                'optionList1' => $ashift,
+                'defaultValue1' => $this->_shift,
             ],
           /*  [
                 'id' => 'year',

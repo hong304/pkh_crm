@@ -31,7 +31,7 @@ class Invoice_CustomerBreakdown {
         }else{
             $this->_zone =  Auth::user()->temp_zone;
         }
-         $this->_shift = $indata['filterData']['shift'];
+        $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'-1';
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
         // check if user has clearance to view this zone
         //
@@ -406,7 +406,9 @@ class Invoice_CustomerBreakdown {
         // output
         return [
             'pdf' => $pdf,
-            'remark' => sprintf("Customer Break Down Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
+            'remark' => sprintf("Customer Break Down, DeliveryDate = %s",date("Y-m-d", $this->_date)),
+            'zoneId' => $this->_zone,
+            'shift' => $this->_shift,
             'uniqueId' => $this->_uniqueid,
         ];
     }
@@ -431,6 +433,10 @@ class Invoice_CustomerBreakdown {
             ];
         }
 
+        $ashift =[['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
+
+
+
 
         array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
         //pd($availablezone);
@@ -450,6 +456,11 @@ class Invoice_CustomerBreakdown {
                 'model' => 'zone',
                 'optionList' => $availablezone,
                 'defaultValue' => $this->_zone,
+
+                'type1' => 'shift',
+                'model1' => 'shift',
+                'optionList1' => $ashift,
+                'defaultValue1' => $this->_shift,
             ],
 
             [
