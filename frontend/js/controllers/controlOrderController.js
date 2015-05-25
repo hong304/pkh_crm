@@ -6,11 +6,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
 
     /* Register shortcut key */
-    var customerTableKeyDownExist = false;
-    var repeatSubmit = false;
-
-    if(customerTableKeyDownExist == false) {
-        $('#orderinfo').keydown(function (e) {
+        $('#orderinfo_orderForm').keydown(function (e) {
             if (e.keyCode == 121) {
                 $scope.submitOrder(1);
             }
@@ -19,9 +15,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 $scope.submitOrder(0);
 
             }
-            customerTableKeyDownExist = true;
         });
-    }
+
 
 	var today = new Date();	
 	var plus = today.getDay() == 6 ? 2 : 1; 
