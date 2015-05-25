@@ -337,6 +337,8 @@ if($this->_shift != '-1')
             'pdf' => $pdf,
             'remark' => '',
             'uniqueId' => $this->_uniqueid,
+            'zoneId' => $this->_zone,
+            'shift' => $this->_shift,
             'associates' => null,
         ];
 
