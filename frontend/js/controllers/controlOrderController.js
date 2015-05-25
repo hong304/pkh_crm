@@ -4,6 +4,7 @@ Metronic.unblockUI();
 
 app.controller('controlOrderController', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state) {
     /* Register shortcut key */
+    $(document).ready(function(){
         $('#order_form').keydown(function (e) {
             if (e.keyCode == 121) {
                 $scope.submitOrder(1);
@@ -13,7 +14,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
             }
         });
-
+    });
 
 	var today = new Date();	
 	var plus = today.getDay() == 6 ? 2 : 1; 
