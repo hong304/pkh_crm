@@ -6,7 +6,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
 
     /* Register shortcut key */
-        $('#orderinfo_orderForm').keydown(function (e) {
+        $('#orderinfo').keydown(function (e) {
             if (e.keyCode == 121) {
                 $scope.submitOrder(1);
             }
