@@ -322,11 +322,6 @@ class Invoice_CashReceiptSummary {
                
             }
 
-
-
-          //  $y += 10;
-            
-        
         }
         $pdf->Line(10, $y, 190, $y);
         $pdf->setXY(152, $y+6);
@@ -334,8 +329,10 @@ class Invoice_CashReceiptSummary {
         // output
         return [
             'pdf' => $pdf,
-            'remark' => sprintf("Cash Receipt Summary Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
+            'remark' => sprintf("Cash Receipt Summary, DeliveryDate = %s",date("Y-m-d", $this->_date)),
             'associates' => json_encode($this->_invoices),
+            'uniqueId' => $this->_uniqueid,
+            'shift' => $this->_shift,
             'uniqueId' => $this->_uniqueid,
         ];
     }
