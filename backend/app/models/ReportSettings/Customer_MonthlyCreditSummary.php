@@ -335,7 +335,7 @@ if($this->_shift != '-1')
         // output
         return [
             'pdf' => $pdf,
-            'remark' => '',
+            'remark' => 'Credit Monthly Report',
             'uniqueId' => $this->_uniqueid,
             'zoneId' => $this->_zone,
             'shift' => $this->_shift,
