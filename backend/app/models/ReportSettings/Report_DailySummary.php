@@ -561,6 +561,7 @@ class Report_DailySummary
             'pdf' => $pdf,
             'remark' => sprintf("Van sell list Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
             'uniqueId' => $this->_uniqueid,
+            'shift' => $this->_shift,
             'associates' => json_encode($this->_invoices),
         ];
     }
