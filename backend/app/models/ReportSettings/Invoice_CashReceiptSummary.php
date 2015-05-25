@@ -331,7 +331,7 @@ class Invoice_CashReceiptSummary {
             'pdf' => $pdf,
             'remark' => sprintf("Cash Receipt Summary, DeliveryDate = %s",date("Y-m-d", $this->_date)),
             'associates' => json_encode($this->_invoices),
-            'uniqueId' => $this->_uniqueid,
+            'zoneId' => $this->_zone,
             'shift' => $this->_shift,
             'uniqueId' => $this->_uniqueid,
         ];
