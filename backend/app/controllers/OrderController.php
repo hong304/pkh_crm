@@ -15,16 +15,15 @@ class OrderController extends BaseController
         $ci->setInvoice($order);
 
       //  pd($product);
-
+        $have_item=false;
         foreach ($product as $p) {
             if ($p['dbid'] != '' && $p['deleted'] == 0)
                 $itemIds[] = $p['dbid'];
-            if ($p['dbid'] == '')
+            if ($p['dbid'] == '' && $p['code'] != '')
                 $have_item = true;
         }
 
         if ($order['invoiceId'] != '') {
-
             if (count($itemIds) == 0 && !$have_item)
                 return [
                     'result' => false,
