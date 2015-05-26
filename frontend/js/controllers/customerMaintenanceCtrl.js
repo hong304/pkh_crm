@@ -348,7 +348,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
                             { "data": "contactPerson_1" },
                             { "data": "address_chi" },
                             { "data": "link" },
-                            {"data":"delete"},
+
                             
                 ],           
                 

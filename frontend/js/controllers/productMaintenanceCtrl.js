@@ -307,7 +307,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
                             { "data": "productStdPrice_inner" },
                             { "data": "productStdPrice_unit" },  
                             { "data": "link" },
-                    { "data": "delete" },
+
                             
                 ],           
                 
