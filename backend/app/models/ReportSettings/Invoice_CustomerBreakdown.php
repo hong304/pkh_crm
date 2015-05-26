@@ -53,7 +53,7 @@ class Invoice_CustomerBreakdown {
 
         $date = $this->_date;
       //  $zone = $this->_zone;
-        
+
         // get invoice from that date and that zone
         $this->goods = ['1F9F'=>[]];
         $this->returngoods = ['1F9F'=>[]];
@@ -125,6 +125,7 @@ class Invoice_CustomerBreakdown {
                                     'stdPrice' => $productDetail->productStdPrice[$unit],
                                     'itemPrice' => '-'.$item->productPrice,
                                     'discount' => $item->productDiscount,
+                                    'remark' => $item->productRemark,
                                 ];
                                 // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
                                 $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
@@ -164,6 +165,7 @@ class Invoice_CustomerBreakdown {
                                'stdPrice' => $productDetail->productStdPrice[$unit],
                                'itemPrice' => $item->productPrice,
                                'discount' => $item->productDiscount,
+                               'remark' => $item->productRemark,
 
                            ];
                            // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;

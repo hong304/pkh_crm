@@ -6,10 +6,10 @@
 <table class="table table-bordered table-hover" style="font-size:15px;">
     <thead>
         <tr role="row" class="heading">
-            <th width="20%">
+            <th width="10%">
                 貨品編號
             </th>
-            <th width="40%">
+            <th width="25%">
                 貨品名稱
             </th>
             <th width="20%"> 
@@ -20,6 +20,10 @@
             </th>
             <th width="10%">
                 總數
+            </th>
+
+            <th width="25%">
+                備註
             </th>
         </tr>
     </thead>
@@ -41,6 +45,9 @@
                     </td>
                     <td>
                         <?php echo '$'.round($item['itemPrice']*$item['counts']*(100-$item['discount'])/100,2);?>
+                    </td>
+                    <td>
+                        <?php echo $item['remark'];?>
                     </td>
                 </tr>  
                 <?php endforeach; ?>
@@ -72,7 +79,7 @@
 <?php }?>
 
             <tr>
-                <td colspan="5" style="text-align:right;">
+                <td colspan="6" style="text-align:right;">
                     <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo number_format($nf['totalAmount'],2,'.',','); ?></span>
                 </td>
             <tr>
