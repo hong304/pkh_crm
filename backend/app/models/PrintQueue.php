@@ -37,6 +37,7 @@ class PrintQueue extends Eloquent  {
 	            }
 	        }
 	    });
+
 	}
 	
 	public function staff()

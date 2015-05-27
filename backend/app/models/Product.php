@@ -15,16 +15,7 @@ class Product extends Eloquent  {
     protected $dates = ['deleted_at'];
 	protected $table = 'Product';
 	
-	// use collection to protect this	
-	public function __construct()
-	{
-	    /* 
-	    if(!Auth::user()->can('view_product_cost'))
-	    {
-	        $this->guarded[] = 'productCost_unit';
-	    }
-	     */
-	}
+
 	
 	public static function boot()
 	{
@@ -38,6 +29,26 @@ class Product extends Eloquent  {
 	        unset($e->productPackingInterval);
 	        unset($e->productMinPrice);
 	    });
+
+        Product::updated(function($model)
+        {
+              foreach ($model->getDirty() as $attribute => $value) {
+                 if(!in_array($attribute, array('created_by', 'created_at', 'updated_at'))) {
+                    $original = $model->getOriginal($attribute);
+                    $x = new TableAudit();
+                    $x->referenceKey = $model->productId;
+                    $x->table = "Product";
+                    $x->attribute = $attribute;
+                    $x->data_from = $original;
+                    $x->data_to = $value;
+                    $x->created_by = Auth::user()->id;
+                    $x->created_at_micro = microtime(true);
+                    $x->save();
+                }
+            }
+
+
+        });
 	}
 	
 	public function InvoiceItem()
@@ -81,8 +92,6 @@ class Product extends Eloquent  {
 	
 	public function newCollection(array $models = array())
 	{
-        $newmodel = [];
-        
 	    foreach($models as $model)
 	    {
 	        	     
@@ -112,13 +121,11 @@ class Product extends Eloquent  {
 	            'inner' => $model->productMinPrice_inner,
 	            'unit' => $model->productMinPrice_unit,
 	        ];
-	        
-	        //dd($model);
-	        $newmodel[$model->productId] = $model;
+
 	    }
 	    
 	    
-	    return new Collection($newmodel);
+	    return new Collection($models);
 	}
 	
 	public function invoice()

@@ -227,10 +227,6 @@ public function jsonQueryProduct()
             Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
             $product = Product::select('*')->where('deleted',false);
 
-
-
-
-
             if($filter['keyword'] != '')
             {
                 $filter['keyword'] = str_replace(array('*', '?'), '%', $filter['keyword']);
@@ -244,6 +240,10 @@ public function jsonQueryProduct()
 
                 $product->where('department', $pieces[0]);
                 $product->where('group', $pieces[1]);
+            }
+
+            if ($filter['status'] != 100) {
+                $product->where('productStatus', $filter['status']);
             }
             // query
     

@@ -111,6 +111,8 @@ class ProductManipulation {
 	    }
         $this->im->productLocation = $info['productLocation']['value'];
         $this->im->productStatus = $info['productStatus']['value'];
+        $this->im->updated_by = Auth()::user()->id;
+
         //dd($this->im);
         unset($this->im->productPacking);
         unset($this->im->productPackingName);

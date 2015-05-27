@@ -47,6 +47,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 	$scope.filterData = {
 			'group'	:	'',
 			'keyword'	:	'',
+            'status' : '100'
 		};
     $scope.hasCommission = '';
     $scope.submit = true;
@@ -96,6 +97,10 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
   		$scope.systeminfo = $rootScope.systeminfo;
         $scope.updateDataSet();
   	}, true);
+
+    $scope.$watch('filterData.status', function() {
+        $scope.updateDataSet();
+    }, true);
 
     $scope.delCustomer = function(id){
         $http({
