@@ -21,7 +21,25 @@ class Product extends Eloquent  {
 	public static function boot()
 	{
 	    parent::boot();
-	
+
+        Product::updated(function($model)
+        {
+            foreach($model->getDirty() as $attribute => $value){
+                $original= $model->getOriginal($attribute);
+                if(!in_array($attribute, array('created_by', 'created_at'))) {
+                    $x = new TableAudit();
+                    $x->referenceKey = $model->job_id;
+                    $x->table = "Product";
+                    $x->attribute = $attribute;
+                    $x->data_from = $original;
+                    $x->data_to = $value;
+                    $x->created_by = Auth::user()->id;
+                    $x->created_at_micro = microtime(true);
+                    $x->save();
+                }
+            }
+        });
+
 	    Product::saving(function($e)
 	    {
 	        unset($e->productPacking);

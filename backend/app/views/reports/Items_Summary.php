@@ -4,22 +4,20 @@
             <th width="20%">貨品</th>
             <th width="50%">名稱</th>
             <th width="15%">累計</th>
+            <th width="15%">單位</th>
         </tr>
     </thead>
     <tbody>
         <?php foreach($data as $row):?> 
             <tr>
-                <td><?php echo $row['invoiceNumber']; ?></td>
-                <td><?php echo $row['name']; ?></td>
-                <td>HK$ <?php echo $row['amount']; ?></td>
-                <td>HK$ <?php echo $row['accumulator']; ?></td>
+                <td><?php echo $row['productId']; ?></td>
+                <td><?php echo $row['productName_chi']; ?></td>
+                <td><?php echo $row['productQtys']; ?></td>
+                  <td><?php echo $row['productUnitName']; ?></td>
+
             </tr>  
          <?php endforeach; ?>.
-         <tr>
-            <td colspan="4" style="text-align:right;">
-                <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo end($data)['accumulator']; ?></span>
-            </td>
-         <tr>
+
     </tbody>
 </table>
 

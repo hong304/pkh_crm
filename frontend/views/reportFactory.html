@@ -164,6 +164,31 @@
                 </div>
             </div>
 
+
+
+            <!-- Search Product -->
+            <div class="portlet-body" data-ng-if="f.type == 'search_product_detail'">
+                <div class="form-group ">
+                    <div class="col-md-12 alert alert-success alert-borderless">
+                        <div class="input-icon right">
+                            <i class="icon-exclamation-sign"></i>
+                            <input autocomplete="off"  ng-model="filterData.productId" debounce="500" immediate="true"  id="product_keyword"
+                                   type="text" placeholder="編號" class="form-control"
+                                    />
+                        </div>
+
+                        <div class="input-icon right">
+                            <i class="icon-exclamation-sign"></i>
+                            <input autocomplete="off" ng-model="filterData.productName" debounce="500" immediate="true"  id="keywordId"
+                                   type="text" placeholder="名稱" class="form-control"
+                                    />
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
 			<!--  single-dropdown -->
 			<div class="portlet-body" data-ng-if="f.type == 'single-dropdown'">				
 				<div class="md-col-12" style="margin-bottom:15px;">

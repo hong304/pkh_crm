@@ -27,6 +27,8 @@ class Items_Summary {
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
+        $this->productId = ($indata['filterData']['productId']=='') ? '%' : $indata['filterData']['productId'];
+        $this->productName = ($indata['filterData']['productName']=='') ? '%' : $indata['filterData']['productId'];
         $this->_date1 = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_date2 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         // check if user has clearance to view this zone        
@@ -72,19 +74,29 @@ class Items_Summary {
             }
         }
 
-                $invoiceitems = InvoiceItem::select('productId',DB::raw('SUM(productQty) AS productQtys'),'productUnitName','productQtyUnit')->wherein('invoiceId',$normal_goods)->groupBy('productId')->groupBy('productQtyUnit')->with('productDetail')->get()->toArray();
-        if(count($return_goods)>0)
-            $invoiceitems_return = InvoiceItem::select('productId',DB::raw('SUM(productQty) AS productQtys'),'productUnitName','productQtyUnit')->wherein('invoiceId',$return_goods)->groupBy('productId')->groupBy('productQtyUnit')->get()->toArray();
 
-        pd($invoiceitems_return);
+                $invoiceitems = InvoiceItem::select('InvoiceItem.productId',DB::raw('SUM(productQty) AS productQtys'),'productUnitName','productQtyUnit','productName_chi')->wherein('invoiceId',$normal_goods)
 
-                   foreach($invoiceitems as $invoiceQ)
+                    ->leftJoin('Product', function($join) {
+                        $join->on('Product.productId', '=', 'InvoiceItem.productId');
+                    })->where('InvoiceItem.productId', 'LIKE', $this->productId)
+                    ->where('productName_chi', 'LIKE',$this->productName)
+                    ->groupBy('productId')->groupBy('productQtyUnit')
+                    ->get()->toArray();
+
+        if(count($return_goods)>0){
+            $invoiceitems_return = InvoiceItem::select('productId',DB::raw('SUM(productQty) AS productQtys'),'productUnitName','productQtyUnit')->wherein('invoiceId',$return_goods)->groupBy('productId')->groupBy('productQtyUnit')->get();
+                   foreach($invoiceitems as &$invoiceQ)
                    {
-                       
-
+                       foreach($invoiceitems_return as $g){
+                           if($g->productId == $invoiceQ['productId'] && $g->productQtyUnit == $invoiceQ['productQtyUnit'] ){
+                               $invoiceQ['productQtys'] -= $g->productQtys;
+                           }
+                       }
                       }
+                    }
 
-       $this->data = $this->_account;
+       $this->data = $invoiceitems;
 
        return $this->data;
     }
@@ -121,6 +133,12 @@ class Items_Summary {
                 'type' => 'search_customer',
                 'label' => '客户資料',
                 'model' => 'customer',
+            ],
+
+            [
+                'id' => 'product',
+                'type' => 'search_product_detail',
+                'label' => '產品資料',
             ],
 
             [
@@ -162,7 +180,7 @@ class Items_Summary {
     
     public function outputPreview()
     {
-        return View::make('reports/Items_Summary')->with('data', $this->_account)->render();
+        return View::make('reports/Items_Summary')->with('data', $this->data)->render();
     }
     
     

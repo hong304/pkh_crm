@@ -11,7 +11,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             }
             if (e.keyCode == 117) {
                 $scope.submitOrder(0);
-
             }
         });
     });
