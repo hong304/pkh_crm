@@ -538,8 +538,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 			$scope.product[i].unit = $scope.product[i].availableunit[0];
 			$scope.updateStandardPrice(i);
 
-            if(!$location.search().invoiceId)
-                $scope.getLastItem(code,$scope.order.clientId,i);
+             $scope.getLastItem(code,$scope.order.clientId,i);
 
           // console.log($scope.lastitem);
 
@@ -622,6 +621,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     	$scope.selectedProduct = SharedService.selectedProductId;
 
     	$scope.searchProduct($scope.currentSelectProductRow, $scope.selectedProduct);
+
+
 
          $("#selectProduct").modal('hide');
 
