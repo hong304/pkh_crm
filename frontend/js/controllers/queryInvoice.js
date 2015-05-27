@@ -262,7 +262,9 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     	$http.post(querytarget, {mode: "single", invoiceId: invoiceId})
     	.success(function(res, status, headers, config){    
     		$scope.nowUnixTime = Math.round(+new Date()/1000);
-    		
+
+                console.log(res);
+
     		$scope.invoiceinfo = res;
                 $scope.invoiceinfo.invoiceStatus = parseInt($scope.invoiceinfo.invoiceStatus);
 

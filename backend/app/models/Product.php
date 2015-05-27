@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
+use Carbon\Carbon;
 class Product extends Eloquent  {
 
     protected $primaryKey = 'productId';
@@ -50,7 +51,15 @@ class Product extends Eloquent  {
 
         });
 	}
-	
+
+    public function getUpdatedAtAttribute($attr) {
+       return date("Y-m-d H:i:s", $attr);
+    }
+
+    public function getUpdatedByAttribute($attr) {
+        return Config::get('userName.'.$attr);
+    }
+
 	public function InvoiceItem()
 	{
 	    return $this->belongsToMany('InvoiceItem');
@@ -92,6 +101,7 @@ class Product extends Eloquent  {
 	
 	public function newCollection(array $models = array())
 	{
+        $newmodel = [];
 	    foreach($models as $model)
 	    {
 	        	     
@@ -122,10 +132,12 @@ class Product extends Eloquent  {
 	            'unit' => $model->productMinPrice_unit,
 	        ];
 
+            $newmodel[$model->productId] = $model;
+
 	    }
 	    
 	    
-	    return new Collection($models);
+	    return new Collection($newmodel);
 	}
 	
 	public function invoice()

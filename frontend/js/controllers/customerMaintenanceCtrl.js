@@ -43,12 +43,13 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 	var iutarget = endpoint + '/manipulateCustomer.json';
 	
 	$scope.filterData = {
-			'name'	:	'',
-			'id'		:	'',
-        'phone' : '',
-			'zone'			:	'',
-        'status' : '100',
+        'name': '',
+        'id': '',
+        'phone': '',
+        'zone': '',
+        'status': '100'
 	};
+
     $scope.submit = true;
 	$scope.customerInfo_def = {
 			'address_chi'		:	'', 
@@ -70,10 +71,10 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 			'phone_2'			:	'',
 			'paymentTermId'		:	'',
 			'routePlanningPriority':	'',
-             'remark' : '',
-        'shift' : '',
-        'productnewId' :'',
-        'customer_group_id' : '',
+            'remark' : '',
+            'shift' : '',
+            'productnewId' :'',
+            'customer_group_id' : ''
 
 	};
 	
@@ -83,12 +84,10 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 	$scope.customerInfo = {};
 	
     $scope.$on('$viewContentLoaded', function() {   
-    	
-        Metronic.initAjax();        
+        Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
         $('#keywordId').focus();
         $scope.updateDataSet();
-
     });
     
     $scope.$watch(function() {

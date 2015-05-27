@@ -49,6 +49,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'keyword'	:	'',
             'status' : '100'
 		};
+
     $scope.hasCommission = '';
     $scope.submit = true;
 	$scope.info_def = {
