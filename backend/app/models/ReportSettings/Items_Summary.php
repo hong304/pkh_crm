@@ -28,7 +28,7 @@ class Items_Summary {
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
         $this->_date1 = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
-        $this->_date2 = (isset($indata['filterData']['deliveryDate1']) ? strtotime($indata['filterData']['deliveryDate1']) : strtotime("today"));
+        $this->_date2 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         // check if user has clearance to view this zone        
 
         $this->_uniqueid = microtime(true);
@@ -61,31 +61,27 @@ class Items_Summary {
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
         });
 
-        $invoicesQuery = $invoicesQuery->lists('invoiceId');
-pd($invoicesQuery);
-                $invoiceitems = InvoiceItem::wherein('invoiceId',$invoicesQuery)->get();
+        $invoicesQuery = $invoicesQuery->get();
+        $return_goods =[];
+        $normal_goods = [];
+        foreach($invoicesQuery as $v){
+            if($v->invoiceStatus == '98'){
+                $return_goods[] = $v->invoiceId;
+            }else{
+                $normal_goods[] = $v->invoiceId;
+            }
+        }
 
-                   $acc = 0;
-                   foreach($invoicesQuery as $invoiceQ)
+                $invoiceitems = InvoiceItem::select('productId',DB::raw('SUM(productQty) AS productQtys'),'productUnitName','productQtyUnit')->wherein('invoiceId',$normal_goods)->groupBy('productId')->groupBy('productQtyUnit')->with('productDetail')->get()->toArray();
+        if(count($return_goods)>0)
+            $invoiceitems_return = InvoiceItem::select('productId',DB::raw('SUM(productQty) AS productQtys'),'productUnitName','productQtyUnit')->wherein('invoiceId',$return_goods)->groupBy('productId')->groupBy('productQtyUnit')->get()->toArray();
+
+        pd($invoiceitems_return);
+
+                   foreach($invoiceitems as $invoiceQ)
                    {
-                       $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+                       
 
-                           $this->_invoices[] = $invoiceQ->invoiceId;
-                           $this->_zoneName = $invoiceQ->zone->zoneName;
-
-                           // first, store all invoices
-                           $invoiceId = $invoiceQ->invoiceId;
-                           $invoices[$invoiceId] = $invoiceQ;
-                           $client = $invoiceQ['client'];
-
-                           $this->_account[] = [
-                               'customerId' => $client->customerId,
-                               'name' => $client->customerName_chi,
-                               'invoiceNumber' => $invoiceId,
-                               'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
-                               'accumulator' =>number_format($acc,2,'.',','),
-                                'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
-                           ];
                       }
 
        $this->data = $this->_account;

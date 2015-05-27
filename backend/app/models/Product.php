@@ -53,7 +53,10 @@ class Product extends Eloquent  {
 	}
 
     public function getUpdatedAtAttribute($attr) {
-       return date("Y-m-d H:i:s", $attr);
+
+            return date("Y-m-d H:i:s A", (int)$attr);
+
+
     }
 
     public function getUpdatedByAttribute($attr) {
