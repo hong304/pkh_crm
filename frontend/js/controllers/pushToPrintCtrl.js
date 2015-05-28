@@ -76,12 +76,18 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                             label: "確定",
                             className: "red",
                             callback: function() {
+
+                                Metronic.blockUI({
+                                    boxed: true,
+                                    message: '資料整合中,需時1分鐘...'
+                                });
+
                                 $http({
                                     method: 'POST',
                                     url: printSelect,
                                     data: {mode:'today',zone:$scope.zone,shift:$scope.shift}
                                 }).success(function(res, status, headers, config){
-
+                                        Metronic.unblockUI();
                                         $scope.updatePrintQueue();
                                         // alert('正在準備傳送至印表機...')
                                     });
@@ -111,11 +117,17 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                     label: "確定",
                     className: "red",
                     callback: function() {
+                        Metronic.blockUI({
+                            boxed: true,
+                            message: '資料整合中'
+                        });
+
                         $http({
                             method: 'POST',
                             url: printSelect,
                             data: {print:$scope.checkid,mode:'selected',zone:$scope.zone,shift:$scope.shift}
                         }).success(function () {
+                            Metronic.unblockUI();
                             $scope.updatePrintQueue();
                         });
                     }
