@@ -234,10 +234,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 
         if(!$scope.submit)
             alert('客户編號不能用');
-        else if(
-    			$scope.customerInfo.address_chi == ""  || (!$scope.customerInfo.customerId && !$scope.customerInfo.productnewId)
-
-    	)
+        else if($scope.customerInfo.address_chi == ""  || (!$scope.customerInfo.customerId && !$scope.customerInfo.productnewId) || $scope.customerInfo.customerName_chi == "" || $scope.customerInfo.deliveryZone == "" || $scope.customerInfo.routePlanningPriority == "" || $scope.customerInfo.shift == "" || $scope.contactPerson_1 == "" || $scope.customerInfo.phone_1 == "" || $scope.customerInfo.paymentTermId == "")
     	{
     		alert('請輸入所需資料');
     	}
