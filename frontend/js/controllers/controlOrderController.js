@@ -679,7 +679,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     	// check if number
     	if(isNaN($scope.product[i]['unitprice']))
     	{
-    		$scope.product[i]['unitprice'] = stdprice;
+    		//$scope.product[i]['unitprice'] = stdprice;
     	}
     	
     	$("#requireapprove_" + i).remove();
