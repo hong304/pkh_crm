@@ -155,19 +155,47 @@ class Invoice_CustomerBreakdown {
                                $customerId = $client->customerId;
 
                            // .  (isset($this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]) ? "(-".$this->goods['1F9F'][$customerId]['returnitems'][$productId][$unit]['counts'].")" : '') ,
-                           $this->goods['1F9F'][$customerId]['items'][$productId][$unit] = [
-                               'invoiceId' => $invoiceId,
-                               'productId' => $productId,
-                               'name' => $productDetail->productName_chi,
-                               'unit' => $unit,
-                               'unit_txt' => str_replace(' ', '', $item->productUnitName),
-                               'counts' => (isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit]) ? $this->goods['1F9F'][$customerId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
-                               'stdPrice' => $productDetail->productStdPrice[$unit],
-                               'itemPrice' => $item->productPrice,
-                               'discount' => $item->productDiscount,
-                               'remark' => $item->productRemark,
 
-                           ];
+                          if( isset($this->goods['1F9F'][$customerId]['items'][$productId][$unit])){
+                              if (!function_exists('fact')){
+                              function fact($good,$customerId,$productId,$unit,$n){
+                                  if(isset($good['1F9F'][$customerId]['items'][$productId.'-'.$n][$unit])){
+                                      return fact($good,$customerId,$productId,$unit,$n+1);
+                                  }else{
+                                        return $n;
+                                  }
+                              }}
+
+                             $v =  fact($this->goods,$customerId,$productId,$unit,'1');
+
+                              $this->goods['1F9F'][$customerId]['items'][$productId.'-'.$v][$unit] = [
+                                  'invoiceId' => $invoiceId,
+                                  'productId' => $productId,
+                                  'name' => $productDetail->productName_chi,
+                                  'unit' => $unit,
+                                  'unit_txt' => str_replace(' ', '', $item->productUnitName),
+                                  'counts' => $item->productQty,
+                                  'stdPrice' => $productDetail->productStdPrice[$unit],
+                                  'itemPrice' => $item->productPrice,
+                                  'discount' => $item->productDiscount,
+                                  'remark' => $item->productRemark,
+                              ];
+
+                          }else{
+                               $this->goods['1F9F'][$customerId]['items'][$productId][$unit] = [
+                                   'invoiceId' => $invoiceId,
+                                   'productId' => $productId,
+                                   'name' => $productDetail->productName_chi,
+                                   'unit' => $unit,
+                                   'unit_txt' => str_replace(' ', '', $item->productUnitName),
+                                   'counts' => $item->productQty,
+                                   'stdPrice' => $productDetail->productStdPrice[$unit],
+                                   'itemPrice' => $item->productPrice,
+                                   'discount' => $item->productDiscount,
+                                   'remark' => $item->productRemark,
+
+                               ];
+                          }
                            // if(!isset($this->goods['1F9F'][$customerId]['totalAmount'])) $this->goods['1F9F'][$customerId]['totalAmount'] = 0;
 
                            $this->goods['1F9F'][$customerId]['customerInfo'] = $client->toArray();
@@ -189,8 +217,6 @@ class Invoice_CustomerBreakdown {
                });
 
        $this->data = $this->goods;
-//pd($this->data);
-
         $ninef = $this->data['1F9F'];
         $newway = [];
 

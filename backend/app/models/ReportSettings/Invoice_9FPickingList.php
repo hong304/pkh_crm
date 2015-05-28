@@ -65,6 +65,7 @@ class Invoice_9FPickingList {
         }])->with('products', 'client')
             ->chunk(50, function($invoicesQuery){
 
+
                 // first of all process all products
                 $productsQuery = array_pluck($invoicesQuery, 'products');
                 foreach($productsQuery as $productQuery)
@@ -125,7 +126,7 @@ class Invoice_9FPickingList {
 
         $this->data = $this->goods;
         $this->data['version'] = $this->_version;
-//pd($this->data);
+
 
         return $this->data;
     }
