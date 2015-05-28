@@ -57,9 +57,9 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'productId' : '',
 			'productLocation' : '',
 			'productStatus'	:	'',
-			'productPacking_carton' : '',
-			'productPacking_inner' : '', 
-			'productPacking_unit' : '',
+			'productPacking_carton' : '1',
+			'productPacking_inner' : '1',
+			'productPacking_unit' : '1',
 			'productPacking_size' : '',
 			'productPackingName_carton' : '',
 			'productPackingName_inner' : '',
@@ -193,7 +193,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	$scope.status = status;
     	
     	$scope.submitbtn = true;
-    	
+        $scope.info.productStatus = status[0];
     	
     	$("#productFormModal").modal({backdrop: 'static'});
     	
