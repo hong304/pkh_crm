@@ -493,11 +493,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     
     $scope.searchProduct = function(i, code) {
 
-        if(($scope.order.status != '97') && (code =='Z002')){
-            return false;
-        }
 		var input = $("#productCode_" + i);
-		//console.log($scope.retrievedProduct, code.toUpperCase());
 		if($scope.retrievedProduct[code.toUpperCase()])
 		{
 			var item = $scope.retrievedProduct[code.toUpperCase()];
