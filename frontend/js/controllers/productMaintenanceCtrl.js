@@ -311,8 +311,9 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
                     { "data": "hasCommission" },
                             { "data": "productStdPrice_carton" },
                             { "data": "productStdPrice_inner" },
-                            { "data": "productStdPrice_unit" },  
-                            { "data": "link" },
+                            { "data": "productStdPrice_unit" },
+                    { "data": "updated_at" },
+                    { "data": "link" },
 
                             
                 ],           

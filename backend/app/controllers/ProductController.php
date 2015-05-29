@@ -248,7 +248,7 @@ public function jsonQueryProduct()
             // query
     
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $product = $product->paginate($page_length);
+            $product = $product->orderBy('updated_at','desc')->paginate($page_length);
     
             $product = $product->toArray();
             
