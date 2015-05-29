@@ -141,7 +141,7 @@ class PrintQueueController extends BaseController {
 
         $job1 = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','name','PrintQueue.status')
             ->wherein('target_path', explode(',', $this->zone))
-            ->where('insert_time', '>', strtotime("2 days ago"))
+            ->where('insert_time', '>', strtotime("1 days ago"))
             ->where('PrintQueue.status','downloaded;passive')
             ->leftJoin('Invoice', function($join) {
                 $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
