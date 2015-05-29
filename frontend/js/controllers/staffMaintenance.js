@@ -67,6 +67,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
         Metronic.initAjax();        
         $scope.systeminfo = $rootScope.systeminfo;   
         $scope.updateDataSet();
+        $scope.loadStaffProfile();
         
         
     });
@@ -175,6 +176,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     	.success(function(res, status, headers, config){    
     		$("#forcebtn_" + auditId).css('display', 'none');
     		alert('已登出及解鎖');
+                $scope.loadStaffProfile();
     	});
     }
     
@@ -285,7 +287,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
                     [10, 20, 50],
                     [10, 20, 50] // change per page values here
                 ],
-                "pageLength": 10, // default record count per page
+                "pageLength": 20, // default record count per page
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
