@@ -159,8 +159,6 @@ Route::get('/setZone', function(){
 
 Route::any('/credential/auth', 'UserController@authenticationProcess');
 
-Route::any('/test.env', 'TestController@testMethod');
-
 // Batch Working
 Route::get('/batch/pscmc-0000-daily.bat', 'BatchController@productSearchandCustomerMapClearance');
 Route::get('/batch/bistp-5min.bat', 'BatchController@batchSendInvoiceToPrinter');
@@ -168,7 +166,7 @@ Route::get('/batch/bistp-5min.bat', 'BatchController@batchSendInvoiceToPrinter')
 // Queue
 Route::any('/queue/generate-preview-invoice-image.queue', 'QueueController@generatePreviewInvoiceImage');
 Route::any('/queue/generate-print-invoice-image.queue', 'QueueController@generatePrintInvoiceImage');
-Route::any('/queue/send-print-job-to-printer.queue', 'QueueController@sendPrintJobToPrinter');
+Route::any('/print', 'QueueController@sendPrintJobToPrinter');
 Route::any('/queue/generate-invoice-pdf.queue', 'QueueController@generateInvoicePDF');
 
 // Printer

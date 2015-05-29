@@ -37,10 +37,10 @@ class QueueController extends BaseController {
      
      public function sendPrintJobToPrinter()
      {
-         $jobId = Input::get('jobId');
+        // $jobId = Input::get('jobId');
          
          $printer = new InvoicePrinter();
-         $printer->sendJobToPrinter([$jobId]);
+         $printer->sendJobToPrinter();
      }
     
 }

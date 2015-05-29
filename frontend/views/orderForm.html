@@ -83,7 +83,6 @@
                                             <select class="form-control" ng-model="order.status" ng-change="statusChange();">
                                                 <option value="2">1. 正常</option>
                                                 <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="98">2. 退貨單</option>
-                                                <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="97">3. 退款單</option>
                                                 <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="96">4. 補貨單</option>
                                             </select>
                                         </div>
