@@ -256,7 +256,7 @@ app.controller('groupMaintenanceCtrl', function($scope, $rootScope, $http, Share
                 "columns": [
                             { "data": "id" },
                             { "data": "name" },
-                            { "data": "status" },
+                            { "data": "groupStatus" },
                     { "data": "phone_1" },
                     { "data": "contact_1" },
                     { "data": "address" },
