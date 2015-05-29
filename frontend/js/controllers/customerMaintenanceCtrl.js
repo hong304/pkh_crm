@@ -47,7 +47,8 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         'id': '',
         'phone': '',
         'zone': '',
-        'status': '100'
+        'status': '100',
+        'groupname' : '',
 	};
 
     $scope.submit = true;
@@ -265,7 +266,10 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     {
     	$scope.updateDataSet();
     }
-    
+
+    $scope.searchGroup = function(){
+        $scope.updateDataSet();
+    }
 
     $scope.searchClient = function()
     {

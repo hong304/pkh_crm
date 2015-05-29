@@ -121,7 +121,9 @@ class CustomerController extends BaseController
                 $filter['zone']['zoneId'] = '';
 
             Paginator::setCurrentPage((Input::get('start') + 10) / Input::get('length'));
-            $customer = Customer::select('*');
+            $customer = Customer::leftJoin('customer_groups', function($join) {
+                $join->on('customer_groups.id', '=','Customer.customer_group_id');
+            });
 
 
             // $customer->where('customerId', $filter['clientId']);
@@ -151,13 +153,15 @@ class CustomerController extends BaseController
             $customer->where(function ($query) use ($filter) {
                 $query
                     ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
-                    ->where('phone_1', 'LIKE', '%' . $filter['phone'] . '%')
+                    ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
                     ->where('customerId', 'LIKE', '%' . $filter['id'] . '%');
             });
 
             // query
             $customer->with('group');
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+
+            $customer->where('name','LIKE','%'.$filter['groupname'].'%');
             $customer = $customer->paginate($page_length);
 
 
