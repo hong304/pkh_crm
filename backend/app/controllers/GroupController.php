@@ -54,7 +54,7 @@ class GroupController extends BaseController {
         {
             $this->im->$f = $info[$f];
         }
-        $this->im->status = $info['status']['value'];
+        $this->im->status = $info['groupStatus']['value'];
         $this->im->save();
 
         return $this->im->id;
@@ -95,10 +95,10 @@ class GroupController extends BaseController {
 
 
             foreach ($customer as $c) {
-                if ($c->status == '1')
-                    $c->status = '正常';
+                if ($c->groupStatus == '1')
+                    $c->groupStatus = '正常';
                 else
-                    $c->status = '暫停';
+                    $c->groupStatus = '暫停';
 
                 if ($c->deleted_at != '') {
                     $c->delete = '';

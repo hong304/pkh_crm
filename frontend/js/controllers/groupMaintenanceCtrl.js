@@ -110,13 +110,12 @@ app.controller('groupMaintenanceCtrl', function($scope, $rootScope, $http, Share
         	$scope.statuscat = statuscat;
         	
         	var pos = $scope.statuscat.map(function(e) {
-
 				return e.value;
-			  }).indexOf(parseInt(res.status));
+			  }).indexOf(parseInt(res.groupStatus));
 
 
 
-        	$scope.GroupInfo.status = $scope.statuscat[pos];
+        	$scope.GroupInfo.groupStatus = $scope.statuscat[pos];
 
 
 
@@ -138,7 +137,7 @@ app.controller('groupMaintenanceCtrl', function($scope, $rootScope, $http, Share
 
     	$scope.submitbtn = true;
     	$scope.GroupInfo = $.extend(true, {}, $scope.GroupInfo_def);
-    	$scope.GroupInfo.status = $scope.statuscat[0];
+    	$scope.GroupInfo.groupStatus = $scope.statuscat[0];
 
 
 
