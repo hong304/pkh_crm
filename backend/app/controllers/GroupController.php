@@ -54,7 +54,7 @@ class GroupController extends BaseController {
         {
             $this->im->$f = $info[$f];
         }
-        $this->im->status = $info['groupStatus']['value'];
+        $this->im->groupStatus = $info['groupStatus']['value'];
         $this->im->save();
 
         return $this->im->id;
