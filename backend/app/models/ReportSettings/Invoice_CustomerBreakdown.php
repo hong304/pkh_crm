@@ -60,8 +60,12 @@ class Invoice_CustomerBreakdown {
 
         $hi = Invoice::select('*');
 
-         $hi->wherein('zoneId',explode(',', $this->_zone))->where('deliveryDate', $date)->where('Invoice.shift', $this->_shift)
-            ->leftJoin('Customer', function($join) {
+         $hi->wherein('zoneId',explode(',', $this->_zone))->where('deliveryDate', $date);
+
+                 if($this->_shift != '-1')
+                     $hi->where('Invoice.shift',$this->_shift);
+
+            $hi->leftJoin('Customer', function($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
             })->leftJoin('customer_groups', function($join) {
                 $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
@@ -461,7 +465,7 @@ class Invoice_CustomerBreakdown {
             ];
         }
 
-        $ashift =[['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
+        $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
 
 
 
