@@ -154,14 +154,15 @@ class CustomerController extends BaseController
                 $query
                     ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
                     ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
-                    ->where('customerId', 'LIKE', '%' . $filter['id'] . '%');
+                    ->where('Customer.customerId', 'LIKE', '%' . $filter['id'] . '%');
             });
 
             // query
-            $customer->with('group');
+           $customer->with('group');
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 
-            $customer->where('name','LIKE','%'.$filter['groupname'].'%');
+            if($filter['groupname']!='')
+                $customer->where('customer_groups.name','LIKE','%'.$filter['groupname'].'%');
             $customer = $customer->paginate($page_length);
 
 
