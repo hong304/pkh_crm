@@ -31,8 +31,6 @@ class VanSellController extends BaseController
         $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift'] : '1');
         $lastid = pickingListVersionControl::where('zone', $this->_zone)->where('date', date("Y-m-d", $this->_date))->where('shift', $this->_shift)->first();
 
-        //  $lastid = @explode('-', $lastid->id);
-
         $this->_version = isset($lastid->f1_version) ? $lastid->f1_version : '';
 
         if ($this->_version)
@@ -80,7 +78,7 @@ class VanSellController extends BaseController
         }
 
         if ($this->_output == 'pdf') {
-
+            $this->_reportId = 'vanselllist';
             $this->compileResults();
             $reportOutput = $this->outputPDF();
 
@@ -89,15 +87,22 @@ class VanSellController extends BaseController
             $filenameUn = $reportOutput['uniqueId'];
             $filename = $filenameUn . ".pdf";
 
-            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+            if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift))
+                mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift, 0777, true);
+            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' .$this->_shift . '/' . $filename;
+
+         //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+
 
             if (ReportArchive::where('id', $filenameUn)->count() == 0) {
                 $archive = new ReportArchive();
                 $archive->id = $filenameUn;
-                $archive->report = $this->_reportId;
+                $archive->report = 'vanselllist';
                 $archive->file = $path;
                 $archive->remark = $reportOutput['remark'];
                 $archive->created_by = Auth::user()->id;
+                $archive->zoneId = $this->_zone;
+                $archive->shift = $this->_shift;
                 $neworder = json_decode($reportOutput['associates']);
                 $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
                 $archive->save();
@@ -407,8 +412,10 @@ class VanSellController extends BaseController
 
         return [
             'pdf' => $pdf,
-            'remark' => sprintf("Van Sell List Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
+            'remark' => sprintf("Van Sell List DeliveryDate = %s", date("Y-m-d", $this->_date)),
+            'zoneId' => $this->_zone,
             'uniqueId' => $this->_uniqueid,
+            'shift' => $this->_shift,
             'associates' => json_encode($this->_invoices),
         ];
     }

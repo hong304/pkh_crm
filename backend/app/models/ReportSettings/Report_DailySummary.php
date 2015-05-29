@@ -56,10 +56,16 @@ class Report_DailySummary
         // get invoice from that date and that zone
         $this->goods = [];
 
-        $hi = Invoice::select('*')->whereIn('invoiceStatus', ['1', '2', '4', '11', '20', '21', '22', '23', '30', '98', '97', '96'])->where('zoneId', $zone)->whereBetween('deliveryDate', [$date, $this->_date1]);
+        $hi = Invoice::select('*')->whereIn('invoiceStatus', ['1', '2', '4', '11', '20', '21', '22', '23', '30', '98', '97', '96'])
+            ->where('zoneId', $zone);
 
         if($this->_shift != '-1')
             $hi->where('shift',$this->_shift);
+
+        if (Auth::user()->role[0]->id == 4)
+            $hi->where('deliveryDate', $date);
+        else
+            $hi->whereBetween('deliveryDate', [$date, $this->_date1]);
 
           $hi->with('invoiceItem', 'products', 'client')
             ->chunk(5000, function ($invoicesQuery) {
@@ -171,14 +177,17 @@ class Report_DailySummary
         if (count($this->goods) > 0)
             ksort($this->goods, SORT_STRING);
 
-
+        $z = [];
         // $this->data = ;
         foreach ($this->goods as $v) {
             foreach ($v as $k) {
                 $z[] = $k;
             }
         }
-        $this->data['items'] = $z;
+        if (count($z) > 0)
+            $this->data['items'] = $z;
+        else
+            $this->data['items'] = [];
         //   pd($this->data['items']);
         // $this->data['returnitems'] =  isset($this->returnGoods)?$this->returnGoods:'';
 
@@ -212,6 +221,25 @@ class Report_DailySummary
             ];
         }
         $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
+
+        if (Auth::user()->role[0]->id == 4) {
+            $ar = [
+                'id' => 'deliveryDate',
+                'type' => 'date-picker',
+                'label' => '送貨日期',
+                'model' => 'deliveryDate',
+                'defaultValue' => date("Y-m-d", $this->_date),
+            ];
+        }else
+        $ar =
+            [
+                'id' => 'deliveryDate',
+                'type' => 'date-picker1',
+                'label' => '送貨日期',
+                'model' => 'deliveryDate',
+                'id1' => 'deliveryDate2',
+                'model1' => 'deliveryDate2',
+            ];
         $filterSetting = [
             [
                 'id' => 'zoneId',
@@ -226,14 +254,8 @@ class Report_DailySummary
                 'optionList1' => $ashift,
                 'defaultValue1' => $this->_shift,
             ],
-            [
-                'id' => 'deliveryDate',
-                'type' => 'date-picker1',
-                'label' => '送貨日期',
-                'model' => 'deliveryDate',
-                'id1' => 'deliveryDate2',
-                'model1' => 'deliveryDate2',
-            ],
+            $ar
+
 
         ];
 
