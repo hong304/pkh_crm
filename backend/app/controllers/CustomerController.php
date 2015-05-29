@@ -131,7 +131,7 @@ class CustomerController extends BaseController
             if ($filter['status'] == 99) {
                 $customer->onlyTrashed();
             } else if ($filter['status'] != 100) {
-                $customer->where('Customer.status', $filter['status']);
+                $customer->where('status', $filter['status']);
             }
 
             // zone
