@@ -440,7 +440,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         			
         			$scope.productCode[j] = item.productId;
         			
-        			$scope.searchProduct(j, item.productId);
+        			$scope.searchProduct(j, item.productId,'unload');
         			       			
         			
         			$scope.product[j]['dbid'] = item.invoiceItemId;
@@ -491,7 +491,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     
    
     
-    $scope.searchProduct = function(i, code) {
+    $scope.searchProduct = function(i, code,flag) {
 
 		var input = $("#productCode_" + i);
 		if($scope.retrievedProduct[code.toUpperCase()])
@@ -533,7 +533,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 			$scope.product[i].unit = $scope.product[i].availableunit[0];
 			$scope.updateStandardPrice(i);
 
-             $scope.getLastItem(code,$scope.order.clientId,i);
+            if(flag != 'unload')
+                $scope.getLastItem(code,$scope.order.clientId,i);
 
           // console.log($scope.lastitem);
 
