@@ -38,11 +38,14 @@ function delGroup(id)
 }
 
 app.controller('groupMaintenanceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
-    var fetchDataTimer;
+
 	var querytarget = endpoint + '/queryGroup.json';
 	var iutarget = endpoint + '/manipulateGroup.json';
-	
-	$scope.filterData = {
+    var fetchDataDelay = 250;   // milliseconds
+    var fetchDataTimer;
+
+
+    $scope.filterData = {
 			'name'	:	'',
         'status' : '100',
 	};
@@ -71,7 +74,15 @@ app.controller('groupMaintenanceCtrl', function($scope, $rootScope, $http, Share
         $scope.updateDataSet();
 
     });
-    
+
+    $scope.$watch('filterData', function() {
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+            $scope.updateDataSet();
+        },fetchDataDelay);
+
+    }, true);
+
     $scope.$watch(function() {
     	return $rootScope.systeminfo;
   	}, function() {

@@ -75,7 +75,7 @@ class GroupController extends BaseController {
             $customer = customerGroup::select('*');
 
 
-            // $customer->where('customerId', $filter['clientId']);
+            $customer->where('name', 'LIKE', '%'.$filter['name'].'%');
 
             if ($filter['status'] == 99) {
                 $customer->onlyTrashed();
