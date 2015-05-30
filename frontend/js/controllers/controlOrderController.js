@@ -426,6 +426,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     {       
         $http.post(endpoint + '/getAllProduct.json', {
         	customerId	:	customerId,
+            productList : defaultProduct,
         })        
     	.success(function(res, status, headers, config) {
     		

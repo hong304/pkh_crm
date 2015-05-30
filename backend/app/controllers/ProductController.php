@@ -5,8 +5,18 @@ class ProductController extends BaseController {
     public function jsonGetAllProduct()
     {
        // $time_start = microtime(true);
-        
-        $products = Cache::remember('AllProducts', 5, function()
+
+        $productList = Input::get('productList');
+
+        $pa = [];
+        if(count($productList)>0 ){
+            foreach ($productList as $p){
+                $pa[]= $p['productId'];
+            }
+
+        }
+
+        $products = Cache::remember('AllProducts', 5, function() use($pa)
         {
             $products = Product::select('productId', 'productName_chi','productLocation',
             'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPacking_size',
@@ -15,9 +25,15 @@ class ProductController extends BaseController {
             'productMinPrice_carton', 'productMinPrice_inner', 'productMinPrice_unit',
             'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit');
         
-            $products = $products->where('productStatus', 'o')->get();
-            $products = $products->toArray();
-            
+           $products->where('productStatus', 'o');
+
+            if(count($pa)>0){
+                $products->orwherein('productId',$pa);
+            }
+            $products = $products->get()->toArray();
+
+
+
             // Switch to standard array
             $products = Product::compileProductStandardForm($products);
 
