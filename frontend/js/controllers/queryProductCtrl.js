@@ -2,7 +2,6 @@
 app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 
     var querytarget = endpoint + '/queryProductwithItem.json';
-    var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
 
     $scope.firstload = true;
@@ -34,14 +33,9 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
 
 
 
-    $scope.$watch('filterData', function() {
-        console.log($scope.filterData);
-        $timeout.cancel(fetchDataTimer);
-        fetchDataTimer = $timeout(function () {
+   $scope.$watch('filterData', function() {
             $scope.updateDataSet();
-        },fetchDataDelay);
-
-    }, true);
+     }, true);
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
@@ -67,11 +61,16 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
         return $rootScope.systeminfo;
     }, function() {
         $scope.systeminfo = $rootScope.systeminfo;
-        $scope.updateDataSet();
+      //  $scope.updateDataSet();
     }, true);
+
 
     $scope.updateDataSet = function()
     {
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+
+
         Metronic.blockUI();
         var grid = new Datatable();
 
@@ -146,7 +145,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
                 ] // set first column as a default sort by asc
             }
         });
-
+    },500);
     }
 
 
