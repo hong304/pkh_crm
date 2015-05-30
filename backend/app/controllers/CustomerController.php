@@ -121,10 +121,10 @@ class CustomerController extends BaseController
                 $filter['zone']['zoneId'] = '';
 
             Paginator::setCurrentPage((Input::get('start') + 10) / Input::get('length'));
-            $customer = Customer::leftJoin('customer_groups', function($join) {
+            $customer = Customer::select('customerId','customerName_chi','status','deliveryZone','routePlanningPriority','paymentTermId','Customer.phone_1','contactPerson_1','address_chi')
+                ->leftJoin('customer_groups', function($join) {
                 $join->on('customer_groups.id', '=','Customer.customer_group_id');
             });
-
 
             // $customer->where('customerId', $filter['clientId']);
 
@@ -158,8 +158,7 @@ class CustomerController extends BaseController
             });
 
             // query
-           $customer->with('group');
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+              $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 
             if($filter['groupname']!='')
                 $customer->where('customer_groups.name','LIKE','%'.$filter['groupname'].'%');
