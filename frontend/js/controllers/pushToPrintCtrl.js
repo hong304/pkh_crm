@@ -20,6 +20,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
+        $scope.updatePrintQueue();
          /* var intervalPromise = $interval(function(){
                        $scope.updatePrintQueue();
                    }, 15000);*/
@@ -78,6 +79,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                             callback: function() {
 
                                 Metronic.blockUI({
+                                    target : '#printArea',
                                     boxed: true,
                                     message: '資料整合中,需時1分鐘...'
                                 });
@@ -87,8 +89,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                                     url: printSelect,
                                     data: {mode:'today',zone:$scope.zone,shift:$scope.shift}
                                 }).success(function(res, status, headers, config){
-                                        Metronic.unblockUI();
-                                        $scope.updatePrintQueue();
+                                            $scope.updatePrintQueue();
                                         // alert('正在準備傳送至印表機...')
                                     });
                             }
@@ -117,7 +118,10 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                     label: "確定",
                     className: "red",
                     callback: function() {
+
+
                         Metronic.blockUI({
+                            target : '#printArea',
                             boxed: true,
                             message: '資料整合中'
                         });
@@ -127,9 +131,9 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                             url: printSelect,
                             data: {print:$scope.checkid,mode:'selected',zone:$scope.zone,shift:$scope.shift}
                         }).success(function () {
-                            Metronic.unblockUI();
                             $scope.updatePrintQueue();
                         });
+
                     }
                 }
             }
@@ -165,6 +169,8 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
             $scope.printed = res['printed'];
+
+            Metronic.unblockUI('#printArea');
             });
     }
 

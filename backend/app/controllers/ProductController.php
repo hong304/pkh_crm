@@ -4,7 +4,7 @@ class ProductController extends BaseController {
 
     public function jsonGetAllProduct()
     {
-        $time_start = microtime(true);
+       // $time_start = microtime(true);
         
         $products = Cache::remember('AllProducts', 5, function()
         {
@@ -27,9 +27,9 @@ class ProductController extends BaseController {
             return $products;
         });       
 
-        $time_end = microtime(true);
-        $time = $time_end - $time_start;
-        syslog(LOG_INFO, "Searched all products in $time seconds");
+       // $time_end = microtime(true);
+        //$time = $time_end - $time_start;
+        //syslog(LOG_INFO, "Searched all products in $time seconds");
         
         return Response::json($products);
     }

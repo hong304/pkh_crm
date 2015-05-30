@@ -229,13 +229,19 @@ class PrintQueueController extends BaseController {
             array_shift($jobId);
 
 
-            $jobs = PrintQueue::wherein('job_id', $jobId)->lists('invoiceId');
-            //pd($jobId);
-            if($jobs) {
-                $this->mergeImage($jobs);
-                Invoice::wherein('invoiceId',$jobs)->update(['printed'=>1]);
-                PrintQueue::wherein('job_id', $jobId)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
+            $jobs = PrintQueue::wherein('job_id', $jobId)->get();
+
+            foreach($jobs as $vv){
+                $groupIds[$vv->target_path][]=$vv->invoiceId;
             }
+
+          //  pd($groupIds);
+            foreach($groupIds as $gg){
+                $this->mergeImage($gg);
+                Invoice::wherein('invoiceId',$gg)->update(['printed'=>1]);
+            }
+            PrintQueue::wherein('job_id', $jobId)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
+
         }
 
 

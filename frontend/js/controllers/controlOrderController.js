@@ -356,9 +356,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         	
         	
         	Metronic.blockUI({
-                target: '#orderportletbody',
+              target: '#orderportletbody',
                 boxed: true,
-                message: '下載資料中...'
+                message: '載入產品中...'
             });
     	}
         else if($location.search().clientId)
