@@ -16,8 +16,8 @@ class ProductController extends BaseController {
 
         }
 
-        $products = Cache::remember('AllProducts', 5, function() use($pa)
-        {
+       // $products = Cache::remember('AllProducts', 5, function() use($pa)
+     //   {
             $products = Product::select('productId', 'productName_chi','productLocation',
             'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPacking_size',
             'productPackingName_inner', 'productPackingName_unit', 'productPackingName_carton',
@@ -33,15 +33,14 @@ class ProductController extends BaseController {
             $products = $products->get()->toArray();
 
 
-
             // Switch to standard array
             $products = Product::compileProductStandardForm($products);
 
             // if customerid is given, get a compiled products json with customer discount information
             //$products = Product::compileProductAddCustomerDiscount($products, Input::get('customerId'));
             
-            return $products;
-        });       
+        //    return $products;
+     //   });
 
        // $time_end = microtime(true);
         //$time = $time_end - $time_start;
