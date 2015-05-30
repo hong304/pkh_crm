@@ -127,7 +127,7 @@ app.controller('queryCommissionCtrl', function($scope, $rootScope, $http, Shared
                     "type": 'POST',
                     "data": {filterData: $scope.filterData, mode: "collection"},
                     "xhrFields": {withCredentials: true},
-                   // "async": false
+                    "async": false
                 },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
