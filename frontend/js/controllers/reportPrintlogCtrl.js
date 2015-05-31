@@ -82,7 +82,7 @@ app.controller('reportPrintlogCtrl', function($scope, $http, SharedService, $tim
                     callback: function() {
                         $http.post(querytarget, {mode: 'reprint', filterData: i})
                             .success(function(res, status, headers, config){
-                                $scope.updateDataSet();
+                                 $scope.updateDataSet();
                             });
                     }
                 }

@@ -89,6 +89,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                                     url: printSelect,
                                     data: {mode:'today',zone:$scope.zone,shift:$scope.shift}
                                 }).success(function(res, status, headers, config){
+
                                             $scope.updatePrintQueue();
                                         // alert('正在準備傳送至印表機...')
                                     });
@@ -130,8 +131,8 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                             method: 'POST',
                             url: printSelect,
                             data: {print:$scope.checkid,mode:'selected',zone:$scope.zone,shift:$scope.shift}
-                        }).success(function () {
-                            $scope.updatePrintQueue();
+                        }).success(function (res) {
+                                   $scope.updatePrintQueue();
                         });
 
                     }

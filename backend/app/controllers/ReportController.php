@@ -44,6 +44,7 @@ class ReportController extends BaseController {
             unset($update['job_id']);
             unset($update['created_at']);
             unset($update['updated_at']);
+            unset($update['complete_time']);
 
             $update['status'] = 'queued';
             $update['created_at'] = new \DateTime;
@@ -52,6 +53,11 @@ class ReportController extends BaseController {
             DB::table('Printlogs')->insert(
                 $update
             );
+
+            $job_id = DB::getPdo()->lastInsertId();
+
+            $class = new PrintQueueController();
+            return $class->sendJobViaFTP($job_id);
         }
             if($mode == 'collection')
             {
