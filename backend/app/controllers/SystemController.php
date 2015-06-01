@@ -38,6 +38,8 @@ class SystemController extends BaseController {
             // zone
             $z = Zone::wherein('zoneId', explode(',', Auth::user()->temp_zone))->get()->toArray();
 
+            //customer group
+            $c = customerGroup::all()->toArray();
 
 
             $currentzone = '';
@@ -72,7 +74,8 @@ class SystemController extends BaseController {
           'permission' => $permissionList,
           'availableZone' => $z,
           'currentzone' => $currentzone,
-          'productgroup' => $productgroup,    
+          'productgroup' => $productgroup,
+            'customerGroup' => $c,
           'invoiceStatus' => Config::get('invoiceStatus'),
          ];
 

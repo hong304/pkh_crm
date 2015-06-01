@@ -13,6 +13,7 @@ class PrintQueueController extends BaseController {
     public $invoiceIds = [];
     private $zone = '';
     private $shift = '';
+    private $group = false;
    // private $temp = [];
 
     public function __construct()
@@ -61,36 +62,6 @@ class PrintQueueController extends BaseController {
         return Response::json($returnCustom);
     }
 
-    /*  public function jsonGetUnprintJobs()
-      {
-          Auth::onceUsingId("27");
-
-          $returnCustom = [];
-          $action = Input::get('action');
-
-          if($action == 'update')
-          {
-              DB::table('PrintQueue')->wherein('job_id', explode(';', Input::get('ids')))->update(array('status' => Input::get('status')));
-          }
-          else
-          {
-         $jobs = PrintQueue::wherein('status', ['queued', 'fast-track'])->where('target_time', '<', time())->OrderBy('file_path','desc')->get();
-                          $returnCustom = [
-                              'currentTimeStamp' => time(),
-                              'jobs' => $jobs,
-                          ];
-
-          }
-
-
-
-
-
-
-
-          return Response::json($returnCustom);
-      } */
-
     //queryInvoice - 列印記錄
     public function instantPrint()
     {
@@ -114,11 +85,14 @@ class PrintQueueController extends BaseController {
 
 
 
-        $job =  PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','name','PrintQueue.status')
+        $job =  PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','users.name','PrintQueue.status')
             ->wherein('target_path',explode(',', $this->zone))->where('insert_time', '>', strtotime("3 days ago"))
             ->where('PrintQueue.status','!=','dead:regenerated')
-            ->where('PrintQueue.status','!=','downloaded;passive')
-            ->leftJoin('Invoice', function($join) {
+            ->where('PrintQueue.status','!=','downloaded;passive');
+if(Input::get('group.id')!='')
+    $job->where('customer_group_id',Input::get('group.id'));
+
+        $job=   $job->leftJoin('Invoice', function($join) {
                 $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
             })->leftJoin('users', function($join) {
                 $join->on('users.id', '=', 'Invoice.updated_by');
@@ -140,11 +114,14 @@ class PrintQueueController extends BaseController {
 
 
 
-        $job1 = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','name','PrintQueue.status')
+        $printed = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','users.name','PrintQueue.status')
             ->wherein('target_path', explode(',', $this->zone))
             ->where('insert_time', '>', strtotime("1 days ago"))
-            ->where('PrintQueue.status','downloaded;passive')
-            ->leftJoin('Invoice', function($join) {
+            ->where('PrintQueue.status','downloaded;passive');
+if(Input::get('group.id')!='')
+    $printed->where('customer_group_id',Input::get('group.id'));
+
+        $printed=   $printed->leftJoin('Invoice', function($join) {
                 $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
             })->leftJoin('users', function($join) {
                 $join->on('users.id', '=', 'Invoice.updated_by');
@@ -167,7 +144,7 @@ class PrintQueueController extends BaseController {
 
 
         $jobs['queued'] = $job;
-        $jobs['printed'] = $job1;
+        $jobs['printed'] = $printed;
         //  pd($jobs);
 
         return Response::json($jobs);
@@ -249,7 +226,28 @@ class PrintQueueController extends BaseController {
         }
 
 
+        if($mode == 'group'){
+            $result = PrintQueue::select('Invoice.invoiceId','job_id')->wherein('PrintQueue.status', ['queued', 'fast-track'])
+                ->leftJoin('Invoice', function($join) {
+                    $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+                })->leftJoin('Customer', function($join) {
+            $join->on('Customer.customerId', '=', 'Invoice.customerId');
+        })
+                ->where(function($query){
+                    $query->where('Invoice.invoiceStatus','2')
+                        ->orwhere('Invoice.invoiceStatus','97')
+                        ->orwhere('Invoice.invoiceStatus','96')
+                        ->orwhere('Invoice.invoiceStatus','98');
+                })->where('Invoice.deliveryDate',strtotime("00:00:00"))->where('customer_group_id',Input::get('group.id'))->lists('Invoice.invoiceId','job_id');
 
+        $this->group = true;
+        $this->mergeImage($result);
+        Invoice::wherein('invoiceId',$result)->update(['printed'=>1]);
+            foreach ($result as $k=>$v)
+                $jobids[] = $k;
+
+                PrintQueue::wherein('job_id', $jobids)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
+         }
     }
 
    /* public function printAllPrintJobsWithinMyZone()
@@ -406,6 +404,7 @@ class PrintQueueController extends BaseController {
         $ftp_user_name = 'pkh';
         $ftp_user_pass = 'pkh2015';
         $ftp_server = 'pingkeehong.asuscomm.com';
+       // $ftp_server = '192.168.1.249';
         $conn_id = ftp_connect($ftp_server);
         if(!$conn_id)
         {
@@ -419,10 +418,18 @@ class PrintQueueController extends BaseController {
 
         DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'sending']);
 
-        if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $job->file_path, FTP_BINARY)) {
-            $updates = ['status'=>'sent', 'complete_time'=>time()];
-        } else {
-            $updates = ['status'=>'queued'];
+        if($this->group){
+            if (@ftp_put($conn_id, '000/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $job->file_path, FTP_BINARY)) {
+                $updates = ['status'=>'sent', 'complete_time'=>time()];
+            } else {
+                $updates = ['status'=>'queued'];
+            }
+        }else{
+            if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $job->file_path, FTP_BINARY)) {
+                $updates = ['status'=>'sent', 'complete_time'=>time()];
+            } else {
+                $updates = ['status'=>'queued'];
+            }
         }
         DB::table('Printlogs')->where('job_id', $job->job_id)->update($updates);
         ftp_close($conn_id);

@@ -3,7 +3,6 @@
 app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeout, $location, $interval) {
 	
 	var querytarget = endpoint + "/getAllPrintJobsWithinMyZone.json";
-//	var pushtarget = endpoint + "/printAllPrintJobsWithinMyZone.json";
     var checkstatus = endpoint + "/getInvoiceStatusMatchPrint.json";
     var printSelect = endpoint + "/printSelectedJobsWithinMyZone.json";
 
@@ -14,6 +13,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     }
 
     $scope.zone = '';
+    $scope.group = '';
     $scope.shift = '1';
     $scope.checkid = [];
 
@@ -38,7 +38,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
         $http({
             method: 'POST',
             url: checkstatus,
-            data: {mode:'today',zone:$scope.zone,shift:$scope.shift}
+            data: {mode:'today',zone:$scope.zone,shift:$scope.shift,group:$scope.group}
         }).success(function (res) {
             console.log(res);
 
@@ -143,7 +143,54 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
     }
+
+    $scope.printGroup = function(){
+
+        bootbox.dialog({
+            message: "列印發票後將不能復原，確定要列印發票嗎？",
+            title: "列印發票",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+
+                    }
+                },
+                danger: {
+                    label: "確定",
+                    className: "red",
+                    callback: function() {
+
+
+                        Metronic.blockUI({
+                            target : '#printArea',
+                            boxed: true,
+                            message: '資料整合中'
+                        });
+
+                        $http({
+                            method: 'POST',
+                            url: printSelect,
+                            data: {mode:'group',group:$scope.group}
+                        }).success(function (res) {
+                            $scope.updatePrintQueue();
+                        });
+
+                    }
+                }
+            }
+        });
+
+
+
+    }
+
     $scope.updateZone = function(){
+        $scope.updatePrintQueue();
+    }
+
+    $scope.updateGroup = function(){
         $scope.updatePrintQueue();
     }
 
@@ -156,7 +203,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
         $http({
             method: 'POST',
             url: querytarget,
-            data: {zone:$scope.zone,shift:$scope.shift}
+            data: {zone:$scope.zone,shift:$scope.shift,group:$scope.group}
         }).success(function(res){
     		$scope.queue = res['queued'];
                 var i = 0;

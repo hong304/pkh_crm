@@ -12,6 +12,18 @@
                         <i class="fa fa-cogs font-green-sharp"></i>
                         <span class="caption-subject font-green-sharp bold uppercase">訂單列印 (Push-to-Print)</span>
                     </div>
+
+                    <div class="actions">
+                        <div class="btn-group">
+                            <select class="form-control"
+                                    ng-model="group"
+                                    data-ng-options="x.name for x in systeminfo.customerGroup track by x.id"
+                                    data-ng-change="updateGroup();">
+                                <option value=''>檢視全部</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="actions">
                             <div class="btn-group">
                                 <select class="form-control"
@@ -57,6 +69,13 @@
                         </div>
                     </div>
 
+
+                    <div class="actions">
+                        <div class="btn-group">
+                            <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="printGroup();">
+                                <i class="fa fa-print"></i> 列印已選集團 </a>&nbsp;
+                        </div>
+                    </div>
 
                 </div>
 
