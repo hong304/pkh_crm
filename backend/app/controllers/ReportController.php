@@ -135,10 +135,15 @@ public function loadvanSellReport(){
     public function viewArchivedReport()
     {
         $rid = Input::get('rid');
+        $shift = Input::get('shift');
 
 
 
-        $report = ReportArchive::where('id', $rid)->first();
+        $report = ReportArchive::where('id', $rid);
+        if($shift!='')
+            $report->where('shift',$shift);
+
+        $report= $report->first();
 
         $content = file_get_contents($report->file);
 
