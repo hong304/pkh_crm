@@ -227,7 +227,7 @@ class VanSellController extends BaseController
             });
         $this->_data = $this->goods['1F'];
 
-
+        $newIds =[];
         foreach ($this->_data as $g) {
             foreach ($g as $k => $v) {
                 $vansell = vansell::where('productId', $v['productId'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->first();
