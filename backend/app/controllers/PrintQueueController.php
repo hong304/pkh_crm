@@ -419,7 +419,7 @@ class PrintQueueController extends BaseController {
 
         DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'sending']);
 
-        if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $job->file_path, FTP_ASCII)) {
+        if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $job->file_path, FTP_BINARY)) {
             $updates = ['status'=>'sent', 'complete_time'=>time()];
         } else {
             $updates = ['status'=>'queued'];
