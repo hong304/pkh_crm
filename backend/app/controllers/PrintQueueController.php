@@ -396,7 +396,7 @@ class PrintQueueController extends BaseController {
         $print_log->shift = $this->shift;
         $print_log->save();
 
-        $this->sendJobViaFTP($print_log->job_id);
+        $this->sendJobViaFTP($print_log->id);
     }
 
     public function sendJobViaFTP($job_id)
