@@ -64,7 +64,7 @@ class VanSellController extends BaseController
 
         if ($this->_output == 'create') {
 
-            $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('version', $this->_version)->orderBy('productId', 'asc')->get();
+            $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->get();
             $inv = [];
             foreach (Input::get('data') as $v) {
                 $inv[$v['productId']] = $v['value'];
@@ -89,9 +89,9 @@ class VanSellController extends BaseController
 
             if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift))
                 mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift, 0777, true);
-            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' .$this->_shift . '/' . $filename;
+            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift . '/' . $filename;
 
-         //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+            //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
 
 
             if (ReportArchive::where('id', $filenameUn)->count() == 0) {
@@ -175,66 +175,63 @@ class VanSellController extends BaseController
     {
         $date = $this->_date;
         $zone = $this->_zone;
-        $regen = false;
-
-        $vansells = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->where('version', $this->_version)->orderBy('productId', 'asc')->get();
-
-        if (count($vansells) == 0) {
-            vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->delete();
-
-            // get invoice from that date and that zone
-            $this->goods = ['1F' => [], '9F' => []];
-            Invoice::select('*')->where('invoiceStatus', '2')->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date)->where('shift', $this->_shift)->with('invoiceItem', 'products', 'client')
-                ->chunk(50, function ($invoicesQuery) {
 
 
-                    // first of all process all products
-                    $productsQuery = array_pluck($invoicesQuery, 'products');
+        // get invoice from that date and that zone
+        $this->goods = ['1F' => [], '9F' => []];
+        Invoice::select('*')->where('invoiceStatus', '2')->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date)->where('shift', $this->_shift)->with('invoiceItem', 'products', 'client')
+            ->chunk(50, function ($invoicesQuery) {
+
+
+                // first of all process all products
+                $productsQuery = array_pluck($invoicesQuery, 'products');
 //pd($productsQuery);
-                    foreach ($productsQuery as $productQuery) {
-                        $productQuery = head($productQuery);
-                        //pd($productQuery);
-                        foreach ($productQuery as $pQ) {
-                            $products[$pQ->productId] = $pQ;
-                        }
+                foreach ($productsQuery as $productQuery) {
+                    $productQuery = head($productQuery);
+                    //pd($productQuery);
+                    foreach ($productQuery as $pQ) {
+                        $products[$pQ->productId] = $pQ;
                     }
+                }
 
-                    // second process invoices
-                    foreach ($invoicesQuery as $invoiceQ) {
-                        $this->_invoices[] = $invoiceQ->invoiceId;
+                // second process invoices
+                foreach ($invoicesQuery as $invoiceQ) {
+                    $this->_invoices[] = $invoiceQ->invoiceId;
 
-                        // first, store all invoices
-                        $invoiceId = $invoiceQ->invoiceId;
-                        $invoices[$invoiceId] = $invoiceQ;
-                        $client = $invoiceQ['client'];
+                    // first, store all invoices
+                    $invoiceId = $invoiceQ->invoiceId;
+                    $invoices[$invoiceId] = $invoiceQ;
+                    $client = $invoiceQ['client'];
 
-                        // second, separate 1F goods and 9F goods
-                        foreach ($invoiceQ['invoiceItem'] as $item) {
-                            // determin its product location
-                            $productId = $item->productId;
+                    // second, separate 1F goods and 9F goods
+                    foreach ($invoiceQ['invoiceItem'] as $item) {
+                        // determin its product location
+                        $productId = $item->productId;
 
-                            $productDetail = $products[$productId];
-                            $unit = $item->productQtyUnit;
+                        $productDetail = $products[$productId];
+                        $unit = $item->productQtyUnit;
 
-                            if ($productDetail->productLocation == '1') {
-                                $this->goods['1F'][$productId][$unit] = [
-                                    'productId' => $productId,
-                                    'name' => $productDetail->productName_chi,
-                                    'unit' => $unit,
-                                    'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
-                                ];
-                            }
-
+                        if ($productDetail->productLocation == '1') {
+                            $this->goods['1F'][$productId][$unit] = [
+                                'productId' => $productId,
+                                'name' => $productDetail->productName_chi,
+                                'unit' => $unit,
+                                'unit_txt' => $item->productUnitName,
+                                'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                            ];
                         }
+
                     }
+                }
 
-                });
-            $this->_data = $this->goods['1F'];
+            });
+        $this->_data = $this->goods['1F'];
 
 
-            foreach ($this->_data as $v) {
-                foreach ($v as $k => $v) {
+        foreach ($this->_data as $g) {
+            foreach ($g as $k => $v) {
+                $vansell = vansell::where('productId', $v['productId'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->first();
+                if (count($vansell) == 0) {
                     $create = new vansell();
                     $create->productId = $v['productId'];
                     $create->name = $v['name'];
@@ -243,17 +240,32 @@ class VanSellController extends BaseController
                     $create->date = $this->_date;
                     $create->zoneId = $this->_zone;
                     $create->shift = $this->_shift;
-                    $create->version = $this->_version;
                     $create->save();
+                } else {
+                    $vansell->org_qty = $v['counts'];
+                    $vansell->save();
+                }
+
+                $newIds[] = $v['productId'];
+            }
+        }
+
+        $dbIds = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->lists('productId');
+
+
+        $result = array_diff($dbIds, $newIds);
+
+        if (count($result) > 0)
+            foreach ($result as $vv) {
+                $del = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('productId', $vv)->first();
+                if ($del->qty > 0) {
+
+                } else {
+                    $del->delete();
                 }
             }
-            $regen = true;
-        }
 
-        if ($regen) {
-            $vansells = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->where('version', $this->_version)->orderBy('productId', 'asc')->get();
-        }
-
+        $vansells = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->get();
         $this->_data = $vansells;
 
     }
@@ -341,31 +353,31 @@ class VanSellController extends BaseController
 
                 if ($u['qty'] != '0') {
                     $pdf->setXY(10, $y);
-                    $pdf->SetFont('chi','',13);
+                    $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
 
                     $pdf->setXY(40, $y);
-                    $pdf->SetFont('chi','',13);
+                    $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
                     if ($u['qty'] == null)
                         $u['qty'] = $u['org_qty'];
 
                     $pdf->setXY(120, $y);
-                    $pdf->SetFont('chi','',13);
+                    $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
 
 
                     $pdf->setXY(131, $y);
-                    $pdf->SetFont('chi','',13);
+                    $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
 
                     $pdf->setXY(145, $y);
-                    $pdf->SetFont('chi','',13);
+                    $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, "________", 0, 0, "L");
 
                     $pdf->setXY(170, $y);
-                    $pdf->SetFont('chi','',13);
+                    $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, "________", 0, 0, "L");
 
                     $y += 7;
@@ -377,7 +389,7 @@ class VanSellController extends BaseController
 //p($nd);
 //echo "<br>";
 
-                if ($nd!='')
+                if ($nd != '')
                     if ($nd != $d) {
                         $pdf->Line(10, $y, 190, $y);
                         $y += 7;
