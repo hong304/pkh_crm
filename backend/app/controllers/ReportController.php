@@ -46,7 +46,7 @@ class ReportController extends BaseController {
             unset($update['updated_at']);
             unset($update['complete_time']);
 
-            $update['status'] = 'queued';
+            $update['status'] = 'ready_for_ftp';
             $update['created_at'] = new \DateTime;
             $update['updated_at'] = new \DateTime;
 

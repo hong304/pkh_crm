@@ -385,7 +385,7 @@ class PrintQueueController extends BaseController {
 
         $print_log = new Printlog();
         $print_log->file_path = $_SERVER['backend'].'/'.$filename;
-        $print_log->status = 'queued';
+        $print_log->status = 'ready_for_ftp';
         $print_log->target_path = $invoiceImage[0]->zoneId;
         $print_log->invoiceIds = implode(',',$Ids);
         $print_log->count = count($Ids);
@@ -408,6 +408,7 @@ class PrintQueueController extends BaseController {
             $debug = new Debug();
             $debug->content = 'Can not connect to FTP';
             $debug->save();
+            DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'queued']);
             die('Can not connect to FTP');
         }
         ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
@@ -417,11 +418,11 @@ class PrintQueueController extends BaseController {
         if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $job->file_path, FTP_ASCII)) {
             $updates = ['status'=>'sent', 'complete_time'=>time()];
         } else {
-            $updates = ['status'=>'fail'];
+            $updates = ['status'=>'queued'];
         }
         DB::table('Printlogs')->where('job_id', $job->job_id)->update($updates);
-        //var_dump(DB::getQUeryLog());
         ftp_close($conn_id);
+        //var_dump(DB::getQUeryLog());
     }
 
 }
