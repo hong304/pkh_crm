@@ -131,6 +131,7 @@ class PrintQueueController extends BaseController {
                     ->orwhere('Invoice.invoiceStatus','1')
                     //->orwhere('Invoice.invoiceStatus','4')
                     ->orwhere('Invoice.invoiceStatus','98')
+                    ->orwhere('Invoice.invoiceStatus','96')
                     ->orwhere('Invoice.invoiceStatus','97');
             })
             ->where('Invoice.shift',$this->shift)
@@ -156,6 +157,7 @@ class PrintQueueController extends BaseController {
                     ->orwhere('Invoice.invoiceStatus','1')
                     //->orwhere('Invoice.invoiceStatus','4')
                     ->orwhere('Invoice.invoiceStatus','98')
+                    ->orwhere('Invoice.invoiceStatus','96')
                     ->orwhere('Invoice.invoiceStatus','97');
             })
             ->where('Invoice.shift',$this->shift)
@@ -186,6 +188,7 @@ class PrintQueueController extends BaseController {
                     ->where(function($query){
                         $query->where('Invoice.invoiceStatus','2')
                             ->orwhere('Invoice.invoiceStatus','97')
+                            ->orwhere('Invoice.invoiceStatus','96')
                             ->orwhere('Invoice.invoiceStatus','98');
                     })->where('Invoice.deliveryDate',strtotime("00:00:00"))
                     ->where('Invoice.shift',$this->shift)
@@ -203,6 +206,7 @@ class PrintQueueController extends BaseController {
                         ->where(function($query){
                             $query->where('Invoice.invoiceStatus','2')
                                 ->orwhere('Invoice.invoiceStatus','97')
+                                ->orwhere('Invoice.invoiceStatus','96')
                                 ->orwhere('Invoice.invoiceStatus','98');
                         })->where('Invoice.deliveryDate',strtotime("00:00:00"))
                         ->where('Invoice.shift',$this->shift)
