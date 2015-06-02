@@ -257,4 +257,10 @@ class Invoice extends Eloquent  {
 	    return $this->hasMany('TableAudit', 'referenceKey', 'invoiceId');
 	}
 
+    public function getUpdatedAtAttribute($attr) {
+
+        return date("Y-m-d h:i:s A", (int)$attr);
+
+
+    }
 }

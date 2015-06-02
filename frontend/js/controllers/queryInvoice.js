@@ -400,6 +400,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                     { "data": "shiftText" },
                     { "data": "laststaff.name" },
                     { "data": "createdat_full" },
+                    { "data": "updated_at" },
                     { "data": "link" }
 
                             

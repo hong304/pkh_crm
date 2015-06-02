@@ -12,7 +12,9 @@ app.controller('queryCommissionCtrl', function($scope, $rootScope, $http, Shared
        'phone' : '',
        'customerId' :'',
        'product' : '',
-       'product_name' : ''
+       'product_name' : '',
+       'zone' : ''
+
     };
 
 
@@ -76,7 +78,7 @@ app.controller('queryCommissionCtrl', function($scope, $rootScope, $http, Shared
 
         var queryObject = {
             filterData	:	$scope.filterData,
-            mode	:	"csv",
+            mode	:	"csv"
 
         };
 

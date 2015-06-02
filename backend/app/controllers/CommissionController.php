@@ -9,7 +9,7 @@ class CommissionController extends BaseController
         $filter = Input::get('filterData');
 
 
-        $zone = (isset($filter['zone']['zoneId'])) ? $filter['zone']['zoneId'] : '-1';
+        $zone = (isset($filter['zone']['zoneId'])) ? $filter['zone']['zoneId'] : '0';
         $data1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
         $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
 
@@ -17,15 +17,9 @@ class CommissionController extends BaseController
             $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
         })->leftJoin('Product', function ($join) {
             $join->on('InvoiceItem.productId', '=', 'Product.productId');
-        })->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit');
-
-        if ($zone != '-1')
-            $invoices->where('zoneId', $zone);
-        else
-            $invoices->wherein('zoneId', explode(',', Auth::user()->temp_zone));
-
+        })->whereNotIn('invoiceStatus',['96','95','98'])->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit');
+        $invoices->where('zoneId', $zone);
         $invoices->whereBetween('Invoice.deliveryDate', [$data1, $data2]);
-
 
         if (Input::get('mode') == 'csv') {
             $invoices = $invoices->get()->toArray();
@@ -65,6 +59,25 @@ class CommissionController extends BaseController
             $invoices = $invoices->paginate($page_length);
 
         }
+
+        $invoice_return = Invoice::select(DB::raw('SUM(productQty) AS productQtys'), 'productName_chi', 'InvoiceItem.productId', 'productUnitName', 'productQtyUnit', 'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPackingName_carton')->leftJoin('InvoiceItem', function ($join) {
+            $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
+        })->leftJoin('Product', function ($join) {
+            $join->on('InvoiceItem.productId', '=', 'Product.productId');
+        })->where('invoiceStatus','98')->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit')
+            ->where('zoneId', $zone)
+            ->whereBetween('Invoice.deliveryDate', [$data1, $data2])->get();
+
+
+        foreach($invoices as $invoiceQ)
+        {
+            foreach($invoice_return as $g){
+                if($g->productId == $invoiceQ->productId && $g->productQtyUnit == $invoiceQ->productQtyUnit ){
+                    $invoiceQ->productQtys -= $g->productQtys;
+                }
+            }
+        }
+
         return Response::json($invoices);
 
     }
