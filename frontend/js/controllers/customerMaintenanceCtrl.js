@@ -237,7 +237,7 @@ console.log(jQuery.trim($scope.customerInfo.routePlanningPriority).length);
         if(!$scope.submit)
             alert('客户編號不能用');
         else if($scope.customerInfo.address_chi == ""  || (!$scope.customerInfo.customerId && !$scope.customerInfo.productnewId) || $scope.customerInfo.customerName_chi == "" || $scope.customerInfo.deliveryZone.zoneName == ""
-            || jQuery.trim($scope.customerInfo.routePlanningPriority).length == 0 || $scope.customerInfo.shift.label === "" || $scope.customerInfo.contactPerson_1 == "" || $scope.customerInfo.phone_1 == "" || $scope.customerInfo.paymentTermId == "")
+            || jQuery.trim($scope.customerInfo.routePlanningPriority).length == 0 || $scope.customerInfo.shift.label === "" || $scope.customerInfo.phone_1 == "" || $scope.customerInfo.paymentTermId == "")
     	{
     		alert('請輸入所需資料');
     	}
