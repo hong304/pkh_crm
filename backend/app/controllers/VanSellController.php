@@ -179,7 +179,11 @@ class VanSellController extends BaseController
 
         // get invoice from that date and that zone
         $this->goods = ['1F' => [], '9F' => []];
-        Invoice::select('*')->where('invoiceStatus', '2')->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date)->where('shift', $this->_shift)->with('invoiceItem', 'products', 'client')
+        $invoices = Invoice::select('*')->where('invoiceStatus', '2')->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date);
+
+            if($this->_shift != '-1')
+               $invoices->where('shift', $this->_shift);
+         $invoices->with('invoiceItem', 'products', 'client')
             ->chunk(50, function ($invoicesQuery) {
 
 
@@ -273,7 +277,13 @@ class VanSellController extends BaseController
 # PDF Section
     public function generateHeader($pdf)
     {
-        $shift = ($this->_shift == 1) ? '早班' : '晚班';
+        if($this->_shift == 1)
+            $shift = '早班';
+        elseif($this->_shift == 2)
+            $shift = '晚班';
+        else
+            $shift = '全部';
+        
         $pdf->SetFont('chi', '', 18);
         $pdf->Cell(0, 10, "炳記行貿易有限公司", 0, 1, "C");
         $pdf->SetFont('chi', 'U', 16);

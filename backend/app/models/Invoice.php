@@ -178,7 +178,12 @@ class Invoice extends Eloquent  {
 	{
 	    return $this->hasOne('User', 'id', 'created_by');
 	}
-	
+
+    public function laststaff()
+    {
+        return $this->hasOne('User', 'id', 'updated_by');
+    }
+
 	public function client()
 	{
 	    return $this->hasOne('Customer', 'customerId', 'customerId');
@@ -252,4 +257,10 @@ class Invoice extends Eloquent  {
 	    return $this->hasMany('TableAudit', 'referenceKey', 'invoiceId');
 	}
 
+    public function getUpdatedAtAttribute($attr) {
+
+        return date("Y-m-d h:i:s A", (int)$attr);
+
+
+    }
 }

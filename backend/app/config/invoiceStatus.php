@@ -99,6 +99,13 @@ return [
         'explanation'          => 'This is replenish order',
         'triggered_by'          => 'SA+',
     ],
+    '95' => [
+        'statusCode'            => '95',
+        'descriptionEnglish'    => 'exchangement',
+        'descriptionChinese'    => '換貨',
+        'explanation'          => 'This is exchange order',
+        'triggered_by'          => 'SA+',
+    ],
 
     'dummy' => [
         'statusCode'            => '',
