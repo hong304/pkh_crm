@@ -262,7 +262,7 @@ class OrderController extends BaseController
               }])->with( 'client', 'staff')->get();*/
 
 
-            $invoices = $invoice->with('client', 'staff')->orderby('invoiceId', 'desc')->paginate($page_length);
+            $invoices = $invoice->with('client', 'laststaff')->orderby('invoiceId', 'desc')->paginate($page_length);
 
             foreach ($invoices as $invoice) {
                 $invoice->link = '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';

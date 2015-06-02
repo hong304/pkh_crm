@@ -178,7 +178,12 @@ class Invoice extends Eloquent  {
 	{
 	    return $this->hasOne('User', 'id', 'created_by');
 	}
-	
+
+    public function laststaff()
+    {
+        return $this->hasOne('User', 'id', 'updated_by');
+    }
+
 	public function client()
 	{
 	    return $this->hasOne('Customer', 'customerId', 'customerId');
