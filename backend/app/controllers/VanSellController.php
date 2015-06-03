@@ -234,7 +234,7 @@ class VanSellController extends BaseController
         $newIds =[];
         foreach ($this->_data as $g) {
             foreach ($g as $k => $v) {
-                $vansell = vansell::where('productId', $v['productId'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->first();
+                $vansell = vansell::where('productId', $v['productId'])->where('unit', $v['unit_txt'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->first();
                 if (count($vansell) == 0) {
                     $create = new vansell();
                     $create->productId = $v['productId'];
