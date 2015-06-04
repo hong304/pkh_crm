@@ -139,8 +139,9 @@ Route::get('/', function(){
 
 
 Route::get('/system.json', 'SystemController@jsonSystem');
-Route::get('/test', function(){
+Route::get('/info', function(){
 
+    p($_SERVER);
 
     //
 
