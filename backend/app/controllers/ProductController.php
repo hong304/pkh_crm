@@ -23,7 +23,7 @@ class ProductController extends BaseController {
             'productPackingName_inner', 'productPackingName_unit', 'productPackingName_carton',
             'productPackingInterval_carton', 'productPackingInterval_inner', 'productPackingInterval_unit',
             'productMinPrice_carton', 'productMinPrice_inner', 'productMinPrice_unit',
-            'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit');
+            'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit','allowNegativePrice');
         
            $products->where('productStatus', 'o');
 

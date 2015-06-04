@@ -672,12 +672,15 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     	*/
     	
     	var stdprice = Number(item.productStdPrice[unit]);
-    	var minprice = Number(item.productMinPrice[unit]);
-    	
+    	//var minprice = Number(item.productMinPrice[unit]);
+
+      //  if(Number(item.allowNegativePrice != 1))
+            console.log(item);
+
     	// check if number
-    	if(isNaN($scope.product[i]['unitprice']))
+    	if(isNaN($scope.product[i]['unitprice']) && item.allowNegativePrice != '1')
     	{
-    		//$scope.product[i]['unitprice'] = stdprice;
+    		$scope.product[i]['unitprice'] = stdprice;
     	}
     	
     	$("#requireapprove_" + i).remove();
@@ -726,33 +729,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             $scope.product[i]['qty'] = 1;
         }
 
-    	/*
-    	var code = $scope.product[i]['code'];
-    	var item = $scope.retrievedProduct[code];
-    	if(item.productPackingAllowDecimal == 0)
-		{
-    		if(
-        			($scope.product[i].qty != '0') &&
-        			($scope.product[i].qty != '0.') &&
-        			($scope.product[i].qty != '0.5') &&
-        			($scope.product[i].qty != '.') &&
-        			($scope.product[i].qty != '.5')
-        	)
-    		{
-
-    	    	if(($scope.product[i].qty / 0.5) % 1 === 0)
-    	    	{
-    	    		$scope.product[i].qty = $scope.product[i].qty.replace(/^0+/, '');
-    	    	}
-    	    	else
-    	    	{
-    	    		// automatically round up 
-    	    		$scope.product[i].qty = Math.ceil($scope.product[i].qty);
-    	    	}
-    	    	
-    		}
-		}
-    	*/
     }
     
     $scope.updateUnit = function(i)

@@ -77,7 +77,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'productName_chi' : '',
 			'productName_eng' : '',
             'productnewId' :'',
-            'hasCommission' : ''
+            'hasCommission' : '',
+        'allowNegativePrice' : '',
 	};
 	
 	$scope.submitbtn = true;
@@ -140,6 +141,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     		$scope.info = $.extend(true, {}, $scope.info_def);
     		$scope.info = res;
             $scope.hasCommission = res.hasCommission;
+                $scope.allowNegativePrice = res.allowNegativePrice;
     		//console.log($scope.info);
 
     		var floorcat = [];
@@ -204,6 +206,14 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
         else
             $scope.info.hasCommission= 0;
     }
+
+    $scope.selectNeg = function(i){
+        if(i == 'yes')
+            $scope.info.allowNegativePrice= 1;
+        else
+            $scope.info.allowNegativePrice= 0;
+    }
+
     $scope.submitProductForm = function()
     {
 
