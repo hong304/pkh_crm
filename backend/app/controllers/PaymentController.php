@@ -198,7 +198,7 @@ class PaymentController extends BaseController {
               $invoice = Invoice::with('invoiceItem')->whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->paginate($page_length);
   */
 
-            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->where('invoiceStatus',20)->OrderBy('deliveryDate')->get();
+            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->wherein('invoiceStatus',[2,20])->OrderBy('deliveryDate')->get();
 
 
             foreach($invoice as $c)
