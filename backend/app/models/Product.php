@@ -28,7 +28,7 @@ class Product extends Eloquent  {
                 $original= $model->getOriginal($attribute);
                 if(!in_array($attribute, array('created_by', 'created_at'))) {
                     $x = new TableAudit();
-                    $x->referenceKey = $model->job_id;
+                    $x->referenceKey = $model->productId;
                     $x->table = "Product";
                     $x->attribute = $attribute;
                     $x->data_from = $original;
