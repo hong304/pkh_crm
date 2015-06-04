@@ -402,8 +402,8 @@ if(Input::get('group.id')!='')
 
         $ftp_user_name = 'pkh';
         $ftp_user_pass = 'pkh2015';
-        $ftp_server = 'pingkeehong.asuscomm.com';
-       // $ftp_server = '192.168.1.249';
+       // $ftp_server = 'pingkeehong.asuscomm.com';
+       $ftp_server = '192.168.1.249';
         $conn_id = ftp_connect($ftp_server);
         if(!$conn_id)
         {
