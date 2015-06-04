@@ -12,6 +12,14 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
 
 	};
     $scope.qty = [];
+$scope.selfdefine = [];
+
+    $scope.selfdefineS = {
+        'productId' : '',
+        'name' : '',
+        'qty' : '',
+        'unit'  : '',
+    }
 
     $scope.invoiceStructure = {
         'id' : '',
@@ -112,16 +120,39 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
 
     	$http.post(querytarget, {reportId: 'vanselllist', output: "preview", filterData: $scope.filterData})
             .success(function(res){
-    		$scope.report = res;
 
+    		$scope.report = res.normal;
+            $scope.report_selfdefine = res.selfdefine;
 
            var i = 0;
-              res.forEach(function(item) {
+                $scope.report.forEach(function(item) {
                     $scope.qty[i] = $.extend(true, {}, $scope.invoiceStructure);
                     $scope.qty[i]['productId'] = item.productId;
                     $scope.qty[i]['value'] = item.qty;
                    i++;
                });
+
+                var j = 0;
+                $scope.report_selfdefine.forEach(function(item) {
+                    $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
+                    $scope.selfdefine[j]['productId'] = item.productId;
+                    $scope.selfdefine[j]['productName'] = item.name;
+                    $scope.selfdefine[j]['qty'] = item.qty;
+                    $scope.selfdefine[j]['unit'] = item.unit;
+                    j++;
+                });
+
+
+                for(; j < 5; j++ ){
+                    $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
+                    $scope.selfdefine[j]['productId'] = '';
+                    $scope.selfdefine[j]['productName'] = '';
+                    $scope.selfdefine[j]['qty'] = '';
+                    $scope.selfdefine[j]['unit'] = '';
+                }
+
+                console.log($scope.selfdefine);
+
     		Metronic.unblockUI();
     	});
     }
@@ -148,7 +179,7 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
     $scope.sendRealFile = function()
     {
 
-        $http.post(querytarget, {reportId: 'vanselllist', output: "create", filterData: $scope.filterData,data:$scope.qty})
+        $http.post(querytarget, {reportId: 'vanselllist', output: "create", filterData: $scope.filterData,data:$scope.qty,selfdefine:$scope.selfdefine})
             .success(function(res, status, headers, config){
 
                 var queryObject = {

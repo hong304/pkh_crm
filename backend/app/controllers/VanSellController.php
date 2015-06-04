@@ -14,6 +14,7 @@ class VanSellController extends BaseController
     private $_uniqueid = "";
     private $_data = [];
     private $_output = '';
+    private  $_pdf = '';
 
     public function loadvanSellReport()
     {
@@ -63,8 +64,27 @@ class VanSellController extends BaseController
         }
 
         if ($this->_output == 'create') {
+            $selfdefine = Input::get('selfdefine');
 
-            $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->get();
+            vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define',true)->delete();
+
+            foreach($selfdefine as $d){
+                if(trim($d['productName']) != '' && trim($d['qty']) != '' && trim($d['unit']) != ''){
+                    $i =  new vansell;
+                    $i->productId = $d['productId'];
+                    $i->name = $d['productName'];
+                    $i->unit = $d['unit'];
+                    $i->qty = $d['qty'];
+                    $i->zoneId = $this->_zone;
+                    $i->date = $this->_date;
+                    $i->shift = $this->_shift;
+                    $i->self_define = 1;
+                    $i->save();
+                }
+            }
+
+
+            $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define',false)->get();
             $inv = [];
             foreach (Input::get('data') as $v) {
                 $inv[$v['productId']] = $v['value'];
@@ -78,6 +98,9 @@ class VanSellController extends BaseController
         }
 
         if ($this->_output == 'pdf') {
+
+
+
             $this->_reportId = 'vanselllist';
             $this->compileResults();
             $reportOutput = $this->outputPDF();
@@ -115,6 +138,119 @@ class VanSellController extends BaseController
             exit;
         }
 
+
+    }
+
+
+
+    public function compileResults()
+    {
+        $date = $this->_date;
+        $zone = $this->_zone;
+
+
+        // get invoice from that date and that zone
+        $this->goods = ['1F' => [], '9F' => []];
+        $invoices = Invoice::select('*')->where('invoiceStatus', '2')->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date);
+
+        if($this->_shift != '-1')
+            $invoices->where('shift', $this->_shift);
+        $invoices->with('invoiceItem', 'products', 'client')
+            ->chunk(50, function ($invoicesQuery) {
+
+
+                // first of all process all products
+                $productsQuery = array_pluck($invoicesQuery, 'products');
+//pd($productsQuery);
+                foreach ($productsQuery as $productQuery) {
+                    $productQuery = head($productQuery);
+                    //pd($productQuery);
+                    foreach ($productQuery as $pQ) {
+                        $products[$pQ->productId] = $pQ;
+                    }
+                }
+
+                // second process invoices
+                foreach ($invoicesQuery as $invoiceQ) {
+                    $this->_invoices[] = $invoiceQ->invoiceId;
+
+                    // first, store all invoices
+                    $invoiceId = $invoiceQ->invoiceId;
+                    $invoices[$invoiceId] = $invoiceQ;
+                    $client = $invoiceQ['client'];
+
+                    // second, separate 1F goods and 9F goods
+                    foreach ($invoiceQ['invoiceItem'] as $item) {
+                        // determin its product location
+                        $productId = $item->productId;
+
+                        $productDetail = $products[$productId];
+                        $unit = $item->productQtyUnit;
+
+                        if ($productDetail->productLocation == '1') {
+                            $this->goods['1F'][$productId][$unit] = [
+                                'productId' => $productId,
+                                'name' => $productDetail->productName_chi,
+                                'unit' => $unit,
+                                'unit_txt' => $item->productUnitName,
+                                'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                            ];
+                        }
+
+                    }
+                }
+
+            });
+        $this->_data = $this->goods['1F'];
+
+        $newIds =[];
+        foreach ($this->_data as $g) {
+            foreach ($g as $k => $v) {
+                $vansell = vansell::where('productId', $v['productId'])->where('unit', $v['unit_txt'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define',false)->first();
+                if (count($vansell) == 0) {
+                    $create = new vansell();
+                    $create->productId = $v['productId'];
+                    $create->name = $v['name'];
+                    $create->unit = $v['unit_txt'];
+                    $create->org_qty = $v['counts'];
+                    $create->date = $this->_date;
+                    $create->zoneId = $this->_zone;
+                    $create->shift = $this->_shift;
+                    $create->save();
+                } else {
+                    $vansell->org_qty = $v['counts'];
+                    $vansell->save();
+                }
+
+                $newIds[] = $v['productId'];
+            }
+        }
+
+        $dbIds = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define',false)->lists('productId');
+
+
+        $result = array_diff($dbIds, $newIds);
+
+        if (count($result) > 0)
+            foreach ($result as $vv) {
+                $del = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('productId', $vv)->where('self_define',false)->first();
+                if ($del->qty > 0) {
+
+                } else {
+                    $del->delete();
+                }
+            }
+
+        $vansells = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->where('self_define',false)->orderBy('productId', 'asc')->get();
+        $this->_data['normal'] = $vansells;
+
+
+        $vansell_selfdefine = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->where('self_define',true)->orderBy('productId', 'asc')->get();
+        $this->_data['selfdefine'] = $vansell_selfdefine;
+
+        $vansells_pdf = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->get()->toArray();
+
+        $this->_pdf = $vansells_pdf;
 
     }
 
@@ -171,109 +307,6 @@ class VanSellController extends BaseController
     }
 
 
-    public function compileResults()
-    {
-        $date = $this->_date;
-        $zone = $this->_zone;
-
-
-        // get invoice from that date and that zone
-        $this->goods = ['1F' => [], '9F' => []];
-        $invoices = Invoice::select('*')->where('invoiceStatus', '2')->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date);
-
-            if($this->_shift != '-1')
-               $invoices->where('shift', $this->_shift);
-         $invoices->with('invoiceItem', 'products', 'client')
-            ->chunk(50, function ($invoicesQuery) {
-
-
-                // first of all process all products
-                $productsQuery = array_pluck($invoicesQuery, 'products');
-//pd($productsQuery);
-                foreach ($productsQuery as $productQuery) {
-                    $productQuery = head($productQuery);
-                    //pd($productQuery);
-                    foreach ($productQuery as $pQ) {
-                        $products[$pQ->productId] = $pQ;
-                    }
-                }
-
-                // second process invoices
-                foreach ($invoicesQuery as $invoiceQ) {
-                    $this->_invoices[] = $invoiceQ->invoiceId;
-
-                    // first, store all invoices
-                    $invoiceId = $invoiceQ->invoiceId;
-                    $invoices[$invoiceId] = $invoiceQ;
-                    $client = $invoiceQ['client'];
-
-                    // second, separate 1F goods and 9F goods
-                    foreach ($invoiceQ['invoiceItem'] as $item) {
-                        // determin its product location
-                        $productId = $item->productId;
-
-                        $productDetail = $products[$productId];
-                        $unit = $item->productQtyUnit;
-
-                        if ($productDetail->productLocation == '1') {
-                            $this->goods['1F'][$productId][$unit] = [
-                                'productId' => $productId,
-                                'name' => $productDetail->productName_chi,
-                                'unit' => $unit,
-                                'unit_txt' => $item->productUnitName,
-                                'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
-                            ];
-                        }
-
-                    }
-                }
-
-            });
-        $this->_data = $this->goods['1F'];
-
-        $newIds =[];
-        foreach ($this->_data as $g) {
-            foreach ($g as $k => $v) {
-                $vansell = vansell::where('productId', $v['productId'])->where('unit', $v['unit_txt'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->first();
-                if (count($vansell) == 0) {
-                    $create = new vansell();
-                    $create->productId = $v['productId'];
-                    $create->name = $v['name'];
-                    $create->unit = $v['unit_txt'];
-                    $create->org_qty = $v['counts'];
-                    $create->date = $this->_date;
-                    $create->zoneId = $this->_zone;
-                    $create->shift = $this->_shift;
-                    $create->save();
-                } else {
-                    $vansell->org_qty = $v['counts'];
-                    $vansell->save();
-                }
-
-                $newIds[] = $v['productId'];
-            }
-        }
-
-        $dbIds = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->lists('productId');
-
-
-        $result = array_diff($dbIds, $newIds);
-
-        if (count($result) > 0)
-            foreach ($result as $vv) {
-                $del = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('productId', $vv)->first();
-                if ($del->qty > 0) {
-
-                } else {
-                    $del->delete();
-                }
-            }
-
-        $vansells = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->get();
-        $this->_data = $vansells;
-
-    }
-
 # PDF Section
     public function generateHeader($pdf)
     {
@@ -311,12 +344,39 @@ class VanSellController extends BaseController
         }*/
 
 
+
+
+
         $pdf = new PDF();
-        $i = 0;
+
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
         // handle 1F goods
-        $firstF = array_chunk($this->_data->toArray(), 20, true);
-//pd($firstF);
+
+
+      //
+        $new_array = $this->_pdf;
+        foreach ($this->_pdf as $i => $f) {
+                $d = substr(current($this->_pdf)['productId'], 0, 1);
+                $nd = substr(next($this->_pdf)['productId'], 0, 1);
+                if ($nd != '')
+                    if ($nd != $d) {
+                       $k[]=$i;
+                    }
+        }
+// array_splice($new_array, $i+1, 0, ['qty'=>999] );
+
+$q = 1;
+        foreach($k as $z){
+            array_splice($new_array, $z+$q, 0, [['qty'=>'line']] );
+            $q++;
+        }
+
+      //  pd($new_array);
+
+        $firstF = array_chunk($new_array, 26, true);
+
+      //  pd($firstF);
+
         foreach ($firstF as $i => $f) {
             // for first Floor
             $pdf->AddPage();
@@ -358,56 +418,104 @@ class VanSellController extends BaseController
             $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i + 1, count($firstF)), 0, 0, "R");
 
 
+            $first = true;
             foreach ($f as $id => $u) {
 
 
-                if ($u['qty'] != '0') {
-                    $pdf->setXY(10, $y);
-                    $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
-
-                    $pdf->setXY(40, $y);
-                    $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
-
-                    if ($u['qty'] == null)
-                        $u['qty'] = $u['org_qty'];
-
-                    $pdf->setXY(120, $y);
-                    $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
+                if ( $first )
+                {
+                    // do something
+                    $first = false;
 
 
-                    $pdf->setXY(131, $y);
-                    $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
+                    if ($u['qty'] != '0' && $u['qty'] != 'line') {
+                        $pdf->setXY(10, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
 
-                    $pdf->setXY(145, $y);
-                    $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, "________", 0, 0, "L");
+                        $pdf->setXY(40, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
-                    $pdf->setXY(170, $y);
-                    $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, "________", 0, 0, "L");
+                        if ($u['qty'] == null)
+                            $u['qty'] = $u['org_qty'];
 
-                    $y += 7;
+                        $pdf->setXY(120, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
+
+
+                        $pdf->setXY(131, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
+
+                        $pdf->setXY(145, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, "________", 0, 0, "L");
+
+                        $pdf->setXY(170, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, "________", 0, 0, "L");
+
+                        $y += 7;
+                    }
+
+                }
+                else
+                {
+                    if ($u['qty'] != '0' && $u['qty'] != 'line') {
+                        $pdf->setXY(10, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
+
+                        $pdf->setXY(40, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
+
+                        if ($u['qty'] == null)
+                            $u['qty'] = $u['org_qty'];
+
+                        $pdf->setXY(120, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
+
+
+                        $pdf->setXY(131, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
+
+                        $pdf->setXY(145, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, "________", 0, 0, "L");
+
+                        $pdf->setXY(170, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, "________", 0, 0, "L");
+
+                        $y += 7;
+                    }
+
+                    if($u['qty'] == 'line'){
+                        $pdf->Line(10, $y, 190, $y);
+                        $y += 7;
+                    }
                 }
 
-                $d = substr(current($f)['productId'], 0, 1);
-                $nd = substr(next($f)['productId'], 0, 1);
-//p($d);
-//p($nd);
-//echo "<br>";
 
+
+
+
+              /*  $d = substr(current($f)['productId'], 0, 1);
+                $nd = substr(next($f)['productId'], 0, 1);
                 if ($nd != '')
                     if ($nd != $d) {
                         $pdf->Line(10, $y, 190, $y);
                         $y += 7;
-                    }
+                    }*/
 
             }
 
-            $y += 10;
+         /*   $y += 10;
             // Notes part
             if ($i == 0) {
                 for ($note = 0; $note <= 2; $note++) {
@@ -420,7 +528,7 @@ class VanSellController extends BaseController
 
                     $y += 8;
                 }
-            }
+            }*/
 
         }
 

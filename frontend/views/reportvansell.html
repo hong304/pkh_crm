@@ -108,10 +108,39 @@
                                         </tbody>
                                     </table>
 
-
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                        <tr role="row" class="heading">
+                                            <th width="20%">
+                                                貨品編號
+                                            </th>
+                                            <th width="60%">
+                                                貨品名稱
+                                            </th>
+                                            <th width="10%">
+                                                數量
+                                            </th>
+                                            <th width="10%">
+                                                單位
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr data-ng-repeat="(k,i) in selfdefine">
+                                            <td>
+                                                <input type="text" data-ng-model="selfdefine[k]['productId']">
+                                            </td>
+                                            <td><input type="text" data-ng-model="selfdefine[k]['productName']"></td>
+                                            <td><input type="text" data-ng-model="selfdefine[k]['qty']"></td>
+                                            <td><input type="text" data-ng-model="selfdefine[k]['unit']"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
 
 
                                 </div>
+
+
 
 
 				</div>
