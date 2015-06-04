@@ -262,7 +262,7 @@ var i = 0;
                     [10, 20, 50],
                     [10, 20, 50] // change per page values here
                 ],
-                "pageLength": 10, // default record count per page
+                "pageLength": 20, // default record count per page
                 "ajax": {
                     "url": query, // ajax source
                     "type": 'POST',
