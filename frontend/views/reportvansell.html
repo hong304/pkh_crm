@@ -102,7 +102,7 @@
                                             </td>
                                             <td>{{i.name}}</td>
                                             <td>{{i.org_qty}} {{i.unit}}</td>
-                                            <td><input type="text" data-ng-model="qty[k]['value']"></td>
+                                            <td><input type="text" class="form-control" data-ng-model="qty[k]['value']"></td>
                                         </tr>
 
                                         </tbody>
@@ -128,11 +128,22 @@
                                         <tbody>
                                         <tr data-ng-repeat="(k,i) in selfdefine">
                                             <td>
-                                                <input type="text" data-ng-model="selfdefine[k]['productId']">
+                                                <input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']">
                                             </td>
-                                            <td><input type="text" data-ng-model="selfdefine[k]['productName']"></td>
-                                            <td><input type="text" data-ng-model="selfdefine[k]['qty']"></td>
-                                            <td><input type="text" data-ng-model="selfdefine[k]['unit']"></td>
+                                            <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']"></td>
+                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']"></td>
+                                            <td>
+
+                                                <select ng-model="selfdefine[k]['unit']" class="form-control" >
+                                                    <option value="箱">箱</option>
+                                                    <option value="包">包</option>
+                                                    <option value="桶">桶</option>
+                                                    <option value="札">札</option>
+                                                    <option value="盒">盒</option>
+                                                    <option value="排">排</option>
+                                                    <option value="隻">隻</option>
+                                                </select>
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>

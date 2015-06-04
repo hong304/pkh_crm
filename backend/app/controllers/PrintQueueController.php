@@ -343,13 +343,10 @@ if(Input::get('group.id')!='')
             {
                 foreach($v['print_storage'] as $index => $url)
                 {
-
-
                     if($section == 0 || $section  % 2 == 0)
                     {
                         $pdf->AddPage();
                         $y = 0;
-
                     }
 
                     $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
