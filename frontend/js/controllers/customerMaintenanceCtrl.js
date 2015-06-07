@@ -349,6 +349,7 @@ console.log(jQuery.trim($scope.customerInfo.routePlanningPriority).length);
                             { "data": "phone_1" },
                             { "data": "contactPerson_1" },
                             { "data": "address_chi" },
+                    { "data": "updated_at" },
                             { "data": "link" },
 
                             

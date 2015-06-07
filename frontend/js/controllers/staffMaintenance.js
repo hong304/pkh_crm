@@ -283,11 +283,8 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
                 
                 "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
 
-                "lengthMenu": [
-                    [10, 20, 50],
-                    [10, 20, 50] // change per page values here
-                ],
-                "pageLength": 20, // default record count per page
+                "lengthMenu": [[10, 25, 50], [10, 25, 50]],
+                "pageLength": 25, // default record count per page
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',

@@ -120,11 +120,11 @@ class CustomerController extends BaseController
             if (!isset($filter['zone']['zoneId']))
                 $filter['zone']['zoneId'] = '';
 
-            Paginator::setCurrentPage((Input::get('start') + 10) / Input::get('length'));
-            $customer = Customer::select('customerId','customerName_chi','status','deliveryZone','routePlanningPriority','paymentTermId','Customer.phone_1','contactPerson_1','address_chi')
+            Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+            $customer = Customer::select('customerId','customerName_chi','status','deliveryZone','routePlanningPriority','paymentTermId','Customer.phone_1','contactPerson_1','address_chi','Customer.updated_at')
                 ->leftJoin('customer_groups', function($join) {
                 $join->on('customer_groups.id', '=','Customer.customer_group_id');
-            });
+            })->Orderby('Customer.updated_at','desc');
 
             // $customer->where('customerId', $filter['clientId']);
 
