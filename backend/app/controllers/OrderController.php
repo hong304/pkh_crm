@@ -132,7 +132,7 @@ class OrderController extends BaseController
                     ->orwhere('Invoice.invoiceStatus', '98');
             })->count();
 
-        $summary['open'] = Invoice::where('invoiceStatus', 2)->wherein('zoneId', explode(',', Auth::user()->temp_zone))->count();
+      //  $summary['open'] = Invoice::where('invoiceStatus', 2)->wherein('zoneId', explode(',', Auth::user()->temp_zone))->count();
 
         $summary['printjobs'] = $jobscount;
         $summary['logintime'] = Session::get('logintime');

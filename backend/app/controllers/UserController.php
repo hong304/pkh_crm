@@ -254,7 +254,7 @@ class UserController extends BaseController {
 	    if($mode == 'collection')
 	    {
 	        $filter = Input::get('filterData');
-	        Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
+            Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
 	        $staff = User::select('*')->where('deleted',false);
 
             if($filter['ceritera'] != '')
