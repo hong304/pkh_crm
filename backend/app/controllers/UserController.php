@@ -148,14 +148,9 @@ class UserController extends BaseController {
     	        $user->password = Input::get('newpassword');
     	        $user->save();
     	        
-    	        if(isset($_SERVER['HTTP_X_APPENGINE_REGION']))
-    	        {
-    	            return Redirect::to('//portal.pingkee.hk');
-    	        }
-    	        else
-    	        {
-    	            return Redirect::to('//yatfai-f.cyrustc.net');
-    	        }
+
+    	            return Redirect::to($_SERVER['frontend']);
+
     	        exit;
             }
 	    }
