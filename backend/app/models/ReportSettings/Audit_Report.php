@@ -28,7 +28,7 @@ class Audit_Report {
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
         $this->_date1 = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
-        $this->_date2 = (isset($indata['filterData']['deliveryDate1']) ? strtotime($indata['filterData']['deliveryDate1']) : strtotime("today"));
+        $this->_date2 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         // check if user has clearance to view this zone        
 
         $this->_uniqueid = microtime(true);
@@ -80,6 +80,7 @@ class Audit_Report {
                            $this->_account[] = [
                                'customerId' => $client->customerId,
                                'name' => $client->customerName_chi,
+                               'deliveryDate' => $invoiceQ->deliveryDate_date,
                                'invoiceNumber' => $invoiceId,
                                'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
                                'accumulator' =>number_format($acc,2,'.',','),
@@ -236,8 +237,11 @@ class Audit_Report {
             $pdf->Cell(0, 0, "訂單編號", 0, 0, "L");
         
             $pdf->setXY(40, 50);
+            $pdf->Cell(0, 0, "送貨日期", 0, 0, "L");
+
+            $pdf->setXY(70, 50);
             $pdf->Cell(0, 0, "客戶", 0, 0, "L");
-        
+
             $pdf->setXY(130, 50);
             $pdf->Cell(0, 0, "應收金額", 0, 0, "L");
         
@@ -268,8 +272,12 @@ class Audit_Report {
                 $pdf->Cell(0, 0, $e['invoiceNumber'], 0, 0, "L");
     
                 $pdf->setXY(40, $y);
+                $pdf->Cell(0, 0, $e['deliveryDate'], 0, 0, "L");
+
+
+                $pdf->setXY(70, $y);
                 $pdf->Cell(0, 0, $e['name'], 0, 0, "L");
-    
+
                 $pdf->setXY(130, $y);
                 $pdf->Cell(0, 0, sprintf("HK$ %s", $e['amount']), 0, 0, "L");
     

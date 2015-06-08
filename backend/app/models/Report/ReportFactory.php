@@ -77,8 +77,8 @@ class ReportFactory{
                         mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'], 0777, true);
                     $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'] . '/' . $filename;
                 }else {
-                    if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift']))
-                        mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'], 0777, true);
+                    if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId))
+                        mkdir(storage_path() . '/report_archive/' . $this->_reportId, 0777, true);
                     $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
                 }
                 if(ReportArchive::where('id',$filenameUn)->where('shift',$shift)->count() == 0){
