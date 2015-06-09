@@ -25,7 +25,7 @@ return array(
 	|
 	*/
 
-	'debug' => false,
+	'debug' => ($_SERVER['HTTP_HOST'] == 'backend.sylam.net')?false:true,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -77,7 +77,7 @@ return array(
 	|
 	*/
 
-	'key' => 'YourSecretKey!!!',
+	'key' => 'ia(8%mVyx6z_OB-jVyF4b5@W0IC)jE(m',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -91,7 +91,6 @@ return array(
 	*/
 
 	'providers' => array(
-
 		'Illuminate\Foundation\Providers\ArtisanServiceProvider',
 		'Illuminate\Auth\AuthServiceProvider',
 		'Illuminate\Cache\CacheServiceProvider',
@@ -188,8 +187,8 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-	    'Image' => 'Intervention\Image\Facades\Image',
-	    'Fpdf'    => 'Anouar\Fpdf\Fpdf',
+	    'Image'           => 'Intervention\Image\Facades\Image',
+	    'Fpdf'            => 'Anouar\Fpdf\Fpdf',
 
 	),
 
