@@ -130,7 +130,9 @@ Route::group(array('before' => 'auth'), function()
 
     //change invoice status to picking
     Route::post('/generalPickingStatus.json','HomeController@generalPickingStatus');
-    
+
+    //Data warehouse
+    Route::get('invoice','DataWarehouseController@getInvoice');
 });
 
 Route::get('/', function(){
@@ -144,35 +146,31 @@ Route::get('/info', function(){
     p($_SERVER);
 
     //
-
     //  $lastid = Product::where('department', 'A')->where('group', '05')->where('new_product_id',0)->orderBy('productId', 'Desc')->first();
       //  pd($lastid);
 
 });
 
 Route::get('/setZone', function(){
-    //pd($_ENV);
     $zoneid = Input::get('id');
     Session::put('zone', $zoneid);
-
     return Redirect::to($_SERVER['frontend']);
 });
 
 Route::any('/credential/auth', 'UserController@authenticationProcess');
 
 // Batch Working
-Route::get('/batch/pscmc-0000-daily.bat', 'BatchController@productSearchandCustomerMapClearance');
-Route::get('/batch/bistp-5min.bat', 'BatchController@batchSendInvoiceToPrinter');
+//Route::get('/batch/pscmc-0000-daily.bat', 'BatchController@productSearchandCustomerMapClearance');
+//Route::get('/batch/bistp-5min.bat', 'BatchController@batchSendInvoiceToPrinter');
 
 // Queue
-Route::any('/queue/generate-preview-invoice-image.queue', 'QueueController@generatePreviewInvoiceImage');
-Route::any('/queue/generate-print-invoice-image.queue', 'QueueController@generatePrintInvoiceImage');
-Route::any('/print', 'QueueController@sendPrintJobToPrinter');
-Route::any('/queue/generate-invoice-pdf.queue', 'QueueController@generateInvoicePDF');
+//Route::any('/queue/generate-preview-invoice-image.queue', 'QueueController@generatePreviewInvoiceImage');
+//Route::any('/queue/generate-print-invoice-image.queue', 'QueueController@generatePrintInvoiceImage');
+//Route::any('/print', 'QueueController@sendPrintJobToPrinter');
+//Route::any('/queue/generate-invoice-pdf.queue', 'QueueController@generateInvoicePDF');
 
 // Printer
 Route::get('/getUnprintJobs.json', 'PrintQueueController@jsonGetUnprintJobs');
 Route::any('/printAllPrintJobsWithinMyZone.json', 'PrintQueueController@printAllPrintJobsWithinMyZone');
 
-//Data warehouse
-Route::get('invoice','DataWarehouseController@getInvoice');
+
