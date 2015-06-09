@@ -115,7 +115,7 @@ if(Input::get('group.id')!='')
 
         $printed = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','users.name','PrintQueue.status')
             ->wherein('target_path', explode(',', $this->zone))
-            ->where('insert_time', '>', strtotime("1 days ago"))
+            ->where('Invoice.deliveryDate', '>', strtotime("1 days ago"))
             ->where('PrintQueue.status','downloaded;passive');
 if(Input::get('group.id')!='')
     $printed->where('customer_group_id',Input::get('group.id'));
