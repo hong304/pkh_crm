@@ -88,7 +88,7 @@ class Report_DailySummary
                 foreach ($invoicesQuery as $invoiceQ) {
 
 
-                    if ($invoiceQ->return || $invoiceQ->invoiceStatus == '97') {
+                    if ($invoiceQ->return) {
 
                         if ($invoiceQ['client']->paymentTermId == 2 && $invoiceQ->paymentTerms == 2) {
                             $this->_sumcredit -= $invoiceQ->amount;
@@ -105,13 +105,13 @@ class Report_DailySummary
                             $productDetail = $products[$productId];
                             $unit = $item->productQtyUnit;
 
-                            $this->goods[$productId][$unit] = [
-                                'productId' => $productId,
+                            $this->goods[$productId . '(退貨)'][$unit] = [
+                                'productId' => $productId . '(補貨)',
                                 'name' => $productDetail->productName_chi,
                                 'productPrice' => $item->productPrice,
                                 'unit' => $unit,
                                 'unit_txt' => $item->productUnitName,
-                                'counts' => ((isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) + $item->productQty),
+                                'counts' => ((isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) - $item->productQty),
                             ];
 
                             //  pd($item);

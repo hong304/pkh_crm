@@ -14,6 +14,7 @@ class PrintQueueController extends BaseController {
     private $zone = '';
     private $shift = '';
     private $group = false;
+    private $startTime = '';
    // private $temp = [];
 
     public function __construct()
@@ -172,10 +173,12 @@ if(Input::get('group.id')!='')
 
 
                 if($result){
+                    $this->startTime = time();
                     $this->mergeImage($result);
-                    Invoice::wherein('invoiceId',$result)->update(['printed'=>1]);
 
-                    $updatepqs = PrintQueue::where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
+
+                    Invoice::wherein('invoiceId',$result)->update(['printed'=>1]);
+                    $updatepqs = PrintQueue::wherein('PrintQueue.invoiceId',$result)->wherein('status', ['queued', 'fast-track'])
                         ->leftJoin('Invoice', function($join) {
                             $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
                         })
@@ -388,6 +391,7 @@ if(Input::get('group.id')!='')
         $print_log->invoiceIds = implode(',',$Ids);
         $print_log->count = count($Ids);
         $print_log->shift = $this->shift;
+        $print_log->consume_time = $consume_time = time() - $this->startTime;
         $print_log->save();
 
         $this->sendJobViaFTP($print_log->id);
