@@ -192,6 +192,7 @@ app.controller('reportPrintlogCtrl', function($scope, $http, SharedService, $tim
                     }
                 },
                 "columns": [
+                    { "data": 'job_id' },
                     { "data": 'target_path' },
                     { "data": 'zone.zoneName' },
                     { "data": 'shift' },

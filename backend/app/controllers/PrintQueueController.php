@@ -14,6 +14,7 @@ class PrintQueueController extends BaseController {
     private $zone = '';
     private $shift = '';
     private $group = false;
+    private $startTime = '';
    // private $temp = [];
 
     public function __construct()
@@ -115,7 +116,7 @@ if(Input::get('group.id')!='')
 
         $printed = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','users.name','PrintQueue.status')
             ->wherein('target_path', explode(',', $this->zone))
-            ->where('insert_time', '>', strtotime("1 days ago"))
+            ->where('Invoice.deliveryDate', '>', strtotime("1 days ago"))
             ->where('PrintQueue.status','downloaded;passive');
 if(Input::get('group.id')!='')
     $printed->where('customer_group_id',Input::get('group.id'));
@@ -154,7 +155,7 @@ if(Input::get('group.id')!='')
 
 
         $mode = Input::get('mode');
-
+        $this->startTime = time();
         if($mode == 'today'){
             foreach(explode(',', $this->zone) as $k => $v){
                 $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
@@ -172,10 +173,12 @@ if(Input::get('group.id')!='')
 
 
                 if($result){
-                    $this->mergeImage($result);
-                    Invoice::wherein('invoiceId',$result)->update(['printed'=>1]);
 
-                    $updatepqs = PrintQueue::where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
+                    $this->mergeImage($result);
+
+
+                    Invoice::wherein('invoiceId',$result)->update(['printed'=>1]);
+                    $updatepqs = PrintQueue::wherein('PrintQueue.invoiceId',$result)->wherein('status', ['queued', 'fast-track'])
                         ->leftJoin('Invoice', function($join) {
                             $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
                         })
@@ -388,6 +391,7 @@ if(Input::get('group.id')!='')
         $print_log->invoiceIds = implode(',',$Ids);
         $print_log->count = count($Ids);
         $print_log->shift = $this->shift;
+        $print_log->consume_time = time() - $this->startTime;
         $print_log->save();
 
         $this->sendJobViaFTP($print_log->id);
@@ -400,7 +404,7 @@ if(Input::get('group.id')!='')
         $ftp_user_name = 'pkh';
         $ftp_user_pass = 'pkh2015';
        // $ftp_server = 'pingkeehong.asuscomm.com';
-       $ftp_server = '192.168.1.249';
+       $ftp_server = '192.168.1.47';
         $conn_id = ftp_connect($ftp_server);
         if(!$conn_id)
         {
