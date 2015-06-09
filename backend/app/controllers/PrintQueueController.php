@@ -155,7 +155,7 @@ if(Input::get('group.id')!='')
 
 
         $mode = Input::get('mode');
-
+        $this->startTime = time();
         if($mode == 'today'){
             foreach(explode(',', $this->zone) as $k => $v){
                 $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
@@ -173,7 +173,7 @@ if(Input::get('group.id')!='')
 
 
                 if($result){
-                    $this->startTime = time();
+
                     $this->mergeImage($result);
 
 
@@ -391,7 +391,7 @@ if(Input::get('group.id')!='')
         $print_log->invoiceIds = implode(',',$Ids);
         $print_log->count = count($Ids);
         $print_log->shift = $this->shift;
-        $print_log->consume_time = $consume_time = time() - $this->startTime;
+        $print_log->consume_time = time() - $this->startTime;
         $print_log->save();
 
         $this->sendJobViaFTP($print_log->id);
