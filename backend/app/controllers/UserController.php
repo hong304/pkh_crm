@@ -62,22 +62,22 @@ class UserController extends BaseController {
     	        catch (Toddish\Verify\UserDeletedException $e)
     	        {
     	            SecurityLog::write('User has been deleted', $e);
-    	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', 'Invalid Credential. Please try again');
+    	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', '密碼錯誤，請重試。');
     	        }
     	        catch (Toddish\Verify\UserNotFoundException $e)
     	        {
     	            SecurityLog::write('User cannot be found', $e);
-    	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', 'Invalid Credential. Please try again');
+    	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', '密碼錯誤，請重試。');
     	        }
     	        catch (Toddish\Verify\UserUnverifiedException $e)
     	        {
     	            SecurityLog::write('Unverified User', $e);
-    	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', 'Invalid Credential. Please try again');
+    	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', '密碼錯誤，請重試。');
     	        }
     	        catch (Toddish\Verify\UserDisabledException $e)
     	        {
     	            SecurityLog::write('User has been disabled', $e);
-    	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', 'User has been suspended. Please contact System Adminsitrator');
+    	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', '帳號已被暫停，請聯絡相關人員。');
     	        }
     	        catch (Toddish\Verify\UserPasswordIncorrectException $e)
     	        {
@@ -160,7 +160,6 @@ class UserController extends BaseController {
 
         if(Input::get('mode') == 'del'){
             //User::where('id',Input::get('customer_id'))->update(['disabled'=>1,'deleted'=>1]);
-
            User::find(Input::get('customer_id'))->roles()->detach();
            User::where('id',Input::get('customer_id'))->delete();
 
