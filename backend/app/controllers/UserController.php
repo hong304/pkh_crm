@@ -128,6 +128,15 @@ class UserController extends BaseController {
 	    if(Input::has('_token'))
 	    {
 
+            $pwd  = Input::get('newpassword');
+
+            if( !preg_match("#[0-9]+#", $pwd) ) {
+                return Redirect::to('/changePassword')->with('flash_error', '新密碼必須最少包含1個數字');
+            }
+            if( !preg_match("#[a-z]+#", $pwd) ) {
+                return Redirect::to('/changePassword')->with('flash_error', '新密碼必須最少包含1個英文');
+            }
+
 	        if (Hash::check(Input::get('oldpassword'), Auth::user()->getAuthPassword())) {
 	            return Redirect::to('/changePassword')->with('flash_error', '舊密碼錯誤');
 	        }
