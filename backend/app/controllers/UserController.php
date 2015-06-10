@@ -23,8 +23,7 @@ class UserController extends BaseController {
     	        try
     	        {
     	            Auth::attempt(array('username' => Input::get('username'), 'password' => Input::get('password')));
-    	            
-    	            
+
     	            /* 
     	             * 29Dec2014 Redirect to any zone
     	             * return Redirect::action('UserController@selectZone');
@@ -113,9 +112,7 @@ class UserController extends BaseController {
 	    $user->save();
 	    
 	    // log this entry
-
 	    $loginRc = LoginAudit::find(Session::get('LoginId'));
-	    
 	    $loginRc->time_out = time();
 	    $loginRc->mode = $mode;
 	    $loginRc->save();
@@ -162,7 +159,11 @@ class UserController extends BaseController {
 
 
         if(Input::get('mode') == 'del'){
-            User::where('id',Input::get('customer_id'))->update(['disabled'=>1,'deleted'=>1]);
+            //User::where('id',Input::get('customer_id'))->update(['disabled'=>1,'deleted'=>1]);
+
+           User::find(Input::get('customer_id'))->roles()->detach();
+           User::where('id',Input::get('customer_id'))->delete();
+
             return [];
         }
 
@@ -172,12 +173,10 @@ class UserController extends BaseController {
 	    
 	    // update user information
 	    $user = User::where('id', $id)->first();
-       // pd($account);
-
 	    $user->username = $account['username'];
 	    $user->name = $account['name'];
 	    $user->email = $account['email'];
-       $user->disabled = $account['status']['value'];
+        $user->disabled = $account['status']['value'];
 	    if(isset($account['password']))
 	    {
 	        $user->password = $account['password'];
@@ -197,7 +196,6 @@ class UserController extends BaseController {
 	    {
 	        if($zone['assigned'])
 	        {
-	            
 	           DB::insert('insert into UserZone (userId, zoneId) values (?, ?)', [$user->id, $zone['zoneId']]);
 	        }
 	    }
@@ -255,23 +253,19 @@ class UserController extends BaseController {
 	    {
 	        $filter = Input::get('filterData');
             Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
-	        $staff = User::select('*')->where('deleted',false);
+	        $staff = User::select('*');
 
             if($filter['ceritera'] != '')
             {
                 $staff->where('username', 'LIKE', '%'.$filter['ceritera'].'%')
-                    ->orwhere('name', 'LIKE', '%'.$filter['ceritera'].'%');
+                      ->orwhere('name', 'LIKE', '%'.$filter['ceritera'].'%');
             }
 
-	
 	        $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 	        $staff = $staff->with('role')->paginate($page_length);
 	
-	        //$staff = $staff->toArray();
-
 	        foreach($staff as $c)
 	        {
-
                 if($c->disabled == 0){
                     $c->disabled = '正常';
                 }else{
@@ -282,12 +276,9 @@ class UserController extends BaseController {
                 $c->m_role = '';
                 foreach($c->role as $v)
 	                $c->m_role =  $v->name;
-	            //$staff[] = $c;
 	        }
-	
-	        //$staff['data'] = $staff;
-	
 	    }
+
 	    elseif($mode == 'single')
 	    {
 	        $staff['account'] = User::where('id', Input::get('StaffId'))->with('roles')->first();

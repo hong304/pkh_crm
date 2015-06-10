@@ -5,6 +5,7 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 use Toddish\Verify\Models\User as VerifyUser;
 new Toddish\Verify\Models\Role;
 new Toddish\Verify\Models\Permission;
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
 class User extends VerifyUser implements UserInterface, RemindableInterface {
 
@@ -13,6 +14,8 @@ class User extends VerifyUser implements UserInterface, RemindableInterface {
 	 *
 	 * @var string
 	 */
+    use SoftDeletingTrait;
+    protected $dates = ['deleted_at'];
 	protected $table = 'users';
 
 	/**
