@@ -9,12 +9,12 @@ else if(window.location.hostname == "frontend.sylam.net")
 {
 	var endpoint = '//backend.sylam.net/';
 	var assets = '//frontend.sylam.net/assets';
-}else if(window.location.hostname == "pkh-f.sylam.net")
-{
+}else{
     var endpoint = '//pkh-b.sylam.net/';
     var assets = '//pkh-f.sylam.net/assets';
 }
-
+console.log('hi');
+console.log(window.location.hostname);
 
 var appname = 'Web Application';
 var companyname = 'PING KEE';
