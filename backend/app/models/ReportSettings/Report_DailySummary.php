@@ -106,12 +106,12 @@ class Report_DailySummary
                             $unit = $item->productQtyUnit;
 
                             $this->goods[$productId . '(退貨)'][$unit] = [
-                                'productId' => $productId . '(補貨)',
+                                'productId' => $productId . '(退貨)',
                                 'name' => $productDetail->productName_chi,
                                 'productPrice' => $item->productPrice,
                                 'unit' => $unit,
                                 'unit_txt' => $item->productUnitName,
-                                'counts' => ((isset($this->goods[$productId][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) - $item->productQty),
+                                'counts' => ((isset($this->goods[$productId.'(退貨)'][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) - $item->productQty),
                             ];
 
                             //  pd($item);
@@ -137,14 +137,14 @@ class Report_DailySummary
                             $unit = $item->productQtyUnit;
 
 
-                            if ($invoiceQ->invoiceStatus == '96') {
-                                $this->goods[$productId . '(補貨)'][$unit] = [
-                                    'productId' => $productId . '(補貨)',
+                            if ($invoiceQ->invoiceStatus == '96' || $item->productPrice == 0) {
+                                $this->goods[$productId . '(零元)'][$unit] = [
+                                    'productId' => $productId . '(零元)',
                                     'name' => $productDetail->productName_chi,
                                     'productPrice' => $item->productPrice,
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods[$productId . '(補貨)'][$unit]) ? $this->goods[$productId . '(補貨)'][$unit]['counts'] : 0) + $item->productQty,
+                                    'counts' => (isset($this->goods[$productId . '(零元)'][$unit]) ? $this->goods[$productId . '(零元)'][$unit]['counts'] : 0) + $item->productQty,
                                 ];
                             } else
                                 $this->goods[$productId][$unit] = [

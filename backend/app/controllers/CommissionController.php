@@ -17,7 +17,8 @@ class CommissionController extends BaseController
             $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
         })->leftJoin('Product', function ($join) {
             $join->on('InvoiceItem.productId', '=', 'Product.productId');
-        })->whereNotIn('invoiceStatus',['96','95','98'])->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit');
+        })->whereNotIn('invoiceStatus',['96','95','98'])->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit')
+        ->where('InvoiceItem.productPrice','!=',0);
         $invoices->where('zoneId', $zone);
         $invoices->whereBetween('Invoice.deliveryDate', [$data1, $data2]);
 
