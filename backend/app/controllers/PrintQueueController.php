@@ -378,7 +378,7 @@ if(Input::get('group.id')!='')
         // $k = explode('-', $this->invoiceId);
 
         // $temp_filename = $k[0].'-'.str_pad($this->route, 2, "0", STR_PAD_LEFT).'-'.$k[1];
-
+$raw_filename =Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
         $filename = 'pdf/'.Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
         //$path = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
         $path = public_path($filename);
@@ -386,6 +386,7 @@ if(Input::get('group.id')!='')
 
         $print_log = new Printlog();
         $print_log->file_path = $_SERVER['backend'].'/'.$filename;
+        $print_log->file_name = $raw_filename;
         $print_log->status = 'ready_for_ftp';
         $print_log->target_path = $invoiceImage[0]->zoneId;
         $print_log->invoiceIds = implode(',',$Ids);
@@ -419,13 +420,13 @@ if(Input::get('group.id')!='')
         DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'sending']);
 
         if($this->group){
-            if (@ftp_put($conn_id, '000/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $job->file_path, FTP_BINARY)) {
+            if (@ftp_put($conn_id, '000/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, FTP_BINARY)) {
                 $updates = ['status'=>'sent', 'complete_time'=>time()];
             } else {
                 $updates = ['status'=>'queued'];
             }
         }else{
-            if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $job->file_path, FTP_BINARY)) {
+            if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, FTP_BINARY)) {
                 $updates = ['status'=>'sent', 'complete_time'=>time()];
             } else {
                 $updates = ['status'=>'queued'];
