@@ -281,9 +281,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
     
         
     .state('newOrder', {
-        url: "/newOrder",
+        url: "/newOrder/:action/:instatus/:invoiceNumber",
         templateUrl: "views/orderForm.html",            
         data: {pageTitle: '下單平台', pageSubTitle: ''},
+
         controller: "controlOrderController",
         resolve: {
             deps: ['$ocLazyLoad', function($ocLazyLoad) {

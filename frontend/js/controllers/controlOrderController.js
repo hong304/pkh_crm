@@ -2,7 +2,7 @@
 
 Metronic.unblockUI();
 
-app.controller('controlOrderController', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state) {
+app.controller('controlOrderController', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
     /* Register shortcut key */
     $(document).ready(function(){
         $('#order_form').keydown(function (e) {
@@ -263,9 +263,26 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.$on('$viewContentLoaded', function() {   
         // initialize core components
         Metronic.initAjax();
-        
-         
-              
+
+        if($stateParams.action == 'success') {
+            if($stateParams.instatus=='2'){
+                $scope.instatusmsg = '已新增訂單';
+            }else if($stateParams.instatus=='1'){
+                $scope.instatusmsg = '訂單需要批核';
+            }
+            Metronic.alert({
+                container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
+                place: 'prepend', // append or prepent in container
+                type: 'success',  // alert's type
+                message: '<span style="font-size:16px;">'+$scope.instatusmsg+' 編號: <strong>' + $stateParams.invoiceNumber + '</strong></span>',  // alert's message
+                close: true, // make alert closable
+                reset: true, // close all previouse alerts first
+                focus: true, // auto scroll to the alert after shown
+                closeInSeconds: 0, // auto close after defined seconds
+                icon: '' // put icon before the message
+            });
+        }
+
         if(!$location.search().invoiceId && !$location.search().clientId)
     	{
 	        $timeout(function(){
@@ -818,66 +835,12 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             	if(res.result == true)
             	{
                     $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
-            		if(res.status == 2)
-            		{
-            			
-            			Metronic.alert({
-                    	    container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
-                    	    place: 'prepend', // append or prepent in container 
-                    	    type: 'success',  // alert's type
-                    	    message: '<span style="font-size:16px;">已新增訂單 編號: <strong>' + res.invoiceNumber + '</strong></span>',  // alert's message
-                    	    close: true, // make alert closable
-                    	    reset: true, // close all previouse alerts first
-                    	    focus: true, // auto scroll to the alert after shown
-                    	    closeInSeconds: 0, // auto close after defined seconds
-                    	    icon: '' // put icon before the message
-                    	});
-            		}
-            		else if(res.status == 1)
-            		{
-            			
-            			Metronic.alert({
-                    	    container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
-                    	    place: 'prepend', // append or prepent in container 
-                    	    type: 'info',  // alert's type
-                    	    message: '<span style="font-size:16px;">訂單需要批核  編號: <strong>' + res.invoiceNumber + '</strong></span>',  // alert's message
-                    	    close: true, // make alert closable
-                    	    reset: true, // close all previouse alerts first
-                    	    focus: true, // auto scroll to the alert after shown
-                    	    closeInSeconds: 0, // auto close after defined seconds
-                    	    icon: 'warning' // put icon before the message
-                    	});
-            		}
 
                     if(res.action == 'update'){
                        $state.go("queryInvoice", {}, {reload: true});
                     }else{
-                        $("#successModal").modal('toggle');
+                        $state.go("newOrder",{action:'success',instatus:res.status ,invoiceNumber:res.invoiceNumber},{ reload: true, inherit: false, notify: true });
 
-                        document.addEventListener('keydown', function(evt) {
-                            var e = window.event || evt;
-                            var key = e.which || e.keyCode;
-                            if(key == 27)
-                            {
-                                $scope.counter.stop();
-                            }
-                        }, false);
-
-                        $scope.counter = new $scope.Countdown({
-                            seconds:1,  // number of seconds to count down
-                            onUpdateStatus: function(sec){
-                                $scope.countdown = sec;
-                            }, // callback for each second
-                            onCounterEnd: function(){
-                                // $window.location.reload();
-                                //consolg.log('123');
-                              $state.go("newOrder", {}, {reload: true});
-                            } // final action
-                        });
-
-                        $scope.counter.start();
-
-                        $scope.order.invoiceNumber = res.invoiceNumber;
                     }
             	}
             	else if(res.result == false)

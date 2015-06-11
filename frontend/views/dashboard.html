@@ -19,7 +19,9 @@
 					<div class="col-md-12">
 
 
-						<a href="/#/newOrder" class="icon-btn"><i class="fa fa-plus" style="font-size:30px;"></i><div>新訂單</div></a>
+
+                            <a href="/#/newOrder" class="icon-btn" ng-click="$state.go('newOrder', {}, {reload: true});">
+                                <i class="fa fa-plus" style="font-size:30px;"></i><div>新訂單</div></a>
 					
 						<a href="/#/queryInvoice" class="icon-btn" style="margin-left:25px;"><i class="fa fa-search" style="font-size:30px;"></i><div>搜尋訂單</div></a>
 
