@@ -1,6 +1,6 @@
 /* Define the environment according to the windows setting */
 //hi test
-if(window.location.hostname != "frontend.sylam.net")
+if(window.location.hostname == "yatfai-f.cyrustc.net")
 {
 	var endpoint = '//yatfai.cyrustc.net';
 	var assets = '//yatfai-f.cyrustc.net/assets';
