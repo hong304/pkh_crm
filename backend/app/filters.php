@@ -17,7 +17,7 @@ App::before(function($request)
 	$uri = Request::path();
 	
 	//dd($_SERVER);
-	if(in_array($_SERVER['SERVER_ADDR'], ['192.168.1.168', '192.168.1.169']))
+	if($_SERVER['HTTP_HOST'] == 'pkh-b.sylam.net')
 	{
         @header('Access-Control-Allow-Origin: http://pkh-f.sylam.net');
         $_SERVER['env'] = 'private_production';
