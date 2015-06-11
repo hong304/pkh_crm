@@ -5,11 +5,16 @@ if(window.location.hostname != "frontend.sylam.net")
 	var endpoint = '//yatfai.cyrustc.net';
 	var assets = '//yatfai-f.cyrustc.net/assets';
 }
-else
+else if(window.location.hostname == "frontend.sylam.net")
 {
 	var endpoint = '//backend.sylam.net/';
 	var assets = '//frontend.sylam.net/assets';
+}else if(window.location.hostname == "pkh-f.sylam.net")
+{
+    var endpoint = '//pkh-b.sylam.net/';
+    var assets = '//pkh-f.sylam.net/assets';
 }
+
 
 var appname = 'Web Application';
 var companyname = 'PING KEE';

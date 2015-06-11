@@ -10,7 +10,7 @@ return array(
     
     'appname' => 'Web Application',
     
-    'assetlocation' => ($_SERVER['HTTP_HOST'] == 'backend.sylam.net') ? '//frontend.sylam.net/assets' : '//yatfai-f.cyrustc.net/assets',
+    'assetlocation' => ($_SERVER['HTTP_HOST'] == 'backend.sylam.net') ? '//frontend.sylam.net/assets' : '//pkh-f.sylam.net/assets',
     
     'companyname' => 'Ping Kee Hong Trading Company Ltd', 
 
@@ -38,7 +38,7 @@ return array(
 	|
 	*/
 
-	'url' => ($_SERVER['HTTP_HOST'] == 'backend.sylam.net') ? 'http://frontend.sylam.net' : 'http://yatfai.cyrustc.net',
+	'url' => ($_SERVER['HTTP_HOST'] == 'backend.sylam.net') ? 'http://frontend.sylam.net' : 'http://pkh-b.sylam.net',
 
 	/*
 	|--------------------------------------------------------------------------

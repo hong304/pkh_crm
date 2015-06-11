@@ -400,15 +400,7 @@ class InvoiceManipulation {
 
         foreach($files as $f)
         {
-            // pd($f);
-
-            //$files[$j]['url'] = CloudStorageTools::getImageServingUrl($f['fullpath'], ['size'=>0]);
-
-            //$file['print_url'][$j] = $files[$j]['url'] = CloudStorageTools::getImageServingUrl($f['fullpath'], ['size'=>0]);
-            $file['print_url'][$j] = $files[$j]['url'] = 'http://yatfai.cyrustc.net/print_I1503-000028-1.png';
-
-
-
+            $file['print_url'][$j] = $files[$j]['url'] = 'undefined.png';
             $file['print_storage'][$j] = $f['fullpath'];
             $j++;
         }

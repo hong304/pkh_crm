@@ -17,11 +17,12 @@ App::before(function($request)
 	$uri = Request::path();
 	
 	//dd($_SERVER);
-	if(isset($_SERVER['CURRENT_VERSION_ID']) OR in_array($_SERVER['REMOTE_ADDR'], ['0.1.0.1', '0.1.0.2']))
+	if(in_array($_SERVER['REMOTE_ADDR'], ['192.168.1.168', '192.168.1.169']))
 	{
-	   @header('Access-Control-Allow-Origin: http://portal.pingkee.hk');
-	   $_SERVER['env'] = 'production';
-       $_SERVER['frontend'] = 'http://frontend.pingkee.hk';
+        @header('Access-Control-Allow-Origin: http://pkh-f.sylam.net');
+        $_SERVER['env'] = 'private_production';
+        $_SERVER['frontend'] = 'http://pkh-f.sylam.net';
+        $_SERVER['backend'] = 'http://pkh-b.sylam.net';
 	}
     elseif($_SERVER['HTTP_HOST'] == 'backend.sylam.net'){
         @header('Access-Control-Allow-Origin: http://frontend.sylam.net');
