@@ -256,7 +256,9 @@ class InvoiceManipulation {
             return '97';
         else if($this->temp_invoice_information['status'] == '96')
             return '96';
-        
+
+        return $this->approval ? '1' : '2';
+
 	    $isBackdayOrder = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']) <= strtotime("today 00:00")-1;
 	    
 	    if($isBackdayOrder)
@@ -274,7 +276,7 @@ class InvoiceManipulation {
 	                return '0';
 	        }*/
 	    } else{
-	        return $this->approval ? '1' : '2';
+            return $this->approval ? '1' : '2';
 	         }
 	    
 	    return '0';
