@@ -62,6 +62,7 @@ class CustomerManipulation {
 	    $this->im->customerId = $this->_customerId;
 	    $this->im->status = $info['status']['value'];
         $this->im->shift = $info['shift']['value'];
+        $this->im->updated_by = Auth::user()->id;
 	    $this->im->save();
 	    
 	    return $this->_customerId;
