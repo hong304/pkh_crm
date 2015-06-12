@@ -352,7 +352,7 @@ if($i['invoiceDiscount'] > 0){
         echo $this->image[$page]->encode('png');
         
     }
-    
+
     public function saveAll()
     {
         foreach($this->image as $page=>$i)
@@ -365,6 +365,8 @@ if($i['invoiceDiscount'] > 0){
             $filename = ($this->print ? 'print_' : 'preview/preview_') . $this->invoiceId . '-' . $numericpagenumber . ".png";
            // $fullpath = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
 
+
+
             $fullpath = public_path($filename);
 
             $filenames[$page]['filename'] = $filename;
@@ -372,8 +374,30 @@ if($i['invoiceDiscount'] > 0){
            // pd($fullpath);
             $i->save($fullpath);
             $i->destroy();
+
+
+                $im = imagecreatefrompng($fullpath);
+
+                list($dst_width, $dst_height) = getimagesize($fullpath);
+
+                $newImg = imagecreatetruecolor($dst_width, $dst_height);
+
+                imagealphablending($newImg, false);
+                imagesavealpha($newImg, true);
+                $transparent = imagecolorallocatealpha($newImg, 255, 255, 255, 127);
+                imagefilledrectangle($newImg, 0, 0, $dst_width, $dst_height, $transparent);
+                imagecopyresampled($newImg, $im, 0, 0, 0, 0, $dst_width, $dst_height, $dst_width, $dst_height);
+                imagepng($newImg, $filename,9);
+
+                //  return $newImg;
+
+
         }
-        
+
+
+
+
+
         return $filenames;
     }
 	

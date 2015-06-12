@@ -397,6 +397,7 @@ class InvoiceManipulation {
 
         // generate print version
         $files = $image->generate($invoice_id, true)->saveAll();
+
         $j = 0;
         $file = [];
 
@@ -413,6 +414,8 @@ class InvoiceManipulation {
         // pd($files);
 
     }
+
+
 
     public function generateInvoicePDF($invoice_id,$instructor)
     {
