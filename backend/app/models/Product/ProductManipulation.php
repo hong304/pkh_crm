@@ -18,7 +18,7 @@ class ProductManipulation {
             $pieces = explode("-",$groupid);
             $this->_departmentid = $pieces[0];
             $this->_groupid = $pieces[1];
-            $this->_productId = $productNewId;
+            $this->_productId = strtoupper($productNewId);
             $this->im = new Product();
             
         }
