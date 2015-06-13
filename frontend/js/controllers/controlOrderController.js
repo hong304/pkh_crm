@@ -306,6 +306,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 $scope.instatusmsg = '已新增訂單';
             }else if($stateParams.instatus=='1'){
                 $scope.instatusmsg = '訂單需要批核';
+            }else if($stateParams.instatus=='98'){
+                $scope.instatusmsg = '已新增退貨單';
             }
             Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
