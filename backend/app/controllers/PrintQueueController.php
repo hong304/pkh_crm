@@ -240,7 +240,7 @@ if(Input::get('group.id')!='')
                         ->orwhere('Invoice.invoiceStatus','97')
                         ->orwhere('Invoice.invoiceStatus','96')
                         ->orwhere('Invoice.invoiceStatus','98');
-                })->where('Invoice.deliveryDate',strtotime("00:00:00"))->where('customer_group_id',Input::get('group.id'))->lists('Invoice.invoiceId','job_id');
+                })->where('customer_group_id',Input::get('group.id'))->lists('Invoice.invoiceId','job_id');
 
         $this->group = true;
         $this->mergeImage($result);
