@@ -376,7 +376,7 @@ if($i['invoiceDiscount'] > 0){
             $i->destroy();
 
 
-                $im = imagecreatefrompng($fullpath);
+           /*     $im = imagecreatefrompng($fullpath);
 
                 list($dst_width, $dst_height) = getimagesize($fullpath);
 
@@ -387,7 +387,7 @@ if($i['invoiceDiscount'] > 0){
                 $transparent = imagecolorallocatealpha($newImg, 255, 255, 255, 127);
                 imagefilledrectangle($newImg, 0, 0, $dst_width, $dst_height, $transparent);
                 imagecopyresampled($newImg, $im, 0, 0, 0, 0, $dst_width, $dst_height, $dst_width, $dst_height);
-                imagepng($newImg, $filename,9);
+                imagepng($newImg, $filename,9);*/
 
                 //  return $newImg;
 
