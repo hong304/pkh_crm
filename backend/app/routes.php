@@ -133,6 +133,10 @@ Route::group(array('before' => 'auth'), function()
 
     //Data warehouse
     Route::get('invoice','DataWarehouseController@getInvoice');
+
+    Route::get('/getHoliday.json','DataWarehouseController@getInvoice');
+
+
 });
 
 Route::get('/', function(){

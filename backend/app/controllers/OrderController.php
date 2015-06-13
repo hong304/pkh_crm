@@ -3,6 +3,18 @@
 class OrderController extends BaseController
 {
 
+    public function jsonHoliday(){
+       $holidays =  holiday::where('year','2015')->first();
+
+            $h_array = explode(",", $holidays->date);
+        foreach($h_array as &$v){
+            $md = explode("-",$v);
+            $m = str_pad($md[0], 2, '0', STR_PAD_LEFT);
+            $d = str_pad($md[1], 2, '0', STR_PAD_LEFT);
+            $v = $m.'-'.$d;
+        }
+
+    }
     public function jsonNewOrder()
     {
         $itemIds = [];

@@ -17,7 +17,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
 	var today = new Date();	
 	var plus = today.getDay() == 6 ? 2 : 1; 
-	
+
+
 	var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
 	if(today.getHours() < 12)
 	{
@@ -27,6 +28,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	{
 		var nextDay = currentDate;
 	}
+
+    var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+
 	var day = nextDay.getDate();
 	var month = nextDay.getMonth() + 1;
 	var year = nextDay.getFullYear();
@@ -157,6 +161,15 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		Metronic.unblockUI();
 	});
 
+
+    $scope.getHoliday = function(){
+        var target = endpoint + '/getHoliday.json';
+
+        $http.get(target)
+            .success(function(res, status, headers, config){
+                $scope.holiday_list = res;
+            });
+    }
 
     $scope.getSameDayInvoice = function(){
         var target = endpoint + '/getClientSameDayOrder.json';
