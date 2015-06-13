@@ -15,27 +15,80 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         });
     });
 
-    var today = new Date();
-    var plus = today.getDay() == 6 ? 2 : 1;
 
+    $scope.order = {
+        deliveryDate: '',
+        dueDate:'',
+        status		:	'2',
+        referenceNumber	:	'',
+        zoneId		:	'',
+        defaultZoneId : '',
+        zoneName	:	'',
+        route		:	'',
+        defaultRoute : '',
+        address		:	'',
+        invoiceRemark : '',
+        clientId	:	'',
+        paymentTerms:	'',
+        discount	:	'0',
+        update		:	false,
+        invoiceId	:	'',
+        print : 1,
+        shift : ''
+    };
 
-    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-    if(today.getHours() < 12)
-    {
-        var nextDay = today;
-    }
-    else
-    {
-        var nextDay = currentDate;
-    }
+    var target = endpoint + '/getHoliday.json';
 
-    var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+    $http.get(target)
+        .success(function(res){
 
-    var day = nextDay.getDate();
-    var month = nextDay.getMonth() + 1;
-    var year = nextDay.getFullYear();
-    var j = 1;
-    var count = 3000;
+            var today = new Date();
+            var plus = today.getDay() == 6 ? 2 : 1;
+
+            var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+            if(today.getHours() > 11 || today.getDay() == 0)
+            {
+                var nextDay = currentDate;
+            }
+            else
+            {
+                var nextDay = today;
+            }
+            var flag = true;
+            var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+            do{
+                flag= true;
+                $.each( res, function( key, value ) {
+                    if(value == working_date){
+                        flag = false;
+                        var today = new Date(nextDay.getFullYear()+'-'+working_date);
+                        nextDay = new Date(today);
+                        nextDay.setDate(today.getDate()+1);
+
+                        if(nextDay.getDay() == 0)
+                            nextDay.setDate(today.getDate()+2);
+
+                        working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+                    }
+                });
+            }while(flag == false);
+
+            var day = ("0" + (nextDay.getDate())).slice(-2);
+            var month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
+            var year = nextDay.getFullYear();
+
+            $('.date-picker').datepicker({
+                rtl: Metronic.isRTL(),
+                orientation: "left",
+                autoclose: true
+            });
+
+            $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
+
+            $scope.order.deliveryDate = year + '-' + month + '-' + day;
+            $scope.order.dueDate = year + '-' + month + '-' + day;
+            $scope.order.invoiceDate = $scope.order.deliveryDate;
+        });
 
     $scope.$watch(function() {
         return $rootScope.systeminfo;
@@ -55,26 +108,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.editable_row = "";
     $scope.lastinvoice = [];
     $scope.lastitem = [];
-    $scope.order = {
-        deliveryDate:	year + '-' + month + '-' + day,
-        dueDate		:	year + '-' + month + '-' + day,
-        status		:	'2',
-        referenceNumber	:	'',
-        zoneId		:	'',
-        defaultZoneId : '',
-        zoneName	:	'',
-        route		:	'',
-        defaultRoute : '',
-        address		:	'',
-        invoiceRemark : '',
-        clientId	:	'',
-        paymentTerms:	'',
-        discount	:	'0',
-        update		:	false,
-        invoiceId	:	'',
-        print : 1,
-        shift : '',
-    };
+
     $scope.productStructure = {
         dbid		:	'',
         code		:	'',
@@ -97,7 +131,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         closePanel	:	'',
         completedRow:	'',
     }
-    $scope.order.invoiceDate = $scope.order.deliveryDate;
+
     $scope.submitButtonText = '提交 (F10)';
     $scope.submitButtonColor = 'blue';
     $scope.countdown = "1";
@@ -160,16 +194,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         Metronic.unblockUI();
     });
-
-
-    $scope.getHoliday = function(){
-        var target = endpoint + '/getHoliday.json';
-
-        $http.get(target)
-            .success(function(res, status, headers, config){
-                $scope.holiday_list = res;
-            });
-    }
 
     $scope.getSameDayInvoice = function(){
         var target = endpoint + '/getClientSameDayOrder.json';
@@ -310,13 +334,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             }, 1000);
         }
 
-        $('.date-picker').datepicker({
-            rtl: Metronic.isRTL(),
-            orientation: "left",
-            autoclose: true
-        });
-
-        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
 
 
         // if it has invoice id in the url, treat that as editing invoice
