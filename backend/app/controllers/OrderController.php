@@ -13,6 +13,7 @@ class OrderController extends BaseController
             $d = str_pad($md[1], 2, '0', STR_PAD_LEFT);
             $v = $m.'-'.$d;
         }
+        return Response::json($h_array);
 
     }
     public function jsonNewOrder()

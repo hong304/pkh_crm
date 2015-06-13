@@ -15,28 +15,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         });
     });
 
-	var today = new Date();	
-	var plus = today.getDay() == 6 ? 2 : 1; 
 
-
-	var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-	if(today.getHours() < 12)
-	{
-		var nextDay = today;
-	}
-	else
-	{
-		var nextDay = currentDate;
-	}
-
-    var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-
-	var day = nextDay.getDate();
-	var month = nextDay.getMonth() + 1;
-	var year = nextDay.getFullYear();
-	var j = 1;
-	var count = 3000;
-		
 	$scope.$watch(function() {
 	  return $rootScope.systeminfo;
 	}, function() {
@@ -56,8 +35,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	$scope.lastinvoice = [];
     $scope.lastitem = [];
 	$scope.order = {
-		deliveryDate:	year + '-' + month + '-' + day,
-		dueDate		:	year + '-' + month + '-' + day,
 		status		:	'2',
 		referenceNumber	:	'',
 		zoneId		:	'',
@@ -162,15 +139,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	});
 
 
-    $scope.getHoliday = function(){
-        var target = endpoint + '/getHoliday.json';
-
-        $http.get(target)
-            .success(function(res, status, headers, config){
-                $scope.holiday_list = res;
-            });
-    }
-
     $scope.getSameDayInvoice = function(){
         var target = endpoint + '/getClientSameDayOrder.json';
 
@@ -210,69 +178,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 		
 	});
 
-    $scope.relocate = function(){
-        if($scope.order.zoneId != $scope.order.defaultZoneId)
-            $scope.order.route = 0;
-        else
-            $scope.order.route = $scope.order.defaultRoute;
-    }
 
-	/*$scope.getClientLastInvoice = function(clientId)
-	{
-		var target = endpoint + '/getClientLastInvoice.json';
-    	
-    	$http.post(target, {customerId: clientId})
-    	.success(function(res, status, headers, config){     
-    		$scope.lastinvoice = res;
-                console.log(res);
-    	});
-	}*/
-
-    $scope.getLastItem = function(productId,clientId,i){
-
-            var target = endpoint + '/getLastItem.json';
-            $http.post(target, {productId: productId, customerId: clientId})
-                .success(function (res, status, headers, config) {
-                    $scope.lastitem = res;
-                    if(res.productQty > 0){
-                        $scope.product[i].unitprice = res.productPrice;
-                        var pos = $scope.product[i]['availableunit'].map(function(e) {
-                            return e.value;
-                        }).indexOf(res.productQtyUnit);
-                        $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
-                        $scope.checkPrice(i);
-                    }
-                });
-
-    }
-	
-	$scope.reCalculateTotalAmount = function() {
-		
-		$scope.totalAmount = 0;
-        var temp_number = 0;
-
-		$scope.product.forEach(function(item){
-			if(item.deleted == 0)
-			{
-				$scope.totalAmount += item.qty * item.unitprice * (100-item.itemdiscount)/100;
-			}
-		});
-		
-		$scope.totalAmount = $scope.totalAmount * (100-$scope.order.discount)/100;
-
-        temp_number = $scope.totalAmount;
-
-        $scope.totalAmount =temp_number.toFixed(1);
-
-
-	}
-	
-	$scope.itemlist.forEach(function(key){	
-		$scope.product[key] = $.extend(true, {}, $scope.productStructure);
-		$scope.timer.product[key] = $.extend(true, {}, $scope.timerProductStructure);
-	});
-		
-	
     $scope.$on('$viewContentLoaded', function() {   
         // initialize core components
         Metronic.initAjax();
@@ -309,15 +215,11 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 	        	//$('#selectclientmodel').modal({backdrop: 'static'});
 	        }, 1000);
     	}
-        
-        $('.date-picker').datepicker({
-            rtl: Metronic.isRTL(),
-            orientation: "left",
-            autoclose: true
-        });
-        
-        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
-        
+
+
+        $scope.getHoliday();
+
+
         
         // if it has invoice id in the url, treat that as editing invoice
         if($location.search().invoiceId)
@@ -451,7 +353,126 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         
     });
-    
+
+    $scope.getHoliday = function(){
+        var target = endpoint + '/getHoliday.json';
+
+        $http.get(target)
+            .success(function(res, status, headers, config){
+
+                var today = new Date();
+                var plus = today.getDay() == 6 ? 2 : 1;
+
+                var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+                if(today.getHours() > 11 || today.getDay() == 0)
+                {
+                    var nextDay = currentDate;
+                }
+                else
+                {
+                    var nextDay = today;
+                }
+                var flag = true;
+                var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+                do{
+                    flag= true;
+                  $.each( res, function( key, value ) {
+                        if(value == working_date){
+                            flag = false;
+                            var today = new Date(nextDay.getFullYear()+'-'+working_date);
+                                nextDay = new Date(today);
+                                nextDay.setDate(today.getDate()+1);
+
+                                   if(nextDay.getDay() == 0)
+                                       nextDay.setDate(today.getDate()+2);
+
+                                working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+                            }
+                    });
+                }while(flag == false);
+
+                var day = ("0" + (nextDay.getDate())).slice(-2);
+                var month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
+                var year = nextDay.getFullYear();
+
+                $('.date-picker').datepicker({
+                    rtl: Metronic.isRTL(),
+                    orientation: "left",
+                    autoclose: true
+                });
+
+                $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
+
+                $scope.order = {
+                    deliveryDate: year + '-' + month + '-' + day,
+                    dueDate: year + '-' + month + '-' + day
+                }
+            });
+    }
+
+    $scope.relocate = function(){
+        if($scope.order.zoneId != $scope.order.defaultZoneId)
+            $scope.order.route = 0;
+        else
+            $scope.order.route = $scope.order.defaultRoute;
+    }
+
+    /*$scope.getClientLastInvoice = function(clientId)
+     {
+     var target = endpoint + '/getClientLastInvoice.json';
+
+     $http.post(target, {customerId: clientId})
+     .success(function(res, status, headers, config){
+     $scope.lastinvoice = res;
+     console.log(res);
+     });
+     }*/
+
+    $scope.getLastItem = function(productId,clientId,i){
+
+        var target = endpoint + '/getLastItem.json';
+        $http.post(target, {productId: productId, customerId: clientId})
+            .success(function (res, status, headers, config) {
+                $scope.lastitem = res;
+                if(res.productQty > 0){
+                    $scope.product[i].unitprice = res.productPrice;
+                    var pos = $scope.product[i]['availableunit'].map(function(e) {
+                        return e.value;
+                    }).indexOf(res.productQtyUnit);
+                    $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
+                    $scope.checkPrice(i);
+                }
+            });
+
+    }
+
+    $scope.reCalculateTotalAmount = function() {
+
+        $scope.totalAmount = 0;
+        var temp_number = 0;
+
+        $scope.product.forEach(function(item){
+            if(item.deleted == 0)
+            {
+                $scope.totalAmount += item.qty * item.unitprice * (100-item.itemdiscount)/100;
+            }
+        });
+
+        $scope.totalAmount = $scope.totalAmount * (100-$scope.order.discount)/100;
+
+        temp_number = $scope.totalAmount;
+
+        $scope.totalAmount =temp_number.toFixed(1);
+
+
+    }
+
+    $scope.itemlist.forEach(function(key){
+        $scope.product[key] = $.extend(true, {}, $scope.productStructure);
+        $scope.timer.product[key] = $.extend(true, {}, $scope.timerProductStructure);
+    });
+
+
     $scope.loadProduct = function(customerId, defaultProduct)
     {       
         $http.post(endpoint + '/getAllProduct.json', {
