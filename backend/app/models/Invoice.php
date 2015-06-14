@@ -216,11 +216,9 @@ class Invoice extends Eloquent  {
             $model->dueDateDate = date("Y-m-d", $model->dueDate);
 	        // full created_at
             if($model->created_at > 10000)
-                $model->createdat_full = date("Y-m-d H:i:s", $model->created_at);
+                $model->createdat_full = date("Y-m-d h:i:s A", $model->created_at);
             else
-	            $model->createdat_full = date("Y-m-d H:i:s", strtotime($model->created_at));
-
-
+	            $model->createdat_full = date("Y-m-d h:i:s A", strtotime($model->created_at));
 
 	        // status text
 	        $model->invoiceStatusText = Config::get('invoiceStatus.' . $model->invoiceStatus . '.descriptionChinese');
