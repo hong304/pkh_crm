@@ -866,7 +866,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
                     if(res.result == true)
                     {
-                        $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
+                       // $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
 
                         if(res.action == 'update'){
                             $state.go("queryInvoice", {}, {reload: true});

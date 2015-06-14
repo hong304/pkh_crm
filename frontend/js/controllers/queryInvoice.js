@@ -11,12 +11,13 @@ function viewInvoice(invoiceId)
 }
 
 app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
-	
+
+    $scope.systeminfo = $rootScope.systeminfo;
 	var fetchDataDelay = 500;   // milliseconds
     var fetchDataTimer;
     var querytarget = endpoint + '/queryInvoice.json';
     var reprint = endpoint + '/rePrint.json';
-	
+
 	$scope.firstload = true;
     $scope.filterData = {
         'displayName'	:	'',
@@ -26,63 +27,54 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         'created_by'	:	'0',
         'invoiceNumber' :	''
     };
-    var target = endpoint + '/getHoliday.json';
     var yday;
     var year;
     var month;
     var day;
 
-    $http.get(target)
-        .success(function(res){
 
-            var today = new Date();
-            var plus = today.getDay() == 6 ? 2 : 1;
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 2 : 1;
 
-            var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-            if(today.getHours() > 11 || today.getDay() == 0)
-            {
-                var nextDay = currentDate;
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    if(today.getHours() > 11 || today.getDay() == 0)
+    {
+        var nextDay = currentDate;
+    }
+    else
+    {
+        var nextDay = today;
+    }
+    var flag = true;
+    var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+    do{
+        flag= true;
+        $.each($scope.systeminfo.holiday, function( key, value ) {
+            if(value == working_date){
+                flag = false;
+                var today = new Date(nextDay.getFullYear()+'-'+working_date);
+                nextDay = new Date(today);
+                nextDay.setDate(today.getDate()+1);
+
+                if(nextDay.getDay() == 0)
+                    nextDay.setDate(today.getDate()+2);
+
+                working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
             }
-            else
-            {
-                var nextDay = today;
-            }
-            var flag = true;
-            var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-            do{
-                flag= true;
-                $.each( res, function( key, value ) {
-                    if(value == working_date){
-                        flag = false;
-                        var today = new Date(nextDay.getFullYear()+'-'+working_date);
-                        nextDay = new Date(today);
-                        nextDay.setDate(today.getDate()+1);
-
-                        if(nextDay.getDay() == 0)
-                            nextDay.setDate(today.getDate()+2);
-
-                        working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-                    }
-                });
-            }while(flag == false);
-
-            day = ("0" + (nextDay.getDate())).slice(-2);
-            month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
-            year = nextDay.getFullYear();
-
-
-            if(today.getDay() == 0)
-                yday  = ("0" + (nextDay.getDate()-2)).slice(-2);
-            else
-                yday  = ("0" + (nextDay.getDate()-1)).slice(-2);
-
-                $scope.setDate();
-
         });
+    }while(flag == false);
+
+    day = ("0" + (nextDay.getDate())).slice(-2);
+    month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
+    year = nextDay.getFullYear();
 
 
-$scope.setDate = function(){
-     $("#deliverydate").datepicker({
+    if(today.getDay() == 0)
+        yday  = ("0" + (nextDay.getDate()-2)).slice(-2);
+    else
+        yday  = ("0" + (nextDay.getDate()-1)).slice(-2);
+
+    $("#deliverydate").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
@@ -96,14 +88,11 @@ $scope.setDate = function(){
     });
     $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
 
-
     $scope.filterData.deliverydate = year+'-'+month+'-'+yday;
     $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
-};
-	
+
     $scope.$on('$viewContentLoaded', function() {
-        Metronic.initAjax();        
-        $scope.systeminfo = $rootScope.systeminfo;
+        Metronic.initAjax();
     });
 
     $scope.clearCustomerSearch = function()
@@ -120,12 +109,12 @@ $scope.setDate = function(){
         };
     	$scope.updateDataSet();
     }
-    
+
     $scope.checkParm = function()
     {
     	if($location.search().scope)
         {
-    		
+
         	var scope = $location.search().scope;
         	if(scope == "pendingOrder")
         	{
@@ -140,12 +129,12 @@ $scope.setDate = function(){
         		$scope.filterData.zone = '';
         	}
         }
-    	
+
     	if($location.search().zone)
 	    {
-    		
-	    	var pos = $scope.systeminfo.availableZone.map(function(e) { 
-				return e.zoneId; 
+
+	    	var pos = $scope.systeminfo.availableZone.map(function(e) {
+				return e.zoneId;
 			  }).indexOf(parseInt($location.search().zone));
 
 	    	$scope.filterData.zone = $scope.systeminfo.availableZone[pos];
@@ -153,28 +142,28 @@ $scope.setDate = function(){
 	    	//console.log("LOG ZONE" + $scope.filterData.zone);
 	    }
     }
-    
+
     $scope.$watch(function() {
     	return $rootScope.systeminfo;
   	}, function() {
   		$scope.systeminfo = $rootScope.systeminfo;
   		$scope.checkParm();
   		$scope.updateDataSet();
-  		
-  		
+
+
   	}, true);
-    
+
     $rootScope.$on('$locationChangeSuccess', function(){
     	$scope.checkParm();
     	$scope.updateDataSet();
-    	
+
 	});
     /*
     $interval(function(){
     	$scope.updateDataSet();
     }, 60000)
     */
-    
+
     /*
     $scope.$watch(function() {
     	return $scope.filterData;
@@ -182,20 +171,20 @@ $scope.setDate = function(){
 		$scope.updateDataSet();
 	}, true);
     */
-    
+
     $scope.$on('handleCustomerUpdate', function(){
-    	
+
 		$scope.filterData.clientId = SharedService.clientId;
-		$scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")"; 
+		$scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
 		$scope.updateDataSet();
 	});
-    
-    
+
+
     $scope.updateZone = function()
     {
     	$scope.updateDataSet();
     }
-    
+
     $scope.updateDelvieryDate = function()
     {
     	$scope.updateDataSet();
@@ -210,7 +199,7 @@ $scope.setDate = function(){
     {
     	$scope.updateDataSet();
     }
-    
+
     $scope.updateInvoiceNumber = function()
     {
     	$timeout.cancel(fetchDataTimer);
@@ -218,19 +207,19 @@ $scope.setDate = function(){
     		$scope.updateDataSet();
     	}, fetchDataDelay);
     }
-    
-    
+
+
  // --------------------- for approval modal
     $scope.toggle = function(index)
     {
     	jQuery("#cost_" + index).toggle();
     	jQuery("#controlcost_" + index).css('display', 'none');
     }
-    
+
     $scope.manipulate = function(action, invoiceId)
     {
     	var approvalJson = $scope.endpoint + "/manipulateInvoiceStatus.json";
-    	
+
     	$http.post(approvalJson, {
     		action: "approval",
     		status:	action,
@@ -239,15 +228,15 @@ $scope.setDate = function(){
     		$("#invoiceNumber_" + invoiceId).remove();
     		$scope.updateDataSet();
         });
-    	
+
     	$("#productDetails").modal('toggle');
     }
-    
+
     $scope.goEdit = function(invoiceId)
     {
     	$location.url("/editOrder?invoiceId=" + invoiceId);
     }
-    
+
     $scope.voidInvoice = function(invoiceId)
     {
     	bootbox.dialog({
@@ -258,7 +247,7 @@ $scope.setDate = function(){
                     label: "取消",
                     className: "green",
                     callback: function() {
-                      
+
                     }
                   },
                 danger: {
@@ -270,26 +259,26 @@ $scope.setDate = function(){
 	                	}).success(function(data) {
 	                		$scope.updateDataSet();
 	                	});
-	                	
+
 	                	$("#productDetails").modal('hide');
 	                }
               }
             }
-        });   	
+        });
     }
-    
+
     $scope.instantPrint = function(jobid)
     {
     	$http.get($scope.endpoint + "/instantPrint.json?jobId=" + jobid).success(function(data){
     		alert('已改為即時列印');
     	});
     }
-    
+
     $scope.viewInvoice = function(invoiceId)
     {
     	Metronic.blockUI();
     	$http.post(querytarget, {mode: "single", invoiceId: invoiceId})
-    	.success(function(res, status, headers, config){    
+    	.success(function(res, status, headers, config){
     		$scope.nowUnixTime = Math.round(+new Date()/1000);
 
                 console.log(res);
@@ -299,38 +288,38 @@ $scope.setDate = function(){
 
     		Metronic.unblockUI();
     		$("#productDetails").modal({backdrop: 'static'});
-    		
+
     	});
-    	
-    	
+
+
     }
-    
+
     // -- unload invoice modal
     $scope.unloadInvoice = function(invoiceId)
     {
     	Metronic.blockUI();
     	$http.post(querytarget, {mode: "single", invoiceId: invoiceId})
-    	.success(function(res, status, headers, config){    
+    	.success(function(res, status, headers, config){
     		$scope.unloadinvoice = {
     			action	:	"",
     		};
     		Metronic.unblockUI();
     		$("#unloadInvoice").modal({backdrop: 'static'});
-    		
+
     	});
     }
     // -- submit unload invoice modal
     $scope.SubmitUnloadInvoice = function(invoiceId)
     {
     	$http.post(endpoint + "/unloadInvoice.json", {detail: $scope.unloadinvoice, invoiceId: invoiceId})
-    	.success(function(res, status, headers, config){    
+    	.success(function(res, status, headers, config){
     		alert('已更改資料');
     		$scope.viewInvoice(invoiceId);
     		$("#unloadInvoice").modal('hide');
-    		
+
     	});
     }
-    
+
     // -- track the action in unload invoice modal
     $scope.unloadinvoice_trackaction = function()
     {
@@ -349,8 +338,8 @@ $scope.setDate = function(){
 	        });
     	}
     }
-    
-    
+
+
     $scope.rePrintInvoice = function(invoiceId)
     {
     	//alert('已排序到列印隊伍上');
@@ -361,17 +350,17 @@ $scope.setDate = function(){
         });
     }
 
-    
+
     $scope.updateDataSet = function()
     {
     	Metronic.blockUI();
     	var grid = new Datatable();
-    	
-    	
+
+
     	//var info = grid.page.info();
     	if(!$scope.firstload)
 		{
-    		$("#datatable_ajax").dataTable().fnDestroy(); 
+    		$("#datatable_ajax").dataTable().fnDestroy();
 		}
     	else
 		{
@@ -390,7 +379,7 @@ $scope.setDate = function(){
             loadingMessage: 'Loading...',
             dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options 
 
-                
+
                 "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
 
                 "lengthMenu": [
@@ -432,9 +421,9 @@ $scope.setDate = function(){
                     { "data": "updated_at" },
                     { "data": "link" }
 
-                            
-                ],           
-                
+
+                ],
+
                 "order": [
                     [1, "asc"]
                 ] // set first column as a default sort by asc
@@ -442,10 +431,10 @@ $scope.setDate = function(){
         });
 
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 });

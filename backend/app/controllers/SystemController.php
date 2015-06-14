@@ -64,6 +64,16 @@ class SystemController extends BaseController {
         }
 
 
+        $holidays =  holiday::where('year',date("Y"))->first();
+
+        $h_array = explode(",", $holidays->date);
+        foreach($h_array as &$v){
+            $md = explode("-",$v);
+            $m = str_pad($md[0], 2, '0', STR_PAD_LEFT);
+            $d = str_pad($md[1], 2, '0', STR_PAD_LEFT);
+            $v = $m.'-'.$d;
+        }
+
         
         $systeminfo = [
           'status' => 'on',
@@ -76,7 +86,8 @@ class SystemController extends BaseController {
           'currentzone' => $currentzone,
           'productgroup' => $productgroup,
             'customerGroup' => $c,
-          'invoiceStatus' => Config::get('invoiceStatus'),
+            'holiday' => $h_array,
+          //'invoiceStatus' => Config::get('invoiceStatus'),
          ];
 
         return Response::json($systeminfo);
