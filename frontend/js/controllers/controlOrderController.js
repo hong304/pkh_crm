@@ -448,9 +448,11 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     }
 
                     Metronic.unblockUI();
+                    $('#productCode_1').focus();
                 });
 
             $scope.loadProduct($location.search().clientId);
+
         }
         else
         {

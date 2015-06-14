@@ -28,7 +28,7 @@ class HomeController extends BaseController {
         */
        // $clients = Customer::where('deliveryZone', Session::get('zone'))->with('Zone')->limit(15)->get();
 
-        $clients = Invoice::select(DB::raw('COUNT(*) as count'),'customerName_chi','phone_1','today','tomorrow')->leftjoin('Customer','Customer.customerId', '=', 'Invoice.customerId')->where('deliveryZone', Session::get('zone'))->groupBy('Invoice.customerId')->orderBy('count','desc')->limit(15)->get();
+        $clients = Invoice::select(DB::raw('COUNT(*) as count'),'customerName_chi','phone_1','today','tomorrow','Invoice.customerId')->leftjoin('Customer','Customer.customerId', '=', 'Invoice.customerId')->where('deliveryZone', Session::get('zone'))->groupBy('Invoice.customerId')->orderBy('count','desc')->limit(15)->get();
 
         $zoneDetail = UserZone::select('zoneId')->where('userId', Auth::user()->id)->with('zoneDetail')->get();
         $current_zone = Zone::where('zoneId',Session::get('zone'))->first();
