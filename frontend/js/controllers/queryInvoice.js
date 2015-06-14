@@ -18,53 +18,92 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var reprint = endpoint + '/rePrint.json';
 	
 	$scope.firstload = true;
+    $scope.filterData = {
+        'displayName'	:	'',
+        'clientId'		:	'0',
+        'status'		:	'0',
+        'zone'			:	'',
+        'created_by'	:	'0',
+        'invoiceNumber' :	''
+    };
+    var target = endpoint + '/getHoliday.json';
+    var yday;
+    var year;
+    var month;
+    var day;
 
-    var today = new Date();
-    var plus = today.getDay() == 6 ? 2 : 1;
+    $http.get(target)
+        .success(function(res){
 
-    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-    if(today.getHours() < 12)
-    {
-        var nextDay = today;
-    }
-    else
-    {
-        var nextDay = currentDate;
-    }
-    var day = nextDay.getDate();
-    var month = nextDay.getMonth() + 1;
-    var year = nextDay.getFullYear();
+            var today = new Date();
+            var plus = today.getDay() == 6 ? 2 : 1;
 
-    var yday = nextDay.getDate()-1;
-	$scope.filterData = {
-		'displayName'	:	'',
-		'clientId'		:	'0',
-		'status'		:	'0',
-		'zone'			:	'',
-        deliverydate : year+'-'+month+'-'+yday,
-        deliverydate2 : year+'-'+month+'-'+day,
-		'created_by'	:	'0',
-		'invoiceNumber' :	''
-	};
+            var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+            if(today.getHours() > 11 || today.getDay() == 0)
+            {
+                var nextDay = currentDate;
+            }
+            else
+            {
+                var nextDay = today;
+            }
+            var flag = true;
+            var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+            do{
+                flag= true;
+                $.each( res, function( key, value ) {
+                    if(value == working_date){
+                        flag = false;
+                        var today = new Date(nextDay.getFullYear()+'-'+working_date);
+                        nextDay = new Date(today);
+                        nextDay.setDate(today.getDate()+1);
+
+                        if(nextDay.getDay() == 0)
+                            nextDay.setDate(today.getDate()+2);
+
+                        working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+                    }
+                });
+            }while(flag == false);
+
+            day = ("0" + (nextDay.getDate())).slice(-2);
+            month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
+            year = nextDay.getFullYear();
+
+
+            if(today.getDay() == 0)
+                yday  = ("0" + (nextDay.getDate()-2)).slice(-2);
+            else
+                yday  = ("0" + (nextDay.getDate()-1)).slice(-2);
+
+                $scope.setDate();
+
+        });
+
+
+$scope.setDate = function(){
+     $("#deliverydate").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + yday);
+
+    $("#deliverydate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
+
+    $scope.filterData.deliverydate = year+'-'+month+'-'+yday;
+    $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
+};
 	
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();        
         $scope.systeminfo = $rootScope.systeminfo;
-
-        $("#deliverydate").datepicker({
-            rtl: Metronic.isRTL(),
-            orientation: "left",
-            autoclose: true
-        });
-        $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + yday);
-
-        $("#deliverydate2").datepicker({
-            rtl: Metronic.isRTL(),
-            orientation: "left",
-            autoclose: true
-        });
-        $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
-
     });
 
     $scope.clearCustomerSearch = function()
