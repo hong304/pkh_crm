@@ -414,7 +414,9 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                     { "data": "zoneId" },
                     { "data": "client.customerName_chi" },
                     { "data": "amount" },
+                    { "data": "version" },
                     { "data": "invoiceStatusText" },
+
                     { "data": "shiftText" },
                     { "data": "laststaff.name" },
                     { "data": "createdat_full" },
