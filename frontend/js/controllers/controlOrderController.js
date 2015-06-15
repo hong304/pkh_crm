@@ -813,9 +813,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         if($scope.order.status == '98')
             $scope.order.invoiceRemark = '退貨單'
-        if($scope.order.status == '97')
-            $scope.order.invoiceRemark = '退款單';
-
+        if($scope.order.status == '96')
+            $scope.order.invoiceRemark = '補貨單';
+        if($scope.order.status == '2')
+            $scope.order.invoiceRemark = ''
     }
 
     $scope.submitOrder = function(v)
