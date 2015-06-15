@@ -86,12 +86,13 @@ class VanSellController extends BaseController
 
             $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define',false)->get();
             $inv = [];
+
             foreach (Input::get('data') as $v) {
-                $inv[$v['productId']] = $v['value'];
+                $inv[$v['productId'].$v['unit']] = $v['value'];
             }
 
             foreach ($vansells as $v) {
-                $v->qty = $inv[$v->productId];
+                $v->qty = $inv[$v->productId.$v->unit];
                 $v->save();
             }
 
@@ -355,6 +356,7 @@ class VanSellController extends BaseController
 
 
       //
+        $k =[];
         $new_array = $this->_pdf;
         foreach ($this->_pdf as $i => $f) {
                 $d = substr(current($this->_pdf)['productId'], 0, 1);
@@ -365,13 +367,13 @@ class VanSellController extends BaseController
                     }
         }
 // array_splice($new_array, $i+1, 0, ['qty'=>999] );
-
-$q = 1;
-        foreach($k as $z){
-            array_splice($new_array, $z+$q, 0, [['qty'=>'line']] );
-            $q++;
+        if(count($k)>0){
+                $q = 1;
+                foreach($k as $z){
+                    array_splice($new_array, $z+$q, 0, [['qty'=>'line']] );
+                    $q++;
+                }
         }
-
       //  pd($new_array);
 
         $firstF = array_chunk($new_array, 26, true);

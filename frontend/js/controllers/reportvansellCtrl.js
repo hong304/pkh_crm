@@ -129,6 +129,7 @@ $scope.selfdefine = [];
                     $scope.qty[i] = $.extend(true, {}, $scope.invoiceStructure);
                     $scope.qty[i]['productId'] = item.productId;
                     $scope.qty[i]['value'] = item.qty;
+                    $scope.qty[i]['unit'] = item.unit;
                    i++;
                });
 
