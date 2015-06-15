@@ -25,7 +25,7 @@ return array(
 	|
 	*/
 
-	'debug' => false,
+	'debug' => true,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -120,7 +120,8 @@ return array(
 	    'Toddish\Verify\VerifyServiceProvider',
 	    'Intervention\Image\ImageServiceProvider',
 	    'Anouar\Fpdf\FpdfServiceProvider',
-	    'Shpasser\GaeSupport\GaeSupportServiceProvider'
+	    'Shpasser\GaeSupport\GaeSupportServiceProvider',
+        'yajra\Datatables\DatatablesServiceProvider'
 	),
 
 	/*
@@ -189,6 +190,7 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 	    'Image'           => 'Intervention\Image\Facades\Image',
 	    'Fpdf'            => 'Anouar\Fpdf\Fpdf',
+        'Datatables' => 'yajra\Datatables\Datatables',
 
 	),
 

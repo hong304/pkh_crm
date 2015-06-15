@@ -2177,4 +2177,7 @@ return array(
     'pickingListVersionControl' => $baseDir . '/app/models/pickingListVersionControl.php',
     'role' => $baseDir . '/app/models/role.php',
     'vansell' => $baseDir . '/app/models/vansell.php',
+    'yajra\\Datatables\\Datatables' => $vendorDir . '/yajra/laravel-datatables-oracle/src/yajra/Datatables/Datatables.php',
+    'yajra\\Datatables\\DatatablesServiceProvider' => $vendorDir . '/yajra/laravel-datatables-oracle/src/yajra/Datatables/DatatablesServiceProvider.php',
+    'yajra\\Datatables\\Facades\\Datatables' => $vendorDir . '/yajra/laravel-datatables-oracle/src/yajra/Datatables/Facade/Datatables.php',
 );
