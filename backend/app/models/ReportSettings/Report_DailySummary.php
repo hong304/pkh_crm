@@ -138,13 +138,13 @@ class Report_DailySummary
 
 
                             if ($invoiceQ->invoiceStatus == '96') {
-                                $this->goods[$productId . '(補換貨)'][$unit] = [
-                                    'productId' => $productId . '(補換貨)',
+                                $this->goods[$productId . '(補貨)'][$unit] = [
+                                    'productId' => $productId . '(補貨)',
                                     'name' => $productDetail->productName_chi,
                                     'productPrice' => $item->productPrice,
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods[$productId . '(補換貨)'][$unit]) ? $this->goods[$productId . '(補換貨)'][$unit]['counts'] : 0) + $item->productQty,
+                                    'counts' => (isset($this->goods[$productId . '(補貨)'][$unit]) ? $this->goods[$productId . '(補貨)'][$unit]['counts'] : 0) + $item->productQty,
                                 ];
                             }else if ($item->productPrice == 0) {
                                 $this->goods[$productId . '(零元)'][$unit] = [
