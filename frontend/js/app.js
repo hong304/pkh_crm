@@ -178,6 +178,7 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
     		// --------------------- handle pending approval order
     		$scope.notification = data;
 
+
             if(data.logintime != parseInt(data.db_logintime)){
                 alert('你已被登出')
                 window.location.href = $scope.endpoint + '/logout?mode=manual';

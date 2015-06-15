@@ -113,8 +113,6 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 	    	{
 	    		$scope.clientHeader = "搜尋結果";
 	    	}
-	    	//canceler.resolve();
-            console.log($scope.keyword);
 
 	    	$http(
 	    			{
