@@ -357,7 +357,7 @@ class InvoiceManipulation {
     	        }
     	        else
     	       */
-    	       if($i['deleted'] == '0')
+    	       if($i['deleted'] == '0' && $i['productQty'] != 0)
     	        {
     	            $item->save();
     	        }
