@@ -119,6 +119,8 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     $scope.editCustomer = function(customerId)
     {
     	$scope.submitbtn = true;
+        $(".phone").inputmask("99999999");
+
     	$http.post(querytarget, {mode: "single", customerId: customerId})
     	.success(function(res, status, headers, config){    
     		$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
@@ -208,7 +210,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	$scope.customerInfo.status = $scope.statuscat[0];
         $scope.customerInfo.shift =     $scope.statuscat1[0];
 
-
+        $(".phone").inputmask("99999999");
     	$("#customerFormModal").modal({backdrop: 'static'});
     	
     }
@@ -232,8 +234,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     }
     $scope.submitCustomerForm = function()
     {
-console.log($scope.customerInfo);
-console.log(jQuery.trim($scope.customerInfo.routePlanningPriority).length);
+
         if(!$scope.submit)
             alert('客户編號不能用');
         else if($scope.customerInfo.address_chi == ""  || (!$scope.customerInfo.customerId && !$scope.customerInfo.productnewId) || $scope.customerInfo.customerName_chi == "" || $scope.customerInfo.deliveryZone.zoneName == ""

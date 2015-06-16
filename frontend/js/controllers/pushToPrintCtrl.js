@@ -38,19 +38,20 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
         $http({
             method: 'POST',
             url: checkstatus,
-            data: {mode:'today',zone:$scope.zone,shift:$scope.shift,group:$scope.group}
+            data: {zone:$scope.zone,shift:$scope.shift,group:$scope.group}
         }).success(function (res) {
-            console.log(res);
 
             if(res.countInDataMart>0) {
 
-                var  reject = res['3'].countInDataMart;
+                var reject = res['3'].countInDataMart;
 
                 var pending = res['1'].countInDataMart;
 
+                var version = res['0'].countInDataMart;
+
                 bootbox.dialog({
-                    message: reject+"張單被拒絕,處理完才可列印<br>"+pending+"張單等待批刻,處理完才可列印",
-                    title: "Error!!!",
+                    message: reject+"張單被拒絕,處理完才可列印<br>"+pending+"張單等待批刻,處理完才可列印<br>"+version+"張單還沒產生備貨單,處理完才可列印",
+                    title: "警告!!!",
                     buttons: {
                         success: {
                             label: "取消",

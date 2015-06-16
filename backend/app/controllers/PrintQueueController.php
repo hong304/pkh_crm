@@ -296,36 +296,35 @@ if(Input::get('group.id')!='')
 
     public function getInvoiceStatusMatchPrint(){
 
-        $mode = Input::get('mode');
-
         $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
             ->wherein('invoiceStatus', ['1', '3'])
             ->where('shift',$this->shift)
             ->wherein('zoneId', explode(',', $this->zone))
-            ->groupBy('invoiceStatus', 'zoneId');
-
-            if($mode == 'today')
-                $invoices = $invoices->where('deliveryDate',strtotime('00:00:00'));
-
-        $invoices = $invoices->with('zone')->get();
+            ->groupBy('invoiceStatus', 'zoneId')->where('deliveryDate',strtotime('00:00:00'))->get();
 
         $summary['countInDataMart'] = 0;
 
         foreach($invoices as $invoice)
         {
-            $summary[$invoice->invoiceStatus]['breakdown'][$invoice->zoneId] = [
-                'zoneId' => $invoice->zoneId,
-                'counts' => $invoice->counts,
-                'zoneText' => $invoice->zone->zoneName,
-            ];
             $summary[$invoice->invoiceStatus]['countInDataMart'] = (isset($summary[$invoice->invoiceStatus]['countInDataMart']) ? $summary[$invoice->invoiceStatus]['countInDataMart'] : 0) + $invoice->counts;
-
             $summary['countInDataMart'] += $invoice->counts;
         }
 
         if(!isset($summary[1]['countInDataMart']))$summary[1]['countInDataMart'] = 0;
         if(!isset($summary[3]['countInDataMart']))$summary[3]['countInDataMart'] = 0;
 
+        $invoices = Invoice::select(DB::raw('version,count(invoiceId) AS counts'))
+            ->where('version', false)
+            ->where('invoiceStatus','!=',98)
+            ->where('shift',$this->shift)
+            ->wherein('zoneId', explode(',', $this->zone))
+            ->where('deliveryDate',strtotime('00:00:00'))->get();
+        foreach($invoices as $invoice)
+        {
+            $summary[$invoice->version]['countInDataMart'] = (isset($summary[$invoice->version]['countInDataMart']) ? $summary[$invoice->version]['countInDataMart'] : 0) + $invoice->counts;
+            $summary['countInDataMart'] += $invoice->counts;
+        }
+        if(!isset($summary[0]['countInDataMart']))$summary[0]['countInDataMart'] = 0;
 
         return Response::json($summary);
     }
