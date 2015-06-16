@@ -164,13 +164,15 @@ Route::get('/setZone', function(){
 Route::any('/credential/auth', 'UserController@authenticationProcess');
 
 Route::get('/cron/resetOrderTrace', function(){
-    Customer::update(['today'=>'','tomorrow'=>'']);
+    DB::table('Customer')->update(['today'=>'','tomorrow'=>'']);
 
-    $invoices = Invoie::where('deliveryDate',strtotime('00:00:00'))->lists('customerId');
-    customer::update(['today'=>1])->wherein($invoices);
+    $invoices = Invoice::where('deliveryDate',strtotime('00:00:00'))->lists('customerId');
+    if(count($invoices)>0)
+    DB::table('Customer')->wherein($invoices)->update(['today'=>1]);
 
-    $invoices = Invoie::where('deliveryDate',strtotime('tomorrow'))->lists('customerId');
-    customer::update(['tomorrow'=>1])->wherein($invoices);
+    $invoices = Invoice::where('deliveryDate',strtotime('tomorrow'))->lists('customerId');
+    if(count($invoices)>0)
+    DB::table('Customer')->wherein($invoices)->update(['tomorrow'=>1]);
 
 });
 
