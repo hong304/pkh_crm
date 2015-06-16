@@ -10,7 +10,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 $scope.submitOrder(1);
             }
             if (e.keyCode == 117) {
-                $scope.submitOrder(0);
+                $scope.preSubmitOrder();
             }
         });
     });
@@ -819,6 +819,53 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             $scope.order.invoiceRemark = ''
     }
 
+
+    $scope.preSubmitOrder = function(){
+
+     //   var currentDate = new Date(new Date().getTime());
+    //    var day = currentDate.getDate();
+
+        var currentDate = new Date(new Date().getTime());
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth()+1;
+        var year = currentDate.getFullYear();
+
+        var dates = ""+year+month+day;
+
+        var orderDate = new Date($scope.order.deliveryDate);
+        var day = orderDate.getDate();
+        var month = orderDate.getMonth()+1;
+        var year = orderDate.getFullYear();
+
+        var order_dates = ""+year+month+day;
+
+        var bool = (Number(order_dates) >= Number(dates));
+
+if(bool)
+        bootbox.dialog({
+            message: "此訂單將不會被列印",
+            title: "提交訂單",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+
+                    }
+                },
+                danger: {
+                    label: "確定",
+                    className: "red",
+                    callback: function() {
+                        $scope.submitOrder(0);
+                    }
+                }
+            }
+        });
+        else
+            $scope.submitOrder(0);
+
+    }
     $scope.submitOrder = function(v)
     {
         var generalError = false;

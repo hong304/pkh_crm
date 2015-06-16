@@ -299,7 +299,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         assets + '/dependencies/jquery.cookie.min.js',
                         assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
                         assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
-                        
+                        assets + '/global/plugins/bootbox/bootbox.min.js',
+
                         'js/controllers/controlOrderController.js',
                         'js/controllers/selectClientCtrl.js',
                         'js/controllers/selectProductCtrl.js',
