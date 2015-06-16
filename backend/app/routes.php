@@ -163,6 +163,18 @@ Route::get('/setZone', function(){
 
 Route::any('/credential/auth', 'UserController@authenticationProcess');
 
+Route::get('/cron/resetOrderTrace', function(){
+    Customer::update(['today'=>'','tomorrow'=>'']);
+
+    $invoices = Invoie::where('deliveryDate',strtotime('00:00:00'))->lists('customerId');
+    customer::update(['today'=>1])->wherein($invoices);
+
+    $invoices = Invoie::where('deliveryDate',strtotime('tomorrow'))->lists('customerId');
+    customer::update(['tomorrow'=>1])->wherein($invoices);
+
+});
+
+
 // Batch Working
 //Route::get('/batch/pscmc-0000-daily.bat', 'BatchController@productSearchandCustomerMapClearance');
 //Route::get('/batch/bistp-5min.bat', 'BatchController@batchSendInvoiceToPrinter');

@@ -289,7 +289,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
                     "url": querytarget, // ajax source
                     "type": 'POST',
                     "data": {filterData: $scope.filterData,mode: "collection"},
-            		"xhrFields": {withCredentials: true},
+            		"xhrFields": {withCredentials: true}
                 },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
