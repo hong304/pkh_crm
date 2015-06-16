@@ -299,6 +299,7 @@ class InvoiceManipulation {
     	    
     	    // save the client
     	    $client = Customer::where('customerId', $this->im->customerId)->first();
+            $client->timestamps = false;
 	        if($this->im->deliveryDate > strtotime("today 23:59"))
     	    {
     	        $client->tomorrow = '1';
