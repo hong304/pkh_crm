@@ -168,11 +168,11 @@ Route::get('/cron/resetOrderTrace', function(){
 
     $invoices = Invoice::where('deliveryDate',strtotime('00:00:00'))->lists('customerId');
     if(count($invoices)>0)
-    DB::table('Customer')->wherein($invoices)->update(['today'=>1]);
+    DB::table('Customer')->wherein('customerId',$invoices)->update(['today'=>1]);
 
-    $invoices = Invoice::where('deliveryDate',strtotime('tomorrow'))->lists('customerId');
-    if(count($invoices)>0)
-    DB::table('Customer')->wherein($invoices)->update(['tomorrow'=>1]);
+    $invoices_tomorrow = Invoice::where('deliveryDate',strtotime('tomorrow'))->lists('customerId');
+    if(count($invoices_tomorrow)>0)
+    DB::table('Customer')->wherein('customerId',$invoices_tomorrow)->update(['tomorrow'=>1]);
 
 });
 
