@@ -396,7 +396,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                             autoclose: true
                         });
                     }
-                    
+
                     if(inf.invoiceStatus == 99)
                     {
                         $scope.allowSubmission = false;
