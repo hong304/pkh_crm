@@ -28,7 +28,7 @@ class Items_Summary {
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
         $this->productId = ($indata['filterData']['productId']=='') ? '%' : $indata['filterData']['productId'];
-        $this->productName = ($indata['filterData']['productName']=='') ? '%' : $indata['filterData']['productId'];
+        $this->productName = ($indata['filterData']['productName']=='') ? '%' : $indata['filterData']['productName'];
         $this->_date1 = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_date2 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         // check if user has clearance to view this zone        
