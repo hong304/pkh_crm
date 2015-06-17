@@ -381,6 +381,22 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
                     $scope.updatePaymentTerms();
 
+                    if(res.paymentTermId == 1)
+                    {
+                        console.log(res.paymentTermId);
+                        $("#paymentTerms").attr('disabled', 'true');
+                        $("#duedatepicker").datepicker('remove');
+                    }
+                    else
+                    {
+                        $("#paymentTerms").removeAttr('disabled');
+                        $("#duedatepicker").datepicker({
+                            rtl: Metronic.isRTL(),
+                            orientation: "left",
+                            autoclose: true
+                        });
+                    }
+                    
                     if(inf.invoiceStatus == 99)
                     {
                         $scope.allowSubmission = false;
@@ -434,6 +450,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
                     if(res.paymentTermId == 1)
                     {
+                        console.log(res.paymentTermId);
                         $("#paymentTerms").attr('disabled', 'true');
                         $("#duedatepicker").datepicker('remove');
                     }
