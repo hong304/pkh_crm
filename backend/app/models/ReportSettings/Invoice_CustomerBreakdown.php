@@ -107,7 +107,7 @@ class Invoice_CustomerBreakdown {
                        $invoices[$invoiceId] = $invoiceQ;
                        $client = $invoiceQ['client'];
 
-                       if ($invoiceQ->return || $invoiceQ->invoiceStatus == '97') {
+                       if ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97') {
                            $amount[$client->customerId] -= $invoiceQ->amount;
 
                             foreach($invoiceQ['invoiceItem'] as $item)

@@ -99,8 +99,8 @@
 					<i class="fa fa-cogs font-green-sharp"></i>
 					<span class="caption-subject font-green-sharp bold uppercase">車號</span>
 				</div>
-				
 			</div>
+
 			<div class="portlet-body">				
 				<div class="md-col-12" style="margin-bottom:15px;">
 					<select class="form-control" 
@@ -108,10 +108,21 @@
 						data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId" 
 						data-ng-change="updateZone();">
 						<option value=''>檢視全部</option>
-					
 					</select>
 				</div>
 			</div>
+
+            <div class="portlet-body" id="shift">
+                <div class="md-col-12">
+                    <select class="form-control"
+                            ng-model="filterData.shift" data-ng-change="updateShift();">
+                        <option value='-1'>全部</option>
+                        <option value='1'>早班</option>
+                        <option value='2'>晚班</option>
+                    </select>
+                </div>
+            </div>
+
 		</div>			
 		
 	</div>

@@ -64,7 +64,7 @@ class Invoice_CashReceiptSummary {
                    $acc = 0;
                    foreach($invoicesQuery as $invoiceQ)
                    {
-                       $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+                       $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
 
                            $this->_invoices[] = $invoiceQ->invoiceId;
                            $this->_zoneName = $invoiceQ->zone->zoneName;
@@ -78,9 +78,9 @@ class Invoice_CashReceiptSummary {
                                'customerId' => $client->customerId,
                                'name' => $client->customerName_chi,
                                'invoiceNumber' => $invoiceId,
-                               'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
+                               'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
                                'accumulator' =>number_format($acc,2,'.',','),
-                                'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+                                'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
                            ];
                       }
 
@@ -92,7 +92,7 @@ class Invoice_CashReceiptSummary {
                  $acc = 0;
                 foreach($invoicesQuery as $invoiceQ)
                 {
-                    $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+                    $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
 
 
                     $this->_invoices[] = $invoiceQ->invoiceId;
@@ -107,9 +107,9 @@ class Invoice_CashReceiptSummary {
                         'customerId' => $client->customerId,
                         'name' => $client->customerName_chi,
                         'invoiceNumber' => $invoiceId,
-                        'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
+                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
                         'accumulator' =>number_format($acc,2,'.',','),
-                        'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+                        'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
                     ];
                 }
 
@@ -121,7 +121,7 @@ class Invoice_CashReceiptSummary {
         $acc = 0;
         foreach($invoicesQuery as $invoiceQ)
         {
-            $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+            $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
 
 
             $this->_invoices[] = $invoiceQ->invoiceId;
@@ -137,9 +137,9 @@ class Invoice_CashReceiptSummary {
                 'name' => $client->customerName_chi,
                 'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                 'invoiceNumber' => $invoiceId,
-                'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
+                'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
                 'accumulator' =>number_format($acc,2,'.',','),
-                'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+                'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
             ];
         }
 

@@ -11,7 +11,8 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
        'phone' : '',
        'customerId' :'',
        'product' : '',
-       'product_name' : ''
+       'product_name' : '',
+       'shift' : '-1'
     };
 
 

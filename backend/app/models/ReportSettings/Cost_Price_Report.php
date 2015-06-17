@@ -77,7 +77,7 @@ class Cost_Price_Report
         }
 
         foreach ($invoicesQuery as $invoiceQ) {
-            $acc += (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97') ? -$invoiceQ->amount : $invoiceQ->amount;
+            $acc += ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97') ? -$invoiceQ->amount : $invoiceQ->amount;
 
             $this->_invoices[] = $invoiceQ->invoiceId;
             $this->_zoneName = $invoiceQ->zone->zoneName;
