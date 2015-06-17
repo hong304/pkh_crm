@@ -2,6 +2,7 @@
 
 class ProductController extends BaseController {
 
+    public $_shift = '';
     public function jsonGetAllProduct()
     {
        // $time_start = microtime(true);
@@ -53,11 +54,13 @@ class ProductController extends BaseController {
 
         $filter = Input::get('filterData');
 
+
         Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
 
         $zone = (isset($filter['zone']['zoneId']))?$filter['zone']['zoneId']:'-1';
         $data1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
         $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
+        $this->_shift = (isset($filter['shift']) ? $filter['shift'] : '-1');
 
         $invoices =  Invoice::leftJoin('InvoiceItem', function($join) {
                 $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
@@ -70,6 +73,9 @@ class ProductController extends BaseController {
             $invoices-> where('zoneId', $zone);
         else
             $invoices-> wherein('zoneId', explode(',', Auth::user()->temp_zone));
+
+        if($this->_shift != '-1')
+            $invoices->where('Invoice.shift',$this->_shift);
 
         $invoices->where(function ($query) use ($filter) {
             $query

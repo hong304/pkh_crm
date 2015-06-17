@@ -106,7 +106,7 @@
 					<select class="form-control" 
 						ng-model="filterData.zone" 
 						data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId" 
-						data-ng-change="updateZone();">
+						>
 						<option value=''>檢視全部</option>
 					</select>
 				</div>
@@ -115,7 +115,7 @@
             <div class="portlet-body" id="shift">
                 <div class="md-col-12">
                     <select class="form-control"
-                            ng-model="filterData.shift" data-ng-change="updateShift();">
+                            ng-model="filterData.shift">
                         <option value='-1'>全部</option>
                         <option value='1'>早班</option>
                         <option value='2'>晚班</option>
