@@ -346,13 +346,13 @@ if($this->_shift != '-1')
                     $pdf->Cell(0, 0, $v['invoice'], 0, 0, "L");
 
                     $pdf->setXY(100, $y);
-                    $pdf->Cell(10, 0, sprintf("%s", $v['invoiceAmount']), 0, 0, "R");
+                    $pdf->Cell(10, 0, "$" . number_format($v['invoiceAmount'], 2, '.', ','), 0, 0, "R");
 
                     $pdf->setXY(140, $y);
-                    $pdf->Cell(10, 0, $v['paid'], 0, 0, "R");
+                    $pdf->Cell(10, 0,  "$" . number_format($v['paid'], 2, '.', ','), 0, 0, "R");
 
                     $pdf->setXY(165, $y);
-                    $pdf->Cell(20, 0, $v['accumulator'], 0, 0, "R");
+                    $pdf->Cell(20, 0, "$" . number_format($v['accumulator'], 2, '.', ','), 0, 0, "R");
 
                     $amount += $v['invoiceAmount'];
                     $paid += $v['paid'];
@@ -364,17 +364,17 @@ if($this->_shift != '-1')
             }
             $pdf->Line(10, $y, 190, $y);
 
-            $pdf->setXY(40, $y + 6);
+            $pdf->setXY(35, $y + 6);
             $pdf->Cell(0, 0, '未清付發票總金額(HKD):', 0, 0, "L");
 
             $pdf->setXY(100, $y + 6);
-            $pdf->Cell(10, 0, $amount, 0, 0, "R");
+            $pdf->Cell(10, 0,  "$" . number_format($amount, 2, '.', ','), 0, 0, "R");
 
             $pdf->setXY(140, $y + 6);
-            $pdf->Cell(10, 0, $paid, 0, 0, "R");
+            $pdf->Cell(10, 0,  "$" . number_format($paid, 2, '.', ','), 0, 0, "R");
 
             $pdf->setXY(165, $y + 6);
-            $pdf->Cell(20, 0, $accu, 0, 0, "R");
+            $pdf->Cell(20, 0, "$" . number_format($accu, 2, '.', ','), 0, 0, "R");
 
             $pdf->Line(10, $y + 12, 190, $y + 12);
 
@@ -385,25 +385,25 @@ if($this->_shift != '-1')
             $pdf->Cell(0, 0, date('Y') . '/' . date('n'), 0, 0, "L");
 
             $pdf->setXY(10, $y + 30);
-            $pdf->Cell(0, 0, '$' . $data[date('n')], 0, 0, "L");
+            $pdf->Cell(0, 0, '$' . number_format($data[date('n')], 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(40, $y + 24);
             $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 1), 0, 0, "L");
 
             $pdf->setXY(40, $y + 30);
-            $pdf->Cell(0, 0, '$' . $data[date('n') - 1], 0, 0, "L");
+            $pdf->Cell(0, 0, '$' .  number_format($data[date('n') - 1], 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(70, $y + 24);
             $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 2), 0, 0, "L");
 
             $pdf->setXY(70, $y + 30);
-            $pdf->Cell(0, 0, '$' . $data[date('n') - 2], 0, 0, "L");
+            $pdf->Cell(0, 0, '$' . number_format($data[date('n') - 2], 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(100, $y + 24);
             $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 3), 0, 0, "L");
 
             $pdf->setXY(100, $y + 30);
-            $pdf->Cell(0, 0, '$' . $data[date('n') - 3], 0, 0, "L");
+            $pdf->Cell(0, 0, '$' .number_format($data[date('n') - 3], 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(10, $y + 36);
             $pdf->Cell(0, 0, 'Payment received after statement date not included', 0, 0, "L");
