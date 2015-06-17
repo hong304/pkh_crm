@@ -419,7 +419,7 @@ $raw_filename =Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
         DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'sending']);
 
         if($this->group){
-            if (@ftp_put($conn_id, '000/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, FTP_BINARY)) {
+            if (@ftp_put($conn_id, 'corp/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, FTP_BINARY)) {
                 $updates = ['status'=>'sent', 'complete_time'=>time()];
             } else {
                 $updates = ['status'=>'queued'];
