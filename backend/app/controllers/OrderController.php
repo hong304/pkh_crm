@@ -4,7 +4,7 @@ class OrderController extends BaseController
 {
 
     public function jsonHoliday(){
-       $holidays =  holiday::where('year','2015')->first();
+       $holidays =  holiday::where('year',date("Y"))->first();
 
             $h_array = explode(",", $holidays->date);
         foreach($h_array as &$v){

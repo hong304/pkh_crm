@@ -146,13 +146,7 @@ Route::get('/', function(){
 
 Route::get('/system.json', 'SystemController@jsonSystem');
 Route::get('/info', function(){
-
     p($_SERVER);
-
-    //
-    //  $lastid = Product::where('department', 'A')->where('group', '05')->where('new_product_id',0)->orderBy('productId', 'Desc')->first();
-      //  pd($lastid);
-
 });
 
 Route::get('/setZone', function(){
@@ -173,6 +167,46 @@ Route::get('/cron/resetOrderTrace', function(){
     $invoices_tomorrow = Invoice::where('deliveryDate',strtotime('tomorrow'))->lists('customerId');
     if(count($invoices_tomorrow)>0)
     DB::table('Customer')->wherein('customerId',$invoices_tomorrow)->update(['tomorrow'=>1]);
+
+});
+
+Route::get('cron/completeOrder',function(){
+
+    $holidays =  holiday::where('year',date("Y"))->first();
+
+    $h_array = explode(",", $holidays->date);
+    foreach($h_array as &$v){
+        $md = explode("-",$v);
+        $m = str_pad($md[0], 2, '0', STR_PAD_LEFT);
+        $d = str_pad($md[1], 2, '0', STR_PAD_LEFT);
+        $v = date("Y"). '-'. $m.'-'.$d;
+    }
+    if(date('w', strtotime(date('Y-m-d'))) == 1 ||date('w', strtotime(date('Y-m-d'))) == 2 ||date('w', strtotime(date('Y-m-d'))) == 3)
+        $days_ago = date('Y-m-d', strtotime('-4 days', strtotime(date('Y-m-d'))));
+    else
+        $days_ago = date('Y-m-d', strtotime('-3 days', strtotime(date('Y-m-d'))));
+
+    function check_in_range($start_date, $end_date, $date_from_user)
+    {
+        // Convert to timestamp
+        $start_ts = strtotime($start_date);
+        $end_ts = strtotime($end_date);
+        $user_ts = strtotime($date_from_user);
+
+        // Check that user date is between start & end
+        return (($user_ts >= $start_ts) && ($user_ts <= $end_ts));
+    }
+
+    $count = 0;
+    foreach($h_array as $g){
+        if(check_in_range($days_ago, date('Y-m-d'), $g))
+            $count++;
+    }
+
+    $accurage_date = date('Y-m-d', strtotime('-'.$count.' days', strtotime($days_ago)));
+
+    Invoice::where('deliveryDate',strtotime($accurage_date))->where('paymentTerms',1)->update(['invoiceStatus'=>'30']);
+    Invoice::where('deliveryDate',strtotime($accurage_date))->where('paymentTerms',2)->update(['invoiceStatus'=>'20']);
 
 });
 
