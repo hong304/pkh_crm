@@ -245,6 +245,9 @@ if($this->_shift != '-1')
         for($month = 1; $month <= 12; $month++) {
             $first_minute = mktime(0, 0, 0, $month, 1,date('Y'));
             $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),date('Y'));
+
+            if(date('n')==$month)
+                $last_minute =  $this->_date2;
             $times[$month] = array($first_minute, $last_minute);
         }
 
@@ -424,7 +427,7 @@ if($this->_shift != '-1')
 
             $pdf->SetFont('Arial','',12);
             $pdf->setXY(10, $y + 18);
-            $pdf->Cell(0, 0, 'The outstanding balance is aged by invoice date as ' . date('Y-m-t', time()) . ' below:', 0, 0, "L");
+            $pdf->Cell(0, 0, 'The outstanding balance is aged by invoice date as ' . date('Y-m-d',  $this->_date2) . ' below:', 0, 0, "L");
 
             $pdf->SetFont('Arial','U',12);
             $pdf->setXY(10, $y + 24);
