@@ -67,7 +67,7 @@ class Audit_Report {
                    $acc = 0;
                    foreach($invoicesQuery as $invoiceQ)
                    {
-                       $acc +=  (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+                       $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
 
                            $this->_invoices[] = $invoiceQ->invoiceId;
                            $this->_zoneName = $invoiceQ->zone->zoneName;
@@ -82,9 +82,9 @@ class Audit_Report {
                                'name' => $client->customerName_chi,
                                'deliveryDate' => $invoiceQ->deliveryDate_date,
                                'invoiceNumber' => $invoiceId,
-                               'invoiceTotalAmount' => (isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
+                               'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
                                'accumulator' =>number_format($acc,2,'.',','),
-                                'amount' => number_format((isset($invoiceQ->return) || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+                                'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
                            ];
                       }
 

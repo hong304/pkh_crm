@@ -257,7 +257,7 @@ $debug = 0;
                 /*
                  * Add Qty
                 */
-                if($i['return']){
+                if($i['invoiceStatus']==98){
                     $i['invoiceTotalAmount'] *= -1;
                     $i['amount'] *= -1;
                     $item['productQty'] *= -1;
