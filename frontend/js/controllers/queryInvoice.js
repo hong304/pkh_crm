@@ -32,7 +32,10 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var month;
     var day;
 
+    var target = endpoint + '/getHoliday.json';
 
+    $http.get(target)
+        .success(function(res){
 
     var today = new Date();
     var plus = today.getDay() == 6 ? 2 : 1;
@@ -50,7 +53,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
     do{
         flag= true;
-        $.each($rootScope.systeminfo.holiday, function( key, value ) {
+        $.each(res, function( key, value ) {
             if(value == working_date){
                 flag = false;
                 var today = new Date(nextDay.getFullYear()+'-'+working_date);
@@ -91,7 +94,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 
     $scope.filterData.deliverydate = year+'-'+month+'-'+yday;
     $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
-
+        });
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         console.log($rootScope.systeminfo);
