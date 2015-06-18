@@ -198,7 +198,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.getSameDayInvoice = function(){
         var target = endpoint + '/getClientSameDayOrder.json';
 
-        $http.post(target, {customerId: $scope.order.clientId, dueDate:$scope.order.dueDate})
+        $http.post(target, {customerId: $scope.order.clientId, deliveryDate:$scope.order.deliveryDate})
             .success(function(res, status, headers, config){
                 $scope.sameDayInvoice = res;
                 //console.log(res);

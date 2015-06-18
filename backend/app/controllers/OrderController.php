@@ -346,11 +346,11 @@ class OrderController extends BaseController
     public function jsonGetSameDayOrder()
     {
         $customerId = Input::get('customerId');
-        $dueDate = Input::get('dueDate');
+        $deliveryDate = Input::get('deliveryDate');
 
-        $dueDate = strtotime($dueDate);
+        $deliveryDate = strtotime($deliveryDate);
 
-        $invoice_id = Invoice::where('customerId', $customerId)->where('dueDate', $dueDate)->first();
+        $invoice_id = Invoice::where('customerId', $customerId)->where('deliveryDate', $deliveryDate)->orderBy('invoiceId','desc')->first();
 
         // pd($invoice_id);
 
