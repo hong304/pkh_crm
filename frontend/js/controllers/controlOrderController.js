@@ -187,7 +187,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         //$(".productCodeField").inputmask("*");
         $('#maxlength_defaultconfig').maxlength({
-            limitReachedClass: "label label-danger",
+            limitReachedClass: "label label-danger"
         })
 
         $scope.timer.selected_client = Date.now();
@@ -344,7 +344,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             // block the full page
             Metronic.blockUI({
                 boxed: true,
-                message: '下載資料中...',
+                message: '下載資料中...'
             });
             // get full invoice information
             var target = endpoint + '/getSingleInvoice.json';
@@ -354,8 +354,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
                     var res = data.invoice.client;
                     var inf = data.invoice;
-
-
 
                     // set client information
                     $scope.order.clientId = res.customerId;
@@ -400,13 +398,11 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     if(inf.invoiceStatus == 99)
                     {
                         $scope.allowSubmission = false;
-
                     }
                     else
                     {
                         // load customer product, first load full db, second load invoice-items
                         $scope.loadProduct($scope.order.clientId, inf.invoice_item);
-
                         Metronic.unblockUI();
                     }
 

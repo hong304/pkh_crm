@@ -49,6 +49,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         'zone': '',
         'status': '100',
         'groupname' : '',
+        'address' : ''
 	};
 
     $scope.submit = true;

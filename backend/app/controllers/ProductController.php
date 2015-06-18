@@ -110,7 +110,7 @@ class ProductController extends BaseController {
         {
             $products = Product::select('productId', 'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPacking_size', 'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit', 'productName_chi')
                                 ->where('department', $departmentid)
-                                 ->where('group',$groupid)
+                                ->where('group',$groupid)
                                 ->where('productStatus', 'o')
                                 ->get();
             $products = $products->toArray();
@@ -205,8 +205,7 @@ class ProductController extends BaseController {
                 ->where(function ($query) use ($keyword) {
                     $query->where('productName_chi', 'LIKE', '%' . $keyword . '%')
                         ->orwhere('productId', 'LIKE', '%' . $keyword . '%');
-                })
-                                    ->where('productStatus','o')
+                })->where('productStatus','o')
                                     ->limit(30)->get();
              
         }

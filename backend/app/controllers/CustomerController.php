@@ -154,6 +154,7 @@ class CustomerController extends BaseController
                 $query
                     ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
                     ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
+                    ->where('Customer.address_chi', 'LIKE', '%' . $filter['address'] . '%')
                     ->where('Customer.customerId', 'LIKE', '%' . $filter['id'] . '%');
             });
 

@@ -31,6 +31,13 @@
                                type="text" placeholder="電話號碼 " class="form-control" ng-change="searchClient()"
                                 />
                     </div>
+
+                    <div class="input-icon right">
+                        <i class="icon-exclamation-sign"></i>
+                        <input autocomplete="off" ng-model="filterData.address" debounce="500" immediate="true"  id="address"
+                               type="text" placeholder="地址" class="form-control" ng-change="searchClient()"
+                                />
+                    </div>
                 </div>
             </div>
         </div>
