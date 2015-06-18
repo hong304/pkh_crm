@@ -19,7 +19,7 @@ class Invoice_CustomerBreakdown {
         $this->_reportTitle = $report->name;
         
         
-        $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
+        $this->_date = (isset($indata['filterData']['deliveryDate1']) ? strtotime($indata['filterData']['deliveryDate1']) : strtotime("today"));
 
         if(isset( $indata['filterData']['zone']) && $indata['filterData']['zone']['value'] != '-1'){
 
@@ -496,10 +496,10 @@ class Invoice_CustomerBreakdown {
             ],
 
             [
-                'id' => 'deliveryDate',
+                'id' => 'deliveryDate1',
                 'type' => 'date-picker',
                 'label' => '送貨日期',
-                'model' => 'deliveryDate',
+                'model' => 'deliveryDate1',
                 'defaultValue' => date("Y-m-d", $this->_date),
             ],
 
