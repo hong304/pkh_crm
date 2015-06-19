@@ -5,13 +5,13 @@ if(window.location.hostname == "dev-f.pingkeehong.com")
 	var endpoint = '//dev-b.pingkeehong.com';
 	var assets = '//dev-f.pingkeehong.com/assets';
 }
-else if(window.location.hostname == "frontend.sylam.net")
+else if(window.location.hostname == "frontend.pingkeehong.com")
 {
-	var endpoint = '//backend.sylam.net/';
-	var assets = '//frontend.sylam.net/assets';
+	var endpoint = '//backend.pingkeehong.com/';
+	var assets = '//frontend.pingkeehong.com/assets';
 }else{
-    var endpoint = '//pkh-b.sylam.net/';
-    var assets = '//pkh-f.sylam.net/assets';
+    var endpoint = '//b.pingkeehong.com/';
+    var assets = '//f.pingkeehong.com/assets';
 }
 
 var appname = 'Web Application';
