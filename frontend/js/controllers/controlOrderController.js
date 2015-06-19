@@ -273,7 +273,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.reCalculateTotalAmount = function() {
 
         $scope.totalAmount = 0;
-        var temp_number = 0;
 
         $scope.product.forEach(function(item){
             if(item.deleted == 0)
@@ -284,7 +283,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         $scope.totalAmount = $scope.totalAmount * (100-$scope.order.discount)/100;
 
-        temp_number = $scope.totalAmount;
+        var temp_number = $scope.totalAmount;
 
         $scope.totalAmount =temp_number.toFixed(1);
 

@@ -17,25 +17,25 @@ App::before(function($request)
 	$uri = Request::path();
 	
 	//dd($_SERVER);
-	if($_SERVER['HTTP_HOST'] == 'pkh-b.sylam.net')
+	if($_SERVER['HTTP_HOST'] == 'b.pingkeehong.com')
 	{
-        @header('Access-Control-Allow-Origin: http://pkh-f.sylam.net');
+        @header('Access-Control-Allow-Origin: http://f.pingkeehong.com');
         $_SERVER['env'] = 'private_production';
-        $_SERVER['frontend'] = 'http://pkh-f.sylam.net';
-        $_SERVER['backend'] = 'http://pkh-b.sylam.net';
+        $_SERVER['frontend'] = 'http://f.pingkeehong.com';
+        $_SERVER['backend'] = 'http://b.pingkeehong.com';
 	}
-    elseif($_SERVER['HTTP_HOST'] == 'backend.sylam.net'){
-        @header('Access-Control-Allow-Origin: http://frontend.sylam.net');
+    elseif($_SERVER['HTTP_HOST'] == 'backend.pingkeehong.com'){
+        @header('Access-Control-Allow-Origin: http://frontend.pingkeehong.com');
         $_SERVER['env'] = 'production';
-        $_SERVER['frontend'] = 'http://frontend.sylam.net';
-        $_SERVER['backend'] = 'http://backend.sylam.net';
+        $_SERVER['frontend'] = 'http://frontend.pingkeehong.com';
+        $_SERVER['backend'] = 'http://backend.pingkeehong.com';
     }
 	else
 	{
-	   @header('Access-Control-Allow-Origin: http://yatfai-f.cyrustc.net');
+	   @header('Access-Control-Allow-Origin: http://dev-f.pingkeehong.com');
         $_SERVER['env'] = 'test';
-        $_SERVER['frontend'] = 'http://yatfai-f.cyrustc.net';
-        $_SERVER['backend'] = 'http://yatfai.cyrustc.net';
+        $_SERVER['frontend'] = 'http://dev-f.pingkeehong.com';
+        $_SERVER['backend'] = 'http://dev-b.pingkeehong.com';
 	}
 	
 	

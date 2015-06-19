@@ -1,9 +1,9 @@
 /* Define the environment according to the windows setting */
 //hi test
-if(window.location.hostname == "yatfai-f.cyrustc.net")
+if(window.location.hostname == "dev-f.pingkeehong.com")
 {
-	var endpoint = '//yatfai.cyrustc.net';
-	var assets = '//yatfai-f.cyrustc.net/assets';
+	var endpoint = '//dev-b.pingkeehong.com';
+	var assets = '//dev-f.pingkeehong.com/assets';
 }
 else if(window.location.hostname == "frontend.sylam.net")
 {

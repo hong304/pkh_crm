@@ -10,7 +10,7 @@ return array(
     
     'appname' => 'Web Application',
     
-    'assetlocation' => '//frontend.sylam.net/assets',
+    'assetlocation' => '//frontend.pingkeehong.com/assets',
     
     'companyname' => 'Ping Kee Hong Trading Company Ltd', 
 
@@ -38,7 +38,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://frontend.sylam.net',
+	'url' => 'http://frontend.pingkeehong.com',
 
 	/*
 	|--------------------------------------------------------------------------
