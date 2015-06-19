@@ -16,7 +16,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
         var nextDay = currentDate;
     }
     var day = nextDay.getDate();
-    var dayD = nextDay.getDate()+1;
+  //  var dayD = nextDay.getDate()+1;
     var month = nextDay.getMonth() + 1;
     var year = nextDay.getFullYear();
     var yday = nextDay.getDate()-1;
@@ -32,7 +32,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
             'customerId' : '',
             'phone' : '',
              deliveryDate : year+'-'+month+'-'+yday,
-        deliveryDate1 : year+'-'+month+'-'+dayD,
+             deliveryDate1 : year+'-'+month+'-'+day,
              deliveryDate2 : year+'-'+month+'-'+day,
             'productId' : '',
              'productName' : '',
@@ -85,7 +85,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     	    	            orientation: "left",
     	    	            autoclose: true
     	    	        });
-    					$("#" + options.id).datepicker( "setDate", year + '-' + month + '-' + dayD );
+    					$("#" + options.id).datepicker( "setDate", year + '-' + month + '-' + day);
     				}
 
                     if(options.type == "date-picker1")

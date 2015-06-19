@@ -27,18 +27,21 @@ class Report_DailySummary
         $this->_reportTitle = $report->name;
 
 
-        $permittedZone = explode(',', Auth::user()->temp_zone);
+
 
         $this->_output = $indata['output'];
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_date1 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
-        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift']['value'] : '-1');
 
-        // check if user has clearance to view this zone        
+        $permittedZone = explode(',', Auth::user()->temp_zone);
+        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
         if (!in_array($this->_zone, $permittedZone)) {
             App::abort(401, "Unauthorized Zone");
         }
+
+        $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift']['value'] : '-1');
+
+
         $this->_uniqueid = microtime(true);
 
     }

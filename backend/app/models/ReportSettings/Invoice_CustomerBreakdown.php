@@ -21,16 +21,13 @@ class Invoice_CustomerBreakdown {
         
         $this->_date = (isset($indata['filterData']['deliveryDate1']) ? strtotime($indata['filterData']['deliveryDate1']) : strtotime("today"));
 
-        if(isset( $indata['filterData']['zone']) && $indata['filterData']['zone']['value'] != '-1'){
-
-            $this->_zone =  $indata['filterData']['zone']['value'];
-            if(!in_array($this->_zone, explode(',', Auth::user()->temp_zone)))
-            {
-                App::abort(401, "Unauthorized Zone");
-            }
-        }else{
-            $this->_zone =  Auth::user()->temp_zone;
+        $permittedZone = explode(',', Auth::user()->temp_zone);
+        $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
+        if (!in_array($this->_zone, $permittedZone)) {
+            App::abort(401, "Unauthorized Zone");
         }
+
+
         $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'-1';
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
         // check if user has clearance to view this zone
@@ -50,31 +47,31 @@ class Invoice_CustomerBreakdown {
     {
 
 
-
         $date = $this->_date;
-      //  $zone = $this->_zone;
 
         // get invoice from that date and that zone
-        $this->goods = ['1F9F'=>[]];
-        $this->returngoods = ['1F9F'=>[]];
+        $this->goods = ['1F9F' => []];
+        $this->returngoods = ['1F9F' => []];
 
         $hi = Invoice::select('*');
 
-         $hi->wherein('zoneId',explode(',', $this->_zone))->where('deliveryDate', $date);
-
-                 if($this->_shift != '-1')
-                     $hi->where('Invoice.shift',$this->_shift);
-
-            $hi->leftJoin('Customer', function($join) {
-                $join->on('Customer.customerId', '=', 'Invoice.customerId');
-            })->leftJoin('customer_groups', function($join) {
-                $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
-            });
-
-        if($this->_group != '')
-            $hi->where('customer_groups.name','LIKE','%'.$this->_group.'%');
+        $hi->where('deliveryDate', $date);
 
 
+        $hi->leftJoin('Customer', function ($join) {
+            $join->on('Customer.customerId', '=', 'Invoice.customerId');
+        })->leftJoin('customer_groups', function ($join) {
+            $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
+        });
+
+        if ($this->_group != '') {
+            $hi->where('customer_groups.name', 'LIKE', '%' . $this->_group . '%');
+        } else {
+
+        $hi->wherein('zoneId', explode(',', $this->_zone));
+        if($this->_shift != '-1')
+            $hi->where('Invoice.shift',$this->_shift);
+    }
             $hi->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
@@ -470,7 +467,7 @@ class Invoice_CustomerBreakdown {
 
 
 
-        array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
+       // array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
         //pd($availablezone);
         $filterSetting = [
 
