@@ -233,6 +233,7 @@ class InvoiceManipulation {
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
             $this->im->shift = $this->temp_invoice_information['shift'];
 
+            $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
 	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
 	        $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
 	        $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
