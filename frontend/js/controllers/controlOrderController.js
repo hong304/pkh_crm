@@ -7,10 +7,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $(document).ready(function(){
         $('#order_form').keydown(function (e) {
             if (e.keyCode == 121) {
-                $scope.submitOrder(1);
+                $scope.preSubmitOrder(1);
             }
             if (e.keyCode == 117) {
-                $scope.preSubmitOrder();
+                $scope.preSubmitOrder(0);
             }
         });
     });
@@ -833,7 +833,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     }
 
 
-    $scope.preSubmitOrder = function(){
+    $scope.preSubmitOrder = function(v){
 
      //   var currentDate = new Date(new Date().getTime());
     //    var day = currentDate.getDate();
@@ -852,11 +852,16 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         var order_dates = ""+year+month+day;
 
-        var bool = (Number(order_dates) >= Number(dates));
-
+        if(v){
+            var bool = (Number(order_dates) < Number(dates));
+            var msg = 'F10! 此訂單將會被列印';
+        }else{
+            var bool = (Number(order_dates) >= Number(dates));
+            var msg = 'F6! 此訂單將不會被列印';
+        }
 if(bool)
         bootbox.dialog({
-            message: "此訂單將不會被列印",
+            message: msg,
             title: "提交訂單",
             buttons: {
                 success: {
@@ -870,15 +875,18 @@ if(bool)
                     label: "確定",
                     className: "red",
                     callback: function() {
-                        $scope.submitOrder(0);
+                        $scope.submitOrder(v);
                     }
                 }
             }
         });
         else
-            $scope.submitOrder(0);
+            $scope.submitOrder(v);
 
     }
+
+
+
     $scope.submitOrder = function(v)
     {
         var generalError = false;
