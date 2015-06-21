@@ -205,8 +205,8 @@ Route::get('cron/completeOrder',function(){
 
     $accurage_date = date('Y-m-d', strtotime('-'.$count.' days', strtotime($days_ago)));
 
-    Invoice::where('deliveryDate',strtotime($accurage_date))->where('paymentTerms',1)->update(['invoiceStatus'=>'30']);
-    Invoice::where('deliveryDate',strtotime($accurage_date))->where('paymentTerms',2)->update(['invoiceStatus'=>'20']);
+    Invoice::where('deliveryDate',strtotime($accurage_date))->where('paymentTerms',1)->where('invoiceStatus',2)->update(['invoiceStatus'=>'30']);
+    Invoice::where('deliveryDate',strtotime($accurage_date))->where('paymentTerms',2)->where('invoiceStatus',2)->update(['invoiceStatus'=>'20']);
 
 });
 
