@@ -16,6 +16,7 @@ class VanSellController extends BaseController
     private $_output = '';
     private  $_pdf = '';
     private $_zonename = '';
+    private $kk = '';
 
     public function loadvanSellReport()
     {
@@ -378,11 +379,35 @@ class VanSellController extends BaseController
                     $q++;
                 }
         }
-      //  pd($new_array);
+       // pd($new_array);
+
+        foreach($new_array as $k1 => $v1){
+            if(isset($v1['productId']))
+                if (strpos($v1['productId'],'D')!== false){
+                    $this->kk = $k1;
+                    break;
+                }
+        }
+
+    if($this->kk > 26)
+        foreach($new_array as $k1 => $v1){
+            if(isset($v1['productId']))
+            if (strpos($v1['productId'],'B')!== false){
+                $this->kk = $k1;
+                break;
+            }
+        }
+
+      //  pd($this->kk);
+        //array_splice($new_array, 24, 0, [['qty'=>'-1']] );
+for($i=$this->kk;$i<26;$i++){
+    array_splice($new_array, $i, 0, [['qty'=>'-1']] );
+}
+ //  pd($new_array);
 
         $firstF = array_chunk($new_array, 26, true);
 
-      //  pd($firstF);
+     // pd($firstF);
 
         foreach ($firstF as $i => $f) {
             // for first Floor
@@ -470,7 +495,7 @@ class VanSellController extends BaseController
                 }
                 else
                 {
-                    if ($u['qty'] != '0' && $u['qty'] != 'line') {
+                    if ($u['qty'] != '0' && $u['qty'] != 'line' && $u['qty'] != '-1') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -506,6 +531,12 @@ class VanSellController extends BaseController
                         $pdf->Line(10, $y, 190, $y);
                         $y += 7;
                     }
+
+                    if($u['qty'] == '-1'){
+                       // $pdf->Line(10, $y, 190, $y);
+                        $y += 7;
+                    }
+
                 }
 
 

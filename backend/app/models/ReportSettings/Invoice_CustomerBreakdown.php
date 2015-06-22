@@ -305,7 +305,7 @@ class Invoice_CustomerBreakdown {
                 $csv .= "\r\n";
 
           }
-
+        echo "\xEF\xBB\xBF";
         return $csv;
 
 
