@@ -255,7 +255,7 @@ class Invoice_CustomerBreakdown {
 
     public function outputCsv(){
 
-        $csv = 'CustomerID,Customer Name,Invoice No.,Product Name,Product Qty' . "\r\n";
+        $csv = 'CustomerID,Customer Name,Invoice No.,Total Amount,Product Name,Product Qty' . "\r\n";
         foreach ($this->data['1F9F'] as $o) {
 
 
@@ -275,7 +275,7 @@ class Invoice_CustomerBreakdown {
                 }
             }
             $csv .= '"' . $invoices . '",';
-
+            $csv .= '"' . $o['totalAmount'] . '",';
                 $firsts = 0;
                 foreach($o['items'] as $itemUnitlv)
                 {
@@ -300,7 +300,7 @@ class Invoice_CustomerBreakdown {
                     }
 
                 }
-            $csv .= '"' . $o['totalAmount'] . '",';
+
                 $csv .= "\r\n";
 
           }
