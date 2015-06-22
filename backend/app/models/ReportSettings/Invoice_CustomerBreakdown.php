@@ -249,8 +249,64 @@ class Invoice_CustomerBreakdown {
             }
         }
       $this->_newway = $newway;
-       // pd($this->data);
+
        return $this->data;        
+    }
+
+    public function outputCsv(){
+
+        $csv = 'CustomerID,Customer Name,Invoice No.,Product Name,Product Qty' . "\r\n";
+        foreach ($this->data['1F9F'] as $o) {
+
+
+                $csv .= '"' . $o['customerInfo']['customerId'] . '",';
+                $csv .= '"' . $o['customerInfo']['customerName_chi'] . '",';
+            $invoices = '';
+
+            $numItems = count($o['invoiceId']);
+            $i = 0;
+
+            foreach($o['invoiceId'] as $invoice){
+
+                if(++$i === $numItems) {
+                    $invoices .= $invoice;
+                }else{
+                    $invoices .= $invoice.'+';
+                }
+            }
+            $csv .= '"' . $invoices . '",';
+
+                $firsts = 0;
+                foreach($o['items'] as $itemUnitlv)
+                {
+                    foreach($itemUnitlv as $item) {
+
+                        if ($firsts == 0)
+                        {
+                            $csv .= '"' . $item['name'] . '",';
+                            $csv .= '"' . $item['counts'] . '",';
+                            $csv .= "\r\n";
+                            $firsts++;
+                        }
+                        else
+                        {
+                            $csv .= ',';
+                            $csv .= ',';
+                            $csv .= ',';
+                            $csv .= '"' . $item['name'] . '",';
+                            $csv .= '"' . $item['counts'] . '",';
+                            $csv .= "\r\n";
+                        }
+                    }
+
+                }
+                $csv .= "\r\n";
+
+          }
+
+        return $csv;
+
+
     }
 
     public function outputPDF()
@@ -524,6 +580,11 @@ class Invoice_CustomerBreakdown {
             [
                 'type' => 'pdf',
                 'name' => '列印  PDF 版本',
+                'warning'   =>  false,
+            ],
+            [
+                'type' => 'csv',
+                'name' => '匯出  Excel 版本',
                 'warning'   =>  false,
             ],
         ];

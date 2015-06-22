@@ -10,6 +10,8 @@ class ReportFactory{
     private $_title = false;
     private $_compiledReport = false;
 
+
+
     public function __construct($reportId,$data)
     {
         $this->_reportId = $reportId;
@@ -19,10 +21,13 @@ class ReportFactory{
         $module = $report->module;
 
         $this->_module = new $module(Input::all());
+
+
     }
     
     public function run()
     {
+
         // prepare filter
         $this->_prepareMenuFilter(); 
         
@@ -36,14 +41,16 @@ class ReportFactory{
         $this->_prepareDownload();
         
         // prepare output function
-        $this->_prepareOutput();        
+        return $this->_prepareOutput();
+
+
         
     }
     
     private function _prepareOutput()
     {
         $output = Input::get('output');
-        
+
         if($output == 'setting')
         {
             $returnInfo = [
@@ -118,7 +125,20 @@ class ReportFactory{
                 //$pdf->Code128(10,3,$filenameUn,150,5);
                 
                 exit;
-            }
+            }else if($output == 'csv'){
+
+               $csv = $this->_module->outputCsv();
+
+
+               echo "\xEF\xBB\xBF";
+
+                $headers = array(
+                    'Content-Type' => 'text/csv',
+                    'Content-Disposition' => 'attachment; filename="custoemr_report.csv"',
+                );
+
+                    return Response::make(rtrim($csv, "\n"), 200, $headers);
+               }
         }
     }
     

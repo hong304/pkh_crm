@@ -101,7 +101,7 @@ class CommissionController extends BaseController
         echo "\xEF\xBB\xBF";
         $headers = array(
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="ExportFileName.csv"',
+            'Content-Disposition' => 'attachment; filename="Commission.csv"',
         );
 
         return Response::make(rtrim($csv, "\n"), 200, $headers);

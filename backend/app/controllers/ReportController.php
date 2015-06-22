@@ -118,7 +118,7 @@ class ReportController extends BaseController {
 
 
         $factory = new ReportFactory($reportId,$data);
-        $factory->run();
+        return $factory->run();
         
         
     }
