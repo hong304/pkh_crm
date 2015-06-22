@@ -300,6 +300,7 @@ class Invoice_CustomerBreakdown {
                     }
 
                 }
+            $csv .= '"' . $o['totalAmount'] . '",';
                 $csv .= "\r\n";
 
           }
