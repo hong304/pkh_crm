@@ -293,6 +293,7 @@ class Invoice_CustomerBreakdown {
                             $csv .= ',';
                             $csv .= ',';
                             $csv .= ',';
+                            $csv .= ',';
                             $csv .= '"' . $item['name'] . '",';
                             $csv .= '"' . $item['counts'] . '",';
                             $csv .= "\r\n";
