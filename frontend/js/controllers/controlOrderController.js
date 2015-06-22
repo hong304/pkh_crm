@@ -13,7 +13,21 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 $scope.preSubmitOrder(0);
             }
         });
+
+        /*
+        var form = $('#orderinfo'),
+            original = form.serialize()
+
+        form.submit(function(){
+            window.onbeforeunload = null
+        })
+
+        window.onbeforeunload = function(){
+            if (form.serialize() != original)
+                return 'hi';
+        }*/
     });
+
 
 
     $scope.order = {
@@ -144,12 +158,20 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     // product: select, change_qty, change_unit
 
+$scope.an = false;
 
-
+    $scope.$on('$locationChangeStart', function( event ) {
+        if($scope.an){
+           var answer = confirm("訂單還沒提交，確定要離開此頁？")
+            if (!answer) {
+               event.preventDefault();
+            }
+        }
+    });
 
     $scope.$on('handleCustomerUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
-
+        $scope.an=true;
         $scope.order.clientId = SharedService.clientId;
         $scope.order.clientName = SharedService.clientName;
         $scope.order.address = SharedService.clientAddress;
@@ -252,12 +274,13 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
      });
      }*/
 
-    $scope.getLastItem = function(productId,clientId,i){
+    $scope.getLastItem = function(productId,clientId,i,q){
 
         var target = endpoint + '/getLastItem.json';
         $http.post(target, {productId: productId, customerId: clientId})
             .success(function (res, status, headers, config) {
                 $scope.lastitem = res;
+                console.log(res);
                 if(res.productQty > 0){
                     $scope.product[i].unitprice = res.productPrice;
                     var pos = $scope.product[i]['availableunit'].map(function(e) {
@@ -266,6 +289,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
                     $scope.checkPrice(i);
                 }
+                if(q==0 && $("#productCode_"+i).val() != productId)
+                        $scope.getLastItem($("#productCode_"+i).val(),$scope.order.clientId,i,1);
             });
 
     }
@@ -598,7 +623,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             $scope.updateStandardPrice(i);
 
             if(flag != 'unload')
-                $scope.getLastItem(code,$scope.order.clientId,i);
+                $scope.getLastItem(code,$scope.order.clientId,i,0);
 
             // console.log($scope.lastitem);
 
@@ -738,7 +763,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         //var minprice = Number(item.productMinPrice[unit]);
 
         //  if(Number(item.allowNegativePrice != 1))
-        console.log(item);
+
 
         // check if number
         if(isNaN($scope.product[i]['unitprice']) && item.allowNegativePrice != '1')
@@ -936,6 +961,7 @@ if(bool)
 
                     if(res.result == true)
                     {
+                        $scope.an=false;
                        // $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
 
                         if(res.action == 'update'){
