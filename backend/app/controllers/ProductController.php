@@ -178,15 +178,15 @@ class ProductController extends BaseController {
     public function jsonSearchProductOrHotItem()
     {
         $keyword = Input::has('keyword') && Input::get('keyword') != '' ? Input::get('keyword') : 'na';
-        $productId = Input::has('customerId') && Input::get('customerId') != '' ? Input::get('customerId') : 'na';
+        $customerId = Input::has('customerId') && Input::get('customerId') != '' ? Input::get('customerId') : 'na';
         # Process
         if($keyword == 'na')
         {
             
             $productData = "";
-            if($productId != 'na')
+            if($customerId != 'na')
             {
-                $iicm = ProductSearchCustomerMap::where('customerId', $productId)->with('productDetail')->limit(20)->orderBy('sumation', 'desc')->get();
+                $iicm = ProductSearchCustomerMap::where('customerId', $customerId)->with('productDetail')->limit(20)->orderBy('sumation', 'desc')->get();
                 if($iicm->count() > 0)
                 {
                     foreach($iicm as $i)
