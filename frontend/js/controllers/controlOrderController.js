@@ -289,8 +289,13 @@ $scope.an = false;
                     $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
                     $scope.checkPrice(i);
                 }
-                if(q==0 && $("#productCode_"+i).val() != productId)
+                if(q==0 && $("#productCode_"+i).val() != productId){
                         $scope.getLastItem($("#productCode_"+i).val(),$scope.order.clientId,i,1);
+                       // $scope.updateStandardPrice(i);
+                    if (typeof res[0] == 'undefined'){
+                        $scope.updateStandardPrice(i);
+                    }
+                }
             });
 
     }
