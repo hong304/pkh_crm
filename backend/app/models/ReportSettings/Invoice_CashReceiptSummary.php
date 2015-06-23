@@ -163,14 +163,29 @@ class Invoice_CashReceiptSummary {
 
     public function outputCsv(){
 
-        $csv = 'CustomerID,Customer Name,Invoice No.,Total Amount' . "\r\n";
+        $csv = 'CustomerID,Customer Name,Invoice No.,Total Amount,no. check,db>in,in>db,Invoice No. on hand,Invoice amount on hand,' . "\r\n";
+        $totalinvoice = count($this->data)+1;
         foreach ($this->data as $o) {
             $csv .= '"' . $o['customerId'] . '",';
             $csv .= '"' . $o['name'] . '",';
             $csv .= '"' . $o['invoiceNumber'] . '",';
             $csv .= '"' . $o['invoiceTotalAmount'] . '",';
+            $csv .= '"' . substr($o['invoiceNumber'], -5) . '",';
+            $csv .= '"=VLOOKUP(A2,H$2:H$'.$totalinvoice.',1,FALSE)",';
+            $csv .= '"=VLOOKUP(H2,A$2:H$'.$totalinvoice.',1,FALSE)",';
             $csv .= "\r\n";
         }
+        $csv .= ',';
+        $csv .= ',';
+        $csv .= ',';
+        $csv .= '=SUM(D2:D'.$totalinvoice.'),';
+        $csv .= ',';
+        $csv .= ',';
+        $csv .= ',';
+        $csv .= ',';
+        $csv .= '=SUM(I2:I'.$totalinvoice.'),';
+        $csv .= "\r\n";
+
         echo "\xEF\xBB\xBF";
 
         $headers = array(
