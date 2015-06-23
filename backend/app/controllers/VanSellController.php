@@ -398,8 +398,9 @@ class VanSellController extends BaseController
             }
         }
 
-      //  pd($this->kk);
+
         //array_splice($new_array, 24, 0, [['qty'=>'-1']] );
+if($this->kk != '')
 for($i=$this->kk;$i<26;$i++){
     array_splice($new_array, $i, 0, [['qty'=>'-1']] );
 }
