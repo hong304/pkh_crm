@@ -235,7 +235,10 @@ class OrderController extends BaseController
                 $invoice = Invoice::select('*');
                 $invoice->where('invoiceId', 'LIKE', '%' . $filter['invoiceNumber'] . '%');
             }else{
-                $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
+                if(isset($filter['deliverydate1']))
+                    $invoice = Invoice::select('*');
+                else
+                     $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
             }
 
             // zone
