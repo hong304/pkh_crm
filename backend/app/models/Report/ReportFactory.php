@@ -126,19 +126,8 @@ class ReportFactory{
                 
                 exit;
             }else if($output == 'csv'){
-
-               $csv = $this->_module->outputCsv();
-
-
-               echo "\xEF\xBB\xBF";
-
-                $headers = array(
-                    'Content-Type' => 'text/csv',
-                    'Content-Disposition' => 'attachment; filename="custoemr_report.csv"',
-                );
-
-                    return Response::make(rtrim($csv, "\n"), 200, $headers);
-               }
+               return $this->_module->outputCsv();
+                }
         }
     }
     

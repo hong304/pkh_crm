@@ -306,7 +306,13 @@ class Invoice_CustomerBreakdown {
 
           }
         echo "\xEF\xBB\xBF";
-        return $csv;
+
+        $headers = array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="Customer_Report.csv"',
+        );
+
+        return Response::make(rtrim($csv, "\n"), 200, $headers);
 
 
     }

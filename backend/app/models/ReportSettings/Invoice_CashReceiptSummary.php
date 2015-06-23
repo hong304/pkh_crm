@@ -54,7 +54,7 @@ class Invoice_CashReceiptSummary {
             });*/
 
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','98','97'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
                 if($this->_shift != '-1')
                     $invoicesQuery->where('shift',$this->_shift);
 
@@ -159,7 +159,30 @@ class Invoice_CashReceiptSummary {
 
        return $this->data;
     }
-    
+
+
+    public function outputCsv(){
+
+        $csv = 'CustomerID,Customer Name,Invoice No.,Total Amount' . "\r\n";
+        foreach ($this->data as $o) {
+            $csv .= '"' . $o['customerId'] . '",';
+            $csv .= '"' . $o['name'] . '",';
+            $csv .= '"' . $o['invoiceNumber'] . '",';
+            $csv .= '"' . $o['invoiceTotalAmount'] . '",';
+            $csv .= "\r\n";
+        }
+        echo "\xEF\xBB\xBF";
+
+        $headers = array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="CashReceipt.csv"',
+        );
+
+        return Response::make(rtrim($csv, "\n"), 200, $headers);
+
+
+    }
+
     public function registerFilter()
     {       
        /*
@@ -223,6 +246,11 @@ class Invoice_CashReceiptSummary {
             [
                 'type' => 'pdf',
                 'name' => '列印  PDF 版本',
+                'warning'   =>  false,
+            ],
+            [
+                'type' => 'csv',
+                'name' => '匯出  Excel 版本',
                 'warning'   =>  false,
             ],
         ];
