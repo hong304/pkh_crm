@@ -165,15 +165,17 @@ class Invoice_CashReceiptSummary {
 
         $csv = 'CustomerID,Customer Name,Invoice No.,Total Amount,no. check,db>in,in>db,Invoice No. on hand,Invoice amount on hand,' . "\r\n";
         $totalinvoice = count($this->data)+1;
+        $ii = 2;
         foreach ($this->data as $o) {
             $csv .= '"' . $o['customerId'] . '",';
             $csv .= '"' . $o['name'] . '",';
             $csv .= '"' . $o['invoiceNumber'] . '",';
             $csv .= '"' . $o['invoiceTotalAmount'] . '",';
             $csv .= '"' . substr($o['invoiceNumber'], -5) . '",';
-            $csv .= '"=VLOOKUP(E2,H$2:H$'.$totalinvoice.',1,FALSE)",';
-            $csv .= '"=VLOOKUP(H2,E$2:E$'.$totalinvoice.',1,FALSE)",';
+            $csv .= '"=VLOOKUP(E'.$ii.',H$2:H$'.$totalinvoice.',1,FALSE)",';
+            $csv .= '"=VLOOKUP(H'.$ii.',E$2:E$'.$totalinvoice.',1,FALSE)",';
             $csv .= "\r\n";
+            $ii++;
         }
         $csv .= ',';
         $csv .= ',';
