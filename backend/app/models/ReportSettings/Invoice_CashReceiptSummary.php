@@ -171,8 +171,8 @@ class Invoice_CashReceiptSummary {
             $csv .= '"' . $o['invoiceNumber'] . '",';
             $csv .= '"' . $o['invoiceTotalAmount'] . '",';
             $csv .= '"' . substr($o['invoiceNumber'], -5) . '",';
-            $csv .= '"=VLOOKUP(A2,H$2:H$'.$totalinvoice.',1,FALSE)",';
-            $csv .= '"=VLOOKUP(H2,A$2:H$'.$totalinvoice.',1,FALSE)",';
+            $csv .= '"=VLOOKUP(E2,H$2:H$'.$totalinvoice.',1,FALSE)",';
+            $csv .= '"=VLOOKUP(H2,E$2:E$'.$totalinvoice.',1,FALSE)",';
             $csv .= "\r\n";
         }
         $csv .= ',';

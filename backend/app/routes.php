@@ -149,6 +149,14 @@ Route::get('/info', function(){
     p($_SERVER);
 });
 
+Route::get('/test', function(){
+    $user = pickingListVersionControl::where('id',312)->first();
+    $user->f9_version += 10;
+    $user->save();
+
+});
+
+
 Route::get('/setZone', function(){
     $zoneid = Input::get('id');
     Session::put('zone', $zoneid);
