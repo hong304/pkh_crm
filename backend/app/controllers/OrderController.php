@@ -225,10 +225,18 @@ class OrderController extends BaseController
             $dDateEnd = strtotime($filter['deliverydate2']);
             //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
 
-            if(isset($filter['deliverydate1']))
+          /*  if(isset($filter['deliverydate1']))
                 $invoice = Invoice::select('*');
-            else
+            else*/
+            $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
+
+            // invoice number
+            if ($filter['invoiceNumber'] != '') {
+                $invoice = Invoice::select('*');
+                $invoice->where('invoiceId', 'LIKE', '%' . $filter['invoiceNumber'] . '%');
+            }else{
                 $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
+            }
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -261,10 +269,7 @@ class OrderController extends BaseController
                 $invoice->where('customerId', $filter['clientId']);
             }
 
-            // invoice number
-            if ($filter['invoiceNumber'] != '') {
-                $invoice->where('invoiceId', 'LIKE', '%' . $filter['invoiceNumber'] . '%');
-            }
+
 
             // created by
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
