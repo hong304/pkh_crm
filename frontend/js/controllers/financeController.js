@@ -58,6 +58,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     $scope.payment = [];
     $scope.discount = [];
     $scope.invoicepaid = [];
+    $scope.totalAmount = 0;
     $scope.invoiceStructure = {
         'id' :'',
         'settle':'',
@@ -144,6 +145,10 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     }
 
     $scope.autoPost = function(){
+        if($scope.totalAmount > $scope.payment.remain) {
+            alert('輸入數目大於支票可用餘額');
+            return false;
+        }
         var data = $scope.invoicepaid;
         $http({
             method: 'POST',
@@ -157,7 +162,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     }
 
     $scope.updateDataSet = function($mode){
-        $http.post(query, {start_date: $scope.payment.start_date, end_date:$scope.payment.end_date,mode:$mode,customerId:$scope.payment.customerId, amount:$scope.payment.amount})
+        $http.post(query, {start_date: $scope.payment.start_date, end_date:$scope.payment.end_date,mode:$mode,customerId:$scope.payment.customerId, amount:$scope.payment.remain})
             .success(function(res, status, headers, config){
 
                 $scope.invoiceinfo = res;
@@ -169,10 +174,20 @@ var i = 0;
                     $scope.invoicepaid[i]['id'] = item.invoiceId;
                     i++;
                 });
+                $scope.updatePaidTotal();
             });
     }
 
+$scope.updatePaidTotal = function(){
+    $scope.totalAmount = 0;
+    $scope.invoicepaid.forEach(function(item){
 
+            $scope.totalAmount += Number(item.settle);
+
+    });
+
+
+}
     $scope.addCheque = function()
     {
         $location.url("/finance-newCheque?action=newCheque");
@@ -289,6 +304,7 @@ var i = 0;
                     { "data": "customer.customerName_chi" },
                     { "data": "ref_number" },
                     { "data": "amount" },
+                    { "data": "remain" },
                     { "data": "start_date" },
                     { "data": "end_date" },
                     { "data": "link" },

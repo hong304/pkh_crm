@@ -44,7 +44,7 @@
                     <label>支票總數</label>
                 </div>
                 <div class="col-md-4">
-                    <label>{{payment.amount}}</label>
+                    <label>{{payment.remain}}</label>
                 </div>
             </div>
             <div class="row">
@@ -69,7 +69,7 @@
         <thead>
         <tr role="row" class="heading">
             <th width="10%">
-                發表號碼
+                發票號碼
             </th>
             <th width="5%">
                 送貨日期
@@ -94,9 +94,18 @@
             </td>
 <td>{{i.deliveryDate_date}}</td>
             <td>{{i.amount}}</td>
-            <td><input data-ng-model="invoicepaid[k]['settle']" /></td>
+            <td><input data-ng-model="invoicepaid[k]['settle']" data-ng-change="updatePaidTotal();" onClick="this.select();" /></td>
             <td><input type="checkbox" data-ng-model="invoicepaid[k]['discount']" data-ng-if="i.amount != invoicepaid[k]['settle'] && invoicepaid[k]['settle'] != 0" /></td>
         </tr>
+        <tr>
+            <td>
+            </td>
+            <td></td>
+            <td></td>
+            <td>輸入總數: HK${{totalAmount}}</td>
+            <td></td>
+        </tr>
+
 
     </table>
 

@@ -26,6 +26,7 @@ class PaymentController extends BaseController {
         $info->start_date = $i['startDate'];
         $info->end_date = $i['endDate'];
         $info->amount = $i['amount'];
+        $info->remain = $i['amount'];
         $info->save();
     }
 
@@ -177,7 +178,7 @@ class PaymentController extends BaseController {
                     $v['amount'] -= $v['paid'];
                 $info['sum']+=$v['amount'];
             }
-            // pd($info);
+
             return Response::json($info);
 
         }
@@ -221,19 +222,25 @@ class PaymentController extends BaseController {
         if($mode == 'posting'){
             $paid = Input::get('paid');
 
-            $cheque_id = Input::get('cheque_id');
-            $p = Payment::find($cheque_id);
-            $p->used = 1;
-            $p->save();
 
+            $set_amount =0;
             foreach ($paid as $k=>$v){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
                 $i->paid += $v['settle'];
+                $set_amount += $v['settle'];
                 if($i->amount == $i->paid || $v['discount'] == 1)
                     $i->invoiceStatus = 30;
                 $i->discount = $v['discount'];
                 $i->save();
             }
+
+            $cheque_id = Input::get('cheque_id');
+            $p = Payment::find($cheque_id);
+            $p->remain = $p->remain-$set_amount;
+            if($p->remain == 0)
+                $p->used = 1;
+            $p->save();
+
 
         }
 
