@@ -13,7 +13,8 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
 	};
     $scope.qty = [];
 $scope.selfdefine = [];
-
+$scope.totalline = 0;
+    $scope.initline = 0;
     $scope.selfdefineS = {
         'productId' : '',
         'name' : '',
@@ -116,7 +117,7 @@ $scope.selfdefine = [];
     
     $scope.loadReport = function()
     {
-        console.log($scope.filterData.deliveryDate);
+        console.log('reload');
 
     	$http.post(querytarget, {reportId: 'vanselllist', output: "preview", filterData: $scope.filterData})
             .success(function(res){
@@ -132,6 +133,7 @@ $scope.selfdefine = [];
                     $scope.qty[i]['unit'] = item.unit;
                    i++;
                });
+                $scope.selfdefine = [];
 
                 var j = 0;
                 $scope.report_selfdefine.forEach(function(item) {
@@ -142,22 +144,22 @@ $scope.selfdefine = [];
                     $scope.selfdefine[j]['unit'] = item.unit;
                     j++;
                 });
-
-
-                for(; j < 8; j++ ){
-                    $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
-                    $scope.selfdefine[j]['productId'] = '';
-                    $scope.selfdefine[j]['productName'] = '';
-                    $scope.selfdefine[j]['qty'] = '';
-                    $scope.selfdefine[j]['unit'] = '';
-                }
-
-                console.log($scope.selfdefine);
-
+                $scope.initline = j;
+                $scope.totalline = $scope.initline;
     		Metronic.unblockUI();
     	});
     }
 
+    $scope.addRows = function(){
+        $scope.totalline += 1;
+        for(var j = $scope.initline; j < $scope.totalline; j++ ){
+            $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
+            $scope.selfdefine[j]['productId'] = '';
+            $scope.selfdefine[j]['productName'] = '';
+            $scope.selfdefine[j]['qty'] = '';
+            $scope.selfdefine[j]['unit'] = '';
+        }
+    }
     $scope.sendFile = function(file)
     {
     	
