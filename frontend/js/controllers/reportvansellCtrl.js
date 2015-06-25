@@ -144,7 +144,7 @@ $scope.selfdefine = [];
                 });
 
 
-                for(; j < 5; j++ ){
+                for(; j < 8; j++ ){
                     $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
                     $scope.selfdefine[j]['productId'] = '';
                     $scope.selfdefine[j]['productName'] = '';
