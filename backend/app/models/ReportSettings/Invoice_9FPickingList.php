@@ -99,14 +99,42 @@ class Invoice_9FPickingList {
                         if($productDetail->productLocation == '9')
                         {
                             $customerId = $client->customerId;
-                            $this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit] = [
-                                'productId' => $productId,
-                                'name' => $productDetail->productName_chi,
-                                'unit' => $unit,
-                                'unit_txt' => $item->productUnitName,
-                                'counts' => (isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
-                                'stdPrice' => $productDetail->productStdPrice[$unit],
-                            ];
+
+
+                                if( isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) && $productDetail->allowSeparate) {
+                                    if (!function_exists('fact')) {
+                                        function fact($good, $customerId, $productId, $invoiceId, $unit, $n){
+                                            if (isset($goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $n][$unit])) {
+                                                return fact($good, $customerId, $productId, $invoiceId, $unit, $n + 1);
+                                            } else {
+                                                return $n;
+                                            }
+                                        }
+                                    }
+
+                                    $v =  fact($this->goods,$customerId,$productId,$invoiceId,$unit,'1');
+
+                                $this->goods['9F'][$customerId.$invoiceId]['items'][$productId.'-'.$v][$unit] = [
+                                    'productId' => $productId,
+                                    'name' => $productDetail->productName_chi,
+                                    'unit' => $unit,
+                                    'unit_txt' => $item->productUnitName,
+                                    'counts' => (isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                    'stdPrice' => $productDetail->productStdPrice[$unit],
+                                ];
+
+                            }else {
+
+                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit] = [
+                                    'productId' => $productId,
+                                    'name' => $productDetail->productName_chi,
+                                    'unit' => $unit,
+                                    'unit_txt' => $item->productUnitName,
+                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                    'stdPrice' => $productDetail->productStdPrice[$unit],
+                                ];
+                            }
+
                             $this->goods['9F'][$customerId.$invoiceId]['customerInfo'] = $client->toArray();
                             $this->goods['9F'][$customerId.$invoiceId]['invoiceId'] = $invoiceId;
 

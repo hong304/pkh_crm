@@ -79,7 +79,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'productName_eng' : '',
             'productnewId' :'',
             'hasCommission' : '',
-        'allowNegativePrice' : '',
+            'allowNegativePrice' : '',
+            'allowSeparate' : ''
 	};
 	
 	$scope.submitbtn = true;
@@ -213,6 +214,13 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
             $scope.info.allowNegativePrice= 1;
         else
             $scope.info.allowNegativePrice= 0;
+    }
+
+    $scope.selectSep = function(i){
+        if(i == 'yes')
+            $scope.info.allowSeparate= 1;
+        else
+            $scope.info.allowSeparate= 0;
     }
 
     $scope.submitProductForm = function()

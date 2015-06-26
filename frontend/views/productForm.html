@@ -84,16 +84,27 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">有佣</label>
                             <div class="col-md-10">
+                                <div class="pull-left control-label">
                                <input type="checkbox" ng-model="hasCommission" ng-true-value="yes" ng-false-value="no" ng-checked="hasCommission==1" ng-change="selectCom(hasCommission);">
-
+                            </div>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-md-2 control-label">允許負價格</label>
                             <div class="col-md-10">
-                                <input type="checkbox" ng-model="allowNegativePrice" ng-true-value="yes" ng-false-value="no" ng-checked="allowNegativePrice==1" ng-change="selectNeg(allowNegativePrice);">
+                                <div class="pull-left control-label">
+                                    <input type="checkbox" ng-model="allowNegativePrice" ng-true-value="yes" ng-false-value="no" ng-checked="allowNegativePrice==1" ng-change="selectNeg(allowNegativePrice);">
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">分開(備貨單)</label>
+                            <div class="col-md-10">
+                                <div class="pull-left control-label">
+                                    <input type="checkbox" ng-model="allowSeparate" ng-true-value="yes" ng-false-value="no" ng-checked="allowSeparate==1" ng-change="selectSep(allowSeparate);">
+                                </div>
                             </div>
                         </div>
 
