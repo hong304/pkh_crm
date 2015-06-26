@@ -151,14 +151,16 @@ $scope.totalline = 0;
     }
 
     $scope.addRows = function(){
-        $scope.totalline += 1;
-        for(var j = $scope.initline; j < $scope.totalline; j++ ){
+
+   var j = $scope.totalline;
+
             $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
             $scope.selfdefine[j]['productId'] = '';
             $scope.selfdefine[j]['productName'] = '';
             $scope.selfdefine[j]['qty'] = '';
             $scope.selfdefine[j]['unit'] = '';
-        }
+        $scope.totalline += 1;
+
     }
     $scope.sendFile = function(file)
     {
