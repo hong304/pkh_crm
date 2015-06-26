@@ -47,7 +47,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 	$scope.filterData = {
 			'group'	:	'',
 			'keyword'	:	'',
-            'status' : '100'
+            'status' : '',
+            'productLocation' : ''
 		};
 
     $scope.hasCommission = '';
@@ -100,7 +101,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
         $scope.updateDataSet();
   	}, true);
 
-    $scope.$watch('filterData.status', function() {
+    $scope.$watch('filterData', function() {
         $scope.updateDataSet();
     }, true);
 

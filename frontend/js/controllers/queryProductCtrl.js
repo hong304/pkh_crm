@@ -12,7 +12,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
        'customerId' :'',
        'product' : '',
        'product_name' : '',
-       'shift' : '-1'
+       'shift' : '-1',
     };
 
 
@@ -110,7 +110,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
                     "url": querytarget, // ajax source
                     "type": 'POST',
                     "data": {filterData: $scope.filterData, mode: "collection"},
-                    "xhrFields": {withCredentials: true},
+                    "xhrFields": {withCredentials: true}
                 },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",

@@ -244,6 +244,7 @@ public function jsonQueryProduct()
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');
+
             Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
             $product = Product::select('*')->where('deleted',false);
 
@@ -262,10 +263,14 @@ public function jsonQueryProduct()
                 $product->where('group', $pieces[1]);
             }
 
-            if ($filter['status'] != 100) {
+            if ($filter['status']) {
                 $product->where('productStatus', $filter['status']);
             }
             // query
+
+            if($filter['productLocation'])
+                $product->where('productLocation', $filter['productLocation']);
+
     
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
             $product = $product->orderBy('updated_at','desc')->paginate($page_length);
