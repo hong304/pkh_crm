@@ -124,8 +124,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         	if(scope == "pendingOrder")
         	{
         		$scope.filterData.status = 1;
-        		$scope.filterData.deliverydate1 = '-1';
-        		$scope.filterData.zone = '';
+        		//$scope.filterData.deliverydate1 = '-1';
+        		//$scope.filterData.zone = '';
         	}
         	else if(scope == "rejectedOrders")
         	{
