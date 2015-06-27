@@ -347,12 +347,33 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 
     $scope.rePrintInvoice = function(invoiceId)
     {
-    	//alert('已排序到列印隊伍上');
-        $http.post(reprint, {
-            invoiceId	:	invoiceId
-        }).success(function(data) {
 
+        bootbox.dialog({
+            message: "將會重印訂單",
+            title: "重印訂單",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+
+                    }
+                },
+                danger: {
+                    label: "確定重印",
+                    className: "red",
+                    callback: function() {
+                        $http.post(reprint, {
+                            invoiceId	:	invoiceId
+                        }).success(function(data) {
+
+                        });
+                    }
+                }
+            }
         });
+
+
     }
 
 

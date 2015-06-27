@@ -33,7 +33,7 @@ class PrintQueueController extends BaseController {
 
             if($count){
                 foreach($count as $v){
-                    $delete = PrintQueue::where('invoiceId',$v->invoiceId)->orderBy('insert_time','desc')->first();
+                    $delete = PrintQueue::where('invoiceId',$v->invoiceId)->orderBy('insert_time','asc')->first();
                     $delete->delete();
                 }
             }
