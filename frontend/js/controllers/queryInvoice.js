@@ -17,7 +17,10 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var fetchDataTimer;
     var querytarget = endpoint + '/queryInvoice.json';
     var reprint = endpoint + '/rePrint.json';
-
+    $scope.invoicepaid= [];
+    $scope.invoiceStructure = {
+          'paid' : ''
+    }
 	$scope.firstload = true;
     $scope.filterData = {
         'displayName'	:	'',
@@ -97,7 +100,6 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         });
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
-        console.log($rootScope.systeminfo);
     });
 
     $scope.clearCustomerSearch = function()
@@ -125,7 +127,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         	{
         		$scope.filterData.status = 1;
         		//$scope.filterData.deliverydate1 = '-1';
-        		//$scope.filterData.zone = '';
+        		$scope.filterData.zone = '';
         	}
         	else if(scope == "rejectedOrders")
         	{
@@ -379,6 +381,10 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 
     $scope.updateDataSet = function()
     {
+
+        $scope.invoicepaid[0] = $.extend(true, {}, $scope.invoiceStructure);
+        $scope.invoicepaid[0]['paid'] = 0;
+
     	Metronic.blockUI();
     	var grid = new Datatable();
 
