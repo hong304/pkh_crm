@@ -9,6 +9,13 @@ function viewInvoice(invoiceId)
     	scope.viewInvoice(invoiceId);
     });
 }
+function goEdit(invoiceId)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.goEdit(invoiceId);
+    });
+}
 
 app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 

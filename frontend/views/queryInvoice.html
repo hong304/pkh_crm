@@ -40,8 +40,8 @@
 					<input type="text" id="invoiceNumber" ng-model="filterData.invoiceNumber" ng-change="updateInvoiceNumber();" class="form-control" placeholder="">
 				</div>
 			</div>
-		</div>	
-		
+		</div>
+
 		<!-- Status -->
 		<div class="portlet light">
 			<div class="portlet-title">
@@ -53,6 +53,9 @@
 			</div>
 			<div class="portlet-body">				
 				<div class="md-col-12" style="margin-bottom:15px;">
+
+
+
 					<div data-ng-repeat="(k,i) in invoicepaid" class="radio-list">
 						<label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="0" value="0" checked> 全部</label>
 						<label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="2" value="2"> 正常</label>
