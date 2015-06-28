@@ -100,6 +100,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
             $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
 
+
             $scope.order.deliveryDate = year + '-' + month + '-' + day;
             $scope.order.dueDate = year + '-' + month + '-' + day;
             $scope.order.invoiceDate = $scope.order.deliveryDate;
