@@ -2,6 +2,8 @@
 
 Metronic.unblockUI();
 
+
+
 app.controller('controlOrderController', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
     /* Register shortcut key */
     $(document).ready(function(){
@@ -215,8 +217,8 @@ $scope.an = false;
         })
 
         $scope.timer.selected_client = Date.now();
-
         Metronic.unblockUI();
+
     });
 
     $scope.getSameDayInvoice = function(){
@@ -459,8 +461,6 @@ $scope.an = false;
 
             $http.post(target, {customerId: $location.search().clientId})
                 .success(function(res, status, headers, config){
-                    console.log(res);
-
 
                     // set client information
                     $scope.order.clientId = res.customerId;
@@ -472,7 +472,6 @@ $scope.an = false;
                     $scope.order.discount = res.invoiceDiscount;
                     $scope.displayName = $scope.order.clientId + " (" + $scope.order.clientName + ")";
                     $scope.order.paymentTerms = res.paymentTermId;
-
                     $scope.updatePaymentTerms();
 
                     if(res.paymentTermId == 1)

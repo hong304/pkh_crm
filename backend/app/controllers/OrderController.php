@@ -287,6 +287,7 @@ class OrderController extends BaseController
 
             foreach ($invoices as $invoice) {
                 $invoice->link = '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+                $invoice->id = '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';
             }
         } elseif ($mode == 'single') {
             $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
