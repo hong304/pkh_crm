@@ -95,6 +95,10 @@ class ProductController extends BaseController {
 
         $invoices = $invoices->paginate($page_length);
 
+        foreach ($invoices as $invoice) {
+            $invoice->id = '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';
+        }
+
         return Response::json($invoices);
 
     }

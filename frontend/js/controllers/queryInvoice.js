@@ -133,7 +133,10 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         	if(scope == "pendingOrder")
         	{
         		$scope.filterData.status = 1;
-        		//$scope.filterData.deliverydate1 = '-1';
+                if($location.search().date == 'today')
+        		    $scope.filterData.deliverydate1 = 'today';
+                else if($location.search().date == 'yesterday')
+                    $scope.filterData.deliverydate1 = 'yesterday';
         		$scope.filterData.zone = '';
         	}
         	else if(scope == "rejectedOrders")
@@ -294,12 +297,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     	$http.post(querytarget, {mode: "single", invoiceId: invoiceId})
     	.success(function(res, status, headers, config){
     		$scope.nowUnixTime = Math.round(+new Date()/1000);
-
-
-
-                $scope.invoiceinfo = res;
-                $scope.invoiceinfo.invoiceStatus = parseInt($scope.invoiceinfo.invoiceStatus);
-                console.log($scope.invoiceinfo);
+            $scope.invoiceinfo = res;
+            $scope.invoiceinfo.invoiceStatus = parseInt($scope.invoiceinfo.invoiceStatus);
     		Metronic.unblockUI();
     		$("#productDetails").modal({backdrop: 'static'});
 

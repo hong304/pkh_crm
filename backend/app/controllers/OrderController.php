@@ -111,27 +111,57 @@ class OrderController extends BaseController
 
     public function jsonGetNotification()
     {
-        $return = array('pendingapproval' => '', 'myrejectedinvoices' => '', 'pendingpring' => 0);
-
-        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
+           $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'),'deliveryDate')
             ->wherein('invoiceStatus', ['1', '3'])
             ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
+            ->where('deliveryDate','>=',strtotime("today 00:00"))
             ->groupBy('invoiceStatus', 'zoneId')
             ->with('zone')
             ->get();
 
-        $summary['countInDataMart'] = 0;
+     //   $summary['countInDataMart'] = 0;
+
+
 
         foreach ($invoices as $invoice) {
-            $summary[$invoice->invoiceStatus]['breakdown'][$invoice->zoneId] = [
+                $summary[$invoice->invoiceStatus.'today']['breakdown'][$invoice->zoneId] = [
+                    'zoneId' => $invoice->zoneId,
+                    'counts' => $invoice->counts,
+                    'zoneText' => $invoice->zone->zoneName,
+                ];
+                $summary[$invoice->invoiceStatus.'today']['countInDataMart'] = (isset($summary[$invoice->invoiceStatus.'today']['countInDataMart']) ? $summary[$invoice->invoiceStatus.'today']['countInDataMart'] : 0) + $invoice->counts;
+            }
+
+
+
+
+        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'),'deliveryDate')
+            ->wherein('invoiceStatus', ['1', '3'])
+            ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
+            ->where('deliveryDate','<',strtotime("today 00:00"))
+            ->groupBy('invoiceStatus', 'zoneId')
+            ->with('zone')
+            ->get();
+
+        foreach ($invoices as $invoice) {
+            $summary[$invoice->invoiceStatus . 'yesterday']['breakdown'][$invoice->zoneId] = [
                 'zoneId' => $invoice->zoneId,
                 'counts' => $invoice->counts,
                 'zoneText' => $invoice->zone->zoneName,
             ];
-            $summary[$invoice->invoiceStatus]['countInDataMart'] = (isset($summary[$invoice->invoiceStatus]['countInDataMart']) ? $summary[$invoice->invoiceStatus]['countInDataMart'] : 0) + $invoice->counts;
-
-            $summary['countInDataMart'] += $invoice->counts;
+            $summary[$invoice->invoiceStatus . 'yesterday']['countInDataMart'] = (isset($summary[$invoice->invoiceStatus . 'yesterday']['countInDataMart']) ? $summary[$invoice->invoiceStatus . 'yesterday']['countInDataMart'] : 0) + $invoice->counts;
         }
+
+        /*  $summary[$invoice->invoiceStatus]['breakdown'][$invoice->zoneId] = [
+              'zoneId' => $invoice->zoneId,
+              'counts' => $invoice->counts,
+              'zoneText' => $invoice->zone->zoneName,
+          ];
+          $summary[$invoice->invoiceStatus]['countInDataMart'] = (isset($summary[$invoice->invoiceStatus]['countInDataMart']) ? $summary[$invoice->invoiceStatus]['countInDataMart'] : 0) + $invoice->counts;
+
+          $summary['countInDataMart'] += $invoice->counts;*/
+
+
 
         $jobscount = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->whereIn('status', ['queued', 'fast-track'])
             ->where('insert_time', '>', strtotime("3 days ago"))
@@ -150,6 +180,7 @@ class OrderController extends BaseController
         $summary['printjobs'] = $jobscount;
         $summary['logintime'] = Session::get('logintime');
         $summary['db_logintime'] = Auth::user()->logintime;
+
 
 
         return Response::json($summary);
@@ -236,7 +267,12 @@ class OrderController extends BaseController
                 $invoice->where('invoiceId', 'LIKE', '%' . $filter['invoiceNumber'] . '%');
             }else{
                 if(isset($filter['deliverydate1']))
-                    $invoice = Invoice::select('*');
+                    if($filter['deliverydate1'] == 'today'){
+                        $invoice = Invoice::select('*')->where('deliveryDate','>=',strtotime("today 00:00"));
+                    }elseif($filter['deliverydate1'] == 'yesterday'){
+                        $invoice = Invoice::select('*')->where('deliveryDate','<',strtotime("today 00:00"));
+                    }else
+                        $invoice = Invoice::select('*');
                 else
                      $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
             }
@@ -300,7 +336,6 @@ class OrderController extends BaseController
         }
         //dd(DB::getQueryLog());
 
-        // pd($invoices);
         return Response::json($invoices);
 
 

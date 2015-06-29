@@ -29,20 +29,20 @@
 
 
 
-					<li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="approval_notification" data-ng-if="notification.1.countInDataMart > 0">
+					<li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="approval_notification" data-ng-if="notification.1today.countInDataMart > 0">
 						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" id="approval_notification_btn" data-hover="dropdown" data-close-others="true">
 						<i class="fa glyphicon glyphicon-send"></i>
-						<span class="badge badge-default">{{notification.1.countInDataMart}}</span>
+						<span class="badge badge-default">{{notification.1today.countInDataMart}}</span>
 						</a>
 						<ul class="dropdown-menu">
 							<li class="external">
-								<h3>共有<strong>{{notification.1.countInDataMart}} 張</strong> 訂單需要批核</h3>
-								<a href="/#/queryInvoice?scope=pendingOrder">檢視待批核的訂單</a> 
+								<h3>共有<strong>{{notification.1today.countInDataMart}} 張</strong> 訂單需要批核</h3>
+								<a href="/#/queryInvoice?scope=pendingOrder&date=today">檢視待批核的訂單</a>
 							</li>
 							<li>
 								<ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
-									<li data-ng-repeat="c in notification.1.breakdown">
-										<a href="/#/queryInvoice?scope=pendingOrder&zone={{c.zoneId}}">
+									<li data-ng-repeat="c in notification.1today.breakdown">
+										<a href="/#/queryInvoice?scope=pendingOrder&date=today&zone={{c.zoneId}}">
 										<!-- <span class="time">{{c.lastload}}</span> -->
 										<span class="details">
 											<span class="label label-sm label-icon label-success">
@@ -55,7 +55,33 @@
 							</li>
 						</ul>
 					</li>
-					
+
+                <li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="approval_notification1" data-ng-if="notification.1yesterday.countInDataMart > 0">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" id="approval_notification_btn1" data-hover="dropdown" data-close-others="true">
+                        <i class="fa glyphicon glyphicon-folder-open"></i>
+                        <span class="badge badge-default">{{notification.1yesterday.countInDataMart}}</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="external">
+                            <h3>共有<strong>{{notification.1yesterday.countInDataMart}} 張</strong> 訂單需要批核</h3>
+                            <a href="/#/queryInvoice?scope=pendingOrder&date=yesterday">檢視待批核的訂單</a>
+                        </li>
+                        <li>
+                            <ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
+                                <li data-ng-repeat="c in notification.1yesterday.breakdown">
+                                    <a href="/#/queryInvoice?scope=pendingOrder&date=yesterday&zone={{c.zoneId}}">
+                                        <!-- <span class="time">{{c.lastload}}</span> -->
+										<span class="details">
+											<span class="label label-sm label-icon label-success">
+											<i class="fa fa-location-arrow"></i>
+										</span>
+										<strong>{{c.zoneId}}</strong> 號 <strong>{{c.zoneText}}</strong> 車: <strong>{{c.counts}}</strong> 張 </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
 					
 					<li class="dropdown dropdown-extended dropdown-dark dropdown-notification" id="rejected_notification" data-ng-if="notification.3.countInDataMart > 0">
 						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" id="rejected_notification_btn" data-hover="dropdown" data-close-others="true">

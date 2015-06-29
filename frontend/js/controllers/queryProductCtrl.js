@@ -1,4 +1,14 @@
 'use strict';
+
+function goEdit(invoiceId)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.goEdit(invoiceId);
+    });
+}
+
+
 app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 
     var querytarget = endpoint + '/queryProductwithItem.json';
@@ -66,6 +76,11 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
     }, true);
 
 
+    $scope.goEdit = function(invoiceId)
+    {
+        $location.url("/editOrder?invoiceId=" + invoiceId);
+    }
+
     $scope.updateDataSet = function()
     {
         $timeout.cancel(fetchDataTimer);
@@ -130,7 +145,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
                 "columns": [
 
 
-                    { "data": "invoiceId" },
+                    { "data": "id" },
                     { "data": "deliveryDate_date" },
                     { "data": "zoneId" },
                     { "data": "customerName_chi" },
