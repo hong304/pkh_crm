@@ -152,15 +152,21 @@ class OrderController extends BaseController
             $summary[$invoice->invoiceStatus . 'yesterday']['countInDataMart'] = (isset($summary[$invoice->invoiceStatus . 'yesterday']['countInDataMart']) ? $summary[$invoice->invoiceStatus . 'yesterday']['countInDataMart'] : 0) + $invoice->counts;
         }
 
-        /*  $summary[$invoice->invoiceStatus]['breakdown'][$invoice->zoneId] = [
-              'zoneId' => $invoice->zoneId,
-              'counts' => $invoice->counts,
-              'zoneText' => $invoice->zone->zoneName,
-          ];
-          $summary[$invoice->invoiceStatus]['countInDataMart'] = (isset($summary[$invoice->invoiceStatus]['countInDataMart']) ? $summary[$invoice->invoiceStatus]['countInDataMart'] : 0) + $invoice->counts;
+        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
+            ->where('invoiceStatus', '3')
+            ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
+            ->groupBy('invoiceStatus', 'zoneId')
+            ->with('zone')
+            ->get();
 
-          $summary['countInDataMart'] += $invoice->counts;*/
-
+        foreach ($invoices as $invoice) {
+            $summary[$invoice->invoiceStatus]['breakdown'][$invoice->zoneId] = [
+                'zoneId' => $invoice->zoneId,
+                'counts' => $invoice->counts,
+                'zoneText' => $invoice->zone->zoneName,
+            ];
+            $summary[$invoice->invoiceStatus]['countInDataMart'] = (isset($summary[$invoice->invoiceStatus]['countInDataMart']) ? $summary[$invoice->invoiceStatus]['countInDataMart'] : 0) + $invoice->counts;
+        }
 
 
         $jobscount = PrintQueue::wherein('target_path', explode(',', Auth::user()->temp_zone))->whereIn('status', ['queued', 'fast-track'])
