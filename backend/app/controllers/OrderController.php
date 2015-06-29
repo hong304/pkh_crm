@@ -380,10 +380,11 @@ class OrderController extends BaseController
 
         $customerId = Input::get('customerId');
         $productId = Input::get('productId');
-        $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE customerId = '" . $customerId . "' AND ii.productId = '" . $productId . "' order by ii.invoiceItemId desc";
+        $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99') and customerId = '" . $customerId . "' AND ii.productId = '" . $productId . "' order by ii.invoiceItemId desc";
         $items = DB::select(DB::raw($sql));
         if ($items == null)
             return Response::json($items);
+
         return Response::json($items[0]);
     }
 
