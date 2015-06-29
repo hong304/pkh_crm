@@ -870,17 +870,24 @@ $scope.an = false;
 
         var currentDate = new Date(new Date().getTime());
         var day = currentDate.getDate();
+        day = ("0" + day).slice(-2);
         var month = currentDate.getMonth()+1;
+        month = ("0" + month).slice(-2);
         var year = currentDate.getFullYear();
 
         var dates = ""+year+month+day;
 
         var orderDate = new Date($scope.order.deliveryDate);
         var day = orderDate.getDate();
+        day = ("0" + day).slice(-2);
         var month = orderDate.getMonth()+1;
+        month = ("0" + month).slice(-2);
         var year = orderDate.getFullYear();
 
         var order_dates = ""+year+month+day;
+
+        console.log(order_dates);
+        console.log(dates);
 
         if(v){
             var bool = (Number(order_dates) < Number(dates));
