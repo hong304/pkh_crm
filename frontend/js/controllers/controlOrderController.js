@@ -609,11 +609,11 @@ $scope.an = false;
             //console.log(item);
 
             if($scope.order.status == '98' || $scope.order.status == '96') {
-                if(item.productPackingInterval_unit == 0)
+                if(item.productPackingName_unit != '')
                 availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
-                if(item.productPackingInterval_inner == 0)
+                if(item.productPackingName_inner != '')
                 availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
-                if(item.productPackingInterval_carton == 0)
+                if(item.productPackingName_carton != '')
                 availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
             }else{
                 if(item.productPackingInterval_unit > 0)
