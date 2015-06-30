@@ -150,9 +150,11 @@ Route::get('/info', function(){
 });
 
 Route::get('/test', function(){
-    $user = pickingListVersionControl::where('id',312)->first();
-    $user->f9_version += 10;
-    $user->save();
+
+  $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
+    foreach ($result as $v) {
+        echo $v['deliveryDate_date'].":".$v['zoneText'].":".$v['count(*)']."<br>";
+   }
 
 });
 
