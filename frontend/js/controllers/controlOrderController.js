@@ -284,7 +284,7 @@ $scope.an = false;
         $http.post(target, {productId: productId, customerId: clientId})
             .success(function (res, status, headers, config) {
                 $scope.lastitem = res;
-                console.log(res);
+
                 if(res.productQty > 0){
                     $scope.product[i].unitprice = res.productPrice;
                     var pos = $scope.product[i]['availableunit'].map(function(e) {
@@ -414,7 +414,7 @@ $scope.an = false;
 
                     if(res.paymentTermId == 1)
                     {
-                        console.log(res.paymentTermId);
+
                         $("#paymentTerms").attr('disabled', 'true');
                         $("#duedatepicker").datepicker('remove');
                     }
@@ -476,7 +476,7 @@ $scope.an = false;
 
                     if(res.paymentTermId == 1)
                     {
-                        console.log(res.paymentTermId);
+
                         $("#paymentTerms").attr('disabled', 'true');
                         $("#duedatepicker").datepicker('remove');
                     }
@@ -608,21 +608,32 @@ $scope.an = false;
             var availableunit = [];
             //console.log(item);
 
-            if(item.productStdPrice_unit > 0)
-            {
-                //$("#unit_" + i).prepend('<option value="unit">Unit</option>');
+            if($scope.order.status == '98' || $scope.order.status == '96') {
+                if(item.productPackingName_unit != '')
                 availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
-            }
-            if(item.productStdPrice_inner > 0)
-            {
-                //$("#unit_" + i).prepend('<option value="inner">Inner</option>');
+                if(item.productPackingName_inner != '')
                 availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
-            }
-            if(item.productStdPrice_carton > 0)
-            {
-                //$("#unit_" + i).prepend('<option value="0">Carton</option>');
+                if(item.productPackingName_carton != '')
                 availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
+            }else{
+                if(item.productStdPrice_unit > 0)
+                {
+                    //$("#unit_" + i).prepend('<option value="unit">Unit</option>');
+                    availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
+                }
+                if(item.productStdPrice_inner > 0)
+                {
+                    //$("#unit_" + i).prepend('<option value="inner">Inner</option>');
+                    availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
+                }
+                if(item.productStdPrice_carton > 0)
+                {
+                    //$("#unit_" + i).prepend('<option value="0">Carton</option>');
+                    availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
+                }
             }
+
+
 
             console.log(availableunit);
 
