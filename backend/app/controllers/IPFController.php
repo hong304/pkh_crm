@@ -26,7 +26,7 @@ class IPFController extends BaseController {
             // query
             
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $ipf = $ipf->paginate($page_length);
+            $ipf = $ipf->orderBy('updated_at','desc')->paginate($page_length);
             
             
             foreach($ipf as $c)
