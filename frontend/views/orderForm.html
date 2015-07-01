@@ -281,7 +281,7 @@
                     </div>
 
                     <div class="portlet-body" id="orderportletbody">
-                        <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.productQty > 0" >貨品收改時間:{{lastitem.created_at}} 數量:{{lastitem.productQty}} 售價:{{lastitem.productPrice}} 折扣:{{lastitem.productDiscount}}% 總數:{{lastitem.productQty*lastitem.productPrice*(100-lastitem.productDiscount)/100|number:1 }}</p>
+                        <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.productQty > 0" >貨品收改時間:{{lastitem.created_at}} 數量:{{lastitem.productQty}} 售價:{{lastitem.productPrice}}({{lastitem.productStandardPrice}}) 折扣:{{lastitem.productDiscount}}% 總數:{{lastitem.productQty*lastitem.productPrice*(100-lastitem.productDiscount)/100|number:1 }}</p>
                         <br />
 
                         <table class="table table-bordered table-hover">
