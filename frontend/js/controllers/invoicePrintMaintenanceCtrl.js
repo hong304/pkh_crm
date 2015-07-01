@@ -115,7 +115,9 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
 
             $('#datatable_ajax').dataTable({
 
-                 //         "dom": '<"top"f<"clear">>rt<"bottom"ip<"clear">>',
+                // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
+
+                "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
 
                 "bServerSide": true,
 
@@ -126,7 +128,7 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 25,
-                "pagingType": "full_numbers",
+                //"pagingType": "full_numbers",
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",

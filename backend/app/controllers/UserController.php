@@ -270,7 +270,7 @@ class UserController extends BaseController {
 
 	        $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 	        $staff = $staff->with('role')->paginate($page_length);
-	
+
 	        foreach($staff as $c)
 	        {
                 if($c->disabled == 0){
@@ -284,9 +284,12 @@ class UserController extends BaseController {
                 foreach($c->role as $v)
 	                $c->m_role =  $v->name;
 	        }
+
 	    }
 
-	    elseif($mode == 'single')
+
+
+	   if($mode == 'single')
 	    {
 	        $staff['account'] = User::where('id', Input::get('StaffId'))->with('roles')->first();
 	        
