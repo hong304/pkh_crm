@@ -119,7 +119,7 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
 
                 "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
 
-                "bServerSide": true,
+              //  "bServerSide": true,
 
                 "ajax": {
                     "url": querytarget, // ajax source
@@ -128,7 +128,7 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 25,
-                //"pagingType": "full_numbers",
+                "pagingType": "full_numbers",
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",
@@ -150,6 +150,9 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
                     { "data": "size" },
                     { "data": "link" },
 
+                ],
+                "order": [
+                    [0, "desc"],
                 ]
 
             });

@@ -19,22 +19,20 @@ class IPFController extends BaseController {
         
         if($mode == 'collection')
         {
-            $filter = Input::get('filterData');
-            Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-            $ipf = InvoicePrintFormat::select('*');
-                        
-            // query
-            
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $ipf = $ipf->orderBy('updated_at','desc')->paginate($page_length);
-            
-            
-            foreach($ipf as $c)
-            {
-                $c->from = date("Y-m-d", $c->from);
-                $c->to = date("Y-m-d", $c->to);
-                $c->link = '<span onclick="editIPF(\''.$c->ipfId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
-            }
+
+            $ipf = InvoicePrintFormat:: select(['ipfId','from', 'to', 'size']);
+            return Datatables::of($ipf)
+                ->addColumn('link', function ($ip) {
+                    return '<span onclick="editIPF(\''.$ip->ipfId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                })
+                ->editColumn('from', function ($ip) {
+                    return  date("Y-m-d", $ip->from);
+                })
+                ->editColumn('to', function ($ip) {
+                    return  date("Y-m-d", $ip->to);
+                })
+                ->make(true);
+
         }
         elseif($mode == 'single')
         {
