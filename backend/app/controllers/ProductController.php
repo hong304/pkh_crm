@@ -254,11 +254,14 @@ public function jsonQueryProduct()
 
             if($filter['keyword'] != '')
             {
-                $filter['keyword'] = str_replace(array('*', '?'), '%', $filter['keyword']);
-                $product->where('productId', 'LIKE', '%'.$filter['keyword'].'%')
-                        ->orwhere('productName_chi', 'LIKE', '%'.$filter['keyword'].'%');
+                $keyword = str_replace(array('*', '?'), '%', $filter['keyword']);
+                $product->where(function ($query) use ($keyword) {
+                    $query->where('productName_chi', 'LIKE', '%' . $keyword . '%')
+                        ->orwhere('productId', 'LIKE', '%' . $keyword . '%');
+                });
             } 
-            elseif($filter['group'] != '')
+
+            if($filter['group'] != '')
             {
                 $groupid =  substr($filter['group']['groupid'], 0, -1);
                 $pieces = explode("-",$groupid);
