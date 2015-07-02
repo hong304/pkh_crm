@@ -117,8 +117,6 @@ $scope.totalline = 0;
     
     $scope.loadReport = function()
     {
-        console.log('reload');
-
     	$http.post(querytarget, {reportId: 'vanselllist', output: "preview", filterData: $scope.filterData})
             .success(function(res){
 

@@ -24,12 +24,10 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $scope.availableZones = data.zones;
         $scope.currentZone = data.current_zone;
         Metronic.unblockUI();
-        console.log($scope.highFrequencyClient);
     });
     
     $scope.createCustomerInvoice = function(customerId)
     {
-    	console.log(customerId);
    $location.path('/newOrder///').search({clientId: customerId});
      //   $location.path('/newOrder///?clientId='+customerId);
     }

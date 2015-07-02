@@ -74,7 +74,7 @@ class VanSellController extends BaseController
             vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define',true)->delete();
 
             foreach($selfdefine as $d){
-                if(trim($d['productName']) != '' && trim($d['qty']) != '' && trim($d['unit']) != ''){
+                if(trim($d['productName']) != '' && trim($d['qty']) != '' && trim($d['unit']) != '' && trim($d['productId'])){
                     $i =  new vansell;
                     $i->productId = $d['productId'];
                     $i->name = $d['productName'];
