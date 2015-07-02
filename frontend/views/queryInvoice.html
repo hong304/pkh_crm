@@ -57,11 +57,14 @@
 
 
 					<div data-ng-repeat="(k,i) in invoicepaid" class="radio-list">
-						<label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="0" value="0" checked> 全部</label>
+						<label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="0" value="0"> 全部</label>
 						<label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="2" value="2"> 正常</label>
 						<label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="1" value="1"> 等待批核 </label>
+                        <label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="100" value="100"> 已批核 </label>
 						<label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="3" value="3"> 被拒絕 </label>
 						<label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="99" value="99"> 已刪除 </label>
+                        <label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="98" value="98"> 退貨單 </label>
+                        <label><input ng-model="filterData.status" ng-change="updateStatus();" type="radio" name="status" id="status" ng-value="96" value="96"> 補貨單 </label>
 					</div>
 
 				</div>
