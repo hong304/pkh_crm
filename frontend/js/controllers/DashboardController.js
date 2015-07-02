@@ -93,8 +93,18 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
     }
 
     $scope.submitStaffForm = function(){
-
-
+        $scope.filterData = {
+            'deliveryDate' : '',
+            'zone' : {
+                'value' : ''
+            },
+            'shift' : {
+                'value' : ''
+            }
+        }
+        $scope.filterData.deliveryDate = $scope.picking.date;
+        $scope.filterData.zone.value = $scope.picking.zone.zoneId;
+        $scope.filterData.shift.value = $scope.picking.shift;
 
         $http.post(iutarget, {info: $scope.version, mode : 'check'})
             .success(function(res, status, headers, config){
@@ -104,8 +114,16 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
                         $("#generalPickingModal").modal('hide');
                         $http.post(iutarget, {info: $scope.picking, mode : 'post'})
                             .success(function(res, status, headers, config){
-                                $scope.version = res;
                                 $scope.picking = true;
+                                if(res == 'true'){
+                                    var queryObject = {
+                                        filterData	:	$scope.filterData,
+                                        reportId	:	'pickinglist9f',
+                                        output		:	'pdf'
+                                    };
+                                    var queryString = $.param( queryObject );
+                                    window.open(endpoint + "/getReport.json?" + queryString);
+                                }
                             });
                     }
             });

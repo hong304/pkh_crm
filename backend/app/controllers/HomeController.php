@@ -159,6 +159,7 @@ class HomeController extends BaseController {
                 $user->save();
             }
 
+            return Response::json($f9);
         }
        //
 
