@@ -25,7 +25,7 @@ class InvoiceImage {
         $i = array_values($invoice['categorized'])[0]['invoices'][0];
         $zoneId = array_values($invoice['categorized'])[0]['zoneId'];
         
-        $adv = InvoicePrintFormat::select('advertisement')->where('from', '<', time())->where('to', '>', time())->orderby('ipfId', 'desc')->first();
+        $adv = InvoicePrintFormat::select('advertisement')->where('from', '<=', $i['deliveryDate'])->where('to', '>=', $i['deliveryDate'])->orderby('ipfId', 'desc')->first();
                 
         
         
