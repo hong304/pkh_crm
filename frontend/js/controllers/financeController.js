@@ -55,6 +55,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     var month = today.getMonth() + 1;
     var year = today.getFullYear();
 
+    $scope.bankName = '000';
     $scope.payment = [];
     $scope.discount = [];
     $scope.invoicepaid = [];
@@ -72,6 +73,9 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         'status'        :   ''
     };
 
+    $scope.cheque = {
+        'bankName' : '000'
+    }
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();

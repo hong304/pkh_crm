@@ -18,11 +18,24 @@
                 <div class="tab-content no-space">
                     <div class="tab-pane active" id="tab_general">
                         <div class="form-body">
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">銀行名稱: <span class="required">
+										* </span>
+                                </label>
+                                    <div class="col-md-3">
+                                        <select class="form-control" ng-model="cheque.bankName">
+                                            <option value="000"> 現金</option>
+                                            <option value="003"> 渣打銀行</option>
+                                        </select>
+                                    </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="col-md-2 control-label">支票號碼: <span class="required">
 										* </span>
                                 </label>
-                                <div class="col-md-5">
+                                <div class="col-md-3">
                                     <input type="text" class="form-control" data-ng-model="cheque.no" placeholder="">
 
                                 </div>
@@ -31,7 +44,7 @@
                                 <label class="col-md-2 control-label">客戶 (c) <span class="required">
 										* </span>
                                 </label>
-                                <div class="col-md-5">
+                                <div class="col-md-3">
                                     <div class="input-group">
                                         <input id="client" class="form-control" type="text" disabled name="client" placeholder="自動填上, 請按鍵選擇" data-ng-model="filterData.displayName")/>
 											<span class="input-group-btn">
@@ -44,13 +57,13 @@
                                 <label class="col-md-2 control-label">總數: <span class="required">
 										* </span>
                                 </label>
-                                <div class="col-md-5">
+                                <div class="col-md-3">
                                     <input type="text" class="form-control" data-ng-model="cheque.amount" placeholder="">
 
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-2 control-label">收票日期:
+                                <label class="col-md-2 control-label">入票日期:
                                 </label>
                                 <div class="col-md-5">
                                     <div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="">
