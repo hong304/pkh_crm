@@ -266,14 +266,47 @@ class Invoice_9FPickingList {
         //  }
 
 
-        $pdf = new PDF();
-        $i = 0;
-        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
+
 
         // handle 9F goods
         $ninef = $this->data['9F'];
+
+
+        $newway = [];
+
+        foreach($ninef as $k => $v){
+            $temp = array_chunk($v['items'],35,true);
+            if(count($temp)>1){
+                foreach($temp as $kk => $vv){
+                    if($kk == 0){
+                        $newway[$k]['items'] = $vv;
+                        $newway[$k]['customerInfo'] = $v['customerInfo'];
+                        $newway[$k]['revised'] = $v['revised'];
+                        $newway[$k]['invoiceId'] = $v['invoiceId'];
+
+                    }else{
+                        $newway[$k."-".$kk]['items'] = $vv;
+                        $newway[$k."-".$kk]['customerInfo'] = $v['customerInfo'];
+                        $newway[$k."-".$kk]['revised'] = $v['revised'];
+                        $newway[$k."-".$kk]['invoiceId'] = $v['invoiceId'];
+                    }
+                }
+            }else{
+                $newway[$k]['items'] = $v['items'];
+                $newway[$k]['customerInfo'] = $v['customerInfo'];
+                $newway[$k]['revised'] = $v['revised'];
+                $newway[$k]['invoiceId'] = $v['invoiceId'];
+            }
+        }
+        $this->_newway = $newway;
+
+
         $consec = $j = 0;
-        foreach($ninef as $c=>$nf)
+
+        $pdf = new PDF();
+        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
+
+        foreach( $this->_newway as $c=>$nf)
         {
 
             $consec += count($nf['items'])+2;
