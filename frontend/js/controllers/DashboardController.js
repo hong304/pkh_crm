@@ -68,7 +68,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
       $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
                     $scope.version = res;
-                    console.log($scope.version);
+              console.log($scope.version);
             });
 
         document.getElementById('shift').style.display='block';
@@ -80,6 +80,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
                 $scope.version = res;
+                console.log($scope.version);
             });
     }
 
@@ -87,6 +88,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
                 $scope.version = res;
+                console.log($scope.version);
             });
     }
 
@@ -104,11 +106,11 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $scope.filterData.zone.value = $scope.picking.zone.zoneId;
         $scope.filterData.shift.value = $scope.picking.shift;
 
-        $http.post(iutarget, {info: $scope.version, mode : 'check'})
+      /*  $http.post(iutarget, {info: $scope.version, mode : 'check'})
             .success(function(res, status, headers, config){
                     if(parseInt(res) == 0){
                         alert('產生備貨單前請列印之前的版本');
-                    }else{
+                    }else{*/
                         $("#generalPickingModal").modal('hide');
                         $http.post(iutarget, {info: $scope.picking, mode : 'post'})
                             .success(function(res, status, headers, config){
@@ -123,8 +125,8 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
                                     window.open(endpoint + "/getReport.json?" + queryString);
                                 }
                             });
-                    }
-            });
+                   // }
+          //  });
 
 
     }
