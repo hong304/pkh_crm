@@ -13,6 +13,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
 
     var querytarget = endpoint + '/queryProductwithItem.json';
     var fetchDataTimer;
+    var fetchDataDelay = 500;   // milliseconds
 
     $scope.firstload = true;
    $scope.filterData= {
@@ -45,7 +46,10 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
 
 
    $scope.$watch('filterData', function() {
-            $scope.updateDataSet();
+       $timeout.cancel(fetchDataTimer);
+       fetchDataTimer = $timeout(function () {
+           $scope.updateDataSet();
+       }, fetchDataDelay);
      }, true);
 
     $scope.$on('$viewContentLoaded', function() {
