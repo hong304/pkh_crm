@@ -74,7 +74,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     };
 
     $scope.cheque = {
-        'bankName' : '000'
+        'bankName' : '003'
     }
 
     $scope.$on('$viewContentLoaded', function() {

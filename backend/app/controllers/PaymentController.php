@@ -22,6 +22,7 @@ class PaymentController extends BaseController {
         $info->customerId = $i['clientId'];
         $info->deliveryZone = $c['deliveryZone'];
         $info->ref_number = $i['no'];
+        $info->bankCode = $i['bankName'];
         $info->receive_date = $i['receiveDate'];
         $info->start_date = $i['startDate'];
         $info->end_date = $i['endDate'];
