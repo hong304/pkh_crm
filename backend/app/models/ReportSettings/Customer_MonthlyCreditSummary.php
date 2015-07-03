@@ -10,6 +10,10 @@ class Customer_MonthlyCreditSummary {
     private $_unPaid = [];
 
     private $_monthly = [];
+
+    private $_reportMonth = '';
+
+    private $_reportMonths = '';
      
     public function __construct($indata)
     {
@@ -241,12 +245,15 @@ if($this->_shift != '-1')
     public function outputPDF()
     {
 
+        $this->_reportMonth = date("n",$this->_date2);
+
+
        $times  = array();
         for($month = 1; $month <= 12; $month++) {
             $first_minute = mktime(0, 0, 0, $month, 1,date('Y'));
             $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),date('Y'));
 
-            if(date('n')==$month)
+            if($this->_reportMonth==$month)
                 $last_minute =  $this->_date2;
             $times[$month] = array($first_minute, $last_minute);
         }
@@ -265,7 +272,7 @@ if($this->_shift != '-1')
 
 
 
-                for ($i = date('n'); $i > 0; $i--) {
+                for ($i = $this->_reportMonth; $i > 0; $i--) {
                     $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->leftJoin('Customer', function ($join) {
                         $join->on('Invoice.customerId', '=', 'Customer.customerId');
                     })->where('paymentTermId', 2)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
@@ -431,33 +438,33 @@ if($this->_shift != '-1')
 
             $pdf->SetFont('Arial','U',12);
             $pdf->setXY(10, $y + 24);
-            $pdf->Cell(0, 0, date('Y') . '/' . date('n'), 0, 0, "L");
+            $pdf->Cell(0, 0, date('Y') . '/' . $this->_reportMonth, 0, 0, "L");
 
             $pdf->setXY(50, $y + 24);
-            $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 1), 0, 0, "L");
+            $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth - 1), 0, 0, "L");
 
             $pdf->setXY(90, $y + 24);
-            $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 2), 0, 0, "L");
+            $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth - 2), 0, 0, "L");
 
             $pdf->setXY(130, $y + 24);
-            $pdf->Cell(0, 0, date('Y') . '/' . (date('m') - 3), 0, 0, "L");
+            $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth - 3), 0, 0, "L");
 
 
             $pdf->SetFont('Arial','',12);
             $pdf->setXY(10, $y + 30);
-            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[date('n')])?end($this->_monthly[date('n')][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
+            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth][$customerId])?end($this->_monthly[$this->_reportMonth][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(50, $y + 30);
-          //  $pdf->Cell(0, 0, '$' .  number_format(isset($this->_monthly[date('n')-1])?end($this->_monthly[date('n')-1][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
-            $pdf->Cell(0, 0, '$' . number_format(0, 2, '.', ','), 0, 0, "L");
+          $pdf->Cell(0, 0, '$' .  number_format(isset($this->_monthly[$this->_reportMonth-1][$customerId])?end($this->_monthly[$this->_reportMonth-1][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
+           // $pdf->Cell(0, 0, '$' . number_format(0, 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(90, $y + 30);
-           // $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[date('n')-2])?end($this->_monthly[date('n')-2][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
-            $pdf->Cell(0, 0, '$' . number_format(0, 2, '.', ','), 0, 0, "L");
+           $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-2][$customerId])?end($this->_monthly[$this->_reportMonth-2][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
+          //  $pdf->Cell(0, 0, '$' . number_format(0, 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(130, $y + 30);
-          //  $pdf->Cell(0, 0, '$' .number_format(isset($this->_monthly[date('n')-3])?end($this->_monthly[date('n')-3][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
-            $pdf->Cell(0, 0, '$' .number_format(0, 2, '.', ','), 0, 0, "L");
+            $pdf->Cell(0, 0, '$' .number_format(isset($this->_monthly[$this->_reportMonth-3][$customerId])?end($this->_monthly[$this->_reportMonth-3][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
+           // $pdf->Cell(0, 0, '$' .number_format(0, 2, '.', ','), 0, 0, "L");
 
 
             $pdf->setXY(10, $y + 36);
