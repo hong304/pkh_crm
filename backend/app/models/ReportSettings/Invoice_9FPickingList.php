@@ -259,18 +259,8 @@ class Invoice_9FPickingList {
 
     public function outputPDF()
     {
-        // Update it as generated into picking list
-        //  if(count($this->_invoices) > 0)
-        //  {
-        // Invoice::wherein('invoiceId', $this->_invoices)->update(['f9_picking_dl'=>'1']);
-        //  }
-
-
-
-
         // handle 9F goods
         $ninef = $this->data['9F'];
-
 
         $newway = [];
 
