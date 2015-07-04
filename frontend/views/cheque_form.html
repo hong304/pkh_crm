@@ -23,8 +23,11 @@
                                 <label class="col-md-2 control-label">銀行名稱: <span class="required">
 										* </span>
                                 </label>
-                                    <div class="col-md-3">
-                                        <select class="form-control" ng-model="cheque.bankName">
+                                    <div class="pull-left col-md-1">
+                                        <input type="text" class="form-control" data-ng-model="cheque.bankCode" placeholder="Bank Code" onClick="this.select();">
+                                    </div>
+                                        <div class="pull-left col-md-2">
+                                        <select class="form-control" ng-model="cheque.bankCode">
                                             <option value="003"> STANDARD CHARTERED BANK (HONG KONG) LIMITED 渣打銀行(香 港)有限公司</option>
                                             <option value="004"> THE HONGKONG AND SHANGHAI BANKING CORPORATION LIMITED 香港上海匯豐銀行有限公司</option>
                                             <option value="005"> CALYON 東方匯理銀行</option>
@@ -152,7 +155,8 @@
                                             <option value="250"> CITIBANK (HONG KONG) LIMITED 花旗銀行 ( 香 港 ) 有限公司</option>
                                             <option value="251"> ICICI BANK LIMITED</option>
                                         </select>
-                                    </div>
+                                            </div>
+
                             </div>
 
                             <div class="form-group">
@@ -161,7 +165,6 @@
                                 </label>
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" data-ng-model="cheque.no" placeholder="">
-
                                 </div>
                             </div>
                             <div class="form-group">
