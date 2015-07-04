@@ -450,7 +450,33 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
         }
     })
 
+        .state('pendingInvoice', {
+            url: "/pendingInvoice",
+            templateUrl: "views/queryInvoice.html",
+            data: {pageTitle: '訂單檢索系統', pageSubTitle: ''},
+            controller: "queryInvoiceCtrl",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
 
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+                            'js/controllers/queryInvoice.js',
+                            'js/controllers/selectClientCtrl.js',
+                        ]
+                    });
+                }]
+            }
+        })
 
         .state('queryProduct', {
             url: "/queryProduct",

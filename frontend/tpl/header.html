@@ -37,12 +37,12 @@
 						<ul class="dropdown-menu">
 							<li class="external">
 								<h3>共有<strong>{{notification.1today.countInDataMart}} 張</strong> 訂單需要批核</h3>
-								<a href="/#/queryInvoice?scope=pendingOrder&date=today">檢視待批核的訂單</a>
+								<a href="/#/pendingInvoice?scope=pendingOrder&date=today">檢視待批核的訂單</a>
 							</li>
 							<li>
 								<ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
 									<li data-ng-repeat="c in notification.1today.breakdown">
-										<a href="/#/queryInvoice?scope=pendingOrder&date=today&zone={{c.zoneId}}">
+										<a href="/#/pendingInvoice?scope=pendingOrder&date=today&zone={{c.zoneId}}">
 										<!-- <span class="time">{{c.lastload}}</span> -->
 										<span class="details">
 											<span class="label label-sm label-icon label-success">
@@ -64,12 +64,12 @@
                     <ul class="dropdown-menu">
                         <li class="external">
                             <h3>共有<strong>{{notification.1yesterday.countInDataMart}} 張</strong> 訂單需要批核</h3>
-                            <a href="/#/queryInvoice?scope=pendingOrder&date=yesterday">檢視待批核的訂單</a>
+                            <a href="/#/pendingInvoice?scope=pendingOrder&date=yesterday">檢視待批核的訂單</a>
                         </li>
                         <li>
                             <ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
                                 <li data-ng-repeat="c in notification.1yesterday.breakdown">
-                                    <a href="/#/queryInvoice?scope=pendingOrder&date=yesterday&zone={{c.zoneId}}">
+                                    <a href="/#/pendingInvoice?scope=pendingOrder&date=yesterday&zone={{c.zoneId}}">
                                         <!-- <span class="time">{{c.lastload}}</span> -->
 										<span class="details">
 											<span class="label label-sm label-icon label-success">
@@ -91,12 +91,12 @@
 						<ul class="dropdown-menu">
 							<li class="external">
 								<h3>你有<strong>{{notification.3.countInDataMart}} 張</strong> 訂單被拒絕</h3>
-								<a href="/#/queryInvoice?scope=rejectedOrders">檢視被拒絕的訂單</a>
+								<a href="/#/pendingInvoice?scope=rejectedOrders">檢視被拒絕的訂單</a>
 							</li>
 							<li>
 								<ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
 										<li data-ng-repeat="i in notification.3.breakdown">
-											<a href="/#/queryInvoice?scope=rejectedOrders&zone={{i.zoneId}}">
+											<a href="/#/pendingInvoice?scope=rejectedOrders&zone={{i.zoneId}}">
 											<!-- <span class="time">{{i.lastload}}</span> -->
 											<span class="details">
 												<span class="label label-sm label-icon label-success">

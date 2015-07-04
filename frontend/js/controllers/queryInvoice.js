@@ -429,7 +429,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                     "url": querytarget, // ajax source
                     "type": 'POST',
                     "data": {filterData: $scope.filterData, mode: "collection"},
-            		"xhrFields": {withCredentials: true},
+            		"xhrFields": {withCredentials: true}
                 },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
