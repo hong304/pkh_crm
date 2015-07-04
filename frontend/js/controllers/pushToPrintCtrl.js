@@ -191,9 +191,9 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
         $scope.updatePrintQueue();
     }
 
-    $scope.updateGroup = function(){
+ /*   $scope.updateGroup = function(){
         $scope.updatePrintQueue();
-    }
+    }*/
 
     $scope.updateShift = function(){
         $scope.updatePrintQueue();
