@@ -51,7 +51,7 @@ class InvoiceStatusManager {
           //      PrintQueue::where('invoiceId', $this->invoiceId)->update(['status'=>'queued']);
           //  }
 
-            PrintQueue::where('invoiceId', $this->invoiceId)->update(['status'=>'queued']);
+            PrintQueue::where('invoiceId', $this->invoiceId)->where('status','dead:pending')->update(['status'=>'queued']);
 
         }
         return $this;
