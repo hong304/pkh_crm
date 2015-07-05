@@ -368,7 +368,7 @@ if($this->_shift != '-1')
             $bd = array_chunk($client['breakdown'],29,true);
 
             foreach ($bd as $k => $g) {
-
+                $count = 0;
                 if($k > 0) {
                     $pdf->AddPage();
                     $y = 20;
@@ -412,8 +412,16 @@ if($this->_shift != '-1')
                     $accu = $v['accumulator'];
 
                     $y += 6;
-
+                    $count++;
                 }
+
+
+
+            }
+
+            if($count > 22){
+                $pdf->AddPage();
+                $y = 20;
             }
             $pdf->Line(10, $y, 190, $y);
 
