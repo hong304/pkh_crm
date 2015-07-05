@@ -74,7 +74,7 @@ class Customer_MonthlyCreditSummary {
 if($this->_shift != '-1')
     $invoices->where('Invoice.shift',$this->_shift);
 
-        $invoices->where('paymentTermId',2)->with('client', 'invoiceItem')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(50, function($invoices){
+        $invoices->where('paymentTerms',2)->with('client', 'invoiceItem')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(50, function($invoices){
             foreach($invoices as $invoice)
             {
 
@@ -275,7 +275,7 @@ if($this->_shift != '-1')
                 for ($i = $this->_reportMonth; $i > 0; $i--) {
                     $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->leftJoin('Customer', function ($join) {
                         $join->on('Invoice.customerId', '=', 'Customer.customerId');
-                    })->where('paymentTermId', 2)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+                    })->where('paymentTerms', 2)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
 
                     foreach($data[$i] as $invoice)
