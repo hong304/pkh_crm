@@ -365,7 +365,7 @@ if($this->_shift != '-1')
             $amount = 0;
             $paid = 0;
 
-            $bd = array_chunk($client['breakdown'],30,true);
+            $bd = array_chunk($client['breakdown'],29,true);
 
             foreach ($bd as $k => $g) {
 
