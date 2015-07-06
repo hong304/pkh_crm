@@ -87,7 +87,7 @@ class PrintQueueController extends BaseController {
 
 
         $job =  PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','users.name','PrintQueue.status')
-            ->wherein('target_path',explode(',', $this->zone))->where('insert_time', '>', strtotime("3 days ago"))
+            ->wherein('target_path',explode(',', $this->zone))
             ->where('PrintQueue.status','!=','dead:regenerated')
             ->where('PrintQueue.status','!=','downloaded;passive');
 if(Input::get('group.id')!='')
