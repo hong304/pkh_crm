@@ -114,7 +114,7 @@ class Report_DailySummary
                                 'productPrice' => $item->productPrice,
                                 'unit' => $unit,
                                 'unit_txt' => $item->productUnitName,
-                                'counts' => ((isset($this->goods[$productId.'(退貨)'][$unit]) ? $this->goods[$productId][$unit]['counts'] : 0) - $item->productQty),
+                                'counts' => ((isset($this->goods[$productId.'(退貨)'][$unit]) ? $this->goods[$productId.'(退貨)'][$unit]['counts'] : 0) - $item->productQty),
                             ];
 
                             //  pd($item);
