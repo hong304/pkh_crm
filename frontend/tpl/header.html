@@ -219,7 +219,7 @@
                     <a href="/#/reportSelection" ><i class="fa fa-star-half-o"></i>報告系統</a>
                 </li>
 
-                <li class="menu-dropdown mega-menu-dropdown"  data-ng-if="systemInfo.permission.customer_maintenance == true">
+                <li class="menu-dropdown mega-menu-dropdown"  data-ng-if="systemInfo.permission.supervisor_up == true">
 
 
                     <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
@@ -254,7 +254,37 @@
 
                 </li>
 
-				
+
+                <li class="menu-dropdown mega-menu-dropdown"  data-ng-if="systemInfo.permission.supervisor_up == true">
+
+
+                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
+                        <i class="fa fa-cogs"></i>
+                        數據分析 <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" style="min-width: 200px">
+                        <li>
+                            <div class="mega-menu-content">
+                                <div class="row">
+
+
+                                    <div class="col-md-12">
+                                        <ul class="mega-menu-submenu">
+                                            <li>
+                                                <a href="/#/dailyReport" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    每日成本 </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                </li>
+
 				<li class="menu-dropdown mega-menu-dropdown ">
 					<a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
 					<i class="fa fa-cogs"></i>

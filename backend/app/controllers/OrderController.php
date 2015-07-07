@@ -212,7 +212,7 @@ class OrderController extends BaseController
 
     public function jsonQueryFactory()
     {
-        $itemIds = array('斤', '樽', '桶', '排', '箱');
+        $itemIds = array('桶', '排', '扎', '箱');
 
         $ids = "'" . implode("','", $itemIds) . "'";
 
@@ -223,41 +223,6 @@ class OrderController extends BaseController
 
             $filter = Input::get('filterData');
 
-            // start with date filter
-         /*   switch ($filter['deliverydate']) {
-                case 'today' :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'coming-7-days' :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("+1 week");
-                    break;
-                case '1daylr' :
-                    $dDateBegin = strtotime("2 days ago 00:00");
-                    $dDateEnd = strtotime("+2 day");
-                    break;
-                case 'past-7-days' :
-                    $dDateBegin = strtotime("7 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'past-30-days' :
-                    $dDateBegin = strtotime("30 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'past-180-days' :
-                    $dDateBegin = strtotime("180 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'extensible-180-180'   :
-                    $dDateBegin = strtotime("180 days ago 00:00");
-                    $dDateEnd = strtotime("+180days 00:00");
-                    break;
-                default :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-            }*/
             $dDateBegin = strtotime($filter['deliverydate']);
             $dDateEnd = strtotime($filter['deliverydate2']);
             //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
@@ -339,7 +304,7 @@ class OrderController extends BaseController
         } elseif ($mode == 'single') {
             $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
                 ->with(['invoiceItem' => function ($query) use ($ids) {
-                    $query->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"));
+                    $query->orderBy('productLocation','asc')->orderBy('productQtyUnit','asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId','asc');
                 }])->with('products', 'client', 'staff', 'printqueue', 'audit', 'audit.User')
                 ->withTrashed()
                 ->first();

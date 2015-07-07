@@ -660,6 +660,32 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }
         })
 
+        .state('dailyReport', {
+            url: "/dailyReport",
+            templateUrl: "views/dailyReport.html",
+            data: {pageTitle: '每日成本', pageSubTitle: ''},
+            controller: "dailyReport",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            'js/controllers/dailyReport.js',
+
+                            assets + '/css/dataTable/bootstrap.min.css',
+                            assets + '/css/dataTable/dataTables.bootstrap.css',
+                            assets + '/js/dataTable/jquery.dataTables.min.js',
+                            assets + '/js/dataTable/dataTables.bootstrap.js',
+
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
     // -- push to print function
     .state('pushToPrint', {
         url: "/push-to-print",

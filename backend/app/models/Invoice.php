@@ -59,23 +59,25 @@ class Invoice extends Eloquent  {
 	{
 	    // get invoices and items
 	    $invoices = $base;
-	    
+
 	    if($zoneid)
 	    {
 	        $invoices = $invoices->where('zoneId', $zoneid);
 	    }
 
-        /*   $itemIds = array('箱','桶','排','樽','斤');
+      $itemIds = array('箱', '扎','排','桶');
 
         $ids = "'" . implode("','", $itemIds) . "'";
 
-	    $invoices = $invoices->with(['invoiceItem'=>function($query) use($ids){
+	  /*  $invoices = $invoices->with(['invoiceItem'=>function($query) use($ids){
             $query->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"));
         }])->with( 'client', 'staff')->get();*/
 
-        $invoices = $invoices->with(['invoiceItem'=>function($query){
-            $query->orderBy('productLocation')->orderBy('productQtyUnit');
+        $invoices = $invoices->with(['invoiceItem' => function ($query) use ($ids) {
+            $query->orderBy('productLocation','asc')->orderBy('productQtyUnit','asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) ASC"))->orderBy('productId','asc');
         }])->with( 'client', 'staff')->get();
+
+
 
 	   // $invoices = $invoices->with('invoiceItem', 'client', 'staff')->get();
 	    $total = $invoices->count();
@@ -117,7 +119,8 @@ class Invoice extends Eloquent  {
 	        'count' => $total,
 	        'invoices' => $invoices->toArray(),
 	    ];
-	       
+
+
 	    return $returnInfo;
 	}
 	

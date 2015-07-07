@@ -16,15 +16,61 @@ class InvoiceImage {
         $image_template = dirname(__FILE__). "/../../storage/invoice_template/PKH_Invoice_SAMPLE_2014_DEC_22.jpg";
 
         
-        # Retrieve the invoice data     
-        $base = Invoice::where('invoiceId', $invoiceId);
-        $invoice = Invoice::categorizePendingInvoice(Invoice::getFullInvoice($base));
+        # Retrieve the invoice data
+    //  $base = Invoice::where('invoiceId', $invoiceId);
+    //  $invoice = Invoice::categorizePendingInvoice(Invoice::getFullInvoice($base));
 
-      //  pd($invoice);
+        $itemIds = array('桶', '排', '扎', '箱');
 
-        $i = array_values($invoice['categorized'])[0]['invoices'][0];
-        $zoneId = array_values($invoice['categorized'])[0]['zoneId'];
-        
+        $ids = "'" . implode("','", $itemIds) . "'";
+        $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
+                ->with(['invoiceItem' => function ($query) use ($ids) {
+                    $query->orderBy('productLocation','asc')->orderBy('productQtyUnit','asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId','asc');
+                }])->with('client', 'staff')
+                ->first();
+
+      //  pd($invoices);
+
+        $total = $invoices->count();
+
+        // get product information
+        $productId = [];
+        if(count($invoices) > 0)
+        {
+
+                $invoiceTotal = 0;
+                foreach($invoices->invoiceItem as $item)
+                {
+                    $productId[] = $item->productId;
+                    $invoiceTotal += $item->productQty * $item->productPrice * (100-$item->productDiscount)/100;
+                }
+            $invoices->totalAmount = $invoiceTotal;
+
+
+            $products = Product::wherein('productId', $productId)->get();
+            foreach($products as $product)
+            {//dd($product->toArray());
+                $newProductSet[$product->productId] = $product->toArray();
+            }
+
+
+                foreach($invoices->invoiceItem as $item)
+                {
+                    $item->productInfo = $newProductSet[$item->productId];
+                }
+
+        }
+
+        $invoice = [
+            'count' => $total,
+            'invoices' => $invoices->toArray(),
+        ];
+
+//pd($invoice);
+
+       $i = $invoice['invoices'];
+
+   //  pd($i);
         $adv = InvoicePrintFormat::select('advertisement')->where('from', '<=', $i['deliveryDate'])->where('to', '>=', $i['deliveryDate'])->orderby('ipfId', 'desc')->first();
                 
         
