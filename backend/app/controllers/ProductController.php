@@ -145,12 +145,14 @@ class ProductController extends BaseController {
             App::abort(500, 'Missing Customer Id.');
         }
         
-        $productId = Input::get('customerId');
+        $customerId = Input::get('customerId');
 
         $products = null;
         
         
-        $invoices = Invoice::where('customerId', $productId)->orderBy('deliveryDate', 'desc')->get();
+        $invoices = Invoice::where('customerId', $customerId)->orderBy('deliveryDate', 'desc')->get();
+
+
         foreach($invoices as $invoice)
         {
             $invoiceId[] = $invoice->invoiceId;

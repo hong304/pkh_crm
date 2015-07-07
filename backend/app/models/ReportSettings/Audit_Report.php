@@ -44,7 +44,7 @@ class Audit_Report {
         $date = $this->_date;
         $filter = $this->_indata['filterData'];
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','98','97'])
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','20','98','96'])
             ->leftJoin('Customer', function($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
             })->leftJoin('customer_groups', function($join) {
