@@ -23,7 +23,7 @@ class InvoiceImage {
         $itemIds = array('桶', '排', '扎', '箱');
 
         $ids = "'" . implode("','", $itemIds) . "'";
-        $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
+        $invoices = Invoice::where('invoiceId', $invoiceId)
                 ->with(['invoiceItem' => function ($query) use ($ids) {
                     $query->orderBy('productLocation','asc')->orderBy('productQtyUnit','asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId','asc');
                 }])->with('client', 'staff')
