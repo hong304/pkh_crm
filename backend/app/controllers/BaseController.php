@@ -19,4 +19,3 @@ class BaseController extends Controller {
 
 }
 
-//This is a class extending controller.
