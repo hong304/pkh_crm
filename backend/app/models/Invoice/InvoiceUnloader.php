@@ -42,6 +42,7 @@ class InvoiceUnloader {
     {
         foreach($this->im as $i)
         {
+            $i->previous_status = $i->invoiceStatus;
             $i->invoiceStatus = '99';
             $i->deleted_at = date('Y-m-d H:i:s');
             $i->save();

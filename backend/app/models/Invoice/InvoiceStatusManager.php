@@ -74,7 +74,7 @@ class InvoiceStatusManager {
         foreach($this->im as $i)
         {
             $i->restore();
-            $i->invoiceStatus = '2';
+            $i->invoiceStatus = $i->previous_status;
             $i->save();
         }
         return $this;

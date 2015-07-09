@@ -76,6 +76,7 @@ class OrderController extends BaseController
     {
         $invoiceId = Input::get('invoiceId');
         $i = Invoice::where('invoiceId', $invoiceId)->first();
+        $i->previous_status = $i->invoiceStatus;
         $i->invoiceStatus = 99;
         $i->save();
         $i->delete();
