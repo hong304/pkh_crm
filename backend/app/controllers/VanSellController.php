@@ -35,13 +35,14 @@ class VanSellController extends BaseController
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
         $this->_zonename =(isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['label'] : $permittedZone[0]);
         $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift'] : '1');
-        $lastid = pickingListVersionControl::where('zone', $this->_zone)->where('date', date("Y-m-d", $this->_date))->where('shift', $this->_shift)->first();
+
+       /* $lastid = pickingListVersionControl::where('zone', $this->_zone)->where('date', date("Y-m-d", $this->_date))->where('shift', $this->_shift)->first();
 
         $this->_version = isset($lastid->f1_version) ? $lastid->f1_version : '';
 
         if ($this->_version)
             $this->_reportTitle = sprintf("%s - v%s", $this->_reportTitle, $this->_version);
-        else
+        else*/
             $this->_reportTitle = sprintf("%s", $this->_reportTitle);
 
         // check if user has clearance to view this zone
@@ -157,7 +158,7 @@ class VanSellController extends BaseController
 
         // get invoice from that date and that zone
         $this->goods = ['1F' => [], '9F' => []];
-        $invoices = Invoice::select('*')->wherein('invoiceStatus', ['2','1','96'])->where('version', true)->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoices = Invoice::select('*')->wherein('invoiceStatus', ['2','1','96'])->where('zoneId', $zone)->where('deliveryDate', $date);
 
         if($this->_shift != '-1')
             $invoices->where('shift', $this->_shift);

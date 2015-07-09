@@ -30,14 +30,10 @@ class Invoice_1FPickingList
         // version & id
         $this->_uniqueid = date("Ymd", $this->_date) . $this->_zone;
 
+       // $lastid = pickingListVersionControl::where('zone', $this->_zone)->where('date', date("Y-m-d", $this->_date))->where('shift', $this->_shift)->first();
+      //  $this->_version = isset($lastid->f1_version) ? $lastid->f1_version : '1';
 
-        //   $lastid = ReportArchive::where('id', 'like', $this->_uniqueid.'-%-1')->select('id')->orderby('created_at', 'desc')->first();
-
-        $lastid = pickingListVersionControl::where('zone', $this->_zone)->where('date', date("Y-m-d", $this->_date))->where('shift', $this->_shift)->first();
-
-        //  $lastid = @explode('-', $lastid->id);
-
-        $this->_version = isset($lastid->f1_version) ? $lastid->f1_version : '1';
+        $this->_version = '1';
 
         $this->_uniqueid = sprintf("%s-%s-1", $this->_uniqueid, $this->_version);
 
@@ -61,8 +57,8 @@ class Invoice_1FPickingList
 
         // get invoice from that date and that zone
         $this->goods = ['1F' => [], 'version' => []];
-        $hi = Invoice::select('*')->where('version', true)->where('zoneId', $zone);
-
+     //   $hi = Invoice::select('*')->where('version', true)->where('zoneId', $zone);
+        $hi = Invoice::select('*')->where('zoneId', $zone);
         if ($this->_shift != '-1')
             $hi->where('shift', $this->_shift);
 

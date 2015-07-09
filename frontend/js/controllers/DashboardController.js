@@ -68,7 +68,6 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
       $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
                     $scope.version = res;
-              console.log($scope.version);
             });
 
         document.getElementById('shift').style.display='block';
@@ -80,7 +79,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
                 $scope.version = res;
-                console.log($scope.version);
+
             });
     }
 
@@ -88,7 +87,6 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         $http.post(iutarget, {info: $scope.picking, mode: 'get'})
             .success(function(res, status, headers, config){
                 $scope.version = res;
-                console.log($scope.version);
             });
     }
 
