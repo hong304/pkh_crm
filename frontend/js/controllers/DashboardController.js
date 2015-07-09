@@ -135,3 +135,5 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
     // set sidebar closed and body solid layout mode
     $rootScope.settings.layout.pageSidebarClosed = false;
 });
+
+//gg
