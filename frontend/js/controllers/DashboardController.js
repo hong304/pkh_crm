@@ -136,4 +136,3 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
     $rootScope.settings.layout.pageSidebarClosed = false;
 });
 
-//gg
