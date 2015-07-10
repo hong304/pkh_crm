@@ -81,7 +81,7 @@ class Report_DailySummary
 
                 foreach ($productsQuery as $productQuery) {
                     $productQuery = head($productQuery);
-                    //pd($productQuery);
+
                     foreach ($productQuery as $pQ) {
                         $products[$pQ->productId] = $pQ;
                     }
@@ -135,7 +135,6 @@ class Report_DailySummary
                         foreach ($invoiceQ['invoiceItem'] as $item) {
                             // determin its product location
                             $productId = $item->productId;
-
                             $productDetail = $products[$productId];
                             $unit = $item->productQtyUnit;
 
@@ -293,6 +292,11 @@ class Report_DailySummary
                 'name' => '列印  PDF 版本',
                 'warning' => false,
             ],
+            [
+                'type' => 'csv',
+                'name' => '匯出  Excel 版本',
+                'warning'   =>  false,
+            ],
         ];
 
         return $downloadSetting;
@@ -305,6 +309,44 @@ class Report_DailySummary
 
     }
 
+
+    public function outputCsv(){
+
+        $csv = 'Product Id,Product Name,Total Amount,Unit' . "\r\n";
+
+        foreach ($this->data['items'] as $o) {
+            $csv .= '"' . $o['productId'] . '",';
+            $csv .= '"' . $o['name'] . '",';
+            $csv .= '"' . $o['counts'] . '",';
+            $csv .= '"' . $o['unit_txt'] . '",';
+            $csv .= "\r\n";
+
+        }
+        $csv .= ',';
+        $csv .= '現金總數 '.$this->data['countcod'] . " 單 "."$" .$this->data['sumcod'].',';
+        $csv .= ',';
+        $csv .= ',';
+        $csv .= "\r\n";
+
+        $num = $this->data['countcredit'] . " 單 "."$" . $this->data['sumcredit'];
+
+        $csv .= ',';
+        $csv .= '月結總數 '.$num.',';
+        $csv .= ',';
+        $csv .= ',';
+        $csv .= "\r\n";
+
+        echo "\xEF\xBB\xBF";
+
+        $headers = array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="DailyReport.csv"',
+        );
+
+        return Response::make(rtrim($csv, "\n"), 200, $headers);
+
+
+    }
 
     # PDF Section
     public function generateHeader($pdf)
