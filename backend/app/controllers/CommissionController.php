@@ -45,16 +45,20 @@ class CommissionController extends BaseController
 //pd($invoices);
             foreach ($invoices as &$v) {
 
+                $carton = ($v['productPacking_carton'] == false) ? 1:$v['productPacking_carton'];
+                $inner = ($v['productPacking_inner']==false) ? 1:$v['productPacking_inner'];
+                $unit = ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit'];
+
                 if ($v['productQtyUnit'] == 'carton') {
                     $v['commissionUnit'] = $v['productQtys'];
                 }
 
                 if ($v['productQtyUnit'] == 'unit') {
-                    $v['commissionUnit'] = ($v['productQtys'] / (($v['productPacking_carton'] == false) ? 1:$v['productPacking_carton'] * ($v['productPacking_inner']==false) ? 1:$v['productPacking_inner'] * ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit']));
+                    $v['commissionUnit'] = $v['productQtys'] / ($carton*$inner*$unit);
                 }
 
                 if ($v['productQtyUnit'] == 'inner') {
-                    $v['commissionUnit'] = (($v['productQtys'] * ($v['productPacking_unit']==false) ? 1:$v['productPacking_unit']) / (($v['productPacking_carton']) ? $v['productPacking_carton'] : '1' * ($v['productPacking_inner']) ? $v['productPacking_inner'] : '1' * ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit']));
+                    $v['commissionUnit'] = ($v['productQtys']*$inner) / ($carton*$inner*$unit);
                 }
             }
             $a = [];
@@ -71,6 +75,7 @@ class CommissionController extends BaseController
                     $h['productQtyUnit_final'] = floor($cc);
                 }
             }
+            pd($a);
             return $this->exportCsv($a);
         } else {
             Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
