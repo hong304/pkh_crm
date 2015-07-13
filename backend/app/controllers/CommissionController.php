@@ -75,13 +75,12 @@ class CommissionController extends BaseController
                     $h['productQtyUnit_final'] = floor($cc);
                 }
             }
-  
+
             return $this->exportCsv($a);
         } else {
             Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
             $invoices = $invoices->paginate($page_length);
-
         }
 
 

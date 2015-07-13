@@ -13,7 +13,7 @@ class Customer_MonthlyCreditSummary {
 
     private $_reportMonth = '';
 
-    private $_reportMonths = '';
+    private $_acc = 0;
      
     public function __construct($indata)
     {
@@ -59,7 +59,9 @@ class Customer_MonthlyCreditSummary {
             $join->on('Customer.customerId', '=', 'Invoice.customerId');
         })->leftJoin('customer_groups', function($join) {
             $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
-        })->whereBetween('Invoice.deliveryDate', [$this->_date1,$this->_date2]);
+        })->where('Invoice.deliveryDate','<=',$this->_date2);
+
+            //->whereBetween('Invoice.deliveryDate', [$this->_date1,$this->_date2]);
 
         if($this->_group != '')
             $invoices->where('customer_groups.name','LIKE','%'.$this->_group.'%');
@@ -77,25 +79,30 @@ if($this->_shift != '-1')
         $invoices->where('paymentTerms',2)->with('client', 'invoiceItem')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(50, function($invoices){
             foreach($invoices as $invoice)
             {
+                if($invoice->deliveryDate < $this->_date1){
+                    $this->_acc += ($invoice->invoiceTotalAmount-$invoice->paid);
+                }elseif($invoice->deliveryDate >= $this->_date1){
+                    $customerId = $invoice['client']->customerId;
+                    $this->_unPaid[$customerId]['customer'] = [
+                        'customerId' => $customerId,
+                        'customerName' => $invoice['client']->customerName_chi,
+                        'customerAddress' => $invoice['client']->address_chi,
 
-
-                $customerId = $invoice['client']->customerId;
-                $this->_unPaid[$customerId]['customer'] = [
-                    'customerId' => $customerId,
-                    'customerName' => $invoice['client']->customerName_chi,
-                    'customerAddress' => $invoice['client']->address_chi,
-                    
-                ];
-                $this->_unPaid[$customerId]['breakdown'][] = [
-                    'invoiceDate' => $invoice->invoiceDate,
-                    'invoice' => $invoice->invoiceId,
-                    'customerRef' => $invoice->customerRef,
-                    'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->invoiceTotalAmount ,
-                    'paid' =>($invoice->invoiceStatus == '98')? $invoice->invoiceTotalAmount: $invoice->paid,
-                    'accumulator' => (isset($this->_unPaid[$customerId]['breakdown']) ? end($this->_unPaid[$customerId]['breakdown'])['accumulator'] : 0) + (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->invoiceTotalAmount:$invoice->invoiceTotalAmount-$invoice->paid)
-                ];
+                    ];
+                    $this->_unPaid[$customerId]['breakdown'][] = [
+                        'invoiceDate' => $invoice->invoiceDate,
+                        'invoice' => $invoice->invoiceId,
+                        'customerRef' => $invoice->customerRef,
+                        'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->invoiceTotalAmount ,
+                        'paid' =>($invoice->invoiceStatus == '98')? $invoice->invoiceTotalAmount: $invoice->paid,
+                        'accumulator' => $this->_acc + (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->invoiceTotalAmount:$invoice->invoiceTotalAmount-$invoice->paid)
+                    ];
+                }
             }
         });
+
+       // pd($this->_acc);
+
         //dd($this->_unPaid);
         $this->data = $this->_unPaid;
 
