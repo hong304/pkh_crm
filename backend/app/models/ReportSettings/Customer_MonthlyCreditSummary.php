@@ -80,7 +80,7 @@ if($this->_shift != '-1')
             foreach($invoices as $invoice)
             {
                 if($invoice->deliveryDate < $this->_date1){
-                    $this->_acc += ($invoice->invoiceTotalAmount-$invoice->paid);
+                    $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->invoiceTotalAmount:$invoice->invoiceTotalAmount-$invoice->paid);
                 }elseif($invoice->deliveryDate >= $this->_date1){
                     $customerId = $invoice['client']->customerId;
                     $this->_unPaid[$customerId]['customer'] = [
