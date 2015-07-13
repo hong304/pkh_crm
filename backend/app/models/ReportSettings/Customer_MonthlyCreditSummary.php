@@ -95,7 +95,7 @@ if($this->_shift != '-1')
                         'customerRef' => $invoice->customerRef,
                         'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->invoiceTotalAmount ,
                         'paid' =>($invoice->invoiceStatus == '98')? $invoice->invoiceTotalAmount: $invoice->paid,
-                        'accumulator' => $this->_acc + (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->invoiceTotalAmount:$invoice->invoiceTotalAmount-$invoice->paid)
+                        'accumulator' => $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->invoiceTotalAmount:$invoice->invoiceTotalAmount-$invoice->paid)
                     ];
                 }
             }
