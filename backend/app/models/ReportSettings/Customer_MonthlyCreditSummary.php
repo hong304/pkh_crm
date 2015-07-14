@@ -76,7 +76,7 @@ class Customer_MonthlyCreditSummary {
 if($this->_shift != '-1')
     $invoices->where('Invoice.shift',$this->_shift);
 
-        $invoices->where('paymentTerms',2)->with('client', 'invoiceItem')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(50, function($invoices){
+        $invoices->where('paymentTerms',2)->with('client')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(50, function($invoices){
             foreach($invoices as $invoice)
             {
                 if($invoice->deliveryDate < $this->_date1){
@@ -129,7 +129,7 @@ if($this->_shift != '-1')
                 'label' => $zone->zoneName,
             ];
         }
-        array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
+      //  array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
         $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
         $filterSetting = [
             [
