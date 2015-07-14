@@ -77,10 +77,13 @@ if($this->_shift != '-1')
     $invoices->where('Invoice.shift',$this->_shift);
 
         $invoices->where('paymentTerms',2)->with('client')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(50, function($invoices){
+
+
+
             foreach($invoices as $invoice)
             {
                 if($invoice->deliveryDate < $this->_date1){
-                    $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->invoiceTotalAmount:$invoice->invoiceTotalAmount-$invoice->paid);
+                    $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid);
                 }elseif($invoice->deliveryDate >= $this->_date1){
                     $customerId = $invoice['client']->customerId;
                     $this->_unPaid[$customerId]['customer'] = [
@@ -94,8 +97,8 @@ if($this->_shift != '-1')
                         'invoice' => $invoice->invoiceId,
                         'customerRef' => $invoice->customerRef,
                         'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->invoiceTotalAmount ,
-                        'paid' =>($invoice->invoiceStatus == '98')? $invoice->invoiceTotalAmount: $invoice->paid,
-                        'accumulator' => $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->invoiceTotalAmount:$invoice->invoiceTotalAmount-$invoice->paid)
+                        'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
+                        'accumulator' => $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
                     ];
                 }
             }
@@ -103,7 +106,7 @@ if($this->_shift != '-1')
 
        // pd($this->_acc);
 
-        //dd($this->_unPaid);
+      //pd($this->_unPaid);
         $this->data = $this->_unPaid;
 
        return $this->data;
@@ -129,7 +132,7 @@ if($this->_shift != '-1')
                 'label' => $zone->zoneName,
             ];
         }
-      //  array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
+       // array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
         $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
         $filterSetting = [
             [
