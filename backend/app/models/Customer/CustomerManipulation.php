@@ -4,14 +4,17 @@
 class CustomerManipulation {
 
     private $_customerId = '';
-    public function __construct($customerId = false,$productNewId)
+    public function __construct($customerId = false,$customerNewId)
     {
         $this->action = $customerId ? 'update' : 'create';
                 
         if($this->action == 'create')
         {
-           // $this->generateId();
-            $this->_customerId = $productNewId;
+             if($customerNewId)
+                $this->_customerId = $customerNewId;
+            else
+                $this->generateId();
+
             $this->im = new Customer();
             $this->im->created_by = Auth::user()->id;
             
@@ -28,14 +31,13 @@ class CustomerManipulation {
     public function generateId()
 	{
 	    $length = 5;
-	    
-	    $prefix = '4';
-	    $lastcustomer = Customer::where('customerId', 'like', $prefix.'%')->limit(1)->orderBy('customerId', 'Desc')->first();
- 
+
+
+        $prefix = '35';
+        $lastcustomer = Customer::where('customerId', 'like', $prefix.'%')->limit(1)->orderBy('customerId', 'Desc')->first();
+
 	    if(count($lastcustomer) > 0)
 	    {
-	        // extract latter part
-	        $i = explode('-', $lastcustomer->customerId);
 	        $nextId = (int) $lastcustomer->customerId + 1;
 	        //$nextId = str_pad($nextId, $length, '0', STR_PAD_LEFT);
 	    }
@@ -43,7 +45,7 @@ class CustomerManipulation {
 	    {
 	        $nextId = $prefix.str_pad('1', $length, '0', STR_PAD_LEFT);
 	    }
-	    
+
 	    $this->_customerId = $nextId;
 	    
 	    return $this;	    
