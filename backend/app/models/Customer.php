@@ -38,7 +38,7 @@ class Customer extends Eloquent  {
 	    
 	    return $customers;
 	}
-	
+
 	public function zone()
 	{
 	    return $this->hasOne('Zone', 'zoneId', 'deliveryZone');

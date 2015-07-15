@@ -68,6 +68,7 @@ class OrderController extends BaseController
         $perf->save();
 
 
+
         return Response::json($result);
 
     }
@@ -344,7 +345,6 @@ class OrderController extends BaseController
             $items = InvoiceItem::select('productId', 'productQtyUnit', 'productQty', 'productPrice')->where('invoiceId', $invoice->invoiceId)->get();
 
             foreach ($items as $item) {
-
                 $lastinv[$item->productId][] = $item->toArray();
             }
         }
@@ -357,12 +357,13 @@ class OrderController extends BaseController
 
         $customerId = Input::get('customerId');
         $productId = Input::get('productId');
-        $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99') and ii.created_at != '' and customerId = '" . $customerId . "' AND ii.productId = '" . $productId . "' order by ii.updated_at desc";
-        $items = DB::select(DB::raw($sql));
+      //  $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99') and ii.created_at != '' and customerId = '" . $customerId . "' AND ii.productId = '" . $productId . "' order by ii.updated_at desc";
+      //  $items = DB::select(DB::raw($sql));
+        $items = lastitem::where('customerId',$customerId)->where('productId',$productId)->first();
         if ($items == null)
             return Response::json($items);
 
-        return Response::json($items[0]);
+        return Response::json($items);
     }
 
     public function jsonGetSameDayOrder()

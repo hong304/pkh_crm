@@ -285,11 +285,11 @@ $scope.an = false;
             .success(function (res, status, headers, config) {
                 $scope.lastitem = res;
 
-                if(res.productQty > 0){
-                    $scope.product[i].unitprice = res.productPrice;
+                if(res.qty > 0){
+                    $scope.product[i].unitprice = res.price;
                     var pos = $scope.product[i]['availableunit'].map(function(e) {
                         return e.value;
-                    }).indexOf(res.productQtyUnit);
+                    }).indexOf(res.unit_level);
                     $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
                     $scope.checkPrice(i);
                 }

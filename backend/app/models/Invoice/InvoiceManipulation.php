@@ -339,6 +339,30 @@ class InvoiceManipulation {
                     $productMap->save();
                 }
 
+                //update last item price
+                if($this->temp_invoice_information['status'] != '98' && $this->temp_invoice_information['status'] != '96'){
+
+                    $lastitem = lastitem::where('customerId',$this->im->customerId)->where('productId',$i['productId'])->first();
+                    if($lastitem==null){
+                        $lastitem = new lastitem();
+                        $lastitem->customerId = $this->im->customerId;
+                        $lastitem->productId = $i['productId'];
+                        $lastitem->org_price = $i['productStandardPrice'];
+                        $lastitem->unit_level = $i['productQtyUnit']['value'];
+                        $lastitem->unit_text = $i['productUnitName'];
+                        $lastitem->price = $i['productPrice'];
+                        $lastitem->qty = $i['productQty'];
+                        $lastitem->discount = $i['productDiscount'];
+                    }else{
+                        $lastitem->unit_level = $i['productQtyUnit']['value'];
+                        $lastitem->unit_text = $i['productUnitName'];
+                        $lastitem->price = $i['productPrice'];
+                        $lastitem->qty = $i['productQty'];
+                        $lastitem->discount = $i['productDiscount'];
+                    }
+                    $lastitem->save();
+                }
+
     	        $item->invoiceId = $this->invoiceId;
     	        $item->productId = $i['productId'];
     	        $item->productQtyUnit = $i['productQtyUnit']['value'];

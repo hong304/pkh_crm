@@ -12,6 +12,8 @@ class CustomerController extends BaseController
 
     public function jsonCheckClient()
     {
+
+
         # Request
         // $time_start = microtime(true);
         $keyword = Input::has('client_keyword') && Input::get('client_keyword') != '' ? Input::get('client_keyword') : 'na';
@@ -70,6 +72,7 @@ class CustomerController extends BaseController
         // $time_end = microtime(true);
         // $time = $time_end - $time_start;
         // syslog(LOG_INFO, "Search $keyword in $time seconds");
+
         return Response::json($clientArray);
 
     }
