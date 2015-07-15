@@ -21,7 +21,7 @@
                         <?php echo $b['invoice']; ?>
                     </td>
                     <td>
-                        HK$<?php echo number_format($b['amount']); ?>
+                        HK$<?php echo number_format($b['invoiceAmount']); ?>
                     </td>
                     <td>
                         HK$<?php echo number_format($b['paid']); ?>
