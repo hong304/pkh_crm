@@ -294,7 +294,7 @@
 						<li>
 							<div class="mega-menu-content">
 								<div class="row">
-									<div class="col-md-3"  data-ng-if="systemInfo.permission.customer_maintenance == true">
+									<div class="col-md-3">
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>客戶相關</h3>
@@ -304,7 +304,7 @@
 												<i class="icon-home"></i>
 												客戶管理 </a>
 											</li>
-                                            <li>
+                                            <li  data-ng-if="systemInfo.permission.customer_maintenance == true">
                                                 <a href="/#/groupMaintenance" class="iconify">
                                                     <i class="icon-home"></i>
                                                     集團管理 </a>

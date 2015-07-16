@@ -188,7 +188,10 @@ class CustomerController extends BaseController
                     $c->link = '';
                 } else {
                     $c->delete = '<span onclick="delCustomer(\'' . $c->customerId . '\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
-                    $c->link = '<span onclick="editCustomer(\'' . $c->customerId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    if(Auth::user()->can('customer_maintenance'))
+                        $c->link = '<span onclick="editCustomer(\'' . $c->customerId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    else
+                        $c->link = '';
                 }
 
             }
