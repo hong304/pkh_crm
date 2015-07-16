@@ -39,10 +39,10 @@ class Report_Archived {
 
         $reports = ReportArchive::select('*')->wherein('zoneId',explode(',', $this->_zone));
         
-        if(!Auth::user()->can('view_global_reportarchive'))
+      /*  if(!Auth::user()->can('view_global_reportarchive'))
         {
             $reports = $reports->where('created_by', Auth::user()->id);
-        }
+        }*/
 
         if($this->_shift != '-1')
             $reports->where('shift',$this->_shift);
