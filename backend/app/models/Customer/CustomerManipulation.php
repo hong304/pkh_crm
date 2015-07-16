@@ -33,7 +33,7 @@ class CustomerManipulation {
 	    $length = 5;
 
 
-        $prefix = '35';
+        $prefix = '3';
         $lastcustomer = Customer::where('customerId', 'like', $prefix.'%')->limit(1)->orderBy('customerId', 'Desc')->first();
 
 	    if(count($lastcustomer) > 0)
