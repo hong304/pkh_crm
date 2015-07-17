@@ -354,7 +354,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
                             { "data": "phone_1" },
                             { "data": "contactPerson_1" },
                             { "data": "address_chi" },
-                    { "data": "updated_at" },
+                           { "data": "updated_at" },
                             { "data": "link" },
 
                             

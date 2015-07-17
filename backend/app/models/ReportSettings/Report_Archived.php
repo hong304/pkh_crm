@@ -9,7 +9,7 @@ class Report_Archived {
      
     public function __construct($indata)
     {
-        
+
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
         $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'-1';
@@ -48,8 +48,7 @@ class Report_Archived {
             $reports->where('shift',$this->_shift);
 
         $reports = $reports->orderby('created_at', 'desc')->with('zone')->paginate(30);;
-        
-        
+
         $this->data = $reports;
 
        return $this->data;        
