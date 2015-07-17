@@ -26,18 +26,8 @@ class Customer_MonthlyCreditSummary {
 
       //  $permittedZone = explode(',', Auth::user()->temp_zone);
 
-        if(isset( $indata['filterData']['zone']) && $indata['filterData']['zone']['value'] != '-1'){
+        $this->_zone =  Auth::user()->temp_zone;
 
-            $this->_zone =  $indata['filterData']['zone']['value'];
-            if(!in_array($this->_zone, explode(',', Auth::user()->temp_zone)))
-            {
-                App::abort(401, "Unauthorized Zone");
-            }
-        }else{
-            $this->_zone =  Auth::user()->temp_zone;
-        }
-
-        $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift']['value'] : '-1');
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
 
         $this->_date1 = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
@@ -54,6 +44,10 @@ class Customer_MonthlyCreditSummary {
     {
 
         $filter = $this->_indata['filterData'];
+
+if($this->_group == '' || $filter['name'] =='' || $filter['phone'] == ''|| $filter['customerId'] == '')
+    $this->data = '';
+
 
         $invoices = Invoice::leftJoin('Customer', function($join) {
             $join->on('Customer.customerId', '=', 'Invoice.customerId');
@@ -72,9 +66,6 @@ class Customer_MonthlyCreditSummary {
                 ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
         });
-
-if($this->_shift != '-1')
-    $invoices->where('Invoice.shift',$this->_shift);
 
         $invoices->where('paymentTerms',2)->with('client')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(50, function($invoices){
 
@@ -147,20 +138,6 @@ if($this->_shift != '-1')
                 'type' => 'search_customer',
                 'label' => '客户資料',
                 'model' => 'customer',
-            ],
-
-            [
-                'id' => 'zoneId',
-                'type' => 'single-dropdown',
-                'label' => '車號',
-                'model' => 'zone',
-                'optionList' => $availablezone,
-                'defaultValue' => $this->_zone,
-
-                'type1' => 'shift',
-                'model1' => 'shift',
-                'optionList1' => $ashift,
-                'defaultValue1' => $this->_shift,
             ],
 
             [
