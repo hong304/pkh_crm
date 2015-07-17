@@ -44,11 +44,11 @@ class Customer_MonthlyCreditSummary {
     {
 
         $filter = $this->_indata['filterData'];
-
+$empty = false;
 if($this->_group == '' || $filter['name'] =='' || $filter['phone'] == ''|| $filter['customerId'] == '')
-    $this->data = '';
+    $empty = true;
 
-
+if(!$empty){
         $invoices = Invoice::leftJoin('Customer', function($join) {
             $join->on('Customer.customerId', '=', 'Invoice.customerId');
         })->leftJoin('customer_groups', function($join) {
@@ -67,8 +67,7 @@ if($this->_group == '' || $filter['name'] =='' || $filter['phone'] == ''|| $filt
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
         });
 
-        $invoices->where('paymentTerms',2)->with('client')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(50, function($invoices){
-
+        $invoices->where('paymentTerms',2)->with('client')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(5000, function($invoices){
 
 
             foreach($invoices as $invoice)
@@ -94,7 +93,7 @@ if($this->_group == '' || $filter['name'] =='' || $filter['phone'] == ''|| $filt
                 }
             }
         });
-
+}
        // pd($this->_acc);
 
       //pd($this->_unPaid);
