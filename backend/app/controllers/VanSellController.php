@@ -90,17 +90,30 @@ class VanSellController extends BaseController
             }
 
 
-            $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define',false)->get();
-            $inv = [];
+          //  $vansells = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define',false)->get()->toArray();
+          //  $inv = [];
+
+
+
+            $debug = new debug();
+            $debug->content = json_encode(Input::get('data'));
+            $debug->save();
 
             foreach (Input::get('data') as $v) {
-                $inv[$v['productId'].$v['productlevel']] = $v['value'];
+              //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
+                if($v['value']!=''){
+                    $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define',false)->where('productlevel', $v['productlevel'])->where('productId', $v['productId'])->first();
+                    $savevansell->qty = $v['value'];
+                    $savevansell->save();
+                }
             }
+         /*   pd($vansells);
 
             foreach ($vansells as $v) {
-                $v->qty = $inv[$v->productId.$v->productlevel];
+                $store = $v->productId.$v->productlevel;
+                $v->qty = $inv[$store];
                 $v->save();
-            }
+            }*/
 
         }
 
