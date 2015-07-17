@@ -86,6 +86,9 @@ if(!$empty){
                         'customerId' => $customerId,
                         'customerName' => $invoice->customerName_chi,
                         'customerAddress' => $invoice->address_chi,
+                          'account_tel' => $invoice['client']->account_tel,
+                        'account_fax' => $invoice['client']->account_fax,
+                       'account_contact' => $invoice['client']->account_contact,
 
                     ];
                     $this->_unPaid[$customerId]['breakdown'][] = [
@@ -292,15 +295,29 @@ if(!$empty){
             $pdf->setXY(30, $y+5);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['customerAddress']), 0, 0, "L");
 
-            $pdf->SetFont('chi', '', 10);
+            $pdf->SetFont('chi', '', 14);
             $pdf->setXY(30, $y+20);
             $pdf->Cell(0, 0, "Tel:", 0, 0, "L");
-
-            $pdf->setXY(60, $y+20);
+            
+            $pdf->SetFont('chi', '', 14);
+            $pdf->setXY(50, $y+20);
+            $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_tel']), 0, 0, "L");
+            
+            $pdf->SetFont('chi', '', 14);
+            $pdf->setXY(80, $y+20);
             $pdf->Cell(0, 0, "Fax:", 0, 0, "L");
+            
+            $pdf->SetFont('chi', '', 14);
+            $pdf->setXY(100, $y+20);
+            $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_fax']), 0, 0, "L");
 
-            $pdf->setXY(90, $y+20);
+            $pdf->SetFont('chi', '', 14);
+            $pdf->setXY(30, $y+14);
             $pdf->Cell(0, 0, "Attn:", 0, 0, "L");
+            
+            $pdf->SetFont('chi', '', 14);
+            $pdf->setXY(50, $y+14);
+            $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_contact']), 0, 0, "L");
 
 
             $pdf->setXY(130, $y);
@@ -324,6 +341,10 @@ if(!$empty){
             $pdf->Cell(0, 0, date('Y-m-d', $this->_date2), 0, 0, "L");
 
             $y = 60;
+            
+             $pdf->SetFont('chi', '', 20);
+            $pdf->setXY(130, $y+10);
+            $pdf->Cell(0, 0, date('Y年m月', $this->_date1), 0, 0, "L");
 
             $pdf->SetFont('chi', '', 12);
             $pdf->setXY(10, $y+20);
