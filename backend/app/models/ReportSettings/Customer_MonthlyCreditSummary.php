@@ -44,10 +44,18 @@ class Customer_MonthlyCreditSummary {
     {
 
         $filter = $this->_indata['filterData'];
-$empty = false;
-if($this->_group == '' || $filter['name'] =='' || $filter['phone'] == ''|| $filter['customerId'] == '')
-    $empty = true;
 
+if($this->_group == '' && $filter['name'] =='' && $filter['phone'] == ''&& $filter['customerId'] == ''){
+    $empty = true;
+    $this->data=[];
+}else{
+    $empty = false;
+}
+
+/*
+ *         })->leftJoin('customer_groups', function($join) {
+            $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
+ */
 if(!$empty){
         $invoices = Invoice::leftJoin('Customer', function($join) {
             $join->on('Customer.customerId', '=', 'Invoice.customerId');
@@ -60,14 +68,12 @@ if(!$empty){
         if($this->_group != '')
             $invoices->where('customer_groups.name','LIKE','%'.$this->_group.'%');
 
-        $invoices->where(function ($query) use ($filter) {
+    $invoices = $invoices->where(function ($query) use ($filter) {
             $query
                 ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
                 ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
-        });
-
-        $invoices->where('paymentTerms',2)->with('client')->wherein('zoneId',explode(',', $this->_zone))->OrderBy('deliveryDate')->chunk(5000, function($invoices){
+        })->where('paymentTerms',2)->OrderBy('deliveryDate')->get();
 
 
             foreach($invoices as $invoice)
@@ -75,11 +81,11 @@ if(!$empty){
                 if($invoice->deliveryDate < $this->_date1){
                     $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid);
                 }elseif($invoice->deliveryDate >= $this->_date1){
-                    $customerId = $invoice['client']->customerId;
+                    $customerId = $invoice->customerId;
                     $this->_unPaid[$customerId]['customer'] = [
                         'customerId' => $customerId,
-                        'customerName' => $invoice['client']->customerName_chi,
-                        'customerAddress' => $invoice['client']->address_chi,
+                        'customerName' => $invoice->customerName_chi,
+                        'customerAddress' => $invoice->address_chi,
 
                     ];
                     $this->_unPaid[$customerId]['breakdown'][] = [
@@ -92,13 +98,9 @@ if(!$empty){
                     ];
                 }
             }
-        });
-}
-       // pd($this->_acc);
 
-      //pd($this->_unPaid);
         $this->data = $this->_unPaid;
-
+}
        return $this->data;
 
     }
@@ -123,7 +125,7 @@ if(!$empty){
             ];
         }
        // array_unshift($availablezone,['value'=>'-1','label'=>'檢視全部']);
-        $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
+      //  $ashift =[['value'=>'-1','label'=>'檢視全部'],['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
         $filterSetting = [
             [
                 'id' => 'group',
@@ -474,7 +476,6 @@ if(!$empty){
             'remark' => 'Credit Monthly Report',
             'uniqueId' => $this->_uniqueid,
             'zoneId' => $this->_zone,
-            'shift' => $this->_shift,
             'associates' => null,
         ];
 
