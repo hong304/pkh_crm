@@ -94,11 +94,11 @@ class VanSellController extends BaseController
             $inv = [];
 
             foreach (Input::get('data') as $v) {
-                $inv[$v['productId'].$v['unit']] = $v['value'];
+                $inv[$v['productId'].$v['productlevel']] = $v['value'];
             }
 
             foreach ($vansells as $v) {
-                $v->qty = $inv[$v->productId.$v->unit];
+                $v->qty = $inv[$v->productId.$v->productlevel];
                 $v->save();
             }
 
@@ -214,13 +214,14 @@ class VanSellController extends BaseController
         $newIds =[];
         foreach ($this->_data as $g) {
             foreach ($g as $k => $v) {
-                $vansell = vansell::where('productId', $v['productId'])->where('unit', $v['unit_txt'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define',false)->first();
+                $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define',false)->first();
                 if (count($vansell) == 0) {
                     $create = new vansell();
                     $create->productId = $v['productId'];
                     $create->name = $v['name'];
                     $create->unit = $v['unit_txt'];
                     $create->org_qty = $v['counts'];
+                    $create->productlevel = $v['unit'];
                     $create->date = $this->_date;
                     $create->zoneId = $this->_zone;
                     $create->shift = $this->_shift;
@@ -376,7 +377,7 @@ class VanSellController extends BaseController
         if(count($k)>0){
                 $q = 1;
                 foreach($k as $z){
-                    array_splice($new_array, $z+$q, 0, [['qty'=>'line']] );
+                    array_splice($new_array, $z+$q, 0, [['qty'=>'-100']] );
                     $q++;
                 }
         }
@@ -462,7 +463,7 @@ for($i=$this->kk;$i<26;$i++){
                     $first = false;
 
 
-                    if ($u['qty'] != '0' && $u['qty'] != 'line') {
+                    if ($u['qty'] != '0' && $u['qty'] != '-100') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -497,7 +498,7 @@ for($i=$this->kk;$i<26;$i++){
                 }
                 else
                 {
-                    if ($u['qty'] != '0' && $u['qty'] != 'line' && $u['qty'] != '-1') {
+                    if ($u['qty'] != '0' && $u['qty'] != '-100' && $u['qty'] != '-1') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -529,7 +530,7 @@ for($i=$this->kk;$i<26;$i++){
                         $y += 7;
                     }
 
-                    if($u['qty'] == 'line'){
+                    if($u['qty'] == '-100'){
                         $pdf->Line(10, $y, 190, $y);
                         $y += 7;
                     }

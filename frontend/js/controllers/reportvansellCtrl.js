@@ -20,6 +20,7 @@ $scope.totalline = 0;
         'name' : '',
         'qty' : '',
         'unit'  : '',
+        'productlevel' : ''
     }
 
     $scope.invoiceStructure = {
@@ -129,6 +130,7 @@ $scope.totalline = 0;
                     $scope.qty[i]['productId'] = item.productId;
                     $scope.qty[i]['value'] = item.qty;
                     $scope.qty[i]['unit'] = item.unit;
+                    $scope.qty[i]['productlevel'] = item.productlevel;
                    i++;
                });
                 $scope.selfdefine = [];
