@@ -11,7 +11,7 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
             deliveryDate : ''
 
 	};
-    $scope.qty = [];
+
 $scope.selfdefine = [];
 $scope.totalline = 0;
     $scope.initline = 0;
@@ -121,11 +121,16 @@ $scope.totalline = 0;
     	$http.post(querytarget, {reportId: 'vanselllist', output: "preview", filterData: $scope.filterData})
             .success(function(res){
 
+
     		$scope.report = res.normal;
             $scope.report_selfdefine = res.selfdefine;
 
+                $scope.qty = [];
            var i = 0;
                 $scope.report.forEach(function(item) {
+                    if(item.org_qty==item.qty)
+                        item.qty = '';
+
                     $scope.qty[i] = $.extend(true, {}, $scope.invoiceStructure);
                     $scope.qty[i]['productId'] = item.productId;
                     $scope.qty[i]['value'] = item.qty;
@@ -183,6 +188,8 @@ $scope.totalline = 0;
     
     $scope.sendRealFile = function()
     {
+
+console.log($scope.qty);
 
         $http.post(querytarget, {reportId: 'vanselllist', output: "create", filterData: $scope.filterData,data:$scope.qty,selfdefine:$scope.selfdefine})
             .success(function(res, status, headers, config){
