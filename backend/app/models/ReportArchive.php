@@ -4,7 +4,7 @@
 
 class ReportArchive extends Eloquent{
     
-    protected $table = 'ReportArchive'; 
+    protected $table = 'reportarchive';
     
     protected $with = ['user'];
     

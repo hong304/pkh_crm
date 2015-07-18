@@ -13,7 +13,7 @@ class TableAudit extends Eloquent  {
 	 */
     
     //protected $with = ['User'];
-	protected $table = 'TableAudit';
+	protected $table = 'tableaudit';
 	protected $primaryKey = 'id';
 	
 	public function user()

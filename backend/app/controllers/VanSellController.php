@@ -477,7 +477,6 @@ for($i=$this->kk;$i<26;$i++){
                     // do something
                     $first = false;
 
-
                     if ($u['qty'] != false && $u['qty'] != '-100') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);

@@ -14,7 +14,7 @@ class Product extends Eloquent  {
     use SoftDeletingTrait;
 
     protected $dates = ['deleted_at'];
-	protected $table = 'Product';
+	protected $table = 'product';
 	
 
 	
