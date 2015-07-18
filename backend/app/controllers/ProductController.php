@@ -150,7 +150,7 @@ class ProductController extends BaseController {
         $products = null;
         
         
-        $invoices = Invoice::where('customerId', $customerId)->orderBy('deliveryDate', 'desc')->get();
+        $invoices = Invoice::where('customerId', $customerId)->orderBy('deliveryDate', 'desc')->limit(20)->get();
 
 
         foreach($invoices as $invoice)
@@ -173,7 +173,7 @@ class ProductController extends BaseController {
                 {
                     $productCustom[$product->productId] = $product->toArray();
                     $productCustom[$product->productId]['deliveryDate'] = $invoiceDetail[$product->invoiceId]['deliveryDate'];
-                    $productCustom[$product->productId]['productStatus'] = ($productCustom[$product->productId]['product_detail']['productStatus'] == "o") ? "有貨": "暫停";
+                    $productCustom[$product->productId]['productStatus'] = ($productCustom[$product->productId]['product_detail']['productStatus'] == "o") ? "": "暫停";
                 }
             }
 
