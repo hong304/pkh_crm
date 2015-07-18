@@ -469,6 +469,7 @@ for($i=$this->kk;$i<26;$i++){
 
 
             $first = true;
+          //  pd($f);
             foreach ($f as $id => $u) {
 
 
@@ -477,8 +478,7 @@ for($i=$this->kk;$i<26;$i++){
                     // do something
                     $first = false;
 
-
-                    if ($u['qty'] != false && $u['qty'] != '-100') {
+                    if (( (!is_null($u['qty']) && $u['qty']==0) && $u['qty'] != -100) || $u['qty'] == '') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -487,8 +487,13 @@ for($i=$this->kk;$i<26;$i++){
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
+                        if (!is_null($u['qty']) && $u['qty']==0)
+                            $u['qty'] = '--';
+
                         if ($u['qty'] == null)
                             $u['qty'] = $u['org_qty'];
+
+
 
                         $pdf->setXY(120, $y);
                         $pdf->SetFont('chi', '', 13);
@@ -513,7 +518,7 @@ for($i=$this->kk;$i<26;$i++){
                 }
                 else
                 {
-                    if ($u['qty'] != false && $u['qty'] != '-100' && $u['qty'] != '-1') {
+                    if ( ( (!is_null($u['qty']) && $u['qty']==0) && $u['qty'] != -100 && $u['qty'] != -1) || $u['qty'] == '') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -524,6 +529,8 @@ for($i=$this->kk;$i<26;$i++){
 
                         if ($u['qty'] == null)
                             $u['qty'] = $u['org_qty'];
+
+
 
                         $pdf->setXY(120, $y);
                         $pdf->SetFont('chi', '', 13);
