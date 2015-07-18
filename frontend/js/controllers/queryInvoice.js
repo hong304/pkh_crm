@@ -109,21 +109,6 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         Metronic.initAjax();
     });
 
-    $scope.clearCustomerSearch = function()
-    {
-        $scope.filterData = {
-            'displayName'	:	'',
-            'clientId'		:	'0',
-            'status'		:	'0',
-            'zone'			:	'',
-            deliverydate : year+'-'+month+'-'+yday,
-            deliverydate2 : year+'-'+month+'-'+day,
-            'created_by'	:	'0',
-            'invoiceNumber' :	'',
-        };
-    	$scope.updateDataSet();
-    }
-
     $scope.checkParm = function()
     {
     	if($location.search().scope)
@@ -165,9 +150,6 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
   	}, function() {
   		$scope.systeminfo = $rootScope.systeminfo;
   		$scope.checkParm();
-  		$scope.updateDataSet();
-
-
   	}, true);
 
     $rootScope.$on('$locationChangeSuccess', function(){
@@ -189,8 +171,22 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 	}, true);
     */
 
-    $scope.$on('handleCustomerUpdate', function(){
+    $scope.clearCustomerSearch = function()
+    {
+        $scope.filterData = {
+            'displayName'	:	'',
+            'clientId'		:	'0',
+            'status'		:	'0',
+            'zone'			:	'',
+            deliverydate : year+'-'+month+'-'+yday,
+            deliverydate2 : year+'-'+month+'-'+day,
+            'created_by'	:	'0',
+            'invoiceNumber' :	'',
+        };
+        $scope.updateDataSet();
+    }
 
+    $scope.$on('handleCustomerUpdate', function(){
 		$scope.filterData.clientId = SharedService.clientId;
 		$scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
 		$scope.updateDataSet();
