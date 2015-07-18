@@ -469,7 +469,7 @@ for($i=$this->kk;$i<26;$i++){
 
 
             $first = true;
-          //  pd($f);
+         // pd($f);
             foreach ($f as $id => $u) {
 
 
@@ -478,7 +478,7 @@ for($i=$this->kk;$i<26;$i++){
                     // do something
                     $first = false;
 
-                    if (( (!is_null($u['qty']) && $u['qty']==0) && $u['qty'] != -100) || $u['qty'] == '') {
+                    if (( (!is_null($u['qty']) && $u['qty']!=0) && $u['qty'] != -100) || $u['qty'] == '') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -487,9 +487,9 @@ for($i=$this->kk;$i<26;$i++){
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
-                        if (!is_null($u['qty']) && $u['qty']==0)
+                        if ($u['qty']==0)
                             $u['qty'] = '--';
-
+                        
                         if ($u['qty'] == null)
                             $u['qty'] = $u['org_qty'];
 
@@ -518,7 +518,7 @@ for($i=$this->kk;$i<26;$i++){
                 }
                 else
                 {
-                    if ( ( (!is_null($u['qty']) && $u['qty']==0) && $u['qty'] != -100 && $u['qty'] != -1) || $u['qty'] == '') {
+                    if ( ( (!is_null($u['qty']) && $u['qty']!=0) && $u['qty'] != -100 && $u['qty'] != -1) || $u['qty'] == '') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -526,6 +526,9 @@ for($i=$this->kk;$i<26;$i++){
                         $pdf->setXY(40, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
+
+                        if ($u['qty']==0)
+                            $u['qty'] = '--';
 
                         if ($u['qty'] == null)
                             $u['qty'] = $u['org_qty'];
