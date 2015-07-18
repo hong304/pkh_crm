@@ -478,7 +478,7 @@ for($i=$this->kk;$i<26;$i++){
                     $first = false;
 
 
-                    if ($u['qty'] != '0' && $u['qty'] != '-100') {
+                    if ($u['qty'] != false && $u['qty'] != '-100') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -513,7 +513,7 @@ for($i=$this->kk;$i<26;$i++){
                 }
                 else
                 {
-                    if ($u['qty'] != '0' && $u['qty'] != '-100' && $u['qty'] != '-1') {
+                    if ($u['qty'] != false && $u['qty'] != '-100' && $u['qty'] != '-1') {
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
