@@ -519,14 +519,7 @@ for($i=$this->kk;$i<26;$i++){
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
-                        if ($u['qty']==0)
-                            $u['qty'] = '--';
-
-                        if ($u['qty'] == null)
-                            $u['qty'] = $u['org_qty'];
-
-
-
+       
                         $pdf->setXY(120, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
