@@ -193,7 +193,7 @@ class Invoice_9FPickingList {
         });
 
         ksort($this->goods['carton']);
-        //  pd($this->goods['carton']);
+        pd($this->goods['carton']);
         foreach ($this->goods['carton'] as &$v){
             ksort($v['items']);
         }
