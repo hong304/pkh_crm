@@ -6,6 +6,7 @@ class InvoiceImage {
     public $image = array();
     public $invoiceId = "";
     public $print = false;
+    public $deliveryDate = '';
 
     public function generate($invoiceId, $print_ver = false)
     {
@@ -45,7 +46,7 @@ class InvoiceImage {
                     $invoiceTotal += $item->productQty * $item->productPrice * (100-$item->productDiscount)/100;
                 }
             $invoices->totalAmount = $invoiceTotal;
-
+            $this->deliveryDate = $invoices->deliveryDate;
 
             $products = Product::wherein('productId', $productId)->get();
             foreach($products as $product)
@@ -407,7 +408,6 @@ if($i['invoiceDiscount'] > 0){
             // Todo: change to independent method
             
             $numericpagenumber = (string) $page + 1;
-            $k = explode('-', $this->invoiceId);
             $filename = ($this->print ? 'print_' : 'preview/preview_') . $this->invoiceId . '-' . $numericpagenumber . ".png";
            // $fullpath = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
 
@@ -417,7 +417,14 @@ if($i['invoiceDiscount'] > 0){
 
             $filenames[$page]['filename'] = $filename;
             $filenames[$page]['fullpath'] = $fullpath;
-           // pd($fullpath);
+
+
+            if (!file_exists(public_path() . '/'.date('Y-m', $this->deliveryDate)))
+                mkdir(public_path() . '/'.date('Y-m', $this->deliveryDate), 0777, true);
+            if (!file_exists(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate)))
+                mkdir(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate), 0777, true);
+            $i->save(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate).'/'.$filename);
+
             $i->save($fullpath);
             $i->destroy();
 
