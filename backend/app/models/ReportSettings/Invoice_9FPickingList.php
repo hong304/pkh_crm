@@ -192,12 +192,12 @@ class Invoice_9FPickingList {
             return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
         });
 
-        ksort($this->goods['carton']);
-        pd($this->goods['carton']);
-        foreach ($this->goods['carton'] as &$v){
-            ksort($v['items']);
+        if(isset($this->goods['carton'])){
+            ksort($this->goods['carton']);
+                foreach ($this->goods['carton'] as &$v){
+                ksort($v['items']);
+            }
         }
-
         $this->data = $this->goods;
         $this->data['version'] = $this->_version;
 
@@ -459,7 +459,7 @@ class Invoice_9FPickingList {
 
 
 
-
+if(isset($this->data['carton'])){
         $consec = $j = 0;
         foreach($this->data['carton'] as $c=>$nf)
         {
@@ -573,7 +573,7 @@ class Invoice_9FPickingList {
             }
 
         }
-
+}
 
 
         // output
