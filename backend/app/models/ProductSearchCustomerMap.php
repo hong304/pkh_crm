@@ -8,7 +8,7 @@ class ProductSearchCustomerMap extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'ProductSearch_Customer_Map';
+	protected $table = 'productsearch_customer_map';
 	
 	public function productDetail()
 	{

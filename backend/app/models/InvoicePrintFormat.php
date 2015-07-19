@@ -11,7 +11,7 @@ class InvoicePrintFormat extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'InvoicePrintFormat';
+	protected $table = 'invoiceprintformat';
 	protected $primaryKey = 'ipfId';
 	//public $timestamps = false;
 	

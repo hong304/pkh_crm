@@ -10,7 +10,7 @@ class MixMatch extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'ProductMixMatch';
+	protected $table = 'productmixmatch';
 	protected $primaryKey = 'id';
 	//public $timestamps = false;
 	

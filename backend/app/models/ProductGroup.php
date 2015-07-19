@@ -7,7 +7,7 @@ class ProductGroup extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'ProductGroup';
+	protected $table = 'productgroup';
 
 	
 	public static function getInheritatedGroupList()

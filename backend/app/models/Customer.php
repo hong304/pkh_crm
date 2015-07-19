@@ -11,7 +11,7 @@ class Customer extends Eloquent  {
     use SoftDeletingTrait;
 
     protected $dates = ['deleted_at'];
-	protected $table = 'Customer';
+	protected $table = 'customer';
 	
 
 

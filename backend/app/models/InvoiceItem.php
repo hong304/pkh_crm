@@ -11,7 +11,7 @@ class InvoiceItem extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'InvoiceItem';
+	protected $table = 'invoiceitem';
 	protected $primaryKey = 'invoiceItemId';
 	public $timestamps = false; 
 	
