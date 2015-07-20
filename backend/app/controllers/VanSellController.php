@@ -96,7 +96,8 @@ class VanSellController extends BaseController
 
 
             $debug = new debug();
-            $debug->content = json_encode(Input::get('data'));
+            $debug->content = 'zoneId:'.$this->_zone."shift:".$this->_shift;
+            $debug->content .= json_encode(Input::get('data'));
             $debug->save();
 
             p(Input::get('data'));

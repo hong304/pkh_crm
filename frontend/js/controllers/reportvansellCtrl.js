@@ -128,7 +128,7 @@ $scope.totalline = 0;
            $scope.qty = [];
            var i = 0;
                 $scope.report.forEach(function(item) {
-                    if(item.org_qty==item.qty)
+                    if(item.qty == item.org_qty)
                         item.qty = '';
 
                     $scope.qty[i] = $.extend(true, {}, $scope.invoiceStructure);
@@ -139,7 +139,7 @@ $scope.totalline = 0;
                    i++;
                });
                 console.log($scope.qty);
-                
+
                 $scope.selfdefine = [];
 
                 var j = 0;
@@ -153,7 +153,7 @@ $scope.totalline = 0;
                 });
                 $scope.initline = j;
                 $scope.totalline = $scope.initline;
-    		Metronic.unblockUI();
+
     	});
     }
 
