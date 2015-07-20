@@ -245,6 +245,8 @@ class VanSellController extends BaseController
                     $create->shift = $this->_shift;
                     $create->save();
                 } else {
+                    if($vansell->qty==$vansell->org_qty)
+                        $vansell->qty = $v['counts'];
                     $vansell->org_qty = $v['counts'];
                     $vansell->save();
                 }
