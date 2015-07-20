@@ -416,6 +416,7 @@ if($i['invoiceDiscount'] > 0){
             $fullpath = public_path($filename);
 
             $filenames[$page]['filename'] = $filename;
+            $filenames[$page]['deliveryDate'] =  $this->deliveryDate;
             $filenames[$page]['fullpath'] = $fullpath;
 
 
