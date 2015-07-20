@@ -345,15 +345,13 @@ if(Input::get('group.id')!='')
             $section = 0;
             for($i = 1; $i <= 2; $i++)
             {
-                foreach($v['print_storage'] as $index => $get_filename)
+                foreach($v['print_storage'] as $index => $url)
                 {
                     if($section == 0 || $section  % 2 == 0)
                     {
                         $pdf->AddPage();
                         $y = 0;
                     }
-
-                   $url =  public_path() . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
 
                     $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
 
