@@ -24,10 +24,9 @@ $scope.totalline = 0;
     }
 
     $scope.invoiceStructure = {
-        'id' : '',
         'value' : '',
         'org_qty' : '',
-        'unit'  : '',
+        'unit'  : ''
     }
 	
     $scope.$on('$viewContentLoaded', function() {
@@ -126,17 +125,18 @@ $scope.totalline = 0;
             $scope.report_selfdefine = res.selfdefine;
 
            $scope.qty = [];
-           var i = 0;
+                var i = 0;
                 $scope.report.forEach(function(item) {
                     if(item.qty == item.org_qty)
                         item.qty = '';
-
                     $scope.qty[i] = $.extend(true, {}, $scope.invoiceStructure);
+                    $scope.qty[i]['id'] = item.id;
                     $scope.qty[i]['productId'] = item.productId;
+                    $scope.qty[i]['org_qty'] = item.org_qty;
                     $scope.qty[i]['value'] = item.qty;
                     $scope.qty[i]['unit'] = item.unit;
                     $scope.qty[i]['productlevel'] = item.productlevel;
-                   i++;
+                    i++;
                });
                 console.log($scope.qty);
 
@@ -153,7 +153,7 @@ $scope.totalline = 0;
                 });
                 $scope.initline = j;
                 $scope.totalline = $scope.initline;
-
+    		Metronic.unblockUI();
     	});
     }
 

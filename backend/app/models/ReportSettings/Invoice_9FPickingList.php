@@ -10,6 +10,7 @@ class Invoice_9FPickingList {
     private $_invoices = [];
     private $_uniqueid = "";
     private $_version = '';
+    private $_zonename = '';
 
     public function __construct($indata)
     {
@@ -20,6 +21,7 @@ class Invoice_9FPickingList {
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
+        $this->_zonename =(isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['label'] : $permittedZone[0]);
         $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'1';
 
         // check if user has clearance to view this zone        
@@ -248,7 +250,7 @@ class Invoice_9FPickingList {
         $pdf->SetFont('chi','U',16);
         $pdf->Cell(0, 10,$this->_reportTitle,0,1,"C");
         $pdf->SetFont('chi','U',13);
-        $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT), 0, 2, "L");
+        $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT)."(".$this->_zonename.")", 0, 2, "L");
         $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date)."(".$shift.")", 0, 2, "L");
         $pdf->setXY(0, 0);
         $pdf->SetFont('chi','', 9);
