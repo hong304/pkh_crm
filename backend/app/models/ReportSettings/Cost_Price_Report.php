@@ -43,6 +43,18 @@ class Cost_Price_Report
 
         $filter = $this->_indata['filterData'];
 
+        if(strlen($this->_group) < 2 && strlen($filter['name']) < 4 && strlen($filter['phone']) < 4 && strlen($filter['customerId']) < 3){
+            $empty = true;
+            $this->data=[];
+        }else{
+            $empty = false;
+        }
+
+
+
+        if(!$empty){
+
+
         $invoicesQuery = Invoice::whereIn('invoiceStatus', ['2', '20', '30'])
             ->leftJoin('Customer', function ($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
@@ -121,6 +133,7 @@ class Cost_Price_Report
         $this->data = $this->_account;
 
         return $this->data;
+        }
     }
 
     public function registerFilter()
