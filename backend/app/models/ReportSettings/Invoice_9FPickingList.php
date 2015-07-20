@@ -412,9 +412,9 @@ class Invoice_9FPickingList {
                 $pdf->SetFont('chi','',14);
                 $pdf->Cell(0, 0, sprintf("%s - %s %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi'],$o['revised']), 0, 0, "L");
 
-                $pdf->SetFont('chi','',11);
+               /* $pdf->SetFont('chi','',11);
                 $pdf->setXY($base_x + 70, $y);
-                $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");
+                $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");*/
 
                 $pdf->SetFont('chi','',12);
 
@@ -429,19 +429,31 @@ class Invoice_9FPickingList {
 
                         $inner = '';
                         if($item['productPacking_inner']>1)
-                            $inner = 'x'.$item['productPacking_inner'] . $item['productPackingName_inner'];
+                            $inner = $item['productPacking_inner'] . $item['productPackingName_inner']."x";
+
+
+                       // $pdf->setXY($base_x + 120, $y);
+                       // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
 
                         $pdf->setXY($base_x + 70, $y);
-                        $pdf->Cell(0, 0,$item['productPacking_carton'] . $item['productPackingName_carton'].$inner."x".$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
+                        $pdf->Cell(0, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'L');
 
-                        $pdf->setXY($base_x + 120, $y);
-                        $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
 
-                        $pdf->setXY($base_x + 140, $y);
-                        $pdf->Cell(0, 0, "    " . sprintf("%s", $item['counts']), 0, 0, 'L');
+                        if($item['unit']=='unit'){
+                            $pdf->setXY($base_x + 90, $y);
+                            $pdf->Cell(0, 0,$item['productPackingSize'] , 0, 0, 'L');
+                        }
 
-                        $pdf->setXY($base_x + 150, $y);
-                        $pdf->Cell(0, 0, "    " . $item['unit_txt'], 0, 0, 'L');
+                        if($item['unit']=='inner'){
+                            $pdf->setXY($base_x + 90, $y);
+                            $pdf->Cell(0, 0,$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
+                        }
+
+                        if($item['unit']=='carton'){
+                            $pdf->setXY($base_x + 90, $y);
+                            $pdf->Cell(0, 0,$inner.$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
+                        }
+
 
                         $y +=  5;
                     }
@@ -557,7 +569,7 @@ if(isset($this->data['carton'])){
                 foreach($o['items'] as $kk=>$item){
 
                     $pdf->setXY($base_x + 0, $y);
-                    $pdf->Cell(0, 0,sprintf("%s號車",$kk), 0, 0, 'L');
+                    $pdf->Cell(0, 0,sprintf("%s站",$kk), 0, 0, 'L');
 
 
                     $pdf->setXY($base_x + 50, $y);
