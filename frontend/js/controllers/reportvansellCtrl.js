@@ -125,7 +125,7 @@ $scope.totalline = 0;
     		$scope.report = res.normal;
             $scope.report_selfdefine = res.selfdefine;
 
-                $scope.qty = [];
+           $scope.qty = [];
            var i = 0;
                 $scope.report.forEach(function(item) {
                     if(item.org_qty==item.qty)
@@ -138,6 +138,8 @@ $scope.totalline = 0;
                     $scope.qty[i]['productlevel'] = item.productlevel;
                    i++;
                });
+                console.log($scope.qty);
+                
                 $scope.selfdefine = [];
 
                 var j = 0;

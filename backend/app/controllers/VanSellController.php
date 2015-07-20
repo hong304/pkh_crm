@@ -99,6 +99,8 @@ class VanSellController extends BaseController
             $debug->content = json_encode(Input::get('data'));
             $debug->save();
 
+            p(Input::get('data'));
+
             foreach (Input::get('data') as $v) {
               //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define',false)->where('productlevel', $v['productlevel'])->where('productId', $v['productId'])->first();
