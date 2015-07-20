@@ -439,21 +439,25 @@ class Invoice_9FPickingList {
                         $pdf->Cell(0, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'L');
 
 
-                        if($item['unit']=='unit'){
-                            $pdf->setXY($base_x + 90, $y);
-                            $pdf->Cell(0, 0,$item['productPackingSize'] , 0, 0, 'L');
-                        }
+                        if($item['unit_txt']=='斤'){
 
-                        if($item['unit']=='inner'){
-                            $pdf->setXY($base_x + 90, $y);
-                            $pdf->Cell(0, 0,$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
-                        }
+                        }else{
+                        
+                            if($item['unit']=='unit'){
+                                $pdf->setXY($base_x + 90, $y);
+                                $pdf->Cell(0, 0,$item['productPackingSize'] , 0, 0, 'L');
+                            }
 
-                        if($item['unit']=='carton'){
-                            $pdf->setXY($base_x + 90, $y);
-                            $pdf->Cell(0, 0,$inner.$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
-                        }
+                            if($item['unit']=='inner'){
+                                $pdf->setXY($base_x + 90, $y);
+                                $pdf->Cell(0, 0,$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
+                            }
 
+                            if($item['unit']=='carton'){
+                                $pdf->setXY($base_x + 90, $y);
+                                $pdf->Cell(0, 0,$inner.$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
+                            }
+                        }
 
                         $y +=  5;
                     }
