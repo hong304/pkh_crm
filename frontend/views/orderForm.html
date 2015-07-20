@@ -412,7 +412,7 @@
 										<tbody>
 											<tr data-ng-repeat="r in recentProduct" ng-click="selectRecentProduct(r.productId)" style="cursor: pointer;">
 												<td>{{r.productId}}</td>
-												<td>{{r.product_detail.productName_chi}} ({{r.productStatus}})</td>
+												<td>{{r.product_detail.productName_chi}} {{r.productStatus}}</td>
 												<td>{{r.deliveryDate * 1000 | date: 'yyyy.MM.dd'}}</td>
 												<td>{{r.productQty}} {{r.UnitName}}</td>
 												<td>{{r.productPrice | currency}}</td>
