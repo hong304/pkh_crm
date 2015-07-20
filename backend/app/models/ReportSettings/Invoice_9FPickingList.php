@@ -24,6 +24,8 @@ class Invoice_9FPickingList {
         $this->_zonename =(isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['label'] : $permittedZone[0]);
         $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'1';
 
+
+
         // check if user has clearance to view this zone        
         if(!in_array($this->_zone, $permittedZone))
         {
