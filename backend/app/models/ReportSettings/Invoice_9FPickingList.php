@@ -10,7 +10,6 @@ class Invoice_9FPickingList {
     private $_invoices = [];
     private $_uniqueid = "";
     private $_version = '';
-    private $_zonename = '';
 
     public function __construct($indata)
     {
@@ -21,10 +20,7 @@ class Invoice_9FPickingList {
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
-        $this->_zonename =(isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['label'] : $permittedZone[0]);
         $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'1';
-
-
 
         // check if user has clearance to view this zone        
         if(!in_array($this->_zone, $permittedZone))
@@ -105,22 +101,31 @@ class Invoice_9FPickingList {
                             $customerId = $client->customerId;
 
 
-                                if( isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) && $productDetail->allowSeparate) {
-                                    if (!function_exists('fact')) {
-                                        function fact($good, $customerId, $productId, $invoiceId, $unit, $n){
-                                            if (isset($goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $n][$unit])) {
-                                                return fact($good, $customerId, $productId, $invoiceId, $unit, $n + 1);
-                                            } else {
-                                                return $n;
-                                            }
+                            if( isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) && $productDetail->allowSeparate) {
+                                if (!function_exists('fact')) {
+                                    function fact($good, $customerId, $productId, $invoiceId, $unit, $n){
+                                        if (isset($goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $n][$unit])) {
+                                            return fact($good, $customerId, $productId, $invoiceId, $unit, $n + 1);
+                                        } else {
+                                            return $n;
                                         }
                                     }
+                                }
 
-                                    $v =  fact($this->goods,$customerId,$productId,$invoiceId,$unit,'1');
+                                $v =  fact($this->goods,$customerId,$productId,$invoiceId,$unit,'1');
 
                                 $this->goods['9F'][$customerId.$invoiceId]['items'][$productId.'-'.$v][$unit] = [
                                     'productId' => $productId,
                                     'name' => $productDetail->productName_chi,
+
+                                    'productPacking_carton' => $productDetail->productPacking_carton,
+                                    'productPacking_inner' => $productDetail->productPacking_inner,
+                                    'productPacking_unit' => $productDetail->productPacking_unit,
+                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                    'productPackingSize' => $productDetail->productPacking_size,
+
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
                                     'counts' => (isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
@@ -132,6 +137,15 @@ class Invoice_9FPickingList {
                                 $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit] = [
                                     'productId' => $productId,
                                     'name' => $productDetail->productName_chi,
+
+                                    'productPacking_carton' => $productDetail->productPacking_carton,
+                                    'productPacking_inner' => $productDetail->productPacking_inner,
+                                    'productPacking_unit' => $productDetail->productPacking_unit,
+                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                    'productPackingSize' => $productDetail->productPacking_size,
+
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
                                     'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
@@ -144,6 +158,28 @@ class Invoice_9FPickingList {
 
                             if(isset($this->goods['9F'][$customerId.$invoiceId]))
                                 $this->goods['9F'][$customerId.$invoiceId]['revised'] = ($invoiceQ->revised == true)?"(修正)":'' ;
+
+
+
+                            if($unit == 'carton'){
+                                $this->goods['carton'][$productId]['items'][$invoiceQ->routePlanningPriority] = [
+                                    'productId' => $productId,
+                                    'name' => $productDetail->productName_chi,
+                                    'productPacking_carton' => $productDetail->productPacking_carton,
+                                    'productPacking_inner' => $productDetail->productPacking_inner,
+                                    'productPacking_unit' => $productDetail->productPacking_unit,
+                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                    'productPackingSize' => $productDetail->productPacking_size,
+                                    'unit' => $unit,
+                                    'unit_txt' => $item->productUnitName,
+                                    'counts' => (isset($this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]) ? $this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]['counts'] : 0) + $item->productQty,
+                                    'stdPrice' => $productDetail->productStdPrice[$unit],
+                                ];
+                                $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
+                                $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
+                            }
                         }
 
                     }
@@ -152,10 +188,16 @@ class Invoice_9FPickingList {
 
             });
 
-      usort($this->goods['9F'], function($elementA, $elementB) {
+        usort($this->goods['9F'], function($elementA, $elementB) {
             return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
         });
 
+        if(isset($this->goods['carton'])){
+            ksort($this->goods['carton']);
+            foreach ($this->goods['carton'] as &$v){
+                ksort($v['items']);
+            }
+        }
         $this->data = $this->goods;
         $this->data['version'] = $this->_version;
 
@@ -252,7 +294,7 @@ class Invoice_9FPickingList {
         $pdf->SetFont('chi','U',16);
         $pdf->Cell(0, 10,$this->_reportTitle,0,1,"C");
         $pdf->SetFont('chi','U',13);
-        $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT)."(".$this->_zonename.")", 0, 2, "L");
+        $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT), 0, 2, "L");
         $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date)."(".$shift.")", 0, 2, "L");
         $pdf->setXY(0, 0);
         $pdf->SetFont('chi','', 9);
@@ -304,7 +346,7 @@ class Invoice_9FPickingList {
         {
 
             $consec += count($nf['items'])+2;
-            $nf['consec'] = $ninef[$c]['consec'] = count($nf['items']);
+            $nf['consec'] = count($nf['items']);
             $nf['acccon'] = $consec;
 
             // we can have 20 items as most per section
@@ -318,63 +360,63 @@ class Invoice_9FPickingList {
                 $ninefproducts[$j][] = $nf;
             }
         }
-
+        //  pd($ninefproducts);
         foreach($ninefproducts as $index=>$order)
         {
 
             // if it is in left section, add a new page
-            if($index % 2 == 0)
-            {
+            //  if($index % 2 == 0)
+            //   {
 
-                $pdf->AddPage();
-                $this->generateHeader($pdf);
+            $pdf->AddPage();
+            $this->generateHeader($pdf);
 
-                $pdf->SetFont('chi','',10);
-                $pdf->setXY(10, $pdf->h-30);
-                $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+            $pdf->SetFont('chi','',10);
+            $pdf->setXY(10, $pdf->h-30);
+            $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
 
-                $pdf->setXY(60, $pdf->h-30);
-                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+            $pdf->setXY(60, $pdf->h-30);
+            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
 
-                $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
-                $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+            $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+            $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
 
-                $pdf->setXY(0, 0);
+            $pdf->setXY(0, 0);
 
-                // add a straight line
+            // add a straight line
+            //    $pdf->Line(105, 45, 105, 280);
 
-                $pdf->Line(105, 45, 105, 280);
-
-                $pdf->SetFont('chi','',10);
-                $pdf->setXY(500, $pdf->h-30);
-                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index/2+1, ceil(count($ninefproducts)/2)) , 0, 0, "R");
-            }
+            $pdf->SetFont('chi','',10);
+            $pdf->setXY(500, $pdf->h-30);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts))) , 0, 0, "R");
+            //   }
 
             //$pdf->Cell(50, 50, "NA", 0, 0, "L");
 
             // define left right position coordinate x differences
             $y = 55;
-            if($index % 2 == 0)
-            {
-                $base_x = 5;
-            }
-            else
-            {
-                $base_x = 110;
-            }
+            $base_x = 10;
+            /*  if($index % 2 == 0)
+              {
+                  $base_x = 5;
+              }
+              else
+              {
+                  $base_x = 110;
+              }*/
 
             foreach($order as $o)
             {
 
                 $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',13);
+                $pdf->SetFont('chi','U',14);
                 $pdf->Cell(0, 0, sprintf("%s - %s %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi'],$o['revised']), 0, 0, "L");
 
-                $pdf->SetFont('chi','',11);
-                $pdf->setXY($base_x + 56, $y);
-                $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");
+                /* $pdf->SetFont('chi','',11);
+                 $pdf->setXY($base_x + 70, $y);
+                 $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");*/
 
-                $pdf->SetFont('chi','',11);
+                $pdf->SetFont('chi','',12);
 
                 $y += 5;
 
@@ -385,14 +427,37 @@ class Invoice_9FPickingList {
                         $pdf->setXY($base_x + 0, $y);
                         $pdf->Cell(0, 0, "    " . $item['name'], 0, 0, 'L');
 
-                        $pdf->setXY($base_x + 50, $y);
-                        $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
+                        $inner = '';
+                        if($item['productPacking_inner']>1)
+                            $inner = $item['productPacking_inner'] . $item['productPackingName_inner']."x";
+
+
+                        // $pdf->setXY($base_x + 120, $y);
+                        // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
 
                         $pdf->setXY($base_x + 70, $y);
-                        $pdf->Cell(0, 0, "    " . sprintf("%s", $item['counts']), 0, 0, 'L');
+                        $pdf->Cell(20, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'R');
 
-                        $pdf->setXY($base_x + 77, $y);
-                        $pdf->Cell(0, 0, "    " . $item['unit_txt'], 0, 0, 'L');
+
+                        if($item['unit_txt']=='斤'){
+
+                        }else{
+
+                            if($item['unit']=='unit'){
+                                $pdf->setXY($base_x + 100, $y);
+                                $pdf->Cell(0, 0,$item['productPackingSize'] , 0, 0, 'L');
+                            }
+
+                            if($item['unit']=='inner'){
+                                $pdf->setXY($base_x + 100, $y);
+                                $pdf->Cell(0, 0,$item['productPacking_unit'] . $item['productPackingName_unit']." x ".$item['productPackingSize'] , 0, 0, 'L');
+                            }
+
+                            if($item['unit']=='carton'){
+                                $pdf->setXY($base_x + 100, $y);
+                                $pdf->Cell(0, 0,$inner.$item['productPacking_unit'] . $item['productPackingName_unit']." x ".$item['productPackingSize'] , 0, 0, 'L');
+                            }
+                        }
 
                         $y +=  5;
                     }
@@ -401,11 +466,134 @@ class Invoice_9FPickingList {
                 $y += 5;
 
                 $pdf->SetDash(1, 1);
-                $pdf->Line($base_x + 2, $y-5, $base_x + 85, $y-5);
+                $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
             }
-
-
         }
+
+
+
+
+
+        /*
+        if(isset($this->data['carton'])){
+                $consec = $j = 0;
+                foreach($this->data['carton'] as $c=>$nf)
+                {
+
+                    $consec += count($nf['items'])+2;
+                    $nf['consec'] = count($nf['items']);
+                    $nf['acccon'] = $consec;
+
+                    // we can have 20 items as most per section
+                    $ninefproducts1[$j][] = $nf;
+                    if($consec > 40)
+                    {
+                        array_pop($ninefproducts1[$j]);
+                        $nf['acccon'] = count($nf['items'])+2;
+                        $j++;
+                        $consec = $nf['acccon'];
+                        $ninefproducts1[$j][] = $nf;
+                    }
+                }
+                //   pd($ninefproducts1);
+
+                foreach($ninefproducts1 as $index=>$order)
+                {
+
+
+                    // if it is in left section, add a new page
+                    //  if($index % 2 == 0)
+                    //   {
+
+                    $pdf->AddPage();
+                    $this->generateHeader($pdf);
+
+                    $pdf->SetFont('chi','',10);
+                    $pdf->setXY(10, $pdf->h-30);
+                    $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+                    $pdf->setXY(60, $pdf->h-30);
+                    $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+                    $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+                    $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+
+                    $pdf->setXY(0, 0);
+
+                    // add a straight line
+                    //    $pdf->Line(105, 45, 105, 280);
+
+                    $pdf->SetFont('chi','',10);
+                    $pdf->setXY(500, $pdf->h-30);
+                    $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts1))) , 0, 0, "R");
+                    //   }
+
+                    //$pdf->Cell(50, 50, "NA", 0, 0, "L");
+
+                    // define left right position coordinate x differences
+                    $y = 55;
+                    $base_x = 10;
+
+
+                    /*  if($index % 2 == 0)
+                      {
+                          $base_x = 5;
+                      }
+                      else
+                      {
+                          $base_x = 110;
+                      }*/
+
+
+        /*
+                    foreach($order as $k=>$o)
+                    {
+
+
+
+                        $pdf->setXY($base_x + 0, $y);
+                        $pdf->SetFont('chi','',12);
+                        $pdf->Cell(0, 0, sprintf("%s - %s", $o['productDetail']['productId'],$o['productDetail']['productName_chi'], 0, 0, "L"));
+
+
+                        $inner = '';
+                        if($item['productPacking_inner']>1)
+                            $inner = 'x'.$o['productDetail']['productPacking_inner'] . $o['productDetail']['productPackingName_inner'];
+
+                        $pdf->setXY($base_x + 70, $y);
+                        $pdf->Cell(0, 0,$o['productDetail']['productPacking_carton'] . $o['productDetail']['productPackingName_carton'].$inner."x".$o['productDetail']['productPacking_unit'] . $o['productDetail']['productPackingName_unit']."x".$o['productDetail']['productPacking_size'] , 0, 0, 'L');
+
+
+
+                        $pdf->setXY($base_x + 120, $y);
+                        $pdf->Cell(0, 0, "    $" . $o['productPrice'], 0, 0, 'L');
+
+                        $pdf->SetFont('chi','',14);
+
+                        $y += 5;
+
+                        foreach($o['items'] as $kk=>$item){
+
+                            $pdf->setXY($base_x + 0, $y);
+                            $pdf->Cell(0, 0,sprintf("%s站",$kk), 0, 0, 'L');
+
+
+                            $pdf->setXY($base_x + 50, $y);
+                            $pdf->Cell(0, 0, "    " . sprintf("%s %s", $item['counts'],$item['unit_txt']), 0, 0, 'L');
+
+
+                            $y +=  5;
+                        }
+                        $y += 5;
+
+                        $pdf->SetDash(1, 1);
+                        $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+                    }
+
+                }
+        }
+        */
+
         // output
         return [
             'pdf' => $pdf,
