@@ -409,7 +409,7 @@ class Invoice_9FPickingList {
             {
 
                 $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',14);
+                $pdf->SetFont('chi','U',14);
                 $pdf->Cell(0, 0, sprintf("%s - %s %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi'],$o['revised']), 0, 0, "L");
 
                /* $pdf->SetFont('chi','',11);
@@ -436,7 +436,7 @@ class Invoice_9FPickingList {
                        // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
 
                         $pdf->setXY($base_x + 70, $y);
-                        $pdf->Cell(0, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'L');
+                        $pdf->Cell(20, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'R');
 
 
                         if($item['unit_txt']=='斤'){
@@ -444,18 +444,18 @@ class Invoice_9FPickingList {
                         }else{
                         
                             if($item['unit']=='unit'){
-                                $pdf->setXY($base_x + 90, $y);
+                                $pdf->setXY($base_x + 100, $y);
                                 $pdf->Cell(0, 0,$item['productPackingSize'] , 0, 0, 'L');
                             }
 
                             if($item['unit']=='inner'){
-                                $pdf->setXY($base_x + 90, $y);
-                                $pdf->Cell(0, 0,$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
+                                $pdf->setXY($base_x + 100, $y);
+                                $pdf->Cell(0, 0,$item['productPacking_unit'] . $item['productPackingName_unit']." x ".$item['productPackingSize'] , 0, 0, 'L');
                             }
 
                             if($item['unit']=='carton'){
-                                $pdf->setXY($base_x + 90, $y);
-                                $pdf->Cell(0, 0,$inner.$item['productPacking_unit'] . $item['productPackingName_unit']."x".$item['productPackingSize'] , 0, 0, 'L');
+                                $pdf->setXY($base_x + 100, $y);
+                                $pdf->Cell(0, 0,$inner.$item['productPacking_unit'] . $item['productPackingName_unit']." x ".$item['productPackingSize'] , 0, 0, 'L');
                             }
                         }
 
@@ -474,7 +474,7 @@ class Invoice_9FPickingList {
 
 
 
-
+/*
 if(isset($this->data['carton'])){
         $consec = $j = 0;
         foreach($this->data['carton'] as $c=>$nf)
@@ -533,6 +533,8 @@ if(isset($this->data['carton'])){
             // define left right position coordinate x differences
             $y = 55;
             $base_x = 10;
+
+
             /*  if($index % 2 == 0)
               {
                   $base_x = 5;
@@ -543,7 +545,7 @@ if(isset($this->data['carton'])){
               }*/
 
 
-
+/*
             foreach($order as $k=>$o)
             {
 
@@ -590,7 +592,7 @@ if(isset($this->data['carton'])){
 
         }
 }
-
+*/
 
         // output
         return [
