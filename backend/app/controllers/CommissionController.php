@@ -19,8 +19,8 @@ class CommissionController extends BaseController
             $join->on('InvoiceItem.productId', '=', 'Product.productId');
         })->whereNotIn('invoiceStatus',['96','95','98'])->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit')
         ->where('InvoiceItem.productPrice','!=',0);
-        $invoices->where('zoneId', $zone);
-        $invoices->whereBetween('Invoice.deliveryDate', [$data1, $data2]);
+        $invoices->where('zoneId', $zone)->where('hascommission',true)
+                ->whereBetween('Invoice.deliveryDate', [$data1, $data2]);
 
 
         $invoice_return = Invoice::select(DB::raw('SUM(productQty) AS productQtys'), 'productName_chi', 'InvoiceItem.productId', 'productUnitName', 'productQtyUnit', 'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPackingName_carton')->leftJoin('InvoiceItem', function ($join) {
@@ -28,7 +28,7 @@ class CommissionController extends BaseController
         })->leftJoin('Product', function ($join) {
             $join->on('InvoiceItem.productId', '=', 'Product.productId');
         })->where('invoiceStatus','98')->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit')
-            ->where('zoneId', $zone)
+            ->where('zoneId', $zone)->where('hascommission',true)
             ->whereBetween('Invoice.deliveryDate', [$data1, $data2])->get();
 
         foreach($invoices as $invoiceQ)
