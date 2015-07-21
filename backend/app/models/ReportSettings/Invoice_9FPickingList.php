@@ -465,8 +465,8 @@ class Invoice_9FPickingList {
 
                 $y += 5;
 
-                $pdf->SetDash(1, 1);
-                $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+              //  $pdf->SetDash(1, 1);
+              //  $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
             }
         }
 
