@@ -95,7 +95,7 @@ class ReportController extends BaseController {
 
                 foreach($Printlogs as $v)
                 {
-                    $v->view = '<a href="'.$v->file_path.'" target="_blank">View</a>';
+                    $v->view = '<a href="'.$_SERVER['backend'].'/'.$v->file_path.'" target="_blank">View</a>';
                     $v->link = '<span onclick="reprint(\''.$v->job_id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 重印</span>';
                 }
 

@@ -386,7 +386,7 @@ $raw_filename =Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
         $pdf->Output($path, "F");
 
         $print_log = new Printlog();
-        $print_log->file_path = $_SERVER['backend'].'/'.$filename;
+        $print_log->file_path = $filename;
         $print_log->file_name = $raw_filename;
         $print_log->status = 'ready_for_ftp';
         $print_log->target_path = $invoiceImage[0]->zoneId;
