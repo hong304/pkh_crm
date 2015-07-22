@@ -73,7 +73,7 @@ if(!$empty){
                 ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
                 ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
-        })->where('paymentTerms',2)->OrderBy('deliveryDate')->get();
+        })->where('paymentTerms',2)->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
 
 
             foreach($invoices as $invoice)
@@ -277,9 +277,7 @@ if(!$empty){
                         $this->_monthly[$i][$customerId][]= [
                             'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
                         ];
-
                     }
-
                 }
 
             $pdf->AddPage();
