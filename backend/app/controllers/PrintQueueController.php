@@ -345,15 +345,13 @@ if(Input::get('group.id')!='')
             $section = 0;
             for($i = 1; $i <= 2; $i++)
             {
-                foreach($v['print_storage'] as $index => $get_filename)
+                foreach($v['print_storage'] as $index => $url)
                 {
                     if($section == 0 || $section  % 2 == 0)
                     {
                         $pdf->AddPage();
                         $y = 0;
                     }
-
-                   $url =  public_path() . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
 
                     $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
 
@@ -388,7 +386,7 @@ $raw_filename =Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
         $pdf->Output($path, "F");
 
         $print_log = new Printlog();
-        $print_log->file_path = $_SERVER['backend'].'/'.$filename;
+        $print_log->file_path = $filename;
         $print_log->file_name = $raw_filename;
         $print_log->status = 'ready_for_ftp';
         $print_log->target_path = $invoiceImage[0]->zoneId;
@@ -405,37 +403,37 @@ $raw_filename =Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
     {
         $job = Printlog::where('job_id', $job_id)->first();
 
-     /*   $ftp_user_name = 'pkh';
+     $ftp_user_name = 'pkh';
         $ftp_user_pass = 'pkh2015';
-       // $ftp_server = 'pingkeehong.asuscomm.com';
+
        $ftp_server = '192.168.1.47';
-        $conn_id = ftp_connect($ftp_server);
+       $conn_id = ftp_connect($ftp_server);
         if(!$conn_id)
         {
             $debug = new Debug();
-            $debug->content = 'Can not connect to FTP';
+            $debug->content = 'Can not connect to FTP'.$ftp_server.$_SERVER['SERVER_ADDR'];
             $debug->save();
             DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'queued']);
             die('Can not connect to FTP');
         }
-        ftp_login($conn_id, $ftp_user_name, $ftp_user_pass); */
+        ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
 
-        DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'sending']);
-        copy($_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, 'C:/hot_folder/'.str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf');
-        $updates = ['status'=>'sent', 'complete_time'=>time()];
+      DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'sending']);
+      //  copy($_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, 'C:/hot_folder/'.str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf');
+      //  $updates = ['status'=>'sent', 'complete_time'=>time()];
         /*  if($this->group){
               if (@ftp_put($conn_id, 'corp/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, FTP_BINARY)) {
                   $updates = ['status'=>'sent', 'complete_time'=>time()];
               } else {
                   $updates = ['status'=>'queued'];
               }
-          }else{
+          }else{*/
         if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, FTP_BINARY)) {
                 $updates = ['status'=>'sent', 'complete_time'=>time()];
             } else {
                 $updates = ['status'=>'queued'];
             }
-    }*/
+   // }
         DB::table('Printlogs')->where('job_id', $job->job_id)->update($updates);
       //  ftp_close($conn_id);
         //var_dump(DB::getQUeryLog());

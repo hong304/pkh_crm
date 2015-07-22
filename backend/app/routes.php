@@ -149,6 +149,11 @@ Route::get('/info', function(){
     p($_SERVER);
 });
 
+Route::get('/json_decode', function(){
+    pd( unserialize('a:2:{s:12:"deliveryDate";a:1:{i:0;i:1437408000;}s:13:"print_storage";a:1:{i:0;s:24:"print_I1507-026645-1.png";}}'));
+});
+
+
 Route::get('/test', function(){
 
   $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();

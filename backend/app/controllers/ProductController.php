@@ -173,7 +173,7 @@ class ProductController extends BaseController {
                 {
                     $productCustom[$product->productId] = $product->toArray();
                     $productCustom[$product->productId]['deliveryDate'] = $invoiceDetail[$product->invoiceId]['deliveryDate'];
-                    $productCustom[$product->productId]['productStatus'] = ($productCustom[$product->productId]['product_detail']['productStatus'] == "o") ? "": "暫停";
+                    $productCustom[$product->productId]['productStatus'] = ($productCustom[$product->productId]['product_detail']['productStatus'] == "o") ? "": "(暫停)";
                 }
             }
 

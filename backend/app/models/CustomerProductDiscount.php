@@ -7,7 +7,7 @@ class CustomerProductDiscount extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'CustomerProductDiscount';
+	protected $table = 'customerproductdiscount';
 	
 	protected $primaryKey = 'id';
 	

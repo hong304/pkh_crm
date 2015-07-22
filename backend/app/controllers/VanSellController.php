@@ -96,14 +96,17 @@ class VanSellController extends BaseController
 
 
             $debug = new debug();
-            $debug->content = json_encode(Input::get('data'));
+            $debug->content = 'zoneId:'.$this->_zone."shift:".$this->_shift;
+            $debug->content .= json_encode(Input::get('data'));
             $debug->save();
+
+            p(Input::get('data'));
 
             foreach (Input::get('data') as $v) {
               //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
-                $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define',false)->where('productlevel', $v['productlevel'])->where('productId', $v['productId'])->first();
+                $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define',false)->where('id', $v['id'])->first();
                 if($v['value'] == '')
-                    $savevansell->qty = $savevansell->org_qty;
+                    $savevansell->qty = $v['org_qty'];
                 else
                     $savevansell->qty = $v['value'];
 
@@ -242,6 +245,8 @@ class VanSellController extends BaseController
                     $create->shift = $this->_shift;
                     $create->save();
                 } else {
+                    if($vansell->qty==$vansell->org_qty)
+                        $vansell->qty = $v['counts'];
                     $vansell->org_qty = $v['counts'];
                     $vansell->save();
                 }

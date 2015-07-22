@@ -427,7 +427,8 @@ class InvoiceManipulation {
 
         foreach($files as $f)
         {
-            $file['print_url'][$j] = $files[$j]['url'] = 'undefined.png';
+            $file['deliveryDate'][$j] = $f['deliveryDate'];
+           // $file['print_storage'][$j] = $f['filename'];
             $file['print_storage'][$j] = $f['fullpath'];
             $j++;
         }

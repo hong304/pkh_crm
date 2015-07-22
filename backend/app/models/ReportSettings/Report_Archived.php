@@ -128,7 +128,7 @@ class Report_Archived {
     
     public function outputPDF()
     {
-        
+
         
         // output
         return [

@@ -7,7 +7,7 @@ class Zone extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'Zone';
+	protected $table = 'zone';
 	
 	public static function getIdByName($name)
 	{

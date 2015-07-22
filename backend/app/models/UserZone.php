@@ -8,7 +8,7 @@ class UserZone extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'UserZone';
+	protected $table = 'userzone';
 	
 	public static function getMyZone()
 	{

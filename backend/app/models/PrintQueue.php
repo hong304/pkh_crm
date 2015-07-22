@@ -10,7 +10,7 @@ class PrintQueue extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'PrintQueue';
+	protected $table = 'printqueue';
 	protected $primaryKey = 'job_id';
 	//public $timestamps = false;
 	

@@ -11,7 +11,7 @@ class InvoiceUserPerformance extends Eloquent  {
 	 *
 	 * @var string
 	 */
-	protected $table = 'InvoiceUserPerformance';
+	protected $table = 'invoiceuserperformance';
 	protected $primaryKey = 'id';
 	//public $timestamps = false;
 	

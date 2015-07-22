@@ -194,7 +194,7 @@ class Invoice_9FPickingList {
 
         if(isset($this->goods['carton'])){
             ksort($this->goods['carton']);
-                foreach ($this->goods['carton'] as &$v){
+            foreach ($this->goods['carton'] as &$v){
                 ksort($v['items']);
             }
         }
@@ -412,9 +412,9 @@ class Invoice_9FPickingList {
                 $pdf->SetFont('chi','U',14);
                 $pdf->Cell(0, 0, sprintf("%s - %s %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi'],$o['revised']), 0, 0, "L");
 
-               /* $pdf->SetFont('chi','',11);
-                $pdf->setXY($base_x + 70, $y);
-                $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");*/
+                /* $pdf->SetFont('chi','',11);
+                 $pdf->setXY($base_x + 70, $y);
+                 $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");*/
 
                 $pdf->SetFont('chi','',12);
 
@@ -432,8 +432,8 @@ class Invoice_9FPickingList {
                             $inner = $item['productPacking_inner'] . $item['productPackingName_inner']."x";
 
 
-                       // $pdf->setXY($base_x + 120, $y);
-                       // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
+                        // $pdf->setXY($base_x + 120, $y);
+                        // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
 
                         $pdf->setXY($base_x + 70, $y);
                         $pdf->Cell(20, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'R');
@@ -442,7 +442,7 @@ class Invoice_9FPickingList {
                         if($item['unit_txt']=='斤'){
 
                         }else{
-                        
+
                             if($item['unit']=='unit'){
                                 $pdf->setXY($base_x + 100, $y);
                                 $pdf->Cell(0, 0,$item['productPackingSize'] , 0, 0, 'L');
@@ -465,8 +465,8 @@ class Invoice_9FPickingList {
 
                 $y += 5;
 
-                $pdf->SetDash(1, 1);
-                $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+              //  $pdf->SetDash(1, 1);
+              //  $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
             }
         }
 
@@ -474,125 +474,125 @@ class Invoice_9FPickingList {
 
 
 
-/*
-if(isset($this->data['carton'])){
-        $consec = $j = 0;
-        foreach($this->data['carton'] as $c=>$nf)
-        {
+        /*
+        if(isset($this->data['carton'])){
+                $consec = $j = 0;
+                foreach($this->data['carton'] as $c=>$nf)
+                {
 
-            $consec += count($nf['items'])+2;
-            $nf['consec'] = count($nf['items']);
-            $nf['acccon'] = $consec;
+                    $consec += count($nf['items'])+2;
+                    $nf['consec'] = count($nf['items']);
+                    $nf['acccon'] = $consec;
 
-            // we can have 20 items as most per section
-            $ninefproducts1[$j][] = $nf;
-            if($consec > 40)
-            {
-                array_pop($ninefproducts1[$j]);
-                $nf['acccon'] = count($nf['items'])+2;
-                $j++;
-                $consec = $nf['acccon'];
-                $ninefproducts1[$j][] = $nf;
-            }
-        }
-        //   pd($ninefproducts1);
-
-        foreach($ninefproducts1 as $index=>$order)
-        {
-
-
-            // if it is in left section, add a new page
-            //  if($index % 2 == 0)
-            //   {
-
-            $pdf->AddPage();
-            $this->generateHeader($pdf);
-
-            $pdf->SetFont('chi','',10);
-            $pdf->setXY(10, $pdf->h-30);
-            $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
-
-            $pdf->setXY(60, $pdf->h-30);
-            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
-
-            $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
-            $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
-
-            $pdf->setXY(0, 0);
-
-            // add a straight line
-            //    $pdf->Line(105, 45, 105, 280);
-
-            $pdf->SetFont('chi','',10);
-            $pdf->setXY(500, $pdf->h-30);
-            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts1))) , 0, 0, "R");
-            //   }
-
-            //$pdf->Cell(50, 50, "NA", 0, 0, "L");
-
-            // define left right position coordinate x differences
-            $y = 55;
-            $base_x = 10;
-
-
-            /*  if($index % 2 == 0)
-              {
-                  $base_x = 5;
-              }
-              else
-              {
-                  $base_x = 110;
-              }*/
-
-
-/*
-            foreach($order as $k=>$o)
-            {
-
-
-
-                $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','',12);
-                $pdf->Cell(0, 0, sprintf("%s - %s", $o['productDetail']['productId'],$o['productDetail']['productName_chi'], 0, 0, "L"));
-
-
-                $inner = '';
-                if($item['productPacking_inner']>1)
-                    $inner = 'x'.$o['productDetail']['productPacking_inner'] . $o['productDetail']['productPackingName_inner'];
-
-                $pdf->setXY($base_x + 70, $y);
-                $pdf->Cell(0, 0,$o['productDetail']['productPacking_carton'] . $o['productDetail']['productPackingName_carton'].$inner."x".$o['productDetail']['productPacking_unit'] . $o['productDetail']['productPackingName_unit']."x".$o['productDetail']['productPacking_size'] , 0, 0, 'L');
-
-
-
-                $pdf->setXY($base_x + 120, $y);
-                $pdf->Cell(0, 0, "    $" . $o['productPrice'], 0, 0, 'L');
-
-                $pdf->SetFont('chi','',14);
-
-                $y += 5;
-
-                foreach($o['items'] as $kk=>$item){
-
-                    $pdf->setXY($base_x + 0, $y);
-                    $pdf->Cell(0, 0,sprintf("%s站",$kk), 0, 0, 'L');
-
-
-                    $pdf->setXY($base_x + 50, $y);
-                    $pdf->Cell(0, 0, "    " . sprintf("%s %s", $item['counts'],$item['unit_txt']), 0, 0, 'L');
-
-
-                    $y +=  5;
+                    // we can have 20 items as most per section
+                    $ninefproducts1[$j][] = $nf;
+                    if($consec > 40)
+                    {
+                        array_pop($ninefproducts1[$j]);
+                        $nf['acccon'] = count($nf['items'])+2;
+                        $j++;
+                        $consec = $nf['acccon'];
+                        $ninefproducts1[$j][] = $nf;
+                    }
                 }
-                $y += 5;
+                //   pd($ninefproducts1);
 
-                $pdf->SetDash(1, 1);
-                $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
-            }
+                foreach($ninefproducts1 as $index=>$order)
+                {
 
+
+                    // if it is in left section, add a new page
+                    //  if($index % 2 == 0)
+                    //   {
+
+                    $pdf->AddPage();
+                    $this->generateHeader($pdf);
+
+                    $pdf->SetFont('chi','',10);
+                    $pdf->setXY(10, $pdf->h-30);
+                    $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+                    $pdf->setXY(60, $pdf->h-30);
+                    $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+                    $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+                    $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+
+                    $pdf->setXY(0, 0);
+
+                    // add a straight line
+                    //    $pdf->Line(105, 45, 105, 280);
+
+                    $pdf->SetFont('chi','',10);
+                    $pdf->setXY(500, $pdf->h-30);
+                    $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts1))) , 0, 0, "R");
+                    //   }
+
+                    //$pdf->Cell(50, 50, "NA", 0, 0, "L");
+
+                    // define left right position coordinate x differences
+                    $y = 55;
+                    $base_x = 10;
+
+
+                    /*  if($index % 2 == 0)
+                      {
+                          $base_x = 5;
+                      }
+                      else
+                      {
+                          $base_x = 110;
+                      }*/
+
+
+        /*
+                    foreach($order as $k=>$o)
+                    {
+
+
+
+                        $pdf->setXY($base_x + 0, $y);
+                        $pdf->SetFont('chi','',12);
+                        $pdf->Cell(0, 0, sprintf("%s - %s", $o['productDetail']['productId'],$o['productDetail']['productName_chi'], 0, 0, "L"));
+
+
+                        $inner = '';
+                        if($item['productPacking_inner']>1)
+                            $inner = 'x'.$o['productDetail']['productPacking_inner'] . $o['productDetail']['productPackingName_inner'];
+
+                        $pdf->setXY($base_x + 70, $y);
+                        $pdf->Cell(0, 0,$o['productDetail']['productPacking_carton'] . $o['productDetail']['productPackingName_carton'].$inner."x".$o['productDetail']['productPacking_unit'] . $o['productDetail']['productPackingName_unit']."x".$o['productDetail']['productPacking_size'] , 0, 0, 'L');
+
+
+
+                        $pdf->setXY($base_x + 120, $y);
+                        $pdf->Cell(0, 0, "    $" . $o['productPrice'], 0, 0, 'L');
+
+                        $pdf->SetFont('chi','',14);
+
+                        $y += 5;
+
+                        foreach($o['items'] as $kk=>$item){
+
+                            $pdf->setXY($base_x + 0, $y);
+                            $pdf->Cell(0, 0,sprintf("%s站",$kk), 0, 0, 'L');
+
+
+                            $pdf->setXY($base_x + 50, $y);
+                            $pdf->Cell(0, 0, "    " . sprintf("%s %s", $item['counts'],$item['unit_txt']), 0, 0, 'L');
+
+
+                            $y +=  5;
+                        }
+                        $y += 5;
+
+                        $pdf->SetDash(1, 1);
+                        $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+                    }
+
+                }
         }
-}
-*/
+        */
 
         // output
         return [

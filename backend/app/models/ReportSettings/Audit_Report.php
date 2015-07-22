@@ -41,8 +41,21 @@ class Audit_Report {
     
     public function compileResults()
     {
-        $date = $this->_date;
+
         $filter = $this->_indata['filterData'];
+
+
+        if(strlen($this->_group) < 2 && strlen($filter['name']) < 4 && strlen($filter['phone']) < 4 && strlen($filter['customerId']) < 3){
+            $empty = true;
+            $this->data=[];
+        }else{
+            $empty = false;
+        }
+
+
+
+        if(!$empty){
+
 
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','20','98','96'])
             ->leftJoin('Customer', function($join) {
@@ -61,7 +74,7 @@ class Audit_Report {
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
         });
 
-        $invoicesQuery = $invoicesQuery->with('client')->get();
+        $invoicesQuery = $invoicesQuery->get();
 
 
                    $acc = 0;
@@ -75,11 +88,11 @@ class Audit_Report {
                            // first, store all invoices
                            $invoiceId = $invoiceQ->invoiceId;
                            $invoices[$invoiceId] = $invoiceQ;
-                           $client = $invoiceQ['client'];
+                         //  $client = $invoiceQ['client'];
 
                            $this->_account[] = [
-                               'customerId' => $client->customerId,
-                               'name' => $client->customerName_chi,
+                               'customerId' => $invoiceQ->customerId,
+                               'name' => $invoiceQ->customerName_chi,
                                'deliveryDate' => $invoiceQ->deliveryDate_date,
                                'invoiceNumber' => $invoiceId,
                                'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
@@ -104,6 +117,7 @@ class Audit_Report {
        $this->data = $this->_account;
 
        return $this->data;
+        }
     }
     
     public function registerFilter()

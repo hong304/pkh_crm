@@ -2,7 +2,7 @@
 
 class Printlog extends Eloquent  {
 
-    protected $table = 'Printlogs';
+    protected $table = 'printlogs';
 
     public function getUpdatedAtAttribute($attr) {
         return  date("Y-m-d H:i:s", $attr);
