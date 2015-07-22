@@ -27,6 +27,7 @@ class Invoice extends Eloquent  {
             unset($invoice->invoiceTotalAmount);
             unset($invoice->backgroundcode);
             unset($invoice->dueDateDate);
+            unset($invoice->paymentTermsText);
         });
 
 	    Invoice::updated(function($model)
