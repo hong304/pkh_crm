@@ -105,7 +105,8 @@ class VanSellController extends BaseController
             foreach (Input::get('data') as $v) {
               //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define',false)->where('id', $v['id'])->first();
-                if($v['value'] == '')
+
+                if($v['value'] === '')
                     $savevansell->qty = $v['org_qty'];
                 else
                     $savevansell->qty = $v['value'];
