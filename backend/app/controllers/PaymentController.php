@@ -13,7 +13,7 @@ class PaymentController extends BaseController {
 
         $i = Input::get('info');
 
-//pd($i);
+       $amount = Invoice::where('customerId',$i['clientId'])->WhereBetween('deliveryDate',[strtotime($i['startDate']),strtotime($i['endDate'])])->where('paymentTerms',2)->where('invoiceStatus',98)->sum('amount');
 
         $info = new Payment();
 
@@ -27,7 +27,8 @@ class PaymentController extends BaseController {
         $info->start_date = $i['startDate'];
         $info->end_date = $i['endDate'];
         $info->amount = $i['amount'];
-        $info->remain = $i['amount'];
+        $info->remain = $i['amount']+$amount;
+        $info->credit = $amount;
         $info->save();
     }
 

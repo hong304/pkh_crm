@@ -156,10 +156,11 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
-  $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
+
+ /* $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
     foreach ($result as $v) {
         echo $v['deliveryDate_date'].":".$v['zoneText'].":".$v['count(*)']."<br>";
-   }
+   }*/
 
 });
 
