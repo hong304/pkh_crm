@@ -106,10 +106,13 @@ class VanSellController extends BaseController
               //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define',false)->where('id', $v['id'])->first();
 
-                if($v['value'] === '')
+                if($v['value'] === ''){
                     $savevansell->qty = $v['org_qty'];
-                else
+                    $savevansell->self_enter = 0;
+                }else{
                     $savevansell->qty = $v['value'];
+                    $savevansell->self_enter = 1;
+                }
 
                 $savevansell->save();
             }
@@ -246,7 +249,7 @@ class VanSellController extends BaseController
                     $create->shift = $this->_shift;
                     $create->save();
                 } else {
-                    if($vansell->qty==$vansell->org_qty)
+                    if($vansell->qty==$vansell->org_qty && $vansell->self_enter == 0)
                         $vansell->qty = $v['counts'];
                     $vansell->org_qty = $v['counts'];
                     $vansell->save();
