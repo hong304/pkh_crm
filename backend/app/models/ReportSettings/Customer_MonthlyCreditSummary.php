@@ -13,7 +13,7 @@ class Customer_MonthlyCreditSummary {
 
     private $_reportMonth = '';
 
-    private $_acc = 0;
+    private $_acc = [];
      
     public function __construct($indata)
     {
@@ -79,7 +79,9 @@ if(!$empty){
             foreach($invoices as $invoice)
             {
                 if($invoice->deliveryDate < $this->_date1){
-                    $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid);
+                    if(!isset($this->_acc[$invoice->customerId]))
+                        $this->_acc[$invoice->customerId] = 0;
+                    $this->_acc[$invoice->customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid);
                 }elseif($invoice->deliveryDate >= $this->_date1){
                     $customerId = $invoice->customerId;
                     $this->_unPaid[$customerId]['customer'] = [
@@ -97,7 +99,7 @@ if(!$empty){
                         'customerRef' => $invoice->customerRef,
                         'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->amount ,
                         'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
-                        'accumulator' => $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
+                        'accumulator' => $this->_acc[$invoice->customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
                     ];
                 }
             }

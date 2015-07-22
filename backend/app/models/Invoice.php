@@ -231,6 +231,7 @@ class Invoice extends Eloquent  {
 
             //zone text
             $model->zoneText = Config::get('zoneName.'.$model->zoneId);
+            $model->paymentTermsText = ($model->paymentTerms==2)?'CREDIT':'COD';
 	        // calculate invoice total
 
 
