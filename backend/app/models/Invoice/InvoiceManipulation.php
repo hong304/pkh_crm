@@ -428,8 +428,8 @@ class InvoiceManipulation {
         foreach($files as $f)
         {
             $file['deliveryDate'][$j] = $f['deliveryDate'];
-           // $file['print_storage'][$j] = $f['filename'];
-            $file['print_storage'][$j] = $f['fullpath'];
+           $file['print_storage'][$j] = $f['filename'];
+          //  $file['print_storage'][$j] = $f['fullpath'];
             $j++;
         }
 
