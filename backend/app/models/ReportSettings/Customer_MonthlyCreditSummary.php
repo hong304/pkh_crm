@@ -93,14 +93,15 @@ if(!$empty){
                        'account_contact' => $invoice['client']->account_contact,
 
                     ];
-                    $this->_unPaid[$customerId]['breakdown'][] = [
-                        'invoiceDate' => $invoice->invoiceDate,
-                        'invoice' => $invoice->invoiceId,
-                        'customerRef' => $invoice->customerRef,
-                        'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->amount ,
-                        'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
-                        'accumulator' => $this->_acc[$invoice->customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
-                    ];
+                    if($invoice->amount != $invoice->paid || $invoice->invoiceStatus == '98')
+                        $this->_unPaid[$customerId]['breakdown'][] = [
+                            'invoiceDate' => $invoice->invoiceDate,
+                            'invoice' => $invoice->invoiceId,
+                            'customerRef' => $invoice->customerRef,
+                            'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->amount ,
+                            'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
+                            'accumulator' => $this->_acc[$invoice->customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
+                        ];
                 }
             }
 
