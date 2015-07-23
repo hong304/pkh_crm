@@ -171,7 +171,7 @@ class PaymentController extends BaseController {
             $start_date = strtotime($info->start_date);
             $end_date = strtotime($info->end_date);
 
-            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('customerId',$info->customerId)->get(); 
+            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('customerId',$info->customerId)->get();
 
 
 
