@@ -93,9 +93,9 @@
                 {{i.invoiceId}}
             </td>
 <td>{{i.deliveryDate_date}}</td>
-            <td>{{i.amount}}</td>
-            <td><input data-ng-model="invoicepaid[k]['settle']" data-ng-change="updatePaidTotal();" onClick="this.select();" /></td>
-            <td><input type="checkbox" data-ng-model="invoicepaid[k]['discount']" data-ng-if="i.amount != invoicepaid[k]['settle'] && invoicepaid[k]['settle'] != 0" /></td>
+            <td>{{i.realAmount}}</td>
+            <td><input data-ng-model="invoicepaid[k]['settle']" data-ng-change="updatePaidTotal();" onClick="this.select();" ng-disabled="i.realAmount < 0" /></td>
+            <td><input type="checkbox" data-ng-model="invoicepaid[k]['discount']" data-ng-if="i.realAmount != invoicepaid[k]['settle'] && invoicepaid[k]['settle'] != 0" /></td>
         </tr>
         <tr>
             <td>

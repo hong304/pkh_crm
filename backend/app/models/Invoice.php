@@ -28,6 +28,8 @@ class Invoice extends Eloquent  {
             unset($invoice->backgroundcode);
             unset($invoice->dueDateDate);
             unset($invoice->paymentTermsText);
+            unset($invoice->realAmount);
+
         });
 
 	    Invoice::updated(function($model)
@@ -233,6 +235,11 @@ class Invoice extends Eloquent  {
             //zone text
             $model->zoneText = Config::get('zoneName.'.$model->zoneId);
             $model->paymentTermsText = ($model->paymentTerms==2)?'CREDIT':'COD';
+
+            if($model->invoiceStatus == 98)
+                $model->realAmount = $model->amount * -1;
+            else
+                $model->realAmount = $model->amount;
 	        // calculate invoice total
 
 

@@ -27,7 +27,7 @@ class PaymentController extends BaseController {
         $info->start_date = $i['startDate'];
         $info->end_date = $i['endDate'];
         $info->amount = $i['amount'];
-        $info->remain = $i['amount']+$amount;
+        $info->remain = $i['amount'];
         $info->credit = $amount;
         $info->save();
     }
@@ -171,14 +171,18 @@ class PaymentController extends BaseController {
             $start_date = strtotime($info->start_date);
             $end_date = strtotime($info->end_date);
 
-            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20])->where('customerId',$info->customerId)->get();
+            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('customerId',$info->customerId)->get();
 
 
 
             foreach ($invoice_info as $v){
-                if($v['paid']>0)
-                    $v['amount'] -= $v['paid'];
-                $info['sum']+=$v['amount'];
+                if($v['paid']>0){
+                    if($v['invoiceStatus']==98)
+                        $v['amount'] = ($v['amount']*-1) - $v['paid'];
+                    else
+                        $v['amount'] -= $v['paid'];
+                }
+                $info['sum']+= ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
             }
 
             return Response::json($info);
@@ -201,22 +205,24 @@ class PaymentController extends BaseController {
               $invoice = Invoice::with('invoiceItem')->whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->paginate($page_length);
   */
 
-            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->wherein('invoiceStatus',[2,20])->OrderBy('deliveryDate')->get();
+            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->OrderBy('deliveryDate')->get();
 
 
             foreach($invoice as $c)
             {
-                $c->amount = $c->amount - $c->paid;
+                $c->realAmount = $c->realAmount - $c->paid;
 
-                if($check_amount >= $c->amount){
-                    $c->settle= $c->amount;
+                if($check_amount >= $c->realAmount){
+                    $c->settle= $c->realAmount;
                 }else
                     $c->settle= $check_amount;
 
-                $check_amount -= $c->amount;
+                $check_amount -= $c->realAmount;
                 if($check_amount < 0) $check_amount = 0;
 
             }
+
+            pd($invoice->toArray());
 
             return Response::json($invoice);
         }
@@ -230,6 +236,8 @@ class PaymentController extends BaseController {
                 $i = Invoice::where('invoiceId',$v['id'])->first();
                 $i->paid += $v['settle'];
                 $set_amount += $v['settle'];
+
+
                 if($i->amount == $i->paid || $v['discount'] == 1)
                     $i->invoiceStatus = 30;
                 $i->discount = $v['discount'];
