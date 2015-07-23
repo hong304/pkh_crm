@@ -222,7 +222,7 @@ class PaymentController extends BaseController {
 
             }
 
-            pd($invoice->toArray());
+
 
             return Response::json($invoice);
         }

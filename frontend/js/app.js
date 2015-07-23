@@ -813,8 +813,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 						assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
                         assets + '/css/dataTable/bootstrap.min.css',
                         assets + '/css/dataTable/dataTables.bootstrap.css',
-                        assets + '/js/dataTable/jquery.dataTables.min.js',
                         assets + '/js/dataTable/dataTables.bootstrap.js',
+                        assets + '/js/dataTable/jquery.dataTables.min.js',
+
 
                         'js/controllers/invoicePrintMaintenanceCtrl.js',
                     ] 
