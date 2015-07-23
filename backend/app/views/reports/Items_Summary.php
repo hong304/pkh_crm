@@ -10,7 +10,8 @@
         </tr>
     </thead>
     <tbody>
-        <?php foreach($data as $row):?> 
+        <?php foreach($data as $row){
+            if ($row['productQtys']>0){?>
             <tr>
                 <td><?php echo $row['productId']; ?></td>
                 <td><?php echo $row['productName_chi']; ?></td>
@@ -18,8 +19,9 @@
                   <td><?php echo $row['productUnitName']; ?></td>
                 <td><?php echo '$'. number_format($row['productAmount']); ?></td>
                 <td><?php echo '$'. number_format($row['productAmount']/$row['productQtys']); ?></td>
-            </tr>  
-         <?php endforeach; ?>.
+            </tr>
+         <?php }
+        }?>
 
     </tbody>
 </table>

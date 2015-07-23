@@ -46,7 +46,7 @@ class Items_Summary {
 
         $filter = $this->_indata['filterData'];
 
-        if(strlen($this->_group) < 2 && strlen($filter['name']) < 4 && strlen($filter['phone']) < 4 && strlen($filter['customerId']) < 3 && strlen($this->productId) < 4 && $this->productName==''){
+        if(strlen($this->_group) < 2 && strlen($filter['name']) < 4 && strlen($filter['phone']) < 4 && strlen($filter['customerId']) < 3 && $this->productId=='' && $this->productName==''){
             $empty = true;
             $this->data=[];
         }else{
