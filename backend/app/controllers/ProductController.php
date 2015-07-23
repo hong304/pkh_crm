@@ -62,7 +62,8 @@ class ProductController extends BaseController {
         $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
         $this->_shift = (isset($filter['shift']) ? $filter['shift'] : '-1');
 
-        $invoices =  Invoice::select('invoice.invoiceId','deliveryDate','zoneId','customerName_chi','productName_chi','invoiceitem.productId','productPrice','productQty')->leftJoin('InvoiceItem', function($join) {
+        $invoices =  Invoice::select('invoice.invoiceId','deliveryDate','zoneId','customerName_chi','productName_chi','invoiceitem.productId','productPrice','productQty','productUnitName')
+            ->leftJoin('InvoiceItem', function($join) {
                 $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
             }) ->leftJoin('Customer', function($join) {
                 $join->on('Invoice.customerId', '=', 'Customer.customerId');

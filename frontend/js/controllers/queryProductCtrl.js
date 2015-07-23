@@ -157,6 +157,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
                     { "data": "productName_chi" },
                     { "data": "productPrice" },
                     { "data": "productQty" },
+                    {"data": "productUnitName"},
 
                 ],
 
