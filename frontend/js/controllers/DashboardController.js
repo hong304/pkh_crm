@@ -91,6 +91,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
     }
 
     $scope.submitStaffForm = function(){
+
         $scope.filterData = {
             'deliveryDate' : '',
             'zone' : {
@@ -103,7 +104,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         }
         $scope.filterData.deliveryDate = $scope.picking.date;
         $scope.filterData.zone.value = $scope.picking.zone.zoneId;
-        $scope.filterData.zone.label = $scope.picking.zone.label;
+        $scope.filterData.zone.label = $scope.picking.zone.zoneName;
         $scope.filterData.shift.value = $scope.picking.shift;
 
       /*  $http.post(iutarget, {info: $scope.version, mode : 'check'})
