@@ -359,6 +359,7 @@ class InvoiceManipulation {
                         $lastitem->price = $i['productPrice'];
                         $lastitem->qty = $i['productQty'];
                         $lastitem->discount = $i['productDiscount'];
+                        $lastitem->updated_at = time();;
                     }
                     $lastitem->save();
                 }
