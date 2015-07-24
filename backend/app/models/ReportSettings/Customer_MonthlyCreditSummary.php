@@ -303,7 +303,7 @@ if(!$empty){
             $pdf->Cell(0, 0, "Tel:", 0, 0, "L");
             
             $pdf->SetFont('chi', '', 14);
-            $pdf->setXY(50, $y+20);
+            $pdf->setXY(40, $y+20);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_tel']), 0, 0, "L");
             
             $pdf->SetFont('chi', '', 14);
@@ -311,7 +311,7 @@ if(!$empty){
             $pdf->Cell(0, 0, "Fax:", 0, 0, "L");
             
             $pdf->SetFont('chi', '', 14);
-            $pdf->setXY(100, $y+20);
+            $pdf->setXY(90, $y+20);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_fax']), 0, 0, "L");
 
             $pdf->SetFont('chi', '', 14);
