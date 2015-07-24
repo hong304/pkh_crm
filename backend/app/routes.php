@@ -85,6 +85,15 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/queryCustomer.json', 'CustomerController@jsonQueryCustomer');
     Route::post('/manipulateCustomer.json', 'CustomerController@jsonManiulateCustomer');
 
+	 //Supplier Maintenance
+    Route::post('/querySupplier.json', 'SupplierController@jsonQuerySupplier');
+    Route::post('/checkSupplier.json', 'SupplierController@jsonCheckSupplier');
+    Route::post('/maniSupplier.json', 'SupplierController@jsonUpdate');
+    //Route::post('/generateSupplier.json', 'SupplierController@generateId');
+    
+    //Po Maintenance
+    Route::post('/queryPo.json', 'PoController@jsonQueryPo');
+	
     // Group Maintenance
     Route::post('/queryGroup.json', 'GroupController@jsonQueryGroup');
     Route::post('/manipulateGroup.json', 'GroupController@jsonManiulateGroup');
@@ -101,6 +110,14 @@ Route::group(array('before' => 'auth'), function()
     // Invoice Printing Maintenance
     Route::post('/queryIPF.json', 'IPFController@jsonQueryIPF');
     Route::post('/manipulateIPF.json', 'IPFController@jsonManiulateIPF');
+	
+	  // Country Maintenance
+    Route::post('/queryCountry.json', 'countryController@jsonQueryCountry');
+    Route::post('/manipulateCountry.json', 'countryController@jsonManiulateCountry');
+    
+     // Currency Maintenance
+    Route::post('/queryCurrency.json', 'currencyController@jsonQueryCurrency');
+    Route::post('/manipulateCurrency.json', 'currencyController@jsonManiulateCurrency');
     
     // Staff Maintenance
     Route::post('/queryStaff.json', 'UserController@jsonQueryStaff');
@@ -136,6 +153,10 @@ Route::group(array('before' => 'auth'), function()
     Route::get('invoice','DataWarehouseController@getInvoice');
 
     Route::get('/getHoliday.json','OrderController@jsonHoliday');
+	
+	  //Supplier
+    Route::get('/getChoice.json','SupplierController@jsonChoice');
+    Route::get('/getCurrency.json','SupplierController@jsonCurrency');
 
 
 });
