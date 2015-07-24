@@ -81,7 +81,7 @@ if(!$empty){
                 if($invoice->deliveryDate < $this->_date1){
                     if(!isset($this->_acc[$invoice->customerId]))
                         $this->_acc[$invoice->customerId] = 0;
-                    $this->_acc[$invoice->customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid);
+                    $this->_acc[$invoice->customerId] += $invoice->realAmount-$invoice->paid;
                 }elseif($invoice->deliveryDate >= $this->_date1){
                     $customerId = $invoice->customerId;
                     $this->_unPaid[$customerId]['customer'] = [
@@ -276,10 +276,12 @@ if(!$empty){
                     {
                         $customerId = $invoice->customerId;
                         $this->_monthly[$i][$customerId][]= [
-                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
+                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-$invoice->paid
                         ];
                     }
                 }
+
+          //  pd($this->_monthly);
 
             $pdf->AddPage();
             $this->generateHeader($pdf);

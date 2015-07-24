@@ -413,9 +413,9 @@ class Invoice_9FPickingList {
                 $pdf->SetFont('chi','U',14);
                 $pdf->Cell(0, 0, sprintf("%s - %s %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi'],$o['revised']), 0, 0, "L");
 
-                /* $pdf->SetFont('chi','',11);
-                 $pdf->setXY($base_x + 70, $y);
-                 $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");*/
+                 $pdf->SetFont('chi','',11);
+                 $pdf->setXY($base_x + 84, $y);
+                 $pdf->Cell(0, 0, sprintf("%s", $o['invoiceId']), 0, 0, "L");
 
                 $pdf->SetFont('chi','',12);
 
