@@ -309,8 +309,8 @@ $debug = 0;
                     $i['amount'] *= -1;
                     $item['productQty'] *= -1;
             }
-                $qty_text = number_format($item['productQty'],1,'.',',') . ' ' .str_replace(' ', '', $item['productInfo']['productPackingName_' . $item['productQtyUnit']]);
-                $this->image[$p]->text($qty_text, 1180, $position['y'], function($font) use($font_file) {
+                $qty_text = number_format($item['productQty'],1,'.','') . ' ' .str_replace(' ', '', $item['productInfo']['productPackingName_' . $item['productQtyUnit']]);
+                $this->image[$p]->text($qty_text, 1178, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
