@@ -158,4 +158,130 @@ public function loadvanSellReport(){
         echo $content;
         
     }
+
+    public function genA4Invoice (){
+
+
+        $invoiceDetails = Invoice::where('invoiceId',Input::get('invoiceId'))->with(['invoiceItem'=>function($query){
+            $query->with('productDetail');
+        }])->with('client')->first()->toArray();
+
+    //    pd($invoiceDetails);
+
+            $pdf = new PDF();
+
+            $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
+            // handle 1F goods
+            $good = array_chunk($invoiceDetails['invoice_item'], 30, true);
+
+            $numItems = count($good);
+            $i = 0;
+
+            foreach ($good as $ij => $f) {
+                $i++;
+                $pdf->AddPage();
+
+
+
+                $pdf->SetFont('chi','',18);
+                $pdf->setXY(45, 10);
+                $pdf->Cell(0, 0,"炳 記 行 貿 易 有 限 公 司",0,1,"L");
+
+                $pdf->SetFont('chi','',18);
+                $pdf->setXY(45, 18);
+                $pdf->Cell(0, 0,"PING KEE HONG TRADING COMPANY LTD.",0,1,"L");
+
+                $pdf->SetFont('chi','',9);
+                $pdf->setXY(45, 25);
+                $pdf->Cell(0, 0,"Flat B, 9/F., Wang Cheung Industrial Building, 6 Tsing Yeung St., Tuen Mun, N.T. Hong Kong.",0,1,"L");
+
+                $pdf->SetFont('chi','',9);
+                $pdf->setXY(45, 30);
+                $pdf->Cell(0, 0,"TEL:24552266    FAX:24552449",0,1,"L");
+
+                $pdf->SetFont('chi','U',16);
+                $pdf->setXY(0, 40);
+                $pdf->Cell(0, 0,'發票',0,0,"C");
+
+                $image = public_path('logo.jpg');
+                $pdf->Cell( 40, 40, $pdf->Image($image, 15, 5, 28), 0, 0, 'L', false );
+
+
+                $pdf->SetFont('chi', 'U', 11);
+                $pdf->setXY(10, 50);
+                $pdf->Cell(0, 0, "單據編號: " . $invoiceDetails['invoiceId'], 0, 2, "L");
+                $pdf->setXY(10, 58);
+                $pdf->Cell(0, 0, "送貨日期: " . $invoiceDetails['deliveryDate_date'], 0, 2, "L");
+                $pdf->setXY(10, 66);
+                $pdf->Cell(0, 0, "參考編號: " . $invoiceDetails['customerRef'], 0, 2, "L");
+
+                $pdf->SetFont('chi', '', 11);
+                $pdf->setXY(100, 58);
+                $pdf->Cell(0, 0, "客戶名稱: " . $invoiceDetails['client']['customerName_chi'], 0, 2, "L");
+                $pdf->setXY(100, 66);
+                $pdf->Cell(0, 0, "地址: " . $invoiceDetails['client']['address_chi'], 0, 2, "L");
+
+
+
+$y = 80;
+
+                $pdf->SetFont('chi', '', 10);
+
+                $pdf->setXY(10, $y);
+                $pdf->Cell(0, 0, "編號", 0, 0, "L");
+
+                $pdf->setXY(50, $y);
+                $pdf->Cell(0, 0, "貨品說明", 0, 0, "L");
+
+                $pdf->setXY(120, $y);
+                $pdf->Cell(0, 0, "數量", 0, 0, "L");
+
+                $pdf->setXY(145, $y);
+                $pdf->Cell(0, 0, "單價", 0, 0, "L");
+
+                $pdf->setXY(170, $y);
+                $pdf->Cell(0, 0, "金額", 0, 0, "L");
+
+                $pdf->Line(10, $y+3, 190, $y+3);
+
+                $y += 10;
+
+                foreach ($f as $u) {
+                    $pdf->setXY(10, $y);
+                    $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
+
+                    $pdf->setXY(50, $y);
+                    $pdf->Cell(0, 0, $u['product_detail']['productName_chi'], 0, 0, "L");
+
+                    $pdf->setXY(120, $y);
+                    $pdf->Cell(10, 0, number_format($u['productQty'], 1, '.', ',').$u['productUnitName'], 0, 0, "R");
+
+                    $pdf->setXY(145, $y);
+                    $pdf->Cell(10, 0, sprintf("$%s", number_format($u['productPrice'], 1, '.', ',')), 0, 0, "R");
+
+                    $pdf->setXY(170, $y);
+                    $pdf->Cell(10, 0,  sprintf("$%s",number_format($u['productPrice']*$u['productQty'], 1, '.', ',')), 0, 0, "R");
+
+                    $y += 6;
+                }
+
+                $pdf->setXY(500, 276);
+                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, $numItems), 0, 0, "R");
+
+            }
+
+
+
+            if ($i === $numItems) {
+
+                $pdf->Line(10, $y, 190, $y);
+
+                $pdf->setXY(170, $y + 5);
+                $pdf->Cell(10, 0, "$" . number_format($invoiceDetails['amount'], 2, '.', ','), 0, 0, "R");
+
+
+        }
+
+        $pdf->Output('','I');
+    }
 }

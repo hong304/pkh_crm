@@ -110,6 +110,7 @@ Route::group(array('before' => 'auth'), function()
     // Printer
     Route::any('/instantPrint.json', 'PrintQueueController@instantPrint');
     Route::any('/rePrint.json', 'PrintQueueController@rePrint');
+    Route::any('/genA4Invoice.json', 'ReportController@genA4Invoice');
     Route::any('/getAllPrintJobsWithinMyZone.json', 'PrintQueueController@getAllPrintJobsWithinMyZone');
     Route::any('/printSelectedJobsWithinMyZone.json', 'PrintQueueController@printSelectedJobsWithinMyZone');
     Route::any('/getInvoiceStatusMatchPrint.json', 'PrintQueueController@getInvoiceStatusMatchPrint');

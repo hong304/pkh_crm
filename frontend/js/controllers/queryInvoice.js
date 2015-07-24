@@ -24,6 +24,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var fetchDataTimer;
     var querytarget = endpoint + '/queryInvoice.json';
     var reprint = endpoint + '/rePrint.json';
+
     $scope.invoicepaid= [];
     $scope.invoiceStructure = {
           'paid' : ''
@@ -348,6 +349,9 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     	}
     }
 
+    $scope.genA4Invoice = function(invoiceId){
+        window.open(endpoint + "/genA4Invoice.json?invoiceId=" + invoiceId);
+    }
 
     $scope.rePrintInvoice = function(invoiceId)
     {

@@ -251,7 +251,11 @@
 				<!-- Reprint Invoice -->
 				<!-- Condition: Invoice Status = |{99} Permission = reprint_invoice -->
 				<button type="button" class="btn grey-cascade" data-ng-if="invoiceinfo.invoiceStatus != 99 && systemInfo.permission.reprint_invoice" data-ng-click="rePrintInvoice(invoiceinfo.invoiceId);">重印單據</button>
-			</div>
+
+                <button type="button" class="btn grey-cascade" data-ng-click="genA4Invoice(invoiceinfo.invoiceId);">A4單據</button>
+
+
+            </div>
 		</div>
 		<!-- /.modal-content -->
 	</div>
