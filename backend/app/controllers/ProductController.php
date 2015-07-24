@@ -62,6 +62,15 @@ class ProductController extends BaseController {
         $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
         $this->_shift = (isset($filter['shift']) ? $filter['shift'] : '-1');
 
+
+
+        if($filter['name'] =='' && $filter['phone'] == ''&& $filter['customerId'] == ''){
+            $empty = true;
+            $this->data=[];
+        }else{
+            $empty = false;
+        }
+
         $customers = Customer::where(function ($query) use ($filter) {
             $query
                 ->where('customerName_chi', 'LIKE', $filter['name'] . '%')
@@ -80,7 +89,9 @@ class ProductController extends BaseController {
                 $join->on('InvoiceItem.productId', '=', 'Product.productId');
             });
 
-        $invoices->wherein('customerId',array_keys($customers));
+        if(!$empty){
+            $invoices->wherein('customerId',array_keys($customers));
+        }
 
         if($zone != '-1')
             $invoices-> where('zoneId', $zone);
