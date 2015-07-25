@@ -216,10 +216,12 @@ public function loadvanSellReport(){
                 $pdf->Cell(0, 0, "參考編號: " . $invoiceDetails['customerRef'], 0, 2, "L");
 
                 $pdf->SetFont('chi', '', 11);
-                $pdf->setXY(100, 58);
+                $pdf->setXY(100, 50);
                 $pdf->Cell(0, 0, "客戶名稱: " . $invoiceDetails['client']['customerName_chi'], 0, 2, "L");
-                $pdf->setXY(100, 66);
+                $pdf->setXY(100, 58);
                 $pdf->Cell(0, 0, "地址: " . $invoiceDetails['client']['address_chi'], 0, 2, "L");
+                $pdf->setXY(100, 66);
+                $pdf->Cell(0, 0, "備註: " . $invoiceDetails['invoiceRemark'], 0, 2, "L");
 
 
 
