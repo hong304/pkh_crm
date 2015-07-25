@@ -2,16 +2,21 @@
 
 class CommissionController extends BaseController
 {
+    public $zone = '';
+    public $date1 = '';
+    public $date2 = '';
+
+    public function __construct(){
+        $filter = Input::get('filterData');
+        $this->zone = (isset($filter['zone']['zoneId'])) ? $filter['zone']['zoneId'] : '0';
+        $this->date1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
+        $this->date2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
+    }
 
     public function queryCommission()
     {
 
-        $filter = Input::get('filterData');
 
-
-        $zone = (isset($filter['zone']['zoneId'])) ? $filter['zone']['zoneId'] : '0';
-        $data1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
-        $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
 
         $invoices = Invoice::select(DB::raw('SUM(productQty) AS productQtys'), 'productName_chi', 'InvoiceItem.productId', 'productUnitName', 'productQtyUnit', 'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPackingName_carton')->leftJoin('InvoiceItem', function ($join) {
             $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
@@ -19,8 +24,8 @@ class CommissionController extends BaseController
             $join->on('InvoiceItem.productId', '=', 'Product.productId');
         })->whereNotIn('invoiceStatus',['96','95','98'])->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit')
         ->where('InvoiceItem.productPrice','!=',0);
-        $invoices->where('zoneId', $zone)->where('hascommission',true)
-                ->whereBetween('Invoice.deliveryDate', [$data1, $data2]);
+        $invoices->where('zoneId', $this->zone)->where('hascommission',true)
+                ->whereBetween('Invoice.deliveryDate', [$this->date1, $this->date2]);
 
 
         $invoice_return = Invoice::select(DB::raw('SUM(productQty) AS productQtys'), 'productName_chi', 'InvoiceItem.productId', 'productUnitName', 'productQtyUnit', 'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPackingName_carton')->leftJoin('InvoiceItem', function ($join) {
@@ -28,8 +33,8 @@ class CommissionController extends BaseController
         })->leftJoin('Product', function ($join) {
             $join->on('InvoiceItem.productId', '=', 'Product.productId');
         })->where('invoiceStatus','98')->groupBy('InvoiceItem.productId')->groupBy('productQtyUnit')
-            ->where('zoneId', $zone)->where('hascommission',true)
-            ->whereBetween('Invoice.deliveryDate', [$data1, $data2])->get();
+            ->where('zoneId', $this->zone)->where('hascommission',true)
+            ->whereBetween('Invoice.deliveryDate', [$this->date1, $this->date2])->get();
 
         foreach($invoices as $invoiceQ)
         {
@@ -91,8 +96,11 @@ class CommissionController extends BaseController
 
     public function exportCsv($invoices)
     {
+   //     pd($invoices);
 
-        $csv = 'Product ID,Name,Total Qty,Unit' . "\r\n";
+        $csv = '車號,'.$this->zone. "\r\n";
+        $csv .= '日期,'.date('Y-m-d',$this->date1).',至,'.date('Y-m-d',$this->date2). "\r\n";
+        $csv .= 'Product ID,Name,Total Qty,Unit' . "\r\n";
         foreach ($invoices as $item) {
             if($item[0]['productQtyUnit_final'] != false){
                 $csv .= '"' . $item[0]['productId'] . '",';
