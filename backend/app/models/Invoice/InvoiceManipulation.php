@@ -340,7 +340,7 @@ class InvoiceManipulation {
                 }
 
                 //update last item price
-                if($this->temp_invoice_information['status'] != '98' && $this->temp_invoice_information['status'] != '96'){
+                if($this->temp_invoice_information['status'] != '98' && $this->temp_invoice_information['status'] != '96' && $i['deleted'] == '0'){
 
                     $lastitem = lastitem::where('customerId',$this->im->customerId)->where('productId',$i['productId'])->first();
                     if($lastitem==null){
