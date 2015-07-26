@@ -60,7 +60,6 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
 
         $("#generalPickingModal").modal({backdrop: 'static'});
 
-
     }
 
     $scope.updateZone = function(){
@@ -115,7 +114,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
                         $("#generalPickingModal").modal('hide');
                         $http.post(iutarget, {info: $scope.picking, mode : 'post'})
                             .success(function(res, status, headers, config){
-                                $scope.picking = true;
+                                $scope.picking_gen = true;
                                 if(res == 'true'){
                                     var queryObject = {
                                         filterData	:	$scope.filterData,
