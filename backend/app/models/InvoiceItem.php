@@ -58,14 +58,10 @@ class InvoiceItem extends Eloquent  {
 	    
 	    return $this->hasOne('Product', 'productId', 'productId');
 	}
-	
-	public function humunize($invoicesItem)
-	{
-	    if(is_array($invoicesItem))
-	    {
-	        
-	    }
-	}
+
+    public function invoice(){
+        return $this->belongsTo('Invoice','invoiceId','invoiceId');
+    }
 	
     public function newCollection(array $models = array())
     {
@@ -98,6 +94,17 @@ class InvoiceItem extends Eloquent  {
         
         
         return new Collection($models);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return "$this->productId $this->productQtyUnit";
+    }
+
+    public function getRealQtyAttribute()
+    {
+        if($this->invoice->invoiceStatus == 98)
+            return $this->productQty * -1;
     }
 	
 }
