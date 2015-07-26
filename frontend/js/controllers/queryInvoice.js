@@ -38,6 +38,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         'created_by'	:	'0',
         'invoiceNumber' :	''
     };
+
+    /*
     var yday;
     var year;
     var month;
@@ -106,6 +108,44 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     $scope.filterData.deliverydate = year+'-'+month+'-'+yday;
     $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
         });
+
+    */
+
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 2 : 1;
+
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    if(today.getHours() < 12)
+    {
+        var nextDay = today;
+    }
+    else
+    {
+        var nextDay = currentDate;
+    }
+    var day = nextDay.getDate()+1;
+    //  var dayD = nextDay.getDate()+1;
+    var month = nextDay.getMonth() + 1;
+    var year = nextDay.getFullYear();
+    var yday = nextDay.getDate()-2;
+
+    $("#deliverydate").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + yday);
+
+    $("#deliverydate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
+    $scope.filterData.deliverydate = year+'-'+month+'-'+yday;
+    $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
+
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
     });
