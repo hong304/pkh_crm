@@ -24,7 +24,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.filterData = {
         'displayName'	:	'',
-        'clientId'		:	'0',
+        'clientId'		:	'',
         'status'		:	'0',
         'zone'			:	'',
         'deliverydate'	:	'last day',
@@ -97,7 +97,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.updateDataSet = function(){
         $http.post(query, {mode:'collection', filterData: $scope.filterData})
-            .success(function(res, status, headers, config){
+            .success(function(res){
 
 
                 $scope.invoiceinfo = res;
@@ -115,7 +115,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     $scope.invoicepaid.settle = $scope.invoicepaid.amount;
                     i++;
                 });
-                console.log($scope.invoicepaid);
             });
     }
 
@@ -154,7 +153,7 @@ var i =0;
     {
         $scope.filterData = {
             'displayName'	:	'',
-            'clientId'		:	'0',
+            'clientId'		:	'',
             'status'		:	'0',
             'zone'			:	'',
             'deliverydate'	:	'last day',

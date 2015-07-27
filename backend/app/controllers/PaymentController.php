@@ -56,51 +56,13 @@ class PaymentController extends BaseController {
         {
             $filter = Input::get('filterData');
 
-
-            // start with date filter
-            switch($filter['deliverydate'])
-            {
-                case 'today' :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'coming-7-days' :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("+1 week");
-                    break;
-                case 'last day' :
-                    $dDateBegin = strtotime("1 day ago 00:00");
-                    $dDateEnd = strtotime("1 day ago 23:59");
-                    break;
-                case 'past-7-days' :
-                    $dDateBegin = strtotime("7 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'last day' :
-                    $dDateBegin = strtotime("1 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'past-30-days' :
-                    $dDateBegin = strtotime("30 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'past-180-days' :
-                    $dDateBegin = strtotime("180 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'extensible-180-180'   :
-                    $dDateBegin = strtotime("180 days ago 00:00");
-                    $dDateEnd = strtotime("+180days 00:00");
-                    break;
-                default :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
+            if($filter['clientId'] =='' && $filter['invoiceNumber'] == ''){
+                return Response::json();
             }
 
             //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
 
-            $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
+            $invoice = Invoice::select('customerName_chi','invoiceId','amount','invoice.zoneId','deliveryDate','invoiceStatus')->leftjoin('customer', 'customer.customerId', '=', 'invoice.customerId')->where('deliveryDate','>',strtotime("-4 days"));
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -137,9 +99,9 @@ class PaymentController extends BaseController {
             }
 
             // client id
-            if($filter['clientId'] != '0')
+            if($filter['clientId'] != '')
             {
-                $invoice->where('customerId', $filter['clientId']);
+                $invoice->where('invoice.customerId', $filter['clientId']);
             }
 
             // invoice number
