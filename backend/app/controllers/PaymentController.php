@@ -2,34 +2,68 @@
 
 class PaymentController extends BaseController {
 
-    private function __standardizeDateYmdTOUnix($date)
-    {
-        $date = explode('-', $date);
-        $date = strtotime($date[2].'-'.$date[1].'-'.$date[0]);
-        return $date;
-    }
-
     public function addCheque(){
 
-        $i = Input::get('info');
 
-       $amount = Invoice::where('customerId',$i['clientId'])->WhereBetween('deliveryDate',[strtotime($i['startDate']),strtotime($i['endDate'])])->where('paymentTerms',2)->where('invoiceStatus',98)->sum('amount');
+
+
+
+
+
+
+            $paid = Input::get('paid');
+
+
+        $ij = Input::get('filterData');
+            $set_amount =0;
+            foreach ($paid as $k=>$v){
+                $i = Invoice::where('invoiceId',$v['id'])->first();
+                $i->paid += $v['settle'];
+                $set_amount += $v['settle'];
+
+
+                if($i->amount == $i->paid || $v['discount'] == 1)
+                    $i->invoiceStatus = 30;
+                $i->discount = $v['discount'];
+                if($ij['discount'])
+                    $i->discount = 1;
+                $i->save();
+            }
+
+
+
 
         $info = new Payment();
 
-        $c = Customer::where('customerId',$i['clientId'])->first();
+        //  $c = Customer::where('customerId',$i['clientId'])->first();
 
-        $info->customerId = $i['clientId'];
-        $info->deliveryZone = $c['deliveryZone'];
-        $info->ref_number = $i['no'];
-        $info->bankCode = $i['bankCode'];
-        $info->receive_date = $i['receiveDate'];
-        $info->start_date = $i['startDate'];
-        $info->end_date = $i['endDate'];
-        $info->amount = $i['amount'];
-        $info->remain = $i['amount'];
-        $info->credit = $amount;
+        $info->customerId = $ij['customerId'];
+        $info->ref_number = $ij['no'];
+        $info->bankCode = $ij['bankCode'];
+        $info->receive_date = $ij['receiveDate'];
+        $info->start_date = $ij['startDate'];
+        $info->end_date = $ij['endDate'];
+        $info->amount = $ij['amount'];
+        // $info->credit = $amount;
+
+
+        if($info->remain == 0)
+            $info->used = 1;
+        if($ij['discount']){
+            $info->used = 1;
+            $info->remain = 0;
+            $info->discount = $set_amount-$ij['amount'];
+        }else{
+            $info->remain = $ij['amount']-$set_amount;
+        }
+
         $info->save();
+
+        foreach ($paid as $k=>$v){
+            $iq = Invoice::where('invoiceId',$v['id'])->first();
+            $iq->cheque_id = $info->id;
+            $iq->save();
+        }
     }
 
     public function querryCashCustomer(){
@@ -124,6 +158,32 @@ class PaymentController extends BaseController {
     public function getClientClearance(){
 
         $mode = Input::get('mode');
+        $filter = Input::get('filterData');
+        $customer = explode(",", $filter['customerId']);
+        $start_date = strtotime($filter['startDate']);
+        $end_date = strtotime($filter['endDate']);
+
+        if($mode  == 'processCustomer'){
+
+            $info['sum'] = 0;
+
+
+
+
+            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customer)->get();
+
+            foreach ($invoice_info as $v){
+                if($v['paid']>0){
+                    if($v['invoiceStatus']==98)
+                        $v['amount'] = ($v['amount']*-1) - $v['paid'];
+                    else
+                        $v['amount'] -= $v['paid'];
+                }
+                $info['sum']+= ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
+            }
+
+            return Response::json($info);
+        }
 
         if($mode == 'payment'){
             $payment_id = Input::get('payment_id');
@@ -153,67 +213,30 @@ class PaymentController extends BaseController {
 
         if ($mode == 'invoice'){
 
-            // pd(Input::all());
 
-            $check_amount = Input::get('amount');
-
-            $start_date = strtotime(Input::get('start_date'));
-            $end_date = strtotime(Input::get('end_date'));
-
-            /*  Paginator::setCurrentPage((Input::get('start')+20) / Input::get('length'));
-
-              $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-
-              $invoice = Invoice::with('invoiceItem')->whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->paginate($page_length);
-  */
-
-            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->OrderBy('deliveryDate')->get();
+         //   $check_amount = Input::get('amount');
 
 
-            foreach($invoice as $c)
+            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customer)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','deliveryDate')->get();
+
+
+        foreach($invoice as &$c)
             {
-                $c->realAmount = $c->realAmount - $c->paid;
+                          $c->realAmount = $c->realAmount - $c->paid;
 
-                if($check_amount >= $c->realAmount){
+              /*  if($check_amount >= $c->realAmount){
                     $c->settle= $c->realAmount;
                 }else
                     $c->settle= $check_amount;
 
                 $check_amount -= $c->realAmount;
-                if($check_amount < 0) $check_amount = 0;
+                if($check_amount < 0) $check_amount = 0;*/
 
             }
 
 
 
             return Response::json($invoice);
-        }
-
-        if($mode == 'posting'){
-            $paid = Input::get('paid');
-
-
-            $set_amount =0;
-            foreach ($paid as $k=>$v){
-                $i = Invoice::where('invoiceId',$v['id'])->first();
-                $i->paid += $v['settle'];
-                $set_amount += $v['settle'];
-
-
-                if($i->amount == $i->paid || $v['discount'] == 1)
-                    $i->invoiceStatus = 30;
-                $i->discount = $v['discount'];
-                $i->save();
-            }
-
-            $cheque_id = Input::get('cheque_id');
-            $p = Payment::find($cheque_id);
-            $p->remain = $p->remain-$set_amount;
-            if($p->remain == 0)
-                $p->used = 1;
-            $p->save();
-
-
         }
 
         if($mode == 'del'){

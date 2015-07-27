@@ -6,7 +6,12 @@ app.controller('selectGroupCtrl', function($scope, $http, SharedService, $timeou
 	$scope.clientHeader = "建議客戶";
 	
 	$scope.lock = false;
-	
+
+    $scope.keyword = {
+        'id' :'',
+        'keyword':''
+    };
+
 	var fetchDataDelay = 500;   // milliseconds
     var fetchDataTimer;
     var csuggestion = -1;
@@ -70,10 +75,7 @@ app.controller('selectGroupCtrl', function($scope, $http, SharedService, $timeou
             $('#address_cht').focus();
             csuggestion = -1;
         })
-    	$scope.keyword = {
-            'id' :'',
-            'keyword':''
-        };
+
     	$scope.searchGroup("");
     	SharedService.setValue('GroupId', c.id, 'handleCustomerUpdate');
     	SharedService.setValue('GroupName', c.name, 'handleCustomerUpdate');
@@ -95,7 +97,7 @@ app.controller('selectGroupCtrl', function($scope, $http, SharedService, $timeou
 			    		method	:	"POST",
 			    		url		: 	endpoint + '/checkGroup.json',
 			        	data	:	{client_keyword: $scope.keyword},
-			        	cache	:	true,
+			        	cache	:	true
 			        	//timeout: canceler.promise,
 			    	}        	
 	        ).

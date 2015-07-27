@@ -897,8 +897,13 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                             assets + '/dependencies/jquery.cookie.min.js',
                             assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
                             assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
                             'js/controllers/financeController.js',
                             'js/controllers/selectClientCtrl.js',
+                            'js/controllers/selectGroupCtrl.js',
                         ]
                     });
                 }]
@@ -949,9 +954,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                             assets + '/global/plugins/bootbox/bootbox.min.js',
                             'js/controllers/financeController.js',
                             'js/controllers/selectClientCtrl.js',
+
                         ]
                     });
-                }],
+                }]
                }
         })
 

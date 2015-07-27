@@ -70,12 +70,10 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         'displayName'	:	'',
         'clientId'		:	'0',
         'zone'			:	'',
-        'status'        :   ''
+        'status'        :   '',
+        'bankCode' : '003'
     };
 
-    $scope.cheque = {
-        'bankCode' : '003'
-    }
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
@@ -87,8 +85,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
             $scope.psuccess = true;
         }
 
-
-        if($location.search().action == 'process'){
+        else if($location.search().action == 'process'){
             $scope.getPaymentInfo('invoice');
         }else if($location.search().action == 'newCheque'){
               $('.date-picker').datepicker({
@@ -119,68 +116,82 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     $scope.$on('handleCustomerUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
 
-        $scope.filterData.clientId = SharedService.clientId;
-        $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
-        $scope.filterData.zone = '';
+       // $scope.filterData.clientId = SharedService.clientId;
+      //  $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
+        $scope.filterData.customer_group_id = SharedService.GroupId;
+        $scope.filterData.groupname = SharedService.GroupName;
+        //$scope.filterData.zone = '';
         $scope.getChequeList();
 
         Metronic.unblockUI();
     });
+    $scope.clearGroup = function(){
+        $scope.filterData.customer_group_id = '';
+        $scope.filterData.groupname = '';
+    }
 
-    $scope.submitCheque = function()
+    $scope.processCustomer = function()
     {
+        $http.post(query, {mode:'processCustomer',filterData:$scope.filterData})
+            .success(function(res, status, headers, config){
+                $scope.payment = res;
+                $scope.getCustomerMonthlyDetails();
+            });
+     //   $location.url("/finance-clientClearance?action=processCustomer");
 
-            $scope.cheque.clientId = $scope.filterData.clientId;
+          /*  $scope.cheque.clientId = $scope.filterData.clientId;
 
             $http.post(intarget, {info: $scope.cheque})
                 .success(function(res, status, headers, config){
                    $location.url("/chequeListing?action=success");
-                 });
+                 });*/
 
 
     }
 
-    $scope.getPaymentInfo = function($mode){
-        $http.post(query, {payment_id: $location.search().id, mode:'payment'})
-            .success(function(res, status, headers, config){
-                $scope.payment = res;
-                $scope.updateDataSet($mode);
-            });
+    $scope.showselectgroup = function()
+    {
+        $("#selectGroupmodel").modal({backdrop: 'static'});
     }
 
-    $scope.autoPost = function(){
-        if($scope.totalAmount > $scope.payment.remain) {
-            alert('輸入數目大於支票可用餘額');
-            return false;
-        }
-        var data = $scope.invoicepaid;
-        $http({
-            method: 'POST',
-            url: query,
-            data: {paid:data,mode:'posting',cheque_id: $scope.payment.id}
-        }).success(function () {
-            $location.url("/chequeListing?action=psuccess");
-        });
 
-       // $scope.getPaymentInfo('autopost');
-    }
-
-    $scope.updateDataSet = function($mode){
-        $http.post(query, {start_date: $scope.payment.start_date, end_date:$scope.payment.end_date,mode:$mode,customerId:$scope.payment.customerId, amount:$scope.payment.remain})
-            .success(function(res, status, headers, config){
+    $scope.getCustomerMonthlyDetails = function(){
+        $http.post(query, {mode:'invoice',filterData:$scope.filterData})
+            .success(function(res){
 
                 $scope.invoiceinfo = res;
-               console.log(res);
-var i = 0;
+                var i = 0;
                 res.forEach(function(item) {
                     $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
-                    $scope.invoicepaid[i]['settle'] = item.settle;
+                    $scope.invoicepaid[i]['settle'] = item.realAmount;
                     $scope.invoicepaid[i]['id'] = item.invoiceId;
                     i++;
                 });
                 $scope.updatePaidTotal();
             });
     }
+
+
+
+    $scope.autoPost = function(){
+        if(!$scope.filterData.discount)
+            if($scope.totalAmount > $scope.filterData.amount) {
+                alert('輸入數目大於支票可用餘額');
+                return false;
+            }
+        var data = $scope.invoicepaid;
+        $http({
+            method: 'POST',
+            url: intarget,
+            data: {paid:data,filterData: $scope.filterData}
+        }).success(function () {
+           // $location.url("/chequeListing?action=psuccess");
+        });
+
+       // $scope.getPaymentInfo('autopost');
+    }
+
+
 
 $scope.updatePaidTotal = function(){
     $scope.totalAmount = 0;
@@ -189,7 +200,17 @@ $scope.updatePaidTotal = function(){
             $scope.totalAmount += Number(item.settle);
 
     });
+$scope.updateDiscount = function(){
 
+    var i = 0;
+    $scope.invoiceinfo.forEach(function(item){
+
+        $scope.invoicepaid[i]['settle']= Number(item.realAmount*$scope.filterData.discount);
+        $scope.invoicepaid[i]['discount'] = 1;
+i++;
+    });
+    $scope.updatePaidTotal();
+}
 
 }
     $scope.addCheque = function()
