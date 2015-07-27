@@ -11,6 +11,27 @@
 			<div class="modal-body">
 				<form action="javascript:;" class="form-horizontal">
 					<div class="form-body">
+
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">貨品類別  *</label>
+                            <div class="col-md-10">
+                                <select class="form-control"
+                                        ng-model="info.group"
+                                        data-ng-change="getGroupPrefix()"
+                                        data-ng-options="x.groupname for x in systeminfo.productgroup track by x.groupid"
+                                        >
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group"  data-ng-if="info.productId == ''">
+                            <label class="col-md-2 control-label">Group Prefix  *</label>
+                            <div class="col-md-1" data-ng-repeat="(k,i) in prefix" data-class="pull-left" >
+                              <div class="control-label"><label><input ng-model="info.groupPrefix" ng-change="getNewId()" type="radio" name="groupPrefix" id="groupPrefix" value="{{i.prefix}}" > {{i.prefix}}</label></div>
+                            </div>
+                        </div>
+
                         <div class="form-group" data-ng-if="info.productId == ''">
                             <label class="col-md-2 control-label">產品編號*</label>
                             <div class="col-md-2">
@@ -55,17 +76,7 @@
 								</select>
 							</div>
 						</div>
-						
-						<div class="form-group" data-ng-if="info.productId == false">
-							<label class="col-md-2 control-label">貨品類別  *</label>
-							<div class="col-md-10">
-								<select class="form-control" 
-									ng-model="info.group" 
-									data-ng-options="x.groupname for x in systeminfo.productgroup track by x.groupid" 
-									>
-								</select>
-							</div>
-						</div>
+
 						
 						<div class="form-group">
 							<label class="col-md-2 control-label">包裝 *</label>

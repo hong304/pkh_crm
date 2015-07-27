@@ -267,6 +267,9 @@ class ProductController extends BaseController {
             // p(Input::get('customer_id'));
             return [];
         }
+        if(Input::get('mode') == 'getNewId'){
+                  return Response::json(Product::select('pattern_key')->where('productId','LIKE',Input::get('groupPrefix').'%')->orderBy('pattern_key','desc')->limit(1)->lists('pattern_key')[0]+1);
+        }
 
 
         $i = Input::get('info');
@@ -346,6 +349,10 @@ class ProductController extends BaseController {
         }elseif($mode == 'checkId'){
             $product = Product::select('productId')->where('productId', Input::get('productId'))->first();
             $product = count($product);
+        }elseif($mode == 'getGroupPrefix'){
+            $pos = strpos(Input::get('group')['groupid'], '-');
+            $prefix = substr(Input::get('group')['groupid'],0,$pos);
+            return Response::json(DB::table('product')->select(DB::raw('DISTINCT SUBSTR(productId,1,1) as prefix'))->where('department',$prefix)->get());
         }
 
         return Response::json($product);
