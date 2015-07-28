@@ -718,13 +718,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                     name: 'app',
                     insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                     files: [
-						//assets + '/global/plugins/datatables/all.min.js',
-					//	assets + '/global/scripts/datatable.js',
+						assets + '/global/plugins/datatables/all.min.js',
+						assets + '/global/scripts/datatable.js',
                         assets + '/global/plugins/bootbox/bootbox.min.js',
                         assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
 
-                        assets + '/js/dataTable/dataTables.bootstrap.js',
-                        assets + '/js/dataTable/jquery.dataTables.min.js',
                         'js/controllers/customerMaintenanceCtrl.js',
                         'js/controllers/selectGroupCtrl.js',
                     ] 
