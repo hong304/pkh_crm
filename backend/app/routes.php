@@ -178,6 +178,8 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
+    $i = Invoice::with('payment')->where('invoiceId','I1507-038823')->get();
+    pd($i);
 
  /* $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
     foreach ($result as $v) {

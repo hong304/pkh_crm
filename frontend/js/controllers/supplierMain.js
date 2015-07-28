@@ -407,22 +407,19 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                     }
                 },
                 "columns": [
-                            { "data": "supplierCode" },
-                            { "data": "supplierName" },
-                            { "data": "status" },
-                            { "data": "countryName" },
-                            {"data":"currencyName"},
-                            { "data": "phone_1" },
-                            { "data": "phone_2" },
-                            { "data": "contactPerson_1" },
-                            { "data": "contactPerson_2" },
-                            { "data": "updated_at" },
-                            { "data": "link" }
-                ],   
-                "order": [
-                    [0, "asc"],
-                ],
-               
+                            { "data": "supplierCode" ,"width": "10%"},
+                            { "data": "supplierName","width": "10%" },
+                            { "data": "status","width": "7%" },
+                            { "data": "countryName","width": "7%" },
+                            {"data":"currencyName","width": "7%"},
+                            { "data": "phone_1" ,"width": "10%"},
+                            { "data": "phone_2","width": "10%" },
+                            { "data": "contactPerson_1","width": "10%" },
+                            { "data": "contactPerson_2","width": "10%" },
+                            { "data": "updated_at","width": "10%" },
+                            { "data": "link","width": "8%" }
+                ]
+
                 
 
        });

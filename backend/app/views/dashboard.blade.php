@@ -8,27 +8,28 @@ $tomorrow = strtotime("+1 day",$today);
 <link href="http://frontend.pingkeehong.com/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 <div class="row" style="margin: 10px">
 <div class="col-md-9">
-<table class="table table-bordered" style="font-size:15px;">
+<table class="table table-bordered" style="border: 1px solid black !important;">
     <tbody>
     <?php foreach($nr as $row):?>
     <tr>
         <?php foreach($row as $k => $v):?>
 
                       <td><?php printf('%s (%s)',$k,$v['name'])."<br/>"; ?>
-
+<div style="border-top: 1px solid #ddd;">
                       <?php
                               foreach($v['date'] as $k1 => $v1){
                                   if($k1 == $yesterday){
-                                      echo '<br/>Yday:' . $v1['volume']. "<br/>";
+                                      echo '昨天:' . $v1['volume']. "<br/>";
                                   }
                                   if($k1 == $today){
-                                      echo 'Today:' . $v1['volume']. "<br/>";
+                                      echo '今天:' . $v1['volume']. "<br/>";
                                   }
                                   if($k1 == $tomorrow){
-                                      echo 'Tmr:' . $v1['volume']. "<br/>";
+                                      echo '明天:' . $v1['volume']. "<br/>";
                                   }
                               }
                               ?>
+</div>
                       </td>
 
         <?php endforeach; ?>
@@ -42,14 +43,17 @@ $tomorrow = strtotime("+1 day",$today);
     <table class="table table-bordered" style="font-size:15px;">
 
         <thead>
-        <th>Total Volume</th>
+        <th class="heading">Total Volume</th>
         </thead>
         <tbody>
 
 
-            <?php foreach($total as $k => $v):?>
+            <?php
+            $i = 0;
+            foreach($total as $k => $v){
+            $i++;?>
             <tr>
-             <td>
+             <td >
                     <?php
 
                         if($k == $yesterday){
@@ -64,7 +68,7 @@ $tomorrow = strtotime("+1 day",$today);
              ?>
                 </td>
             </tr>
-            <?php endforeach; ?>
+            <?php } ?>
 
 
         </tbody>

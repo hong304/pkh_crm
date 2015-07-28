@@ -160,14 +160,13 @@ class PaymentController extends BaseController {
         $mode = Input::get('mode');
         $filter = Input::get('filterData');
 
-        $start_date = strtotime($filter['startDate']);
-        $end_date = strtotime($filter['endDate']);
 
         if($mode  == 'processCustomer'){
 
             $info['sum'] = 0;
             $customerId = explode(",", $filter['customerId']);
-
+            $start_date = strtotime($filter['startDate']);
+            $end_date = strtotime($filter['endDate']);
 
 
             $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->get();
@@ -213,7 +212,8 @@ class PaymentController extends BaseController {
 
         if ($mode == 'invoice'){
             $customerId = explode(",", $filter['customerId']);
-
+            $start_date = strtotime($filter['startDate']);
+            $end_date = strtotime($filter['endDate']);
          //   $check_amount = Input::get('amount');
 
 
