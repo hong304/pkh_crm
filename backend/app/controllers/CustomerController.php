@@ -113,7 +113,6 @@ class CustomerController extends BaseController
     public function jsonQueryCustomer()
     {
 
-
         $mode = Input::get('mode');
 
         if ($mode == 'collection') {
@@ -122,12 +121,18 @@ class CustomerController extends BaseController
 
             if (!isset($filter['zone']['zoneId']))
                 $filter['zone']['zoneId'] = '';
+            
+             $filterId = "Customer.updated_at";
+             $filterOrder = "";
+            if($filter["sorting"] != "")
+                $filterId = $filter["sorting"];
+                $filterOrder = $filter["current_sorting"];
 
-            Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
-            $customer = Customer::select('customerId','customerName_chi','status','deliveryZone','routePlanningPriority','paymentTermId','Customer.phone_1','contactPerson_1','address_chi','Customer.updated_at')
+          //  Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+            $customer = Customer::select(['customerId','customerName_chi','status','deliveryZone','routePlanningPriority','paymentTermId','Customer.phone_1','contactPerson_1','address_chi','Customer.updated_at'])
                 ->leftJoin('customer_groups', function($join) {
                 $join->on('customer_groups.id', '=','Customer.customer_group_id');
-            })->Orderby('Customer.updated_at','desc');
+            })->Orderby($filterId,$filterOrder);
 
             // $customer->where('customerId', $filter['clientId']);
 
@@ -162,11 +167,11 @@ class CustomerController extends BaseController
             });
 
             // query
-              $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+          //    $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 
             if($filter['groupname']!='')
                 $customer->where('customer_groups.name','LIKE','%'.$filter['groupname'].'%');
-            $customer = $customer->paginate($page_length);
+         //   $customer = $customer->paginate($page_length);
 
 
             foreach ($customer as $c) {
@@ -195,8 +200,34 @@ class CustomerController extends BaseController
                 }
 
             }
+            
+             return Datatables::of($customer)
+                ->addColumn('link', function ($custome) {
+                    return '<span onclick="editCustomer(\''.$custome->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                })
+                 ->editColumn('updated_at', function ($custome) {
+                    return  date("Y-m-d", $custome->updated_at);
+                    //return $supplie->updated_at;
+                })
+                ->editColumn('status', function ($custome) {
+                   // return  date("Y-m-d", $ip->to);
+                    return ($custome->status == '1') ? $custome->status = '正常' : $custome->status = '暫停';
+                })
+                 ->editColumn('paymentTerms', function ($custome) {
+                     if ($custome->paymentTermId == '1') {
+                        return 'Cash';
+                    } elseif ($custome->paymentTermId == '2') {
+                    return 'Credit';
+                    } else {
+                    return 'UNKNOWN';
+                    }
+                })
+                
+                
+                 ->make(true);
         } elseif ($mode == 'single') {
             $customer = Customer::where('customerId', Input::get('customerId'))->with('group')->first();
+            $customer['format_updated_at'] = date("Y-m-d",$customer['updated_at']);
           } elseif ($mode == 'checkId') {
             $customer = Customer::select('customerId')->where('customerId', Input::get('customerId'))->first();
             $customer = count($customer);

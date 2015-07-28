@@ -26,13 +26,17 @@ class countryController extends BaseController {
     public function jsonQueryCountry()
     {
         
-         
+       
         $mode = Input::get('mode');
+        $filter = Input::get('filterData');
         
         if($mode == 'collection')
         {
-
-            $country = Country :: select('*');
+            $country = Country :: select( '*' );
+            
+        if($filter['sorting']!='')
+            $country =$country->Orderby($filter['sorting'],$filter['current_sorting']);
+        
             return Datatables::of($country)
                 ->addColumn('link', function ($countr) {
                      if(Auth::user()->can('allow_edit')) return '<span onclick="editCountry(\''.$countr->countryId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
@@ -46,7 +50,7 @@ class countryController extends BaseController {
                     return $countr->countryName;
                 })
                 ->make(true);
-             
+        
         }
         elseif($mode == 'single')
         {

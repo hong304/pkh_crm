@@ -7,13 +7,17 @@ class SupplierController extends BaseController
     public function jsonQuerySupplier()
     {
         $mode = Input::get('mode');
-            
         if ($mode == 'collection') {
             $filter = Input::get('filterData');
-
+            $filterId = "supplierCode";
+            $filterOrder = "";
+            if($filter["sorting"] != "")
+                $filterId = $filter["sorting"];
+                $filterOrder = $filter["current_sorting"];
+                
             //if (!isset($filter['zone']['zoneId']))
              //   $filter['zone']['zoneId'] = '';
-           $supplier = Supplier :: select('*');
+          // $supplier = Supplier :: select('*');
       
        //   Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
              //select(['ipfId','from', 'to', 'size']);
@@ -24,8 +28,8 @@ class SupplierController extends BaseController
             ->leftJoin('currencies', function($joins) {
                 $joins->on('currencies.currencyId', '=','suppliers.currencyId');  
             })
-            ->Orderby('supplierCode','asc');
-
+            ->Orderby($filterId,$filterOrder);
+   
            
             if ($filter['status'] == 99) {
                 $supplier->onlyTrashed();
@@ -57,47 +61,14 @@ class SupplierController extends BaseController
                 ->addColumn('link', function ($supplie) {
                     return '<span onclick="editSupplier(\''.$supplie->supplierCode.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                 })
-                ->editColumn('supplierCode', function ($supplie) {
-                  //  return  date("Y-m-d", $ip->from);
-                       return $supplie->supplierCode;
-                  })
-                ->editColumn('supplierName', function ($supplie) {
-                  //  return  date("Y-m-d", $ip->from);
-                    return $supplie->supplierName;
-                })
-                ->editColumn('status', function ($supplie) {
-                   // return  date("Y-m-d", $ip->to);
-                    return ($supplie->status == '1') ? $supplie->status = '正常' : $supplie->status = '暫停';
-                })
-                 ->editColumn('countryName', function ($supplie) {
-                   // return  date("Y-m-d", $ip->to);
-                    return $supplie->countryName;
-                })
-                ->editColumn('currencyName', function ($supplie) {
-                   // return  date("Y-m-d", $ip->to);
-                    return $supplie->currencyName;
-                })
-                 ->editColumn('phone_1', function ($supplie) {
-                   // return  date("Y-m-d", $ip->to);
-                    return $supplie->phone_1;
-                })
-                 ->editColumn('phone_2', function ($supplie) {
-                   // return  date("Y-m-d", $ip->to);
-                    return $supplie->phone_2;
-                })
-                  ->editColumn('contactPerson_1', function ($supplie) {
-                   // return  date("Y-m-d", $ip->to);
-                    return $supplie->contactPerson_1;
-                })
-                ->editColumn('contactPerson_2', function ($supplie) {
-                   // return  date("Y-m-d", $ip->to);
-                    return $supplie->contactPerson_2;
-                })
                  ->editColumn('updated_at', function ($supplie) {
                     return  date("Y-m-d", $supplie->updated_at);
                     //return $supplie->updated_at;
                 })
-                 
+                 ->editColumn('status', function ($supplie) {
+                   // return  date("Y-m-d", $ip->to);
+                    return ($supplie->status == '1') ? $supplie->status = '正常' : $supplie->status = '暫停';
+                })
                 ->make(true);
       
                 

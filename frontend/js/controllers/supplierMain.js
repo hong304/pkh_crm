@@ -83,7 +83,9 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
         'phone': '',
         'status': '100',
         'country' : '',
-        'contact' : ''
+        'contact' : '',
+         'sorting' :'',
+         'current_sorting' :'desc',
 	};
 
     $scope.submit = true;
@@ -211,6 +213,19 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 
     }
 
+    $scope.click = function(event)
+    {
+         $scope.filterData.sorting = event.target.id;
+    
+            if ($scope.filterData.current_sorting == 'asc'){
+                $scope.filterData.current_sorting = 'desc';
+            }else{
+               $scope.filterData.current_sorting = 'asc';
+            }
+                
+         $scope.updateDataSet();
+    }
+    
     $scope.showselectgroup = function()
     {
         $("#selectGroupmodel").modal({backdrop: 'static'});
@@ -366,7 +381,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 
                 "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
 
-              //  "bServerSide": true,
+                "bServerSide": true,
                 
                 "ajax": {
                     "url": querytarget, // ajax source
@@ -374,7 +389,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                     "data": {mode: "collection",filterData: $scope.filterData},
                     "xhrFields": {withCredentials: true}
                 },
-                "iDisplayLength": 25,
+                "iDisplayLength": 10,
                 "pagingType": "full_numbers",
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",

@@ -22,6 +22,12 @@ app.controller('countryController', function($scope, $rootScope, $http, SharedSe
 	};
 	
 	$scope.info = {};
+        
+          $scope.filterData = 
+            {
+                'sorting' :'',
+                'current_sorting' :'desc'
+            }
 	
     $scope.$on('$viewContentLoaded', function() {   
     	
@@ -61,6 +67,24 @@ app.controller('countryController', function($scope, $rootScope, $http, SharedSe
     	});
     	
     	
+    }
+    
+  
+    
+    $scope.click = function(event)
+    {
+       //  alert(event.target.id);
+         $scope.filterData.sorting = event.target.id;
+       
+    
+            if ($scope.filterData.current_sorting == 'asc'){
+               // $scope.filterData.sorting_method = 'desc';
+                $scope.filterData.current_sorting = 'desc';
+            }else{
+               $scope.filterData.current_sorting = 'asc';
+            }
+                
+         $scope.updateDataSet();
     }
     
     $scope.addCountry = function()
@@ -114,12 +138,12 @@ app.controller('countryController', function($scope, $rootScope, $http, SharedSe
 
                 "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
 
-              //  "bServerSide": true,
+                "bServerSide": true,
 
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
-                    "data": {mode: "collection"},
+                    "data": {mode: "collection",filterData : $scope.filterData},
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 25,
@@ -145,9 +169,7 @@ app.controller('countryController', function($scope, $rootScope, $http, SharedSe
                     { "data": "link" },
 
                 ],
-                "order": [
-                    [0, "asc"],
-                ]
+               
 
             });
 

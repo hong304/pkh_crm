@@ -49,7 +49,9 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         'zone': '',
         'status': '100',
         'groupname' : '',
-        'address' : ''
+        'address' : '',
+        'sorting' :'',
+        'current_sorting' :'desc'
 	};
 
     $scope.submit = true;
@@ -79,7 +81,8 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
             'remark' : '',
             'shift' : '',
             'productnewId' :'',
-            'customer_group_id' : ''
+            'customer_group_id' : '',
+ 
 
 	};
 	
@@ -101,6 +104,22 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
   		$scope.systeminfo = $rootScope.systeminfo;  		
   	}, true);
 
+ 
+    $scope.click = function(event)
+    {
+       //  alert(event.target.id);
+         $scope.filterData.sorting = event.target.id;
+    
+            if ($scope.filterData.current_sorting == 'asc'){
+               // $scope.filterData.sorting_method = 'desc';
+                $scope.filterData.current_sorting = 'desc';
+            }else{
+               $scope.filterData.current_sorting = 'asc';
+            }
+                
+         $scope.updateDataSet();
+    }
+    
     $scope.$watch('filterData.status', function() {
         $scope.updateDataSet();
     }, true);
@@ -126,9 +145,10 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         $(".phone").inputmask("99999999");
 
     	$http.post(querytarget, {mode: "single", customerId: customerId})
-    	.success(function(res, status, headers, config){    
+    	.success(function(res, status, headers, config){
     		$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
     		$scope.customerInfo = res;
+                $("#format_date").html(res.format_updated_at);
                 if(res.group)
                     $scope.customerInfo.groupname = $scope.customerInfo.group.name;
 
@@ -282,8 +302,77 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     {
         $scope.updateDataSet();
     }
+    
+          $scope.updateDataSet = function () {
+        $(document).ready(function() {
 
-    $scope.updateDataSet = function()
+            if(!$scope.firstload)
+            {
+                $("#datatable_ajax").dataTable().fnDestroy();
+            }
+            else
+            {
+                $scope.firstload = false;
+            }
+
+
+            $('#datatable_ajax').dataTable({
+
+                // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
+
+                 "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
+                processing: true,
+                "bServerSide": true,
+                
+                "ajax": {
+                    "url": querytarget, // ajax source
+                    "type": 'POST',
+                    "data": {mode: "collection",filterData: $scope.filterData},
+                    "xhrFields": {withCredentials: true}
+                },
+                "iDisplayLength": 50,
+                "pagingType": "full_numbers",
+                "language": {
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有匹配結果",
+                    "sEmptyTable":     "沒有匹配結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(filtered from _MAX_ total records)",
+                    "Processing":   "處理中...",
+                    "Paginate": {
+                        "First":    "首頁",
+                        "Previous": "上頁",
+                        "Next":     "下頁",
+                        "Last":     "尾頁"
+                    }
+                },
+                "columns": [
+                          { "data": "customerId" },
+                            { "data": "customerName_chi" },
+                            { "data": "status" },
+                            { "data": "deliveryZone" },
+                            { "data": "routePlanningPriority" },
+                            { "data": "paymentTerms" },
+                            { "data": "phone_1" },
+                            { "data": "contactPerson_1" },
+                            { "data": "address_chi" },
+                           { "data": "updated_at" },
+                            { "data": "link" },
+                ],   
+
+                "order": [
+                    [0, "asc"],
+                ],
+               
+                
+
+       });
+       
+        });
+    };
+
+  /*  $scope.updateDataSet = function()
     {
 
 
@@ -367,7 +456,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         });
 
         },500);
-    }
+    }*/
 
 
     

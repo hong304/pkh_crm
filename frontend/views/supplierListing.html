@@ -91,16 +91,16 @@
                         <table class="table table-striped table-bordered table-hover" id="datatable_ajax">
                             <thead>
                             <tr role="row" class="heading">
-                                <th width="10%">供應商編號 </th>
-                                <th width="10%">名稱 </th>
-                                <th width="5%">狀態</th>
-                                <th width="3%">國家</th>
-                                <th width="5%">貨幣 </th>
-                                <th width="10%">電話1 </th>
-                                <th width="10%">電話2 </th>
-                                <th width="10%">聯絡人1 </th>
-                                <th width="10%">聯絡人2 </th>
-                                <th width="10%">最後修改時間 </th>
+                                <th width="10%" id="supplierCode" ng-click="click($event);">供應商編號 </th>
+                                <th width="10%" id="supplierName" ng-click="click($event);">名稱 </th>
+                                <th width="5%" id="status" ng-click="click($event);">狀態</th>
+                                <th width="3%" id="countries.countryName" ng-click="click($event);">國家</th>
+                                <th width="5%" id="currencies.currencyName" ng-click="click($event);">貨幣 </th>
+                                <th width="10%" id="phone_1" ng-click="click($event);">電話1 </th>
+                                <th width="10%" id="phone_2" ng-click="click($event);">電話2 </th>
+                                <th width="10%" id="contactPerson_1" ng-click="click($event);">聯絡人1 </th>
+                                <th width="10%" id="contactPerson_2" ng-click="click($event);">聯絡人2 </th>
+                                <th width="10%" id="suppliers.updated_at" ng-click="click($event);">最後修改時間 </th>
                                 <th width="1%">&nbsp;</th>
 
                             </tr>

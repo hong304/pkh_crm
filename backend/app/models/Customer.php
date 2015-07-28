@@ -75,9 +75,9 @@ class Customer extends Eloquent  {
         return new Collection($models);
     }
 
-    public function getUpdatedAtAttribute($attr) {
+ /*   public function getUpdatedAtAttribute($attr) {
      //   return Carbon::parse($attr)->format('d/m/Y - h:ia'); //Change the format to whichever you desire
         return date("Y-m-d H:i:s", $attr);
-    }
+    }*/
 
 }
