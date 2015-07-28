@@ -93,4 +93,26 @@ class SystemController extends BaseController {
         return Response::json($systeminfo);
     }
 
+    public function getDashboard(){
+        $today              = strtotime("00:00:00");
+        $yesterday          = strtotime("-1 day", $today);
+        $tomorrow = strtotime("+1 day",$today);
+
+
+        $result = Invoice::whereBetween('deliveryDate',[$yesterday,$tomorrow])->wherein('invoiceStatus',['2','1','20','30'])->orderBy('zoneId')->orderBy('deliveryDate')->get();
+
+        $nr = [];
+
+        foreach($result as $v){
+            $nr[$v->zoneId]['date'][$v->deliveryDate]['amount'] = (isset($nr[$v->zoneId]['date'][$v->deliveryDate]['amount'])?$nr[$v->zoneId]['date'][$v->deliveryDate]['amount']:0) + $v->amount;
+            $nr[$v->zoneId]['date'][$v->deliveryDate]['volume'] = (isset($nr[$v->zoneId]['date'][$v->deliveryDate]['volume'])?$nr[$v->zoneId]['date'][$v->deliveryDate]['volume']:0) + 1;
+            $nr[$v->zoneId]['amount'] = (isset($nr[$v->zoneId]['amount'])?$nr[$v->zoneId]['amount']:0) + $v->amount;
+            $nr[$v->zoneId]['name'] = $v->zoneText;
+        }
+
+        $nr = array_chunk($nr,5,true);
+        return View::make('dashboard')->with('nr',$nr);
+
+    }
+
 }

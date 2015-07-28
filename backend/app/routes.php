@@ -187,6 +187,8 @@ Route::get('/test', function(){
 });
 
 
+Route::get('/dashboard', 'SystemController@getDashboard');
+
 Route::get('/setZone', function(){
     $zoneid = Input::get('id');
     Session::put('zone', $zoneid);
