@@ -159,18 +159,18 @@ class PaymentController extends BaseController {
 
         $mode = Input::get('mode');
         $filter = Input::get('filterData');
-        $customer = explode(",", $filter['customerId']);
+
         $start_date = strtotime($filter['startDate']);
         $end_date = strtotime($filter['endDate']);
 
         if($mode  == 'processCustomer'){
 
             $info['sum'] = 0;
+            $customerId = explode(",", $filter['customerId']);
 
 
 
-
-            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customer)->get();
+            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->get();
 
             foreach ($invoice_info as $v){
                 if($v['paid']>0){
@@ -212,12 +212,12 @@ class PaymentController extends BaseController {
         }
 
         if ($mode == 'invoice'){
-
+            $customerId = explode(",", $filter['customerId']);
 
          //   $check_amount = Input::get('amount');
 
 
-            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customer)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','deliveryDate')->get();
+            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','deliveryDate')->get();
 
 
         foreach($invoice as &$c)
