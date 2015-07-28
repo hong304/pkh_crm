@@ -348,17 +348,17 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
                     }
                 },
                 "columns": [
-                          { "data": "customerId" },
-                            { "data": "customerName_chi" },
-                            { "data": "status" },
-                            { "data": "deliveryZone" },
-                            { "data": "routePlanningPriority" },
-                            { "data": "paymentTerms" },
-                            { "data": "phone_1" },
-                            { "data": "contactPerson_1" },
-                            { "data": "address_chi" },
-                           { "data": "updated_at" },
-                            { "data": "link" },
+                          { "data": "customerId" ,"width": "8%" },
+                            { "data": "customerName_chi","width": "10%"  },
+                            { "data": "status" ,"width": "6%" },
+                            { "data": "deliveryZone" ,"width": "6%"},
+                            { "data": "routePlanningPriority","width": "6%" },
+                            { "data": "paymentTerms" ,"width":"9%" },
+                            { "data": "phone_1" ,"width":"10%"},
+                            { "data": "contactPerson_1" ,"width":"10%"},
+                            { "data": "address_chi","width":"14%" },
+                           { "data": "updated_at","width":"9%" },
+                            { "data": "link", "width":"7%" },
                 ],   
 
                 "order": [
