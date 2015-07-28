@@ -51,7 +51,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
         'groupname' : '',
         'address' : '',
         'sorting' :'',
-        'current_sorting' :'desc'
+        'current_sorting' :'asc'
 	};
 
     $scope.submit = true;

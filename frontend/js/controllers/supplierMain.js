@@ -84,8 +84,8 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
         'status': '100',
         'country' : '',
         'contact' : '',
-         'sorting' :'',
-         'current_sorting' :'desc',
+        'sorting' :'',
+        'current_sorting' :'asc',
 	};
 
     $scope.submit = true;

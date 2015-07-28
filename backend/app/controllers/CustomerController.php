@@ -122,7 +122,7 @@ class CustomerController extends BaseController
             if (!isset($filter['zone']['zoneId']))
                 $filter['zone']['zoneId'] = '';
             
-             $filterId = "Customer.updated_at";
+             $filterId = "customerId";
              $filterOrder = "";
             if($filter["sorting"] != "")
                 $filterId = $filter["sorting"];
