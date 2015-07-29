@@ -46,7 +46,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
 
     var intarget = endpoint + '/addCheque.json';
     var query = endpoint + '/querryClientClearance.json';
-
+    var getClearance = endpoint + '/getClearance.json';
 
 
     $scope.invoice = [];
@@ -132,10 +132,18 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
 
     $scope.processCustomer = function()
     {
-        $http.post(query, {mode:'processCustomer',filterData:$scope.filterData})
+        $http.post(getClearance, {mode:'processCustomer',filterData:$scope.filterData})
             .success(function(res, status, headers, config){
                 $scope.payment = res;
-                $scope.getCustomerMonthlyDetails();
+                $scope.invoiceinfo = res.data;
+                var i = 0;
+                $scope.invoiceinfo.forEach(function(item) {
+                    $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
+                    $scope.invoicepaid[i]['settle'] = item.realAmount;
+                    $scope.invoicepaid[i]['id'] = item.invoiceId;
+                    i++;
+                });
+                $scope.updatePaidTotal();
             });
      //   $location.url("/finance-clientClearance?action=processCustomer");
 
@@ -154,22 +162,6 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         $("#selectGroupmodel").modal({backdrop: 'static'});
     }
 
-
-    $scope.getCustomerMonthlyDetails = function(){
-        $http.post(query, {mode:'invoice',filterData:$scope.filterData})
-            .success(function(res){
-
-                $scope.invoiceinfo = res;
-                var i = 0;
-                res.forEach(function(item) {
-                    $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
-                    $scope.invoicepaid[i]['settle'] = item.realAmount;
-                    $scope.invoicepaid[i]['id'] = item.invoiceId;
-                    i++;
-                });
-                $scope.updatePaidTotal();
-            });
-    }
 
 
 

@@ -321,7 +321,7 @@
             <tr data-ng-repeat="(k,i) in invoiceinfo" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
 
                 <td>
-                    {{i.invoiceId}}
+                    {{i.invoiceId}} - {{i.customer_name}}[{{i.customerId}}]
                 </td>
                 <td>{{i.deliveryDate_date}}</td>
                 <td>{{i.realAmount}}</td>

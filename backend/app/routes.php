@@ -141,6 +141,7 @@ Route::group(array('before' => 'auth'), function()
     // Payment
     Route::post('/addCheque.json','PaymentController@addCheque');
     Route::any('querryClientClearance.json','PaymentController@getClientClearance');
+    Route::any('getClearance.json','PaymentController@getClearance');
     Route::any('querryCashCustomer.json','PaymentController@querryCashCustomer');
 
     //Data analysis

@@ -30,6 +30,7 @@ class Invoice extends Eloquent  {
             unset($invoice->paymentTermsText);
             unset($invoice->realAmount);
 
+
         });
 
 	    Invoice::updated(function($model)
@@ -255,7 +256,7 @@ class Invoice extends Eloquent  {
 
                 $model->invoiceTotalAmount = round($model->invoiceTotalAmount*((100-$model->invoiceDiscount)/100),1);
 	        }
-	        
+
 	    }
 	
 	
@@ -276,6 +277,10 @@ class Invoice extends Eloquent  {
 
     public function Payment(){
         return $this->belongsToMany('Payment')->withPivot('amount','paid','discount')->withTimestamps();
+    }
+
+    public function getCustomerNameAttribute(){
+        return $this->client->customerName_chi;
     }
 
 }

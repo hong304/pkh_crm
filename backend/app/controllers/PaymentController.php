@@ -3,14 +3,6 @@
 class PaymentController extends BaseController {
 
     public function addCheque(){
-
-
-
-
-
-
-
-
             $paid = Input::get('paid');
 
 
@@ -22,10 +14,11 @@ class PaymentController extends BaseController {
                 $set_amount += $v['settle'];
 
 
+
                 if($i->amount == $i->paid || $v['discount'] == 1)
                     $i->invoiceStatus = 30;
                 $i->discount = $v['discount'];
-                if($ij['discount'])
+                if(isset($ij['discount']))
                     $i->discount = 1;
                 $i->save();
             }
@@ -49,7 +42,7 @@ class PaymentController extends BaseController {
 
         if($info->remain == 0)
             $info->used = 1;
-        if($ij['discount']){
+        if(isset($ij['discount'])){
             $info->used = 1;
             $info->remain = 0;
             $info->discount = $set_amount-$ij['amount'];
@@ -61,7 +54,7 @@ class PaymentController extends BaseController {
 
         foreach ($paid as $k=>$v){
             $iq = Invoice::where('invoiceId',$v['id'])->first();
-            $iq->cheque_id = $info->id;
+            $iq->payment()->attach($info->id,['amount'=>$iq->amount,'paid'=>$v['settle']]);
             $iq->save();
         }
     }
@@ -155,21 +148,34 @@ class PaymentController extends BaseController {
 
     }
 
-    public function getClientClearance(){
-
+    public function getClearance(){
         $mode = Input::get('mode');
         $filter = Input::get('filterData');
 
+        $start_date = strtotime($filter['startDate']);
+        $end_date = strtotime($filter['endDate']);
+
+        $customer = [];
+        $customer2 = [];
+        if($filter['customer_group_id'] != '')
+            $customer = customer::leftJoin('customer_groups', function($join) {
+                $join->on('customer_groups.id', '=', 'customer.customer_group_id');
+            })->where('customer_group_id',$filter['customer_group_id'])->lists('customerId');
+
+        if(isset($filter['customerId'])){
+            $customer2 = explode(",", $filter['customerId']);
+        }
+
+        $customerId = array_merge($customer, $customer2);
 
         if($mode  == 'processCustomer'){
 
-            $info['sum'] = 0;
-            $customerId = explode(",", $filter['customerId']);
-            $start_date = strtotime($filter['startDate']);
-            $end_date = strtotime($filter['endDate']);
+            $sum = 0;
+
+          //  $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->with('client')->get();
+            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','deliveryDate')->get();
 
 
-            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->get();
 
             foreach ($invoice_info as $v){
                 if($v['paid']>0){
@@ -178,11 +184,24 @@ class PaymentController extends BaseController {
                     else
                         $v['amount'] -= $v['paid'];
                 }
-                $info['sum']+= ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
+                $v['realAmount'] = $v['realAmount'] - $v['paid'];
+                $v['customer_name'] = $v['customer_name'];
+                $sum += ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
             }
+            $invoice['data'] = $invoice_info;
+            $invoice['sum']=$sum;
 
-            return Response::json($info);
+            return Response::json($invoice);
+
+
         }
+
+    }
+
+
+    public function getClientClearance(){
+        $mode = Input::get('mode');
+
 
         if($mode == 'payment'){
             $payment_id = Input::get('payment_id');
@@ -210,34 +229,7 @@ class PaymentController extends BaseController {
 
         }
 
-        if ($mode == 'invoice'){
-            $customerId = explode(",", $filter['customerId']);
-            $start_date = strtotime($filter['startDate']);
-            $end_date = strtotime($filter['endDate']);
-         //   $check_amount = Input::get('amount');
 
-
-            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','deliveryDate')->get();
-
-
-        foreach($invoice as &$c)
-            {
-                          $c->realAmount = $c->realAmount - $c->paid;
-
-              /*  if($check_amount >= $c->realAmount){
-                    $c->settle= $c->realAmount;
-                }else
-                    $c->settle= $check_amount;
-
-                $check_amount -= $c->realAmount;
-                if($check_amount < 0) $check_amount = 0;*/
-
-            }
-
-
-
-            return Response::json($invoice);
-        }
 
         if($mode == 'del'){
             $cheque_id = Input::get('cheque_id');
