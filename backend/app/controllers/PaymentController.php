@@ -274,16 +274,12 @@ class PaymentController extends BaseController {
         if($mode == 'getChequeList')
         {
             $filter = Input::get('filterData');
-            Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
             $customer = Payment::select('*');
-
-
             //cheque status
             if($filter['status'] != 2)
             {
                 $customer->where('used', $filter['status']);
             }
-
 
             // client id
             if($filter['clientId']!='')
@@ -299,12 +295,8 @@ class PaymentController extends BaseController {
             }else{
                 $customer->whereIn('deliveryZone',$permittedZone);
             }
-
-
-            // query
-
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $customer = $customer->paginate($page_length);
+            $customer = $customer->OrderBy('start_date','desc');
+            return Datatables::of($customer)->make(true);
 
 
           /*  foreach($customer as $c)
@@ -319,6 +311,7 @@ class PaymentController extends BaseController {
             }*/
 
             return Response::json($customer);
+
         }
 
 

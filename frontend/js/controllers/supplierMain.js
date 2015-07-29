@@ -389,7 +389,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                     "data": {mode: "collection",filterData: $scope.filterData},
                     "xhrFields": {withCredentials: true}
                 },
-                "iDisplayLength": 10,
+                "iDisplayLength": 50,
                 "pagingType": "full_numbers",
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",

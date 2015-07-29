@@ -268,44 +268,34 @@ i++;
     {
 
 
+        $(document).ready(function() {
 
-        var grid = new Datatable();
-
-        //var info = grid.page.info();
-        if(!$scope.firstload)
-        {
-            $("#datatable_ajax").dataTable().fnDestroy();
-        }
-        else
-        {
-            $scope.firstload = false;
-        }
-        grid.init({
-            src: $("#datatable_ajax"),
-            onSuccess: function (grid) {
-                // execute some code after table records loaded
-
-            },
-            onError: function (grid) {
-                // execute some code on network or other general error
-            },
-            loadingMessage: 'Loading...',
-            dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options
+            if(!$scope.firstload)
+            {
+                $("#datatable_ajax").dataTable().fnDestroy();
+            }
+            else
+            {
+                $scope.firstload = false;
+            }
 
 
-                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
+            $('#datatable_ajax').dataTable({
 
-                "lengthMenu": [
-                    [10, 20, 50],
-                    [10, 20, 50] // change per page values here
-                ],
-                "pageLength": 20, // default record count per page
+                // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
+
+                "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
+
+                "bServerSide": true,
+
                 "ajax": {
                     "url": query, // ajax source
                     "type": 'POST',
                     "data": {mode: "getChequeList",filterData: $scope.filterData},
-                    "xhrFields": {withCredentials: true},
+                    "xhrFields": {withCredentials: true}
                 },
+                "iDisplayLength": 25,
+                "pagingType": "full_numbers",
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",
@@ -329,15 +319,10 @@ i++;
                     { "data": "start_date" },
                     { "data": "end_date" },
 
+                ]
 
-                ],
-
-                "order": [
-                    [1, "asc"]
-                ] // set first column as a default sort by asc
-            }
+            });
         });
-
     }
 /*
     $scope.updateDataSet1 = function($mode)
