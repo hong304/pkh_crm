@@ -281,20 +281,23 @@ class PaymentController extends BaseController {
                 $customer->where('used', $filter['status']);
             }
 
-            // client id
-            if($filter['clientId']!='')
-            {
-                $customer->where('customerId', $filter['clientId']);
-            }
+            /*
+          // client id
+          if($filter['clientId']!='')
+          {
+              $customer->where('customerId', $filter['clientId']);
+          }
 
-            $permittedZone = explode(',', Auth::user()->temp_zone);
 
-            if($filter['zone'] != '')
+             $permittedZone = explode(',', Auth::user()->temp_zone);
+
+           if($filter['zone'] != '')
             {
                 $customer->where('deliveryZone', $filter['zone']['zoneId']);
             }else{
                 $customer->whereIn('deliveryZone',$permittedZone);
-            }
+            }*/
+
             $customer = $customer->OrderBy('start_date','desc');
             return Datatables::of($customer)->make(true);
 
