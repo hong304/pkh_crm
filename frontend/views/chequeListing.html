@@ -41,8 +41,8 @@
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
                     <div class="radio-list">
-                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="0" checked> 未處理</label>
-                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="2"> 全部</label>
+                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="2" checked> 全部</label>
+                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="0" > 未處理</label>
                         <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="1"> 已處理 </label>
                     </div>
                 </div>
@@ -96,14 +96,12 @@
                             <thead>
                             <tr role="row" class="heading">
                                 <th width="5%">客戶編號 </th>
-                                <th width="10%">名稱 </th>
                                 <th width="3%">支票號碼</th>
                                 <th width="3%">總數 </th>
                                 <th width="3%">餘數 </th>
                                 <th width="5%">開始日期 </th>
                                 <th width="10%">結束日期 </th>
-                                <th width="5%">&nbsp;</th>
-                                <th width="5%">&nbsp;</th>
+
                             </tr>
 
                             </thead>

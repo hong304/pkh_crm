@@ -235,10 +235,10 @@ class PaymentController extends BaseController {
         $mode = Input::get('mode');
 
 
-        if($mode == 'payment'){
+       /* if($mode == 'payment'){
             $payment_id = Input::get('payment_id');
 
-            $info = Payment::where('id',$payment_id)->where('used','!=',1)->with('customer')->first();
+            $info = Payment::where('id',$payment_id)->where('used','!=',1)->first();
 
             $start_date = strtotime($info->start_date);
             $end_date = strtotime($info->end_date);
@@ -259,15 +259,15 @@ class PaymentController extends BaseController {
 
             return Response::json($info);
 
-        }
+        }*/
 
 
 
-        if($mode == 'del'){
+     /*   if($mode == 'del'){
             $cheque_id = Input::get('cheque_id');
             $p =Payment::find($cheque_id);
             $p->delete();
-        }
+        }*/
 
 
 
@@ -304,17 +304,19 @@ class PaymentController extends BaseController {
             // query
 
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $customer = $customer->with('Customer')->paginate($page_length);
+            $customer = $customer->paginate($page_length);
 
 
-            foreach($customer as $c)
+          /*  foreach($customer as $c)
             {
-                if($c->used == true)
-                    $c->link = '已處理';
-                else
-                    $c->link = '<span onclick="processCheque(\''.$c->id.'\')" class="btn btn-xs default"><i class="glyphicon glyphicon-cog"></i> 處理</span>';
-                $c->delete = '<span onclick="delCheque(\''.$c->id.'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
-            }
+                if($c->used == true){
+                   // $c->link = '已處理';
+                   // $c->delete = '不可刪除';
+                }else{
+                   // $c->link = '<span onclick="processCheque(\''.$c->id.'\')" class="btn btn-xs default"><i class="glyphicon glyphicon-cog"></i> 處理</span>';
+                  //  $c->delete = '<span onclick="delCheque(\''.$c->id.'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+                }
+            }*/
 
             return Response::json($customer);
         }

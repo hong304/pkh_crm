@@ -72,7 +72,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         'clientId' : '',
         'customer_group_id' : '',
         'zone'			:	'',
-        'status'        :   '',
+        'status'        :   '2',
         'bankCode' : '003'
     };
 
@@ -181,7 +181,8 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         }).success(function (res) {
             if(res.length > 0)
                 alert(res);
-           // $location.url("/chequeListing?action=psuccess");
+            else
+                $location.url("/chequeListing?action=psuccess");
         });
 
        // $scope.getPaymentInfo('autopost');
@@ -322,14 +323,12 @@ i++;
                 },
                 "columns": [
                     { "data": "customerId" },
-                    { "data": "customer.customerName_chi" },
                     { "data": "ref_number" },
                     { "data": "amount" },
                     { "data": "remain" },
                     { "data": "start_date" },
                     { "data": "end_date" },
-                    { "data": "link" },
-                    { "data": "delete" }
+
 
                 ],
 
