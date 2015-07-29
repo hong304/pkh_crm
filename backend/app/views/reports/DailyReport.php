@@ -39,13 +39,19 @@
 
             <td colspan="2" style="text-align:right;border-right-style:none;">
                 <span style="font-weight:bold;font-size:15px;">現金總數:<br />
-                月結總數:</span>
+                月結總數:<br />
+                現金退貨單:<br />
+                現金補貨單:</span>
             </td>
 
             <td style="text-align:left;">
                 <span style="font-weight:bold;font-size:15px;"><?php echo number_format($data['countcod']); ?>單 $<?php echo number_format($data['sumcod'], 2, '.', ','); ?>
                 <br />
                     <?php echo number_format($data['countcredit']); ?>單 $<?php echo number_format($data['sumcredit'], 2, '.', ','); ?>
+                    <br />
+                    <?php echo number_format($data['countcodreturn']); ?>單
+                    <br />
+                    <?php echo number_format($data['countcodreplace']); ?>單
                 </span>
             </td>
         </tr>
