@@ -68,7 +68,9 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
 
     $scope.filterData = {
         'displayName'	:	'',
-        'clientId'		:	'0',
+        'customerId'		:	'',
+        'clientId' : '',
+        'customer_group_id' : '',
         'zone'			:	'',
         'status'        :   '',
         'bankCode' : '003'
@@ -176,7 +178,9 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
             method: 'POST',
             url: intarget,
             data: {paid:data,filterData: $scope.filterData}
-        }).success(function () {
+        }).success(function (res) {
+            if(res.length > 0)
+                alert(res);
            // $location.url("/chequeListing?action=psuccess");
         });
 

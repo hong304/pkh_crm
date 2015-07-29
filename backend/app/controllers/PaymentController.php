@@ -7,6 +7,34 @@ class PaymentController extends BaseController {
 
 
         $ij = Input::get('filterData');
+
+
+
+
+
+        $rules = [
+            'no' => 'required',
+            'amount' => 'required',
+            'customerId' => 'required_without:customer_group_id',
+            'customer_group_id' => 'required_without:customerId',
+        ];
+
+
+        $validator = Validator::make($ij, $rules);
+        $errorMessage = '';
+        if ($validator->fails())
+        {
+            $info = $validator->messages()->all();
+            foreach($info as $a)
+            {
+                $errorMessage .= "$a\n";
+            }
+            return $errorMessage;
+
+         }
+
+
+
             $set_amount =0;
             foreach ($paid as $k=>$v){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
@@ -31,6 +59,7 @@ class PaymentController extends BaseController {
         //  $c = Customer::where('customerId',$i['clientId'])->first();
 
         $info->customerId = $ij['customerId'];
+        $info->groupId = $ij['customer_group_id'];
         $info->ref_number = $ij['no'];
         $info->bankCode = $ij['bankCode'];
         $info->receive_date = $ij['receiveDate'];
@@ -152,6 +181,7 @@ class PaymentController extends BaseController {
         $mode = Input::get('mode');
         $filter = Input::get('filterData');
 
+
         $start_date = strtotime($filter['startDate']);
         $end_date = strtotime($filter['endDate']);
 
@@ -162,18 +192,20 @@ class PaymentController extends BaseController {
                 $join->on('customer_groups.id', '=', 'customer.customer_group_id');
             })->where('customer_group_id',$filter['customer_group_id'])->lists('customerId');
 
-        if(isset($filter['customerId'])){
+        if($filter['customerId'] != ''){
             $customer2 = explode(",", $filter['customerId']);
         }
 
         $customerId = array_merge($customer, $customer2);
+
+
 
         if($mode  == 'processCustomer'){
 
             $sum = 0;
 
           //  $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->with('client')->get();
-            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','deliveryDate')->get();
+            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
 
 
 
@@ -189,7 +221,7 @@ class PaymentController extends BaseController {
                 $sum += ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
             }
             $invoice['data'] = $invoice_info;
-            $invoice['sum']=$sum;
+            $invoice['sum'] = $sum;
 
             return Response::json($invoice);
 
@@ -206,7 +238,7 @@ class PaymentController extends BaseController {
         if($mode == 'payment'){
             $payment_id = Input::get('payment_id');
 
-            $info = Payment::where('id',$payment_id)->where('used','!=',1)->with('Customer')->first();
+            $info = Payment::where('id',$payment_id)->where('used','!=',1)->with('customer')->first();
 
             $start_date = strtotime($info->start_date);
             $end_date = strtotime($info->end_date);
@@ -254,7 +286,7 @@ class PaymentController extends BaseController {
 
 
             // client id
-            if($filter['clientId'])
+            if($filter['clientId']!='')
             {
                 $customer->where('customerId', $filter['clientId']);
             }
