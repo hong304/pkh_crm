@@ -312,12 +312,12 @@ i++;
                     }
                 },
                 "columns": [
-                    { "data": "customerId" },
-                    { "data": "ref_number" },
-                    { "data": "amount" },
-                    { "data": "remain" },
-                    { "data": "start_date" },
-                    { "data": "end_date" },
+                    { "data": "customerId","width":"17%" },
+                    { "data": "ref_number","width":"17%" },
+                    { "data": "amount","width":"17%" },
+                    { "data": "remain","width":"17%" },
+                    { "data": "start_date","width":"17%" },
+                    { "data": "end_date","width":"17%" },
 
                 ]
 

@@ -288,7 +288,7 @@ class PaymentController extends BaseController {
               $customer->where('customerId', $filter['clientId']);
           }
 
-
+*/
              $permittedZone = explode(',', Auth::user()->temp_zone);
 
            if($filter['zone'] != '')
@@ -296,7 +296,7 @@ class PaymentController extends BaseController {
                 $customer->where('deliveryZone', $filter['zone']['zoneId']);
             }else{
                 $customer->whereIn('deliveryZone',$permittedZone);
-            }*/
+            }
 
             $customer = $customer->OrderBy('start_date','desc');
             return Datatables::of($customer)->make(true);
