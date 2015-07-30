@@ -9,6 +9,15 @@ function processCheque(id)
     });
 }
 
+function viewCheque(cheque_id)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.viewCheque(cheque_id);
+
+    });
+}
+
 function delCheque(id)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
@@ -66,6 +75,8 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         'discount' : ''
     }
 
+    $scope.chequeDetails = [];
+
     $scope.filterData = {
         'displayName'	:	'',
         'customerId'		:	'',
@@ -74,7 +85,8 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         'status'        :   '2',
         'bankCode' : '003',
         'deliverydate': '',
-        'deliverydate2' : ''
+        'deliverydate2' : '',
+        'ChequeNumber' : ''
     };
 
 
@@ -137,6 +149,11 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     });
 
 
+    $scope.$on('handleCustomerUpdate', function(){
+        $scope.filterData.clientId = SharedService.clientId;
+        $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
+        $scope.getChequeList();
+    });
 
 
     $scope.$watch(function() {
@@ -158,6 +175,21 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
 
         Metronic.unblockUI();
     });
+
+    $scope.viewCheque = function(cheque_id)
+    {
+        Metronic.blockUI();
+        $http.post(query, {mode: "single", cheque_id: cheque_id})
+            .success(function(res, status, headers, config){
+                $scope.chequeDetails = res.payment;
+                $scope.chequeCustomers = res.customer;
+
+                Metronic.unblockUI();
+                $("#chequeDetails").modal({backdrop: 'static'});
+
+            });
+    }
+
     $scope.clearGroup = function(){
         $scope.filterData.customer_group_id = '';
         $scope.filterData.groupname = '';
@@ -290,6 +322,12 @@ i++;
         $scope.getChequeList();
     }
 
+    $scope.updateChequeNumber = function()
+    {
+        $scope.getChequeList();
+    }
+
+
     $scope.clearCustomerSearch = function()
     {
         $scope.filterData.displayName = "";
@@ -350,10 +388,11 @@ i++;
                     { "data": "customGroup","width":"10%" },
 
                     { "data": "ref_number","width":"10%" },
-                    { "data": "amount","width":"10%" },
-                    { "data": "remain","width":"10%" },
-                    { "data": "start_date","width":"10%" },
-                    { "data": "end_date","width":"10%" },
+                    { "data": "amount","width":"8%" },
+                    { "data": "remain","width":"8%" },
+                    { "data": "start_date","width":"8%" },
+                    { "data": "end_date","width":"8%" },
+                    { "data": "link","width":"8%" },
 
 
                 ]

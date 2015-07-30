@@ -269,9 +269,30 @@ class PaymentController extends BaseController {
             $p->delete();
         }*/
 
+        if($mode == 'single')
+        {
+            $payment = Payment::where('id',Input::get('cheque_id'))->with('invoice')->first();
 
 
-        if($mode == 'getChequeList')
+    foreach($payment->invoice as $vv){
+      $vv->customerName = $vv->customer_name;
+
+    }
+
+
+
+            $vv = $payment;
+                $c = explode(',',$vv->customerId);
+                $cc = customer::whereIn('customerId',$c)->get();
+
+
+          $final['payment'] = $payment;
+            $final['customer']  = $cc;
+
+
+            return Response::json($final);
+
+        }else if($mode == 'getChequeList')
         {
             $filter = Input::get('filterData');
             $payments = Payment::select('*');
@@ -281,7 +302,11 @@ class PaymentController extends BaseController {
                 $payments->where('used', $filter['status']);
             }
 
-            $payments->where('start_date', '>=',$filter['deliverydate'])->where('end_date','<=',$filter['deliverydate2']);
+            $payments->where('start_date', '>=',$filter['deliverydate'])->where('end_date','<=',$filter['deliverydate2'])
+
+            ->where('ref_number','Like',$filter['ChequeNumber'].'%')
+
+            ->where('customerId','Like','%'.$filter['clientId'].'%');
 
             /*
           // client id
@@ -341,6 +366,10 @@ $arr2 = [];
 
 
             return Datatables::of($payments)
+
+                ->addColumn('link', function ($model) {
+                return '<span onclick="viewCheque(\''.$model->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+            })
                 ->addColumn('customName', function ($user) use($arr) {
                     return $arr[$user->id];
                 })->addColumn('customID', function ($user) use($arr1) {
@@ -361,7 +390,6 @@ $arr2 = [];
                 }
             }*/
 
-            return Response::json($customer);
 
         }
 

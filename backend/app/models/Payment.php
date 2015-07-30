@@ -3,7 +3,7 @@
 class Payment extends Eloquent  {
 
     public function Invoice(){
-        return $this->belongsToMany('Invoice')->withTimestamps();
+        return $this->belongsToMany('Invoice')->withPivot('amount','paid')->withTimestamps();
     }
 
 

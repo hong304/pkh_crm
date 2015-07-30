@@ -202,7 +202,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
     $scope.checkIdexist = function(){
 
         $http.post(querytarget, {mode: "checkId", supplierCode: $scope.customerInfo.supplierCode})
-            .success(function(res, status, headers, config){
+            .success(function(res){
                 $scope.productIdused = res;
                 if($scope.productIdused == 1){
                     $scope.submit = false;

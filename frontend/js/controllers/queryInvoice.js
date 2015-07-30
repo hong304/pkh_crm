@@ -337,8 +337,6 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     		$("#productDetails").modal({backdrop: 'static'});
 
     	});
-
-
     }
 
     // -- unload invoice modal
