@@ -427,7 +427,7 @@ if($i['invoiceDiscount'] > 0){
                 mkdir(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate), 0777, true);
             $i->save(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate).'/'.$filename);
 
-            $i->save($fullpath);
+            //$i->save($fullpath);
             $i->destroy();
 
 
