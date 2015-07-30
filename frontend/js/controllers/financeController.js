@@ -71,11 +71,47 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         'customerId'		:	'',
         'clientId' : '',
         'customer_group_id' : '',
-        'zone'			:	'',
         'status'        :   '2',
-        'bankCode' : '003'
+        'bankCode' : '003',
+        'deliverydate': '',
+        'deliverydate2' : ''
     };
 
+
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 2 : 1;
+
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    if(today.getHours() < 12)
+    {
+        var nextDay = today;
+    }
+    else
+    {
+        var nextDay = currentDate;
+    }
+    var day = nextDay.getDate()+1;
+    //  var dayD = nextDay.getDate()+1;
+    var month = nextDay.getMonth() + 1;
+    var year = nextDay.getFullYear();
+    var yday = nextDay.getDate()-2;
+
+    $("#deliverydate").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + yday);
+
+    $("#deliverydate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
+    $scope.filterData.deliverydate = year+'-'+month+'-'+yday;
+    $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
@@ -247,10 +283,12 @@ i++;
     }
 
 
-    $scope.updateZone = function()
+    $scope.updateDelvieryDate = function()
     {
         $scope.getChequeList();
     }
+
+
 
     $scope.updateStatus = function()
     {
@@ -312,12 +350,16 @@ i++;
                     }
                 },
                 "columns": [
-                    { "data": "customerId","width":"17%" },
-                    { "data": "ref_number","width":"17%" },
-                    { "data": "amount","width":"17%" },
-                    { "data": "remain","width":"17%" },
-                    { "data": "start_date","width":"17%" },
-                    { "data": "end_date","width":"17%" },
+                    { "data": "customID","width":"10%" },
+                    { "data": "customName","width":"30%" },
+                    { "data": "customGroup","width":"10%" },
+
+                    { "data": "ref_number","width":"10%" },
+                    { "data": "amount","width":"10%" },
+                    { "data": "remain","width":"10%" },
+                    { "data": "start_date","width":"10%" },
+                    { "data": "end_date","width":"10%" },
+
 
                 ]
 

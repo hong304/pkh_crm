@@ -274,12 +274,14 @@ class PaymentController extends BaseController {
         if($mode == 'getChequeList')
         {
             $filter = Input::get('filterData');
-            $customer = Payment::select('*');
+            $payments = Payment::select('*');
             //cheque status
             if($filter['status'] != 2)
             {
-                $customer->where('used', $filter['status']);
+                $payments->where('used', $filter['status']);
             }
+
+            $payments->where('start_date', '>=',$filter['deliverydate'])->where('end_date','<=',$filter['deliverydate2']);
 
             /*
           // client id
@@ -288,7 +290,7 @@ class PaymentController extends BaseController {
               $customer->where('customerId', $filter['clientId']);
           }
 
-*/
+
              $permittedZone = explode(',', Auth::user()->temp_zone);
 
            if($filter['zone'] != '')
@@ -296,10 +298,56 @@ class PaymentController extends BaseController {
                 $customer->where('deliveryZone', $filter['zone']['zoneId']);
             }else{
                 $customer->whereIn('deliveryZone',$permittedZone);
-            }
+            }*/
 
-            $customer = $customer->OrderBy('start_date','desc');
-            return Datatables::of($customer)->make(true);
+            $payments = $payments->OrderBy('start_date','desc');
+
+
+           $p = $payments->get();
+
+            $arr = [];
+            $arr1 = [];
+$arr2 = [];
+           foreach($p as $vv){
+
+               if(!isset($arr[$vv->id]))
+                   $arr[$vv->id] = '';
+               if(!isset($arr1[$vv->id]))
+                   $arr1[$vv->id] = '';
+
+                   $c = explode(',',$vv->customerId);
+                    $cc = customer::whereIn('customerId',$c)->get();
+
+               if(count($cc) < 1){
+                   $arr[$vv->id] ='';
+                   $arr1[$vv->id] = '';
+               }
+
+                   foreach ($cc as $g){
+                       $arr[$vv->id] .= $g->customerName_chi.'<br/>';
+                       $arr1[$vv->id] .= $g->customerId.'<br/>';
+                   }
+
+                   if(!isset($arr2[$vv->id]))
+                       $arr2[$vv->id] = '';
+                   $cc = customerGroup::find($vv->groupId);
+                    if(count($cc) < 1)
+                        $arr2[$vv->id] = '';
+               else
+                   $arr2[$vv->id] = $cc->name;
+
+           }
+
+
+
+            return Datatables::of($payments)
+                ->addColumn('customName', function ($user) use($arr) {
+                    return $arr[$user->id];
+                })->addColumn('customID', function ($user) use($arr1) {
+                    return $arr1[$user->id];
+                })->addColumn('customGroup', function ($user) use($arr2) {
+                    return $arr2[$user->id];
+                })->make(true);
 
 
           /*  foreach($customer as $c)
