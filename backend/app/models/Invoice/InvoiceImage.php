@@ -414,11 +414,11 @@ if($i['invoiceDiscount'] > 0){
 
 
 
-            $fullpath = public_path($filename);
+           // $fullpath = public_path($filename);
 
             $filenames[$page]['filename'] = $filename;
             $filenames[$page]['deliveryDate'] =  $this->deliveryDate;
-            $filenames[$page]['fullpath'] = $fullpath;
+           // $filenames[$page]['fullpath'] = $fullpath;
 
 
             if (!file_exists(public_path() . '/'.date('Y-m', $this->deliveryDate)))
