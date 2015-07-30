@@ -111,30 +111,27 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
 
     */
 
-    var today = new Date();
-    var plus = today.getDay() == 6 ? 2 : 1;
 
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 3 : 2;
     var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-    if(today.getHours() < 12)
-    {
-        var nextDay = today;
-    }
-    else
-    {
-        var nextDay = currentDate;
-    }
-    var day = nextDay.getDate()+1;
-    //  var dayD = nextDay.getDate()+1;
-    var month = nextDay.getMonth() + 1;
-    var year = nextDay.getFullYear();
-    var yday = nextDay.getDate()-2;
+    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
+
+    var ymonth = start_date.getMonth() + 1;
+    var yyear = start_date.getFullYear();
+    var yday = start_date.getDate();
+
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+
 
     $("#deliverydate").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
-    $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + yday);
+    $("#deliverydate").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
 
     $("#deliverydate2").datepicker({
         rtl: Metronic.isRTL(),
@@ -143,7 +140,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     });
     $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
 
-    $scope.filterData.deliverydate = year+'-'+month+'-'+yday;
+    $scope.filterData.deliverydate = yyear+'-'+ymonth+'-'+yday;
     $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
 
     $scope.$on('$viewContentLoaded', function() {
