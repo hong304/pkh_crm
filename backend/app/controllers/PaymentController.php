@@ -117,7 +117,7 @@ if($paidinfo['no']!=''){
                 if($v['paid'] == 30)
                     $i->paid_date = $v['date'];
                 $i->save();
-                
+
                 if($paidinfo['no']!='')
                 $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$v['paid']]);
             }
