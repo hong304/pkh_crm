@@ -196,6 +196,28 @@ class PaymentController extends BaseController {
             $customer2 = explode(",", $filter['customerId']);
         }
 
+        if(count($customer2)>0){
+                for($i = 0; $i < count($customer2); $i++){
+                    $rules['customerId.' . $i] = 'exists:customer,customerId';
+                    $messages = ['exists' => 'Customer ID:'.$customer2[$i].' does not exists.'];
+                }
+
+                $arr = ['customerId'=>$customer2];
+
+                $validator = Validator::make($arr, $rules,$messages);
+                $errorMessage['error'] = '';
+                if ($validator->fails())
+                {
+                    $info = $validator->messages()->all();
+                    foreach($info as $a)
+                    {
+                        $errorMessage['error'] .= "$a\n";
+                    }
+                     return $errorMessage;
+
+                }
+        }
+
         $customerId = array_merge($customer, $customer2);
 
 
@@ -206,7 +228,6 @@ class PaymentController extends BaseController {
 
           //  $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->with('client')->get();
             $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
-
 
 
             foreach ($invoice_info as $v){
@@ -302,12 +323,19 @@ class PaymentController extends BaseController {
                 $payments->where('used', $filter['status']);
             }
 
-            if($filter['ChequeNumber'] == '' && $filter['clientId'] == '')
+
+
+            if($filter['ChequeNumber'] == '' && $filter['clientId'] == '' && $filter['groupName'] == '')
             $payments->where('start_date', '>=',$filter['deliverydate'])->where('end_date','<=',$filter['deliverydate2']);
 else{
+    if($filter['groupName'] != ''){
+        $payments->leftJoin('customer_groups', function($join) {
+            $join->on('customer_groups.id', '=', 'payments.groupId');
+        })->where('customer_groups.name','LIKE','%'.$filter['groupName'].'%');
+    }else{
             $payments->where('ref_number','Like',$filter['ChequeNumber'].'%')
-
             ->where('customerId','Like','%'.$filter['clientId'].'%');
+    }
 }
             /*
           // client id

@@ -57,7 +57,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     var query = endpoint + '/querryClientClearance.json';
     var getClearance = endpoint + '/getClearance.json';
 
-
+var fetchDataTimer = '';
     $scope.invoice = [];
     var today = new Date();
     var day = today.getDate();
@@ -86,7 +86,8 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         'bankCode' : '003',
         'deliverydate': '',
         'deliverydate2' : '',
-        'ChequeNumber' : ''
+        'ChequeNumber' : '',
+        'groupName' : ''
     };
 
 
@@ -199,6 +200,23 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     {
         $http.post(getClearance, {mode:'processCustomer',filterData:$scope.filterData})
             .success(function(res, status, headers, config){
+
+                if(res.error){
+                    Metronic.alert({
+                        container: '#cheque_form', // alerts parent container(by default placed after the page breadcrumbs)
+                        place: 'prepend', // append or prepent in container
+                        type: 'danger',  // alert's type
+                        message: '<span style="font-size:16px;">'+res.error + '</strong></span>',  // alert's message
+                        close: true, // make alert closable
+                        reset: true, // close all previouse alerts first
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 0, // auto close after defined seconds
+                        icon: '' // put icon before the message
+                    });
+                }else{
+
+
+
                 $scope.payment = res;
                 $scope.invoiceinfo = res.data;
                 var i = 0;
@@ -209,6 +227,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
                     i++;
                 });
                 $scope.updatePaidTotal();
+                }
             });
      //   $location.url("/finance-clientClearance?action=processCustomer");
 
@@ -315,7 +334,12 @@ i++;
         $scope.getChequeList();
     }
 
+$scope.updateGroupName = function(){
+    fetchDataTimer = $timeout(function () {
+        $scope.getChequeList();
+    }, 500);
 
+}
 
     $scope.updateStatus = function()
     {
