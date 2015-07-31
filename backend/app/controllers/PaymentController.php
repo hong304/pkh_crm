@@ -286,9 +286,12 @@ if($paidinfo['no']!=''){
 
 
             $vv = $payment;
-                $c = explode(',',$vv->customerId);
-                $cc = customer::whereIn('customerId',$c)->orwhere('customer_group_id',$vv->groupId)->get();
 
+                $c = explode(',',$vv->customerId);
+            if($vv->groupId != 0)
+                $cc = customer::whereIn('customerId',$c)->orwhere('customer_group_id',$vv->groupId)->get();
+            else
+                $cc = customer::whereIn('customerId',$c)->get();
 
           $final['payment'] = $payment;
             $final['customer']  = $cc;
