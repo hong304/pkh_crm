@@ -302,12 +302,13 @@ class PaymentController extends BaseController {
                 $payments->where('used', $filter['status']);
             }
 
-            $payments->where('start_date', '>=',$filter['deliverydate'])->where('end_date','<=',$filter['deliverydate2'])
-
-            ->where('ref_number','Like',$filter['ChequeNumber'].'%')
+            if($filter['ChequeNumber'] == '' && $filter['clientId'] == '')
+            $payments->where('start_date', '>=',$filter['deliverydate'])->where('end_date','<=',$filter['deliverydate2']);
+else{
+            $payments->where('ref_number','Like',$filter['ChequeNumber'].'%')
 
             ->where('customerId','Like','%'.$filter['clientId'].'%');
-
+}
             /*
           // client id
           if($filter['clientId']!='')

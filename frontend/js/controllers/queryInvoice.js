@@ -453,13 +453,14 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
             dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options 
 
 
-                "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
+                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
 
                 "lengthMenu": [
                     [20, 50],
                     [20, 50] // change per page values here
                 ],
                 "pageLength": 50, // default record count per page
+
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
@@ -489,7 +490,6 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                     { "data": "amount" },
                     { "data": "version" },
                     { "data": "invoiceStatusText" },
-
                     { "data": "shiftText" },
                     { "data": "laststaff.name" },
                     { "data": "createdat_full" },

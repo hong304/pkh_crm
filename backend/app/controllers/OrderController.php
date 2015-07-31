@@ -221,7 +221,7 @@ class OrderController extends BaseController
         $mode = Input::get('mode');
 
         if ($mode == 'collection') {
-            Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+
 
             $filter = Input::get('filterData');
 
@@ -286,23 +286,16 @@ class OrderController extends BaseController
                 $invoice->where('customerId', $filter['clientId']);
             }
 
+            $invoices = $invoice->with('client', 'laststaff')->orderby('invoiceId', 'desc');
 
+                return Datatables::of($invoices)
+                ->addColumn('link', function ($invoice) {
+                   return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+                })       ->addColumn('id', function ($invoice) {
+                    return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';
+                })
+                ->make(true);
 
-            // created by
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-
-
-            /*  $invoices = $invoices->with(['invoiceItem'=>function($query) use($ids){
-                  $query->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"));
-              }])->with( 'client', 'staff')->get();*/
-
-
-            $invoices = $invoice->with('client', 'laststaff')->orderby('invoiceId', 'desc')->paginate($page_length);
-
-            foreach ($invoices as $invoice) {
-                $invoice->link = '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
-                $invoice->id = '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';
-            }
         } elseif ($mode == 'single') {
             $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
                 ->with(['invoiceItem' => function ($query) use ($ids) {
