@@ -93,9 +93,22 @@ class PaymentController extends BaseController {
         $mode = Input::get('mode');
 
         if($mode == 'posting'){
-
-
             $paid = Input::get('paid');
+            $paidinfo = Input::get('paidinfo');
+
+if($paidinfo['no']!=''){
+            $payment = new Payment();
+            $payment->ref_number = $paidinfo['no'];
+                $payment->start_date = $paidinfo['receiveDate'];
+                    $payment->end_date =  $paidinfo['receiveDate'];
+                        $payment->receive_date = $paidinfo['receiveDate'];
+                            $payment->amount = $paidinfo['amount'];
+                                $payment->used = 1;
+                                    $payment->remain = 0;
+            $payment->customerId = $paid[0]['customerId'];
+            $payment->save();
+}
+
 
             foreach ($paid as $k=>$v){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
@@ -104,6 +117,9 @@ class PaymentController extends BaseController {
                 if($v['paid'] == 30)
                     $i->paid_date = $v['date'];
                 $i->save();
+                
+                if($paidinfo['no']!='')
+                $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$v['paid']]);
             }
 
         }
@@ -118,7 +134,7 @@ class PaymentController extends BaseController {
 
             //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
 
-            $invoice = Invoice::select('customerName_chi','invoiceId','amount','invoice.zoneId','deliveryDate','invoiceStatus')->leftjoin('customer', 'customer.customerId', '=', 'invoice.customerId')->where('deliveryDate','>',strtotime("-4 days"));
+            $invoice = Invoice::select('customerName_chi','invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','customerId')->leftjoin('customer', 'customer.customerId', '=', 'invoice.customerId')->where('deliveryDate','>',strtotime("-7 days"));
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -142,11 +158,9 @@ class PaymentController extends BaseController {
             }
 
             // status
-            if($filter['status'] != '0')
+            if($filter['status'] != '')
             {
                 $invoice->where('invoiceStatus', $filter['status']);
-            }else{
-                $invoice->wherein('invoiceStatus',['2','20','30']);
             }
 
             if($filter['status'] == '99')
@@ -169,6 +183,7 @@ class PaymentController extends BaseController {
             // created by
 
             $invoices = $invoice->orderby('invoiceId', 'desc')->get();
+
 
 
             return Response::json($invoices);

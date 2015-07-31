@@ -87,7 +87,8 @@ var fetchDataTimer = '';
         'deliverydate': '',
         'deliverydate2' : '',
         'ChequeNumber' : '',
-        'groupName' : ''
+        'groupName' : '',
+
     };
 
 

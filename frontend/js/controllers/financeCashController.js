@@ -25,11 +25,14 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.filterData = {
         'displayName'	:	'',
         'clientId'		:	'',
-        'status'		:	'0',
+        'status'		:	'',
         'zone'			:	'',
         'deliverydate'	:	'last day',
         'created_by'	:	'0',
         'invoiceNumber' :	'',
+        'bankCode' : '003',
+        'cashAmount' : '0',
+        'amount' : '0'
     };
 
 
@@ -44,11 +47,21 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
 
 
+
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
 
-           //  $scope.updateDataSet();
+
+
+        $('.date-picker').datepicker({
+            rtl: Metronic.isRTL(),
+            orientation: "left",
+            autoclose: true
+        });
+
+        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
+
     });
 
 
@@ -58,7 +71,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         return $rootScope.systeminfo;
     }, function() {
         $scope.systeminfo = $rootScope.systeminfo;
-        $scope.updateDataSet();
+       // $scope.updateDataSet();
     }, true);
 
     $scope.$on('handleCustomerUpdate', function(){
@@ -87,7 +100,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
      $http({
             method: 'POST',
             url: query,
-            data: {paid:data,mode:'posting'}
+            data: {paid:data,paidinfo:$scope.filterData,mode:'posting'}
         }).success(function () {
              $scope.updateDataSet();
         });
@@ -108,6 +121,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                 res.forEach(function(item) {
                     $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
                     $scope.invoicepaid[i]['id'] = item.invoiceId;
+                    $scope.invoicepaid[i]['customerId'] = item.customerId;
                     $scope.invoicepaid[i]['paid'] = 0;
                     $scope.invoicepaid[i]['date'] = year + '-' + month + '-' + day;
                     $scope.invoicepaid[i]['collect'] = 0;
@@ -115,6 +129,9 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     $scope.invoicepaid.settle = $scope.invoicepaid.amount;
                     i++;
                 });
+
+
+
             });
     }
 

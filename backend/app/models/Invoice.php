@@ -29,6 +29,8 @@ class Invoice extends Eloquent  {
             unset($invoice->dueDateDate);
             unset($invoice->paymentTermsText);
             unset($invoice->realAmount);
+            unset($invoice->remain);
+
 
 
         });
@@ -241,6 +243,8 @@ class Invoice extends Eloquent  {
                 $model->realAmount = $model->amount * -1;
             else
                 $model->realAmount = $model->amount;
+
+            $model->remain = $model->amount-$model->paid;
 	        // calculate invoice total
 
 
