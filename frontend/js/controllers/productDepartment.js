@@ -19,7 +19,8 @@ app.controller('productDepartment', function($scope, $rootScope, $http, SharedSe
      $scope.departmantIds = loadTableId();
         
 	$scope.filterData = {
-			
+	     'sorting' : '',
+            'current_sorting' : 'asc',
 		};
 	
 	$scope.info_def = {
@@ -28,8 +29,7 @@ app.controller('productDepartment', function($scope, $rootScope, $http, SharedSe
             'productGroupId' : '',
             'productGroupName' : '',
             'productDepartmentId' : '',
-            'sorting' : '',
-            'current_sorting' : 'asc',
+           
 	};
         
   
@@ -127,15 +127,14 @@ app.controller('productDepartment', function($scope, $rootScope, $http, SharedSe
     {
        //  alert(event.target.id);
          $scope.filterData.sorting = event.target.id;
-       
-    
+       console.log($scope.filterData.current_sorting);
             if ($scope.filterData.current_sorting == 'asc'){
-               // $scope.filterData.sorting_method = 'desc';
                 $scope.filterData.current_sorting = 'desc';
             }else{
                $scope.filterData.current_sorting = 'asc';
+               
             }
-                
+
          $scope.updateDataSet();
     }
     
