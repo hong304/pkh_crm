@@ -272,7 +272,7 @@ class PaymentController extends BaseController {
 
             $vv = $payment;
                 $c = explode(',',$vv->customerId);
-                $cc = customer::whereIn('customerId',$c)->get();
+                $cc = customer::whereIn('customerId',$c)->orwhere('customer_group_id',$vv->groupId)->get();
 
 
           $final['payment'] = $payment;
@@ -356,11 +356,11 @@ $arr2 = [];
 
                    if(!isset($arr2[$vv->id]))
                        $arr2[$vv->id] = '';
-                   $cc = customerGroup::find($vv->groupId);
-                    if(count($cc) < 1)
+                   $cc1 = customerGroup::find($vv->groupId);
+                    if(count($cc1) < 1)
                         $arr2[$vv->id] = '';
                else
-                   $arr2[$vv->id] = $cc->name;
+                   $arr2[$vv->id] = $cc1->name;
 
            }
 
