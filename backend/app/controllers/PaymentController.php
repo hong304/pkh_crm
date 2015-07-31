@@ -256,42 +256,10 @@ class PaymentController extends BaseController {
         $mode = Input::get('mode');
 
 
-       /* if($mode == 'payment'){
-            $payment_id = Input::get('payment_id');
-
-            $info = Payment::where('id',$payment_id)->where('used','!=',1)->first();
-
-            $start_date = strtotime($info->start_date);
-            $end_date = strtotime($info->end_date);
-
-            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('customerId',$info->customerId)->get();
-
-
-
-            foreach ($invoice_info as $v){
-                if($v['paid']>0){
-                    if($v['invoiceStatus']==98)
-                        $v['amount'] = ($v['amount']*-1) - $v['paid'];
-                    else
-                        $v['amount'] -= $v['paid'];
-                }
-                $info['sum']+= ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
-            }
-
-            return Response::json($info);
-
-        }*/
-
-
-
-     /*   if($mode == 'del'){
-            $cheque_id = Input::get('cheque_id');
-            $p =Payment::find($cheque_id);
-            $p->delete();
-        }*/
-
         if($mode == 'single')
         {
+
+
             $payment = Payment::where('id',Input::get('cheque_id'))->with('invoice')->first();
 
 
@@ -313,10 +281,14 @@ class PaymentController extends BaseController {
 
             return Response::json($final);
 
-        }else if($mode == 'getChequeList')
+        }
+
+        if($mode == 'getChequeList')
         {
+
+
             $filter = Input::get('filterData');
-            $payments = Payment::select('*');
+            $payments = Payment::select('payments.id as id','ref_number','start_date','end_date','customerId','groupId','amount','remain');
             //cheque status
             if($filter['status'] != 2)
             {
@@ -396,8 +368,8 @@ $arr2 = [];
 
             return Datatables::of($payments)
 
-                ->addColumn('link', function ($model) {
-                return '<span onclick="viewCheque(\''.$model->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+                ->addColumn('link', function ($payment) {
+                return '<span onclick="viewCheque(\''.$payment->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
             })
                 ->addColumn('customName', function ($user) use($arr) {
                     return $arr[$user->id];
