@@ -284,8 +284,6 @@ class ProductController extends BaseController {
 
     public function jsonQueryProduct()
     {
-
-
         $mode = Input::get('mode');
 
         if($mode == 'collection')
@@ -371,25 +369,17 @@ class ProductController extends BaseController {
             $sorting = $filterData['sorting'];
         }
         $currentSorting = $filterData['current_sorting'];
+
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');
-            Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
             $product = ProductGroup::select('*')->orderBy($sorting,$currentSorting);
 
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $product = $product->paginate($page_length);
-
-            $product = $product->toArray();
-
-            foreach($product['data'] as $c)
-            {
-                $c['link'] = '<span onclick="editProductGroup(\''.$c['productDepartmentId'].'\',\''.$c['productGroupId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
-                $products[] = $c; 
-                //$c['productGroupId']
-            }
-
-            $product['data'] = $products;
+              return Datatables::of($product)
+                ->addColumn('link', function ($produc) {
+                    return '<span onclick="editProductGroup(\''.$produc['productDepartmentId'].'\',\''.$produc['productGroupId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                })
+                ->make(true);
 
         }
         elseif($mode == 'single')
