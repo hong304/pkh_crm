@@ -106,6 +106,7 @@ Route::group(array('before' => 'auth'), function()
 
     
     Route::post('/queryProductDepartment.json', 'ProductController@jsonQueryProductDepartment');
+    Route::post('/manipulateProductDepartment.json', 'ProductController@jsonManProductDepartment');
     
     // Invoice Printing Maintenance
     Route::post('/queryIPF.json', 'IPFController@jsonQueryIPF');

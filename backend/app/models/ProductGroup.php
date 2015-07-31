@@ -8,6 +8,7 @@ class ProductGroup extends Eloquent  {
 	 * @var string
 	 */
 	protected $table = 'productgroup';
+      //  protected $primaryKey = 'productDepartmentId,productGroupId';
 
 	
 	public static function getInheritatedGroupList()

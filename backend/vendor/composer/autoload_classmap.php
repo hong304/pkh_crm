@@ -58,6 +58,7 @@ return array(
     'Product' => $baseDir . '/app/models/Product.php',
     'ProductController' => $baseDir . '/app/controllers/ProductController.php',
     'ProductGroup' => $baseDir . '/app/models/ProductGroup.php',
+    'ProductGroupManipulation' => $baseDir . '/app/models/Product/ProductGroupManipulation.php',
     'ProductManipulation' => $baseDir . '/app/models/Product/ProductManipulation.php',
     'ProductSearchCustomerMap' => $baseDir . '/app/models/ProductSearchCustomerMap.php',
     'QueueController' => $baseDir . '/app/controllers/QueueController.php',

@@ -153,9 +153,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
                        $scope.info.productnewId = $scope.info.groupPrefix+res;
                    else
                        $scope.info.productnewId = res;
-
                }
-
                 $scope.checkIdexist();
             });
     }

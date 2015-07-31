@@ -1,11 +1,12 @@
 'use strict';
 
-function editProduct(productId)
+function editProductGroup(departmentId,groupId)
 {
 	var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
-    	scope.editProduct(productId);
+    	scope.editProductGroup(departmentId,groupId);
     });
+    
 }
 
 app.controller('productDepartment', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
@@ -13,17 +14,39 @@ app.controller('productDepartment', function($scope, $rootScope, $http, SharedSe
 	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
 	var querytarget = endpoint + '/queryProductDepartment.json';
-	var iutarget = endpoint + '/manipulateProduct.json';
+	var iutarget = endpoint + '/manipulateProductDepartment.json';
 	
+     $scope.departmantIds = loadTableId();
+        
 	$scope.filterData = {
 			
 		};
 	
 	$scope.info_def = {
+            'productDepartmentIdOther' : '',
+            'productDepartmentName' : '',
+            'productGroupId' : '',
+            'productGroupName' : '',
+            'productDepartmentId' : '',
+            'sorting' : '',
+            'current_sorting' : 'asc',
 	};
-	
+        
+  
+        
+        function loadTableId()
+        {
+             $http.post(querytarget, {mode: "dropdown"})
+        	.success(function(res, status, headers, config){    
+                    $scope.sizes = res;
+             });
+             return $scope.sizes;
+        }
+        
+  
 	$scope.submitbtn = true;
 	$scope.newId = "";
+        $scope.newGroupId = "";
 	
 	$scope.info = {};
 	
@@ -42,28 +65,178 @@ app.controller('productDepartment', function($scope, $rootScope, $http, SharedSe
   	}, true);
     
     
-    $scope.editProduct = function(productId)
+    $scope.editProductGroup = function(departmentId,groupId)
     {
-    	
-    	
-    	
+         $("#submitButton").attr("disabled",false);
+        $scope.info.productDepartmentId = departmentId;
+        $scope.info.productGroupId = groupId;
+        	$http.post(querytarget, {mode : 'queryItemInfo',info: $scope.info})
+        	.success(function(res, status, headers, config){    
+                  $scope.info  = res;
+        	});
+        $("#address_cht").attr("disabled",true);
+        $(".updateThing").show();
+        $(".increase").hide();
+        $("#productDepartmentFormModal").modal({backdrop: 'static'});
+   
+    }
+   
+     $scope.keydown = function() {
+           $scope.departmantIds = loadTableId();
+          if($scope.departmantIds != "" && $scope.departmantIds != "undefined" && $scope.departmantIds != [])
+          {
+              var keepGoing = true;
+              angular.forEach($scope.departmantIds, function(value, key) {
+                  
+                  if(keepGoing)
+                  {
+                       if($scope.info.productDepartmentId == value.productDepartmentId) 
+                       {
+                             keepGoing = false;
+                             $scope.info.departmentIdWrongMsg = "這部門ID已存在";
+                             $("#submitButton").attr("disabled",true);
+                       }else
+                       {
+                            keepGoing = true;
+                           $scope.info.departmentIdWrongMsg = "";
+                           $("#submitButton").attr("disabled",false);
+                       }
+                  }   
+              });
+              
+          }
+
+     };
+    
+    $scope.addDepartment = function()
+    {
+         $("#submitButton").attr("disabled",false);
+        $scope.currentAction = "addDepartment";
+    	$scope.info = $.extend(true, {}, $scope.info_def);
+    	$scope.newId = "";
+	
+    	$scope.submitbtn = true;
+        $scope.info.productStatus = status[0];
+        $("#address_cht").attr("disabled",false);
+        $(".updateThing").hide();
+        $(".increase").show();
+    	$("#productDepartmentFormModal").modal({backdrop: 'static'});
+
+    }
+    $scope.click = function(event)
+    {
+       //  alert(event.target.id);
+         $scope.filterData.sorting = event.target.id;
+       
+    
+            if ($scope.filterData.current_sorting == 'asc'){
+               // $scope.filterData.sorting_method = 'desc';
+                $scope.filterData.current_sorting = 'desc';
+            }else{
+               $scope.filterData.current_sorting = 'asc';
+            }
+                
+         $scope.updateDataSet();
     }
     
-    $scope.addProduct = function()
+
+    $scope.addCategory = function()
     {
-    	
-    	
+         $("#submitButton").attr("disabled",false);
+        loadTableId();
+        $scope.currentAction = "addCategory";
+        $scope.info = $.extend(true, {}, $scope.info_def);
+    	$scope.newId = "";
+	
+    	$scope.submitbtn = true;
+        $scope.info.productStatus = status[0];
+   
+    	$("#productGroupFormModal").modal({backdrop: 'static'});
     }
     
     $scope.submitProductForm = function()
     {
-
-    	
-    	
+        if($scope.currentAction == "addCategory")
+        {
+             $scope.info.productDepartmentId = ($scope.info.productDepartmentIdOther.productDepartmentId === undefined ) ? "" : $scope.info.productDepartmentIdOther.productDepartmentId;
+        }
+   $http.post(iutarget, {info: $scope.info})
+        	.success(function(res, status, headers, config){    
+                    if(typeof res === "object")
+                    {
+                        $("#submitButton").attr("disabled",true);
+                        $scope.newGroupId = res.id._productGroupId;
+                        $scope.updateDataSet();	
+                        
+                    }else
+                    {
+                        alert(res);
+                    }
+                });
     }
     
+  $scope.updateDataSet = function () {
+        $(document).ready(function() {
+
+            if(!$scope.firstload)
+            {
+                $("#datatable_ajax").dataTable().fnDestroy();
+            }
+            else
+            {
+                $scope.firstload = false;
+            }
+
+
+            $('#datatable_ajax').dataTable({
+
+                // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
+
+                "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
+
+                "bServerSide": true,
+
+                "ajax": {
+                    "url": querytarget, // ajax source
+                    "type": 'POST',
+                    "data": {filterData: $scope.filterData, mode: "collection"},
+                    "xhrFields": {withCredentials: true}
+                },
+                "iDisplayLength": 25,
+                "pagingType": "full_numbers",
+                "language": {
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有匹配結果",
+                    "sEmptyTable":     "沒有匹配結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(filtered from _MAX_ total records)",
+                    "Processing":   "處理中...",
+                    "Paginate": {
+                        "First":    "首頁",
+                        "Previous": "上頁",
+                        "Next":     "下頁",
+                        "Last":     "尾頁"
+                    }
+                },
+               "columns": [
+                            { "data": "productDepartmentId" ,"width" : "20%"},
+                            { "data": "productGroupId" ,"width" : "20%"},
+                            { "data": "productDepartmentName" ,"width" : "20%"},
+                            { "data": "productGroupName","width" : "20%" },
+                            { "data": "link" ,"width" : "20%"},
+                            
+                ],           
+               
+
+            });
+
+
+
+        });
+    };
    
-    $scope.updateDataSet = function()
+  /*  $scope.updateDataSet = function()
     {
     	
     	var grid = new Datatable();
@@ -127,12 +300,10 @@ app.controller('productDepartment', function($scope, $rootScope, $http, SharedSe
                             
                 ],           
                 
-                "order": [
-                    [1, "asc"]
-                ] // set first column as a default sort by asc
+     
             }
         });
 
-    }
+    }*/
     
 });

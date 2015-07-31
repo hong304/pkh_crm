@@ -3,6 +3,7 @@
 class ProductController extends BaseController {
 
     public $_shift = '';
+    public $message = "";
     public function jsonGetAllProduct()
     {
         // $time_start = microtime(true);
@@ -361,15 +362,20 @@ class ProductController extends BaseController {
     public function jsonQueryProductDepartment()
     {
 
-
         $mode = Input::get('mode');
-
+        $sorting = "productDepartmentId";
+        $currentSorting = "";
+        $filterData = Input ::get('filterData');
+        if($filterData['sorting'] != "")
+        {
+            $sorting = $filterData['sorting'];
+        }
+        $currentSorting = $filterData['current_sorting'];
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');
             Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-            $product = ProductGroup::select('*');
-
+            $product = ProductGroup::select('*')->orderBy($sorting,$currentSorting);
 
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
             $product = $product->paginate($page_length);
@@ -378,9 +384,9 @@ class ProductController extends BaseController {
 
             foreach($product['data'] as $c)
             {
-
-                $c['link'] = '<span onclick="editProduct(\''.$c['productDepartmentId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
-                $products[] = $c;
+                $c['link'] = '<span onclick="editProductGroup(\''.$c['productDepartmentId'].'\',\''.$c['productGroupId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                $products[] = $c; 
+                //$c['productGroupId']
             }
 
             $product['data'] = $products;
@@ -389,9 +395,64 @@ class ProductController extends BaseController {
         elseif($mode == 'single')
         {
             $product = Product::where('productId', Input::get('productId'))->first();
+        }elseif($mode == 'dropdown')
+        {
+            $product = ProductGroup::distinct()->select('productDepartmentId','productDepartmentName')->get()->toArray();
+        }elseif($mode == 'queryItemInfo')
+        {
+            $info = Input :: get('info');
+            $product = ProductGroup :: select('*')->where('productDepartmentId',$info['productDepartmentId'])->where('productGroupId',$info['productGroupId'])->first();
         }
 
         return Response::json($product);
     }
+    
+    public function jsonManProductDepartment()
+    {
+        $gpObject = Input::get('info');
+        $departmentId = (!$gpObject['productDepartmentId'] == "") ? $gpObject['productDepartmentId'] :false ;
+        $groupId = (!$gpObject['productGroupId'] == "") ? $gpObject['productGroupId'] : false;
+        $gp = new ProductGroupManipulation($departmentId,$groupId,$gpObject);
+       
+       if(empty($this->validation($gpObject)))
+       {
+           $id = $gp->save($gpObject);
+           return Response::json(['id' => $gp]);
+       }else
+       {
+            $errorMessage = "";
+          //  foreach($this->message as $a)
+          //  {
+           //     $errorMessage .= "$a\n";
+          //  }
+            return $this->message;
+       }
+        
+    }
+    
+       public function validation($e)
+    {
+        $rules = [
+	            'productDepartmentId' => 'required',
+	            'productGroupName' => 'required',
+                  //  'productGroupId' => 'required',
+                //    'productDepartmentName' => 'required',
+	        ];
+         
+      
+         $validator = Validator::make($e, $rules);
+	 if ($validator->fails())
+	  {
+             $this->message = "請輸入所需信息";
+	       //$this->message = $validator->messages()->all();
+               //
+	           // return Redirect::action('UserController@authenticationProcess')->with('flash_error', 'Invalid Credential. Please try again');
+	  }
+       
+          return $this->message;
+          
+    }
+    
+
 
 }
