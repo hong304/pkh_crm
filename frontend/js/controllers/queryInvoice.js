@@ -485,16 +485,16 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                 "columns": [
                     { "data": "id", "width":"8%" },
                     { "data": "deliveryDate_date", "width":"7%" },
-                    { "data": "zoneId" },
-                    { "data": "client.customerName_chi" },
-                    { "data": "amount" },
-                    { "data": "version" },
-                    { "data": "invoiceStatusText" },
-                    { "data": "shiftText" },
-                    { "data": "laststaff.name" },
-                    { "data": "createdat_full" },
-                    { "data": "updated_at" },
-                    { "data": "link" }
+                    { "data": "zoneId", "width":"5%" },
+                    { "data": "client.customerName_chi",  "width":"15%"},
+                    { "data": "amount", "width":"5%" },
+                    { "data": "version", "width":"7%" },
+                    { "data": "invoiceStatusText", "width":"6%" },
+                    { "data": "shiftText", "width":"6%" },
+                    { "data": "laststaff.name", "width":"8%" },
+                    { "data": "createdat_full",  "width":"13%" },
+                    { "data": "updated_at",  "width":"13%" },
+                    { "data": "link", "width":"5%" }
 
 
                 ],
