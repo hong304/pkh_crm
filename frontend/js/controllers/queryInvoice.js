@@ -483,8 +483,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                     }
                 },
                 "columns": [
-                    { "data": "id" },
-                    { "data": "deliveryDate_date" },
+                    { "data": "id", "width":"8%" },
+                    { "data": "deliveryDate_date", "width":"7%" },
                     { "data": "zoneId" },
                     { "data": "client.customerName_chi" },
                     { "data": "amount" },
