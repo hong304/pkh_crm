@@ -9,6 +9,10 @@ else if(window.location.hostname == "frontend.pingkeehong.com")
 {
 	var endpoint = '//backend.pingkeehong.com/';
 	var assets = '//frontend.pingkeehong.com/assets';
+}else if(window.location.hostname == "pkh-f.sylam.net")
+{
+    var endpoint = '//pkh-b.sylam.net/';
+    var assets = '//pkh-f.sylam.net/assets';
 }else{
     var endpoint = '//b.pingkeehong.com/';
     var assets = '//f.pingkeehong.com/assets';

@@ -524,28 +524,6 @@ class InvoiceManipulation {
 
         $this->generateInvoicePDF($this->invoiceId,Auth::user()->id);
 
-	    /*if($_SERVER['env'] == 'production')
-	    {
-	        syslog(LOG_DEBUG, "New Push Queue to Print Invoice");
-	        syslog(LOG_DEBUG, print_r(['user'=>Auth::user(), 'server'=> $_SERVER, 'get'=>$_GET, 'post'=>$_POST], true));
-	        
-	        $task = new PushTask('/queue/generate-print-invoice-image.queue', ['invoiceId' => $this->invoiceId]);
-	        $task_name = $task->add('generate-invoice-image');
-	        
-
-	       // $task = new PushTask('/queue/generate-preview-invoice-image.queue', ['invoiceId' => $this->invoiceId]);
-	       // $task_name = $task->add('generate-invoice-image');
-
-
-	        $task = new PushTask('/queue/generate-invoice-pdf.queue', 
-	            [
-	                'invoiceId' => $this->invoiceId, 
-	                'printInstant' => $this->im->deliveryDate < strtotime("today 23.59"), 
-	                'printBatch' => $this->im->deliveryDate > strtotime("today 23:59"),
-	                'instructor' => Auth::user()->id,	                
-	            ]);
-	        $task_name = $task->add('invoice-printing-factory');
-	    }*/
 	}
 	
 }
