@@ -1,0 +1,66 @@
+
+<div class="modal fade bs-modal-lg " id="productGroupFormModal" data-ng-init="" tabindex="-1" role="basic" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+				<h4 class="modal-title">新增類別</h4>
+			</div>
+			<div class="modal-body">
+				<form action="javascript:;" class="form-horizontal">
+					<div class="form-body">
+                                          <!--  <div class="form-group">
+                                                <label class="col-md-3 control-label">部門ID *</label>
+                                                <div class="col-md-9">
+                                            <ul>
+                                                 <li><label><input type="radio" ng-model="value" value="選擇部門" ng-change='department(value)'>選擇部門</label></li>
+                                                  <li><label><input type="radio" ng-model="value" value="新增部門" ng-change='department(value)'>新增部門</label></li>
+                                             </ul>
+                                                    </div>
+                                                </div>-->
+						<div class="form-group" id="chooseDepartment">
+							<label class="col-md-3 control-label">選擇部門ID *</label>
+							<div class="col-md-9 " >
+								<select ng-model="info.productDepartmentIdOther" class="form-control" id="productDepartmentId"  ng-options="(size.productDepartmentId + ' - ' + size.productDepartmentName) for size in sizes">
+								</select>
+                                                            <!--size as size.productDepartmentId for size in sizes -->
+                                                        </div> 
+						</div>
+                                                                            
+
+						<div class="form-group" id="createGroup">
+							<label class="col-md-3 control-label">新增類別ID *</label>
+							<div class="col-md-9">
+								<input type="text" id="address_cht" ng-model="customerInfo.customerName_chi" class="form-control ng-pristine ng-valid" placeholder="系統自動生成" disabled>
+							</div>
+						</div>
+                                            
+                                                
+						
+						<div class="form-group" id="groupName">
+							<label class="col-md-3 control-label">類別名稱 *</label>
+							<div class="col-md-9">
+								<input type="text" ng-model="info.productGroupName" class="form-control" placeholder="">
+								</textarea>
+							</div>
+						</div>
+                                            
+                                            
+						
+						
+					</div>
+				</form>
+				
+			</div>
+			<div class="modal-footer">
+                                         <p><span>類別代碼: {{newGroupId}}</span></p>
+					<button type="button" class="btn blue" data-ng-click="submitProductForm();" id="submitButton">提交</button>
+					<button type="button" class="btn default" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>

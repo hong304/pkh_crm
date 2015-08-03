@@ -208,6 +208,7 @@ class Invoice_CustomerBreakdown {
                        }
 
                            $this->goods['1F9F'][$client->customerId]['invoiceId'][] = $invoiceQ->invoiceId;
+                           $this->goods['1F9F'][$client->customerId]['invoiceInfo']['payment_method'] = $invoiceQ->paymentTermsText;
 
                        }
 
@@ -216,6 +217,7 @@ class Invoice_CustomerBreakdown {
                    }
 
                });
+
 
        $this->data = $this->goods;
         $ninef = $this->data['1F9F'];

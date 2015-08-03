@@ -2,33 +2,90 @@
 
 class PaymentController extends BaseController {
 
-    private function __standardizeDateYmdTOUnix($date)
-    {
-        $date = explode('-', $date);
-        $date = strtotime($date[2].'-'.$date[1].'-'.$date[0]);
-        return $date;
-    }
-
     public function addCheque(){
+            $paid = Input::get('paid');
 
-        $i = Input::get('info');
 
-//pd($i);
+        $ij = Input::get('filterData');
+
+
+
+
+
+        $rules = [
+            'no' => 'required',
+            'amount' => 'required',
+            'customerId' => 'required_without:customer_group_id',
+            'customer_group_id' => 'required_without:customerId',
+        ];
+
+
+        $validator = Validator::make($ij, $rules);
+        $errorMessage = '';
+        if ($validator->fails())
+        {
+            $info = $validator->messages()->all();
+            foreach($info as $a)
+            {
+                $errorMessage .= "$a\n";
+            }
+            return $errorMessage;
+
+         }
+
+
+
+            $set_amount =0;
+            foreach ($paid as $k=>$v){
+                $i = Invoice::where('invoiceId',$v['id'])->first();
+                $i->paid += $v['settle'];
+                $set_amount += $v['settle'];
+
+
+
+                if($i->amount == $i->paid || $v['discount'] == 1)
+                    $i->invoiceStatus = 30;
+                $i->discount = $v['discount'];
+                if(isset($ij['discount']))
+                    $i->discount = 1;
+                $i->save();
+            }
+
+
+
 
         $info = new Payment();
 
-        $c = Customer::where('customerId',$i['clientId'])->first();
+        //  $c = Customer::where('customerId',$i['clientId'])->first();
 
-        $info->customerId = $i['clientId'];
-        $info->deliveryZone = $c['deliveryZone'];
-        $info->ref_number = $i['no'];
-        $info->bankCode = $i['bankCode'];
-        $info->receive_date = $i['receiveDate'];
-        $info->start_date = $i['startDate'];
-        $info->end_date = $i['endDate'];
-        $info->amount = $i['amount'];
-        $info->remain = $i['amount'];
+        $info->customerId = $ij['customerId'];
+        $info->groupId = $ij['customer_group_id'];
+        $info->ref_number = $ij['no'];
+        $info->bankCode = $ij['bankCode'];
+        $info->receive_date = $ij['receiveDate'];
+        $info->start_date = $ij['startDate'];
+        $info->end_date = $ij['endDate'];
+        $info->amount = $ij['amount'];
+        // $info->credit = $amount;
+
+
+        if($info->remain == 0)
+            $info->used = 1;
+        if(isset($ij['discount'])){
+            $info->used = 1;
+            $info->remain = 0;
+            $info->discount = $set_amount-$ij['amount'];
+        }else{
+            $info->remain = $ij['amount']-$set_amount;
+        }
+
         $info->save();
+
+        foreach ($paid as $k=>$v){
+            $iq = Invoice::where('invoiceId',$v['id'])->first();
+            $iq->payment()->attach($info->id,['amount'=>$iq->amount,'paid'=>$v['settle']]);
+            $iq->save();
+        }
     }
 
     public function querryCashCustomer(){
@@ -36,9 +93,22 @@ class PaymentController extends BaseController {
         $mode = Input::get('mode');
 
         if($mode == 'posting'){
-
-
             $paid = Input::get('paid');
+            $paidinfo = Input::get('paidinfo');
+
+if($paidinfo['no']!=''){
+            $payment = new Payment();
+            $payment->ref_number = $paidinfo['no'];
+                $payment->start_date = $paidinfo['receiveDate'];
+                    $payment->end_date =  $paidinfo['receiveDate'];
+                        $payment->receive_date = $paidinfo['receiveDate'];
+                            $payment->amount = $paidinfo['amount'];
+                                $payment->used = 1;
+                                    $payment->remain = 0;
+            $payment->customerId = $paid[0]['customerId'];
+            $payment->save();
+}
+
 
             foreach ($paid as $k=>$v){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
@@ -47,6 +117,9 @@ class PaymentController extends BaseController {
                 if($v['paid'] == 30)
                     $i->paid_date = $v['date'];
                 $i->save();
+
+                if($paidinfo['no']!='')
+                $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$v['paid']]);
             }
 
         }
@@ -55,51 +128,13 @@ class PaymentController extends BaseController {
         {
             $filter = Input::get('filterData');
 
-
-            // start with date filter
-            switch($filter['deliverydate'])
-            {
-                case 'today' :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'coming-7-days' :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("+1 week");
-                    break;
-                case 'last day' :
-                    $dDateBegin = strtotime("1 day ago 00:00");
-                    $dDateEnd = strtotime("1 day ago 23:59");
-                    break;
-                case 'past-7-days' :
-                    $dDateBegin = strtotime("7 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'last day' :
-                    $dDateBegin = strtotime("1 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'past-30-days' :
-                    $dDateBegin = strtotime("30 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'past-180-days' :
-                    $dDateBegin = strtotime("180 days ago 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
-                case 'extensible-180-180'   :
-                    $dDateBegin = strtotime("180 days ago 00:00");
-                    $dDateEnd = strtotime("+180days 00:00");
-                    break;
-                default :
-                    $dDateBegin = strtotime("today 00:00");
-                    $dDateEnd = strtotime("today 23:59");
-                    break;
+            if($filter['clientId'] =='' && $filter['invoiceNumber'] == ''){
+                return Response::json();
             }
 
             //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
 
-            $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
+            $invoice = Invoice::select('customerName_chi','invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','customerId')->leftjoin('customer', 'customer.customerId', '=', 'invoice.customerId')->where('deliveryDate','>',strtotime("-7 days"));
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -123,11 +158,9 @@ class PaymentController extends BaseController {
             }
 
             // status
-            if($filter['status'] != '0')
+            if($filter['status'] != '')
             {
                 $invoice->where('invoiceStatus', $filter['status']);
-            }else{
-                $invoice->wherein('invoiceStatus',['2','20','30']);
             }
 
             if($filter['status'] == '99')
@@ -136,9 +169,9 @@ class PaymentController extends BaseController {
             }
 
             // client id
-            if($filter['clientId'] != '0')
+            if($filter['clientId'] != '')
             {
-                $invoice->where('customerId', $filter['clientId']);
+                $invoice->where('invoice.customerId', $filter['clientId']);
             }
 
             // invoice number
@@ -152,153 +185,231 @@ class PaymentController extends BaseController {
             $invoices = $invoice->orderby('invoiceId', 'desc')->get();
 
 
+
             return Response::json($invoices);
         }
 
 
     }
 
-    public function getClientClearance(){
-
+    public function getClearance(){
         $mode = Input::get('mode');
+        $filter = Input::get('filterData');
 
-        if($mode == 'payment'){
-            $payment_id = Input::get('payment_id');
 
-            $info = Payment::where('id',$payment_id)->where('used','!=',1)->with('Customer')->first();
+        $start_date = strtotime($filter['startDate']);
+        $end_date = strtotime($filter['endDate']);
 
-            $start_date = strtotime($info->start_date);
-            $end_date = strtotime($info->end_date);
+        $customer = [];
+        $customer2 = [];
+        if($filter['customer_group_id'] != '')
+            $customer = customer::leftJoin('customer_groups', function($join) {
+                $join->on('customer_groups.id', '=', 'customer.customer_group_id');
+            })->where('customer_group_id',$filter['customer_group_id'])->lists('customerId');
 
-            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20])->where('customerId',$info->customerId)->get();
+        if($filter['customerId'] != ''){
+            $customer2 = explode(",", $filter['customerId']);
+        }
 
+        if(count($customer2)>0){
+                for($i = 0; $i < count($customer2); $i++){
+                    $rules['customerId.' . $i] = 'exists:customer,customerId';
+                    $messages = ['exists' => 'Customer ID:'.$customer2[$i].' does not exists.'];
+                }
+
+                $arr = ['customerId'=>$customer2];
+
+                $validator = Validator::make($arr, $rules,$messages);
+                $errorMessage['error'] = '';
+                if ($validator->fails())
+                {
+                    $info = $validator->messages()->all();
+                    foreach($info as $a)
+                    {
+                        $errorMessage['error'] .= "$a\n";
+                    }
+                     return $errorMessage;
+
+                }
+        }
+
+        $customerId = array_merge($customer, $customer2);
+
+
+
+        if($mode  == 'processCustomer'){
+
+            $sum = 0;
+
+          //  $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->with('client')->get();
+            $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
 
 
             foreach ($invoice_info as $v){
-                if($v['paid']>0)
-                    $v['amount'] -= $v['paid'];
-                $info['sum']+=$v['amount'];
+                if($v['paid']>0){
+                    if($v['invoiceStatus']==98)
+                        $v['amount'] = ($v['amount']*-1) - $v['paid'];
+                    else
+                        $v['amount'] -= $v['paid'];
+                }
+                $v['realAmount'] = $v['realAmount'] - $v['paid'];
+                $v['customer_name'] = $v['customer_name'];
+                $sum += ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
             }
-
-            return Response::json($info);
-
-        }
-
-        if ($mode == 'invoice'){
-
-            // pd(Input::all());
-
-            $check_amount = Input::get('amount');
-
-            $start_date = strtotime(Input::get('start_date'));
-            $end_date = strtotime(Input::get('end_date'));
-
-            /*  Paginator::setCurrentPage((Input::get('start')+20) / Input::get('length'));
-
-              $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-
-              $invoice = Invoice::with('invoiceItem')->whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->paginate($page_length);
-  */
-
-            $invoice = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->where('customerId',Input::get('customerId'))->wherein('invoiceStatus',[2,20])->OrderBy('deliveryDate')->get();
-
-
-            foreach($invoice as $c)
-            {
-                $c->amount = $c->amount - $c->paid;
-
-                if($check_amount >= $c->amount){
-                    $c->settle= $c->amount;
-                }else
-                    $c->settle= $check_amount;
-
-                $check_amount -= $c->amount;
-                if($check_amount < 0) $check_amount = 0;
-
-            }
+            $invoice['data'] = $invoice_info;
+            $invoice['sum'] = $sum;
 
             return Response::json($invoice);
-        }
-
-        if($mode == 'posting'){
-            $paid = Input::get('paid');
-
-
-            $set_amount =0;
-            foreach ($paid as $k=>$v){
-                $i = Invoice::where('invoiceId',$v['id'])->first();
-                $i->paid += $v['settle'];
-                $set_amount += $v['settle'];
-                if($i->amount == $i->paid || $v['discount'] == 1)
-                    $i->invoiceStatus = 30;
-                $i->discount = $v['discount'];
-                $i->save();
-            }
-
-            $cheque_id = Input::get('cheque_id');
-            $p = Payment::find($cheque_id);
-            $p->remain = $p->remain-$set_amount;
-            if($p->remain == 0)
-                $p->used = 1;
-            $p->save();
 
 
         }
 
-        if($mode == 'del'){
-            $cheque_id = Input::get('cheque_id');
-            $p =Payment::find($cheque_id);
-            $p->delete();
+    }
+
+
+    public function getClientClearance(){
+        $mode = Input::get('mode');
+
+
+        if($mode == 'single')
+        {
+
+
+            $payment = Payment::where('id',Input::get('cheque_id'))->with('invoice')->first();
+
+
+    foreach($payment->invoice as $vv){
+      $vv->customerName = $vv->customer_name;
+
+    }
+
+
+
+            $vv = $payment;
+
+                $c = explode(',',$vv->customerId);
+            if($vv->groupId != 0)
+                $cc = customer::whereIn('customerId',$c)->orwhere('customer_group_id',$vv->groupId)->get();
+            else
+                $cc = customer::whereIn('customerId',$c)->get();
+
+          $final['payment'] = $payment;
+            $final['customer']  = $cc;
+
+
+            return Response::json($final);
+
         }
-
-
 
         if($mode == 'getChequeList')
         {
+
+
             $filter = Input::get('filterData');
-            Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-            $customer = Payment::select('*');
-
-
+            $payments = Payment::select('payments.id as id','ref_number','start_date','end_date','customerId','groupId','amount','remain');
             //cheque status
             if($filter['status'] != 2)
             {
-                $customer->where('used', $filter['status']);
+                $payments->where('used', $filter['status']);
             }
 
 
-            // client id
-            if($filter['clientId'])
-            {
-                $customer->where('customerId', $filter['clientId']);
-            }
 
-            $permittedZone = explode(',', Auth::user()->temp_zone);
+            if($filter['ChequeNumber'] == '' && $filter['clientId'] == '' && $filter['groupName'] == '')
+            $payments->where('start_date', '>=',$filter['deliverydate'])->where('end_date','<=',$filter['deliverydate2']);
+else{
+    if($filter['groupName'] != ''){
+        $payments->leftJoin('customer_groups', function($join) {
+            $join->on('customer_groups.id', '=', 'payments.groupId');
+        })->where('customer_groups.name','LIKE','%'.$filter['groupName'].'%');
+    }else{
+            $payments->where('ref_number','Like',$filter['ChequeNumber'].'%')
+            ->where('customerId','Like','%'.$filter['clientId'].'%');
+    }
+}
+            /*
+          // client id
+          if($filter['clientId']!='')
+          {
+              $customer->where('customerId', $filter['clientId']);
+          }
 
-            if($filter['zone'] != '')
+
+             $permittedZone = explode(',', Auth::user()->temp_zone);
+
+           if($filter['zone'] != '')
             {
                 $customer->where('deliveryZone', $filter['zone']['zoneId']);
             }else{
                 $customer->whereIn('deliveryZone',$permittedZone);
-            }
+            }*/
+
+            $payments = $payments->OrderBy('start_date','desc');
 
 
-            // query
+           $p = $payments->get();
 
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $customer = $customer->with('Customer')->paginate($page_length);
+            $arr = [];
+            $arr1 = [];
+$arr2 = [];
+           foreach($p as $vv){
+
+               if(!isset($arr[$vv->id]))
+                   $arr[$vv->id] = '';
+               if(!isset($arr1[$vv->id]))
+                   $arr1[$vv->id] = '';
+
+                   $c = explode(',',$vv->customerId);
+                    $cc = customer::whereIn('customerId',$c)->get();
+
+               if(count($cc) < 1){
+                   $arr[$vv->id] ='';
+                   $arr1[$vv->id] = '';
+               }
+
+                   foreach ($cc as $g){
+                       $arr[$vv->id] .= $g->customerName_chi.'<br/>';
+                       $arr1[$vv->id] .= $g->customerId.'<br/>';
+                   }
+
+                   if(!isset($arr2[$vv->id]))
+                       $arr2[$vv->id] = '';
+                   $cc1 = customerGroup::find($vv->groupId);
+                    if(count($cc1) < 1)
+                        $arr2[$vv->id] = '';
+               else
+                   $arr2[$vv->id] = $cc1->name;
+
+           }
 
 
-            foreach($customer as $c)
+
+            return Datatables::of($payments)
+
+                ->addColumn('link', function ($payment) {
+                return '<span onclick="viewCheque(\''.$payment->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+            })
+                ->addColumn('customName', function ($user) use($arr) {
+                    return $arr[$user->id];
+                })->addColumn('customID', function ($user) use($arr1) {
+                    return $arr1[$user->id];
+                })->addColumn('customGroup', function ($user) use($arr2) {
+                    return $arr2[$user->id];
+                })->make(true);
+
+
+          /*  foreach($customer as $c)
             {
-                if($c->used == true)
-                    $c->link = '已處理';
-                else
-                    $c->link = '<span onclick="processCheque(\''.$c->id.'\')" class="btn btn-xs default"><i class="glyphicon glyphicon-cog"></i> 處理</span>';
-                $c->delete = '<span onclick="delCheque(\''.$c->id.'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
-            }
+                if($c->used == true){
+                   // $c->link = '已處理';
+                   // $c->delete = '不可刪除';
+                }else{
+                   // $c->link = '<span onclick="processCheque(\''.$c->id.'\')" class="btn btn-xs default"><i class="glyphicon glyphicon-cog"></i> 處理</span>';
+                  //  $c->delete = '<span onclick="delCheque(\''.$c->id.'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+                }
+            }*/
 
-            return Response::json($customer);
+
         }
 
 

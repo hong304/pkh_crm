@@ -60,7 +60,6 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
 
         $("#generalPickingModal").modal({backdrop: 'static'});
 
-
     }
 
     $scope.updateZone = function(){
@@ -91,6 +90,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
     }
 
     $scope.submitStaffForm = function(){
+
         $scope.filterData = {
             'deliveryDate' : '',
             'zone' : {
@@ -103,7 +103,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         }
         $scope.filterData.deliveryDate = $scope.picking.date;
         $scope.filterData.zone.value = $scope.picking.zone.zoneId;
-        $scope.filterData.zone.label = $scope.picking.zone.label;
+        $scope.filterData.zone.label = $scope.picking.zone.zoneName;
         $scope.filterData.shift.value = $scope.picking.shift;
 
       /*  $http.post(iutarget, {info: $scope.version, mode : 'check'})
@@ -114,7 +114,7 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
                         $("#generalPickingModal").modal('hide');
                         $http.post(iutarget, {info: $scope.picking, mode : 'post'})
                             .success(function(res, status, headers, config){
-                                $scope.picking = true;
+                                $scope.picking_gen = true;
                                 if(res == 'true'){
                                     var queryObject = {
                                         filterData	:	$scope.filterData,

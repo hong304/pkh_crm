@@ -2,11 +2,9 @@
 
 class Payment extends Eloquent  {
 
-    public function Customer()
-    {
-        return $this->hasOne('Customer','customerId','customerId');
+    public function Invoice(){
+        return $this->belongsToMany('Invoice')->withPivot('amount','paid')->withTimestamps();
     }
-
 
 
 }

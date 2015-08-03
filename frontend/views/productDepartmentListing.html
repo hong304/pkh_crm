@@ -1,3 +1,10 @@
+<style>
+    #datatable_ajax_filter
+    {
+        display:none;
+    }
+</style>
+
 <form class="form-horizontal" role="form" id="queryInfo">
 	<div class="col-md-12">
 		<div class="row">
@@ -8,21 +15,27 @@
 							<i class="fa fa-cogs font-green-sharp"></i>
 							<span class="caption-subject font-green-sharp bold uppercase">設定列表</span>
 						</div>
-						<div class="actions">
-							<a href="javascript:;" ng-click="" class="btn btn-default btn-circle">
+                                                <div class="actions">
+							<a href="javascript:;" ng-click="addCategory()" class="btn btn-default btn-circle">
 							<i class="fa fa-plus"></i>
 							<span class="hidden-480"> 新增類別 </span> </a>					
+						</div>
+						<div class="actions">
+							<a href="javascript:;" ng-click="addDepartment()" class="btn btn-default btn-circle">
+							<i class="fa fa-plus"></i>
+							<span class="hidden-480"> 新增部門 </span> </a>					
 						</div>		
+                                               
 					</div>
 					<div class="portlet-body">
 						<table class="table table-striped table-bordered table-hover" id="datatable_ajax">
 						<thead>
 							<tr role="row" class="heading">
-								<th width="20%">部門ID </th>
-								<th width="20%">類別ID</th>
-								<th width="20%">部門名稱</th> 
-								<th width="20%">類別名稱</th> 
-								<th width="20%">&nbsp;</th>
+								<th class="productDepartmentId" ng-click="click($event);">部門ID </th>
+								<th class = "productGroupId" ng-click="click($event);">類別ID</th>
+								<th class = "productDepartmentName" ng-click="click($event);">部門名稱</th> 
+								<th class= "productGroupName" ng-click="click($event);">類別名稱</th> 
+								<th>&nbsp;</th>
 							</tr> 
 							
 						</thead>
@@ -36,5 +49,10 @@
 		</div>
 		
 	</form>
+
+<!-- Select Client Modal -->
+<div ng-include="'/views/productDepartmentForm.html'"></div>
+
+<div ng-include="'/views/productGroupForm.html'"></div>
 	
 </div>

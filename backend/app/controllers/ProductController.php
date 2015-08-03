@@ -3,9 +3,10 @@
 class ProductController extends BaseController {
 
     public $_shift = '';
+    public $message = "";
     public function jsonGetAllProduct()
     {
-       // $time_start = microtime(true);
+        // $time_start = microtime(true);
 
         $productList = Input::get('productList');
 
@@ -17,36 +18,36 @@ class ProductController extends BaseController {
 
         }
 
-       // $products = Cache::remember('AllProducts', 5, function() use($pa)
-     //   {
-            $products = Product::select('productId', 'productName_chi','productLocation',
+        // $products = Cache::remember('AllProducts', 5, function() use($pa)
+        //   {
+        $products = Product::select('productId', 'productName_chi','productLocation',
             'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPacking_size',
             'productPackingName_inner', 'productPackingName_unit', 'productPackingName_carton',
             'productPackingInterval_carton', 'productPackingInterval_inner', 'productPackingInterval_unit',
             'productMinPrice_carton', 'productMinPrice_inner', 'productMinPrice_unit',
             'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit','allowNegativePrice');
-        
-           $products->where('productStatus', 'o');
 
-            if(count($pa)>0){
-                $products->orwherein('productId',$pa);
-            }
-            $products = $products->get()->toArray();
+        $products->where('productStatus', 'o');
+
+        if(count($pa)>0){
+            $products->orwherein('productId',$pa);
+        }
+        $products = $products->get()->toArray();
 
 
-            // Switch to standard array
-            $products = Product::compileProductStandardForm($products);
+        // Switch to standard array
+        $products = Product::compileProductStandardForm($products);
 
-            // if customerid is given, get a compiled products json with customer discount information
-            //$products = Product::compileProductAddCustomerDiscount($products, Input::get('customerId'));
-            
+        // if customerid is given, get a compiled products json with customer discount information
+        //$products = Product::compileProductAddCustomerDiscount($products, Input::get('customerId'));
+
         //    return $products;
-     //   });
+        //   });
 
-       // $time_end = microtime(true);
+        // $time_end = microtime(true);
         //$time = $time_end - $time_start;
         //syslog(LOG_INFO, "Searched all products in $time seconds");
-        
+
         return Response::json($products);
     }
 
@@ -62,13 +63,37 @@ class ProductController extends BaseController {
         $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
         $this->_shift = (isset($filter['shift']) ? $filter['shift'] : '-1');
 
-        $invoices =  Invoice::select('invoice.invoiceId','deliveryDate','zoneId','customerName_chi','productName_chi','invoiceitem.productId','productPrice','productQty')->leftJoin('InvoiceItem', function($join) {
+
+
+        if($filter['name'] =='' && $filter['phone'] == ''&& $filter['customerId'] == ''){
+            $empty = true;
+            $this->data=[];
+        }else{
+            $empty = false;
+        }
+
+        $customers = Customer::where(function ($query) use ($filter) {
+            $query
+                ->where('customerName_chi', 'LIKE', $filter['name'] . '%')
+                ->where('phone_1', 'LIKE', $filter['phone'] . '%')
+                ->where('customerId', 'LIKE', $filter['customerId'] . '%');
+        })->lists('customerName_chi','customerId');
+
+        $invoices =  Invoice::select('invoice.invoiceId','deliveryDate','zoneId','customerId','productName_chi','invoiceitem.productId','productPrice','productQty','productUnitName')
+            ->leftJoin('InvoiceItem', function($join) {
                 $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
-            }) ->leftJoin('Customer', function($join) {
-                $join->on('Invoice.customerId', '=', 'Customer.customerId');
-            }) ->leftJoin('Product', function($join) {
+            })
+            //  ->leftJoin('Customer', 'Invoice.customerId', '=', 'Customer.customerId')
+
+
+            ->leftJoin('Product', function($join) {
                 $join->on('InvoiceItem.productId', '=', 'Product.productId');
             });
+
+        if(!$empty){
+            $invoices->wherein('customerId',array_keys($customers));
+        }
+
         if($zone != '-1')
             $invoices-> where('zoneId', $zone);
         else
@@ -77,79 +102,90 @@ class ProductController extends BaseController {
         if($this->_shift != '-1')
             $invoices->where('Invoice.shift',$this->_shift);
 
-        $invoices->where(function ($query) use ($filter) {
-            $query
-                ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
-                ->where('phone_1', 'LIKE', '%' . $filter['phone'] . '%')
-                ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
-        });
+
 
         $invoices->where(function ($query) use ($filter) {
             $query
-                ->where('Product.productId', 'LIKE', '%' . $filter['product'] . '%')
-                ->where('productName_chi', 'LIKE', '%' . $filter['product_name'] . '%');
+                ->where('Product.productId', 'LIKE', $filter['product'] . '%')
+                ->where('productName_chi', 'LIKE', $filter['product_name'] . '%');
         });
 
-       $invoices->whereBetween('Invoice.deliveryDate', [$data1,$data2]);
+        $invoices->whereBetween('Invoice.deliveryDate', [$data1,$data2]);
         $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+
+        /*    foreach($invoices->get()->toArray() as $v){
+                 $cid[]=$v['customerId'];
+              }*/
+
 
         $invoices = $invoices->paginate($page_length);
 
+
+
+        /*   $customers = Customer::wherein('customerId',$cid)->where(function ($query) use ($filter) {
+               $query
+                   ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
+                   ->where('phone_1', 'LIKE', '%' . $filter['phone'] . '%')
+                   ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
+           })->lists('customerName_chi','customerId');*/
+
+
         foreach ($invoices as $invoice) {
             $invoice->id = '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';
+            $invoice->customerName_chi = $customers[$invoice->customerId];
         }
 
         return Response::json($invoices);
 
     }
-    
+
     public function jsonGetProductsfromGroup()
     {
         $time_start = microtime(true);
-        
+
         $departmentid = Input::get('departmentid');
         $groupid = Input::get('groupid');
         $productcode_prefix = $departmentid . '-' . $groupid;
         $products = Cache::remember('Products_' . $productcode_prefix, 5, function() use($departmentid,$groupid)
         {
             $products = Product::select('productId', 'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPacking_size', 'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit', 'productName_chi')
-                                ->where('department', $departmentid)
-                                ->where('group',$groupid)
-                                ->where('productStatus', 'o')
-                                ->get();
+                ->where('department', $departmentid)
+                ->where('group',$groupid)
+                ->where('productStatus', 'o')
+                ->get();
             $products = $products->toArray();
-            
+
             return $products;
         });
-        
+
         $time_end = microtime(true);
         $time = $time_end - $time_start;
         syslog(LOG_INFO, "Searched all products in $time seconds");
-        
+
         return Response::json(array_chunk($products, 500)[0]);
     }
-    
+
     public function jsonGetProductGroups()
     {
         $json = [
             'groups' => ProductGroup::getInheritatedGroupList(),
         ];
-    
+
         return Response::json($json);
     }
-    
+
     public function jsonFindRecentProductsByCustomerId()
     {
         if(!Input::has('customerId'))
         {
             App::abort(500, 'Missing Customer Id.');
         }
-        
+
         $customerId = Input::get('customerId');
 
         $products = null;
-        
-        
+
+
         $invoices = Invoice::where('customerId', $customerId)->orderBy('deliveryDate', 'desc')->limit(20)->get();
 
 
@@ -158,14 +194,14 @@ class ProductController extends BaseController {
             $invoiceId[] = $invoice->invoiceId;
             $invoiceDetail[$invoice->invoiceId] = $invoice->toArray();
         }
-        
+
         if($invoices)
         {
             // get all items from invoices db
             $products = InvoiceItem::wherein('invoiceId', $invoiceId)
-                        ->orderBy('created_at', 'desc')
-                        ->with('productDetail')
-                        ->get();
+                ->orderBy('created_at', 'desc')
+                ->with('productDetail')
+                ->get();
             foreach($products as $product)
             {
 
@@ -182,7 +218,7 @@ class ProductController extends BaseController {
 
         return Response::json($productCustom);
     }
-    
+
     public function jsonSearchProductOrHotItem()
     {
         $keyword = Input::has('keyword') && Input::get('keyword') != '' ? Input::get('keyword') : 'na';
@@ -190,7 +226,7 @@ class ProductController extends BaseController {
         # Process
         if($keyword == 'na')
         {
-            
+
             $productData = "";
             if($customerId != 'na')
             {
@@ -201,28 +237,28 @@ class ProductController extends BaseController {
                     {
                         $productData[] = $i->product_detail->toArray();
                     }
-                    
+
                 }
             }
-             
+
         }
         else
         {
-            $keyword = str_replace('*', '%', $keyword); 
+            $keyword = str_replace('*', '%', $keyword);
             $productData = Product::select('productName_chi','productId')
                 ->where(function ($query) use ($keyword) {
                     $query->where('productName_chi', 'LIKE', '%' . $keyword . '%')
                         ->orwhere('productId', 'LIKE', '%' . $keyword . '%');
                 })->where('productStatus','o')
-                                    ->limit(30)->get();
-             
+                ->limit(30)->get();
+
         }
-        
+
         return Response::json($productData);
     }
 
 
-    
+
     public function jsonManiulateProduct()
     {
 
@@ -232,23 +268,24 @@ class ProductController extends BaseController {
             // p(Input::get('customer_id'));
             return [];
         }
+        if(Input::get('mode') == 'getNewId'){
+                  return Response::json(Product::select('pattern_key')->where('productId','LIKE',Input::get('groupPrefix').'%')->orderBy('pattern_key','desc')->limit(1)->lists('pattern_key')[0]+1);
+        }
 
 
         $i = Input::get('info');
 
         $cm = new ProductManipulation($i['productId'], (isset($i['group']['groupid']) ? $i['group']['groupid'] : false), (isset($i['productnewId']) ? $i['productnewId']: false));
-      //  $cm = new ProductManipulation($i['productId'], (isset($i['productId']) ? false : $i['group']['groupid']));
+        //  $cm = new ProductManipulation($i['productId'], (isset($i['productId']) ? false : $i['group']['groupid']));
         $id = $cm->save($i);
-        
+
         return Response::json(['mode'=>($i['productId'] == $id ? 'update' : 'create'), 'id'=>$id]);
     }
-    
-public function jsonQueryProduct()
+
+    public function jsonQueryProduct()
     {
-    
-    
         $mode = Input::get('mode');
-    
+
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');
@@ -263,7 +300,7 @@ public function jsonQueryProduct()
                     $query->where('productName_chi', 'LIKE', '%' . $keyword . '%')
                         ->orwhere('productId', 'LIKE', '%' . $keyword . '%');
                 });
-            } 
+            }
 
             if($filter['group'] != '')
             {
@@ -282,12 +319,12 @@ public function jsonQueryProduct()
             if($filter['productLocation'])
                 $product->where('productLocation', $filter['productLocation']);
 
-    
+
             $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
             $product = $product->orderBy('updated_at','desc')->paginate($page_length);
-    
+
             $product = $product->toArray();
-            
+
             foreach($product['data'] as $c)
             {
 
@@ -296,14 +333,14 @@ public function jsonQueryProduct()
                 }else{
                     $c['productStatus'] = '暫停';
                 }
-              //  $c['delete'] = '<span onclick="delCustomer(\''.$c['productId'].'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+                //  $c['delete'] = '<span onclick="delCustomer(\''.$c['productId'].'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
 
                 $c['link'] = '<span onclick="editProduct(\''.$c['productId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                 $products[] = $c;
             }
-            
+
             $product['data'] = $products;
-            
+
         }
         elseif($mode == 'single')
         {
@@ -311,45 +348,101 @@ public function jsonQueryProduct()
         }elseif($mode == 'checkId'){
             $product = Product::select('productId')->where('productId', Input::get('productId'))->first();
             $product = count($product);
+        }elseif($mode == 'getGroupPrefix'){
+            $pos = strpos(Input::get('group')['groupid'], '-');
+            $prefix = substr(Input::get('group')['groupid'],0,$pos);
+            return Response::json(DB::table('product')->select(DB::raw('DISTINCT SUBSTR(productId,1,1) as prefix'))->where('department',$prefix)->get());
         }
-    
+
         return Response::json($product);
     }
-    
+
     public function jsonQueryProductDepartment()
     {
-    
-    
+
         $mode = Input::get('mode');
-    
+        $sorting = "productDepartmentId";
+        $currentSorting = "";
+        $filterData = Input ::get('filterData');
+        if($filterData['sorting'] != "")
+        {
+            $sorting = $filterData['sorting'];
+        }
+        $currentSorting = $filterData['current_sorting'];
+
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');
-            Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-            $product = ProductGroup::select('*');
-    
-    
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $product = $product->paginate($page_length);
-    
-            $product = $product->toArray();
-    
-            foreach($product['data'] as $c)
-            {
-    
-                $c['link'] = '<span onclick="editProduct(\''.$c['productDepartmentId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
-                $products[] = $c;
-            }
-    
-            $product['data'] = $products;
-    
+            $product = ProductGroup::select('*')->orderBy($sorting,$currentSorting);
+
+              return Datatables::of($product)
+                ->addColumn('link', function ($produc) {
+                    return '<span onclick="editProductGroup(\''.$produc['productDepartmentId'].'\',\''.$produc['productGroupId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                })
+                ->make(true);
+
         }
         elseif($mode == 'single')
         {
             $product = Product::where('productId', Input::get('productId'))->first();
+        }elseif($mode == 'dropdown')
+        {
+            $product = ProductGroup::distinct()->select('productDepartmentId','productDepartmentName')->get()->toArray();
+        }elseif($mode == 'queryItemInfo')
+        {
+            $info = Input :: get('info');
+            $product = ProductGroup :: select('*')->where('productDepartmentId',$info['productDepartmentId'])->where('productGroupId',$info['productGroupId'])->first();
         }
-    
+
         return Response::json($product);
     }
     
+    public function jsonManProductDepartment()
+    {
+        $gpObject = Input::get('info');
+        $departmentId = (!$gpObject['productDepartmentId'] == "") ? $gpObject['productDepartmentId'] :false ;
+        $groupId = (!$gpObject['productGroupId'] == "") ? $gpObject['productGroupId'] : false;
+        $gp = new ProductGroupManipulation($departmentId,$groupId,$gpObject);
+       
+       if(empty($this->validation($gpObject)))
+       {
+           $id = $gp->save($gpObject);
+           return Response::json(['id' => $gp]);
+       }else
+       {
+            $errorMessage = "";
+          //  foreach($this->message as $a)
+          //  {
+           //     $errorMessage .= "$a\n";
+          //  }
+            return $this->message;
+       }
+        
+    }
+    
+       public function validation($e)
+    {
+        $rules = [
+	            'productDepartmentId' => 'required',
+	            'productGroupName' => 'required',
+                  //  'productGroupId' => 'required',
+                //    'productDepartmentName' => 'required',
+	        ];
+         
+      
+         $validator = Validator::make($e, $rules);
+	 if ($validator->fails())
+	  {
+             $this->message = "請輸入所需信息";
+	       //$this->message = $validator->messages()->all();
+               //
+	           // return Redirect::action('UserController@authenticationProcess')->with('flash_error', 'Invalid Credential. Please try again');
+	  }
+       
+          return $this->message;
+          
+    }
+    
+
+
 }

@@ -24,6 +24,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     var fetchDataTimer;
     var querytarget = endpoint + '/queryInvoice.json';
     var reprint = endpoint + '/rePrint.json';
+
     $scope.invoicepaid= [];
     $scope.invoiceStructure = {
           'paid' : ''
@@ -37,6 +38,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         'created_by'	:	'0',
         'invoiceNumber' :	''
     };
+
+    /*
     var yday;
     var year;
     var month;
@@ -105,6 +108,41 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     $scope.filterData.deliverydate = year+'-'+month+'-'+yday;
     $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
         });
+
+    */
+
+
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 3 : 2;
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
+
+    var ymonth = start_date.getMonth() + 1;
+    var yyear = start_date.getFullYear();
+    var yday = start_date.getDate();
+
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+
+
+    $("#deliverydate").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
+
+    $("#deliverydate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
+    $scope.filterData.deliverydate = yyear+'-'+ymonth+'-'+yday;
+    $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
+
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
     });
@@ -299,8 +337,6 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     		$("#productDetails").modal({backdrop: 'static'});
 
     	});
-
-
     }
 
     // -- unload invoice modal
@@ -348,6 +384,9 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     	}
     }
 
+    $scope.genA4Invoice = function(invoiceId){
+        window.open(endpoint + "/genA4Invoice.json?invoiceId=" + invoiceId);
+    }
 
     $scope.rePrintInvoice = function(invoiceId)
     {
@@ -414,13 +453,14 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
             dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options 
 
 
-                "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
+                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
 
                 "lengthMenu": [
                     [20, 50],
                     [20, 50] // change per page values here
                 ],
                 "pageLength": 50, // default record count per page
+
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
@@ -443,19 +483,18 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                     }
                 },
                 "columns": [
-                    { "data": "id" },
-                    { "data": "deliveryDate_date" },
-                    { "data": "zoneId" },
-                    { "data": "client.customerName_chi" },
-                    { "data": "amount" },
-                    { "data": "version" },
-                    { "data": "invoiceStatusText" },
-
-                    { "data": "shiftText" },
-                    { "data": "laststaff.name" },
-                    { "data": "createdat_full" },
-                    { "data": "updated_at" },
-                    { "data": "link" }
+                    { "data": "id", "width":"8%" },
+                    { "data": "deliveryDate_date", "width":"7%" },
+                    { "data": "zoneId", "width":"5%" },
+                    { "data": "client.customerName_chi",  "width":"15%"},
+                    { "data": "amount", "width":"5%" },
+                    { "data": "version", "width":"7%" },
+                    { "data": "invoiceStatusText", "width":"6%" },
+                    { "data": "shiftText", "width":"6%" },
+                    { "data": "laststaff.name", "width":"8%" },
+                    { "data": "createdat_full",  "width":"13%" },
+                    { "data": "updated_at",  "width":"13%" },
+                    { "data": "link", "width":"5%" }
 
 
                 ],

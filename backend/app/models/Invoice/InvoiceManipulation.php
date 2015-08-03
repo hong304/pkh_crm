@@ -340,7 +340,7 @@ class InvoiceManipulation {
                 }
 
                 //update last item price
-                if($this->temp_invoice_information['status'] != '98' && $this->temp_invoice_information['status'] != '96'){
+                if($this->temp_invoice_information['status'] != '98' && $this->temp_invoice_information['status'] != '96' && $i['deleted'] == '0'){
 
                     $lastitem = lastitem::where('customerId',$this->im->customerId)->where('productId',$i['productId'])->first();
                     if($lastitem==null){
@@ -359,6 +359,7 @@ class InvoiceManipulation {
                         $lastitem->price = $i['productPrice'];
                         $lastitem->qty = $i['productQty'];
                         $lastitem->discount = $i['productDiscount'];
+                        $lastitem->updated_at = time();;
                     }
                     $lastitem->save();
                 }
@@ -428,8 +429,8 @@ class InvoiceManipulation {
         foreach($files as $f)
         {
             $file['deliveryDate'][$j] = $f['deliveryDate'];
-           // $file['print_storage'][$j] = $f['filename'];
-            $file['print_storage'][$j] = $f['fullpath'];
+           $file['print_storage'][$j] = $f['filename'];
+          //  $file['print_storage'][$j] = $f['fullpath'];
             $j++;
         }
 

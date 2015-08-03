@@ -127,7 +127,7 @@ $scope.totalline = 0;
            $scope.qty = [];
                 var i = 0;
                 $scope.report.forEach(function(item) {
-                    if(item.qty == item.org_qty)
+                    if(item.qty == item.org_qty && item.self_enter == 0)
                         item.qty = '';
                     $scope.qty[i] = $.extend(true, {}, $scope.invoiceStructure);
                     $scope.qty[i]['id'] = item.id;

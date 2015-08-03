@@ -3,8 +3,8 @@
 class GroupController extends BaseController {
 
     public function checkGroup(){
-        $filter = Input::get('filterData');
-        return Response::json(customerGroup::where('name','LIKE',$filter['name'])->get());
+        $filter = Input::get('client_keyword');
+        return Response::json(customerGroup::where('name','LIKE','%'.$filter['keyword'].'%')->where('id','LIKE','%'.$filter['id'].'%')->get());
 }
 
     public function jsonManiulateGroup()

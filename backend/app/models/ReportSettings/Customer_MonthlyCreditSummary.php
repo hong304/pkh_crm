@@ -13,7 +13,7 @@ class Customer_MonthlyCreditSummary {
 
     private $_reportMonth = '';
 
-    private $_acc = 0;
+    private $_acc = [];
      
     public function __construct($indata)
     {
@@ -73,13 +73,15 @@ if(!$empty){
                 ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
                 ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
-        })->where('paymentTerms',2)->OrderBy('deliveryDate')->get();
+        })->where('paymentTerms',2)->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
 
 
             foreach($invoices as $invoice)
             {
                 if($invoice->deliveryDate < $this->_date1){
-                    $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid);
+                    if(!isset($this->_acc[$invoice->customerId]))
+                        $this->_acc[$invoice->customerId] = 0;
+                    $this->_acc[$invoice->customerId] += $invoice->realAmount-$invoice->paid;
                 }elseif($invoice->deliveryDate >= $this->_date1){
                     $customerId = $invoice->customerId;
                     $this->_unPaid[$customerId]['customer'] = [
@@ -91,14 +93,15 @@ if(!$empty){
                        'account_contact' => $invoice['client']->account_contact,
 
                     ];
-                    $this->_unPaid[$customerId]['breakdown'][] = [
-                        'invoiceDate' => $invoice->invoiceDate,
-                        'invoice' => $invoice->invoiceId,
-                        'customerRef' => $invoice->customerRef,
-                        'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->amount ,
-                        'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
-                        'accumulator' => $this->_acc += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
-                    ];
+                    if($invoice->amount != $invoice->paid || $invoice->invoiceStatus == '98')
+                        $this->_unPaid[$customerId]['breakdown'][] = [
+                            'invoiceDate' => $invoice->invoiceDate,
+                            'invoice' => $invoice->invoiceId,
+                            'customerRef' => $invoice->customerRef,
+                            'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->amount ,
+                            'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
+                            'accumulator' => $this->_acc[$invoice->customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
+                        ];
                 }
             }
 
@@ -273,12 +276,12 @@ if(!$empty){
                     {
                         $customerId = $invoice->customerId;
                         $this->_monthly[$i][$customerId][]= [
-                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
+                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-$invoice->paid
                         ];
-
                     }
-
                 }
+
+          //  pd($this->_monthly);
 
             $pdf->AddPage();
             $this->generateHeader($pdf);
@@ -300,7 +303,7 @@ if(!$empty){
             $pdf->Cell(0, 0, "Tel:", 0, 0, "L");
             
             $pdf->SetFont('chi', '', 14);
-            $pdf->setXY(50, $y+20);
+            $pdf->setXY(40, $y+20);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_tel']), 0, 0, "L");
             
             $pdf->SetFont('chi', '', 14);
@@ -308,7 +311,7 @@ if(!$empty){
             $pdf->Cell(0, 0, "Fax:", 0, 0, "L");
             
             $pdf->SetFont('chi', '', 14);
-            $pdf->setXY(100, $y+20);
+            $pdf->setXY(90, $y+20);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_fax']), 0, 0, "L");
 
             $pdf->SetFont('chi', '', 14);

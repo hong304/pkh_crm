@@ -263,10 +263,10 @@ $debug = 0;
                 'row_interval' => 50, //(400 / $max_item_per_section),
             ];
 
-            $line_total = 1480;
+            $line_total = 1520;
             foreach($sections_items as $check){
                if($check['productDiscount'] > 0)
-                   $line_total = 1480;
+                   $line_total = 1520;
             }
 
             foreach($sections_items as $item)
@@ -309,18 +309,19 @@ $debug = 0;
                     $i['amount'] *= -1;
                     $item['productQty'] *= -1;
             }
-                $qty_text = $item['productQty'] . ' ' .str_replace(' ', '', $item['productInfo']['productPackingName_' . $item['productQtyUnit']]);
-                $this->image[$p]->text($qty_text, 1080, $position['y'], function($font) use($font_file) {
+                $qty_text = number_format($item['productQty'],1,'.','') . ' ' .str_replace(' ', '', $item['productInfo']['productPackingName_' . $item['productQtyUnit']]);
+                $this->image[$p]->text($qty_text, 1176, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
+                    $font->align('right');
                 });
 
                 /*
                  * Add Product Price
                 */
                 $price = round($item['productPrice'],1);
-                $this->image[$p]->text('$'.number_format($price,2,'.',','), 1310, $position['y'], function($font) use($font_file) {
+                $this->image[$p]->text('$'.number_format($price,1,'.',','), 1310, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
@@ -413,11 +414,11 @@ if($i['invoiceDiscount'] > 0){
 
 
 
-            $fullpath = public_path($filename);
+           // $fullpath = public_path($filename);
 
             $filenames[$page]['filename'] = $filename;
             $filenames[$page]['deliveryDate'] =  $this->deliveryDate;
-            $filenames[$page]['fullpath'] = $fullpath;
+           // $filenames[$page]['fullpath'] = $fullpath;
 
 
             if (!file_exists(public_path() . '/'.date('Y-m', $this->deliveryDate)))
@@ -426,7 +427,7 @@ if($i['invoiceDiscount'] > 0){
                 mkdir(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate), 0777, true);
             $i->save(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate).'/'.$filename);
 
-            $i->save($fullpath);
+            //$i->save($fullpath);
             $i->destroy();
 
 

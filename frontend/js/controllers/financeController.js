@@ -9,6 +9,15 @@ function processCheque(id)
     });
 }
 
+function viewCheque(cheque_id)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.viewCheque(cheque_id);
+
+    });
+}
+
 function delCheque(id)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
@@ -46,9 +55,9 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
 
     var intarget = endpoint + '/addCheque.json';
     var query = endpoint + '/querryClientClearance.json';
+    var getClearance = endpoint + '/getClearance.json';
 
-
-
+var fetchDataTimer = '';
     $scope.invoice = [];
     var today = new Date();
     var day = today.getDate();
@@ -66,16 +75,52 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
         'discount' : ''
     }
 
+    $scope.chequeDetails = [];
+
     $scope.filterData = {
         'displayName'	:	'',
-        'clientId'		:	'0',
-        'zone'			:	'',
-        'status'        :   ''
+        'customerId'		:	'',
+        'clientId' : '',
+        'customer_group_id' : '',
+        'status'        :   '2',
+        'bankCode' : '003',
+        'deliverydate': '',
+        'deliverydate2' : '',
+        'ChequeNumber' : '',
+        'groupName' : '',
+
     };
 
-    $scope.cheque = {
-        'bankCode' : '003'
-    }
+
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 3 : 2;
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
+
+    var ymonth = start_date.getMonth() + 1;
+    var yyear = start_date.getFullYear();
+    var yday = start_date.getDate();
+
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+
+    $("#deliverydate").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
+
+    $("#deliverydate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
+    $scope.filterData.deliverydate = yyear+'-'+ymonth+'-'+yday;
+    $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
@@ -87,8 +132,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
             $scope.psuccess = true;
         }
 
-
-        if($location.search().action == 'process'){
+        else if($location.search().action == 'process'){
             $scope.getPaymentInfo('invoice');
         }else if($location.search().action == 'newCheque'){
               $('.date-picker').datepicker({
@@ -107,6 +151,11 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     });
 
 
+    $scope.$on('handleCustomerUpdate', function(){
+        $scope.filterData.clientId = SharedService.clientId;
+        $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
+        $scope.getChequeList();
+    });
 
 
     $scope.$watch(function() {
@@ -119,68 +168,110 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     $scope.$on('handleCustomerUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
 
-        $scope.filterData.clientId = SharedService.clientId;
-        $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
-        $scope.filterData.zone = '';
+       // $scope.filterData.clientId = SharedService.clientId;
+      //  $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
+        $scope.filterData.customer_group_id = SharedService.GroupId;
+        $scope.filterData.groupname = SharedService.GroupName;
+        //$scope.filterData.zone = '';
         $scope.getChequeList();
 
         Metronic.unblockUI();
     });
 
-    $scope.submitCheque = function()
+    $scope.viewCheque = function(cheque_id)
     {
+        Metronic.blockUI();
+        $http.post(query, {mode: "single", cheque_id: cheque_id})
+            .success(function(res, status, headers, config){
+                $scope.chequeDetails = res.payment;
+                $scope.chequeCustomers = res.customer;
 
-            $scope.cheque.clientId = $scope.filterData.clientId;
+                Metronic.unblockUI();
+                $("#chequeDetails").modal({backdrop: 'static'});
+
+            });
+    }
+
+    $scope.clearGroup = function(){
+        $scope.filterData.customer_group_id = '';
+        $scope.filterData.groupname = '';
+    }
+
+    $scope.processCustomer = function()
+    {
+        $http.post(getClearance, {mode:'processCustomer',filterData:$scope.filterData})
+            .success(function(res, status, headers, config){
+
+                if(res.error){
+                    Metronic.alert({
+                        container: '#cheque_form', // alerts parent container(by default placed after the page breadcrumbs)
+                        place: 'prepend', // append or prepent in container
+                        type: 'danger',  // alert's type
+                        message: '<span style="font-size:16px;">'+res.error + '</strong></span>',  // alert's message
+                        close: true, // make alert closable
+                        reset: true, // close all previouse alerts first
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 0, // auto close after defined seconds
+                        icon: '' // put icon before the message
+                    });
+                }else{
+
+
+
+                $scope.payment = res;
+                $scope.invoiceinfo = res.data;
+                var i = 0;
+                $scope.invoiceinfo.forEach(function(item) {
+                    $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
+                    $scope.invoicepaid[i]['settle'] = item.realAmount;
+                    $scope.invoicepaid[i]['id'] = item.invoiceId;
+                    i++;
+                });
+                $scope.updatePaidTotal();
+                }
+            });
+     //   $location.url("/finance-clientClearance?action=processCustomer");
+
+          /*  $scope.cheque.clientId = $scope.filterData.clientId;
 
             $http.post(intarget, {info: $scope.cheque})
                 .success(function(res, status, headers, config){
                    $location.url("/chequeListing?action=success");
-                 });
+                 });*/
 
 
     }
 
-    $scope.getPaymentInfo = function($mode){
-        $http.post(query, {payment_id: $location.search().id, mode:'payment'})
-            .success(function(res, status, headers, config){
-                $scope.payment = res;
-                $scope.updateDataSet($mode);
-            });
+    $scope.showselectgroup = function()
+    {
+        $("#selectGroupmodel").modal({backdrop: 'static'});
     }
+
+
+
 
     $scope.autoPost = function(){
-        if($scope.totalAmount > $scope.payment.remain) {
-            alert('輸入數目大於支票可用餘額');
-            return false;
-        }
+        if(!$scope.filterData.discount)
+            if($scope.totalAmount > $scope.filterData.amount) {
+                alert('輸入數目大於支票可用餘額');
+                return false;
+            }
         var data = $scope.invoicepaid;
         $http({
             method: 'POST',
-            url: query,
-            data: {paid:data,mode:'posting',cheque_id: $scope.payment.id}
-        }).success(function () {
-            $location.url("/chequeListing?action=psuccess");
+            url: intarget,
+            data: {paid:data,filterData: $scope.filterData}
+        }).success(function (res) {
+            if(res.length > 0)
+                alert(res);
+            else
+                $location.url("/chequeListing?action=psuccess");
         });
 
        // $scope.getPaymentInfo('autopost');
     }
 
-    $scope.updateDataSet = function($mode){
-        $http.post(query, {start_date: $scope.payment.start_date, end_date:$scope.payment.end_date,mode:$mode,customerId:$scope.payment.customerId, amount:$scope.payment.remain})
-            .success(function(res, status, headers, config){
 
-                $scope.invoiceinfo = res;
-               console.log(res);
-var i = 0;
-                res.forEach(function(item) {
-                    $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
-                    $scope.invoicepaid[i]['settle'] = item.settle;
-                    $scope.invoicepaid[i]['id'] = item.invoiceId;
-                    i++;
-                });
-                $scope.updatePaidTotal();
-            });
-    }
 
 $scope.updatePaidTotal = function(){
     $scope.totalAmount = 0;
@@ -189,7 +280,17 @@ $scope.updatePaidTotal = function(){
             $scope.totalAmount += Number(item.settle);
 
     });
+$scope.updateDiscount = function(){
 
+    var i = 0;
+    $scope.invoiceinfo.forEach(function(item){
+
+        $scope.invoicepaid[i]['settle']= Number(item.realAmount*$scope.filterData.discount);
+        $scope.invoicepaid[i]['discount'] = 1;
+i++;
+    });
+    $scope.updatePaidTotal();
+}
 
 }
     $scope.addCheque = function()
@@ -229,15 +330,28 @@ $scope.updatePaidTotal = function(){
     }
 
 
-    $scope.updateZone = function()
+    $scope.updateDelvieryDate = function()
     {
         $scope.getChequeList();
     }
+
+$scope.updateGroupName = function(){
+    fetchDataTimer = $timeout(function () {
+        $scope.getChequeList();
+    }, 500);
+
+}
 
     $scope.updateStatus = function()
     {
         $scope.getChequeList();
     }
+
+    $scope.updateChequeNumber = function()
+    {
+        $scope.getChequeList();
+    }
+
 
     $scope.clearCustomerSearch = function()
     {
@@ -250,44 +364,34 @@ $scope.updatePaidTotal = function(){
     {
 
 
+        $(document).ready(function() {
 
-        var grid = new Datatable();
-
-        //var info = grid.page.info();
-        if(!$scope.firstload)
-        {
-            $("#datatable_ajax").dataTable().fnDestroy();
-        }
-        else
-        {
-            $scope.firstload = false;
-        }
-        grid.init({
-            src: $("#datatable_ajax"),
-            onSuccess: function (grid) {
-                // execute some code after table records loaded
-
-            },
-            onError: function (grid) {
-                // execute some code on network or other general error
-            },
-            loadingMessage: 'Loading...',
-            dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options
+            if(!$scope.firstload)
+            {
+                $("#datatable_ajax").dataTable().fnDestroy();
+            }
+            else
+            {
+                $scope.firstload = false;
+            }
 
 
-                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
+            $('#datatable_ajax').dataTable({
 
-                "lengthMenu": [
-                    [10, 20, 50],
-                    [10, 20, 50] // change per page values here
-                ],
-                "pageLength": 20, // default record count per page
+                // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
+
+                "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
+
+                "bServerSide": true,
+
                 "ajax": {
                     "url": query, // ajax source
                     "type": 'POST',
                     "data": {mode: "getChequeList",filterData: $scope.filterData},
-                    "xhrFields": {withCredentials: true},
+                    "xhrFields": {withCredentials: true}
                 },
+                "iDisplayLength": 25,
+                "pagingType": "full_numbers",
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",
@@ -304,24 +408,22 @@ $scope.updatePaidTotal = function(){
                     }
                 },
                 "columns": [
-                    { "data": "customerId" },
-                    { "data": "customer.customerName_chi" },
-                    { "data": "ref_number" },
-                    { "data": "amount" },
-                    { "data": "remain" },
-                    { "data": "start_date" },
-                    { "data": "end_date" },
-                    { "data": "link" },
-                    { "data": "delete" }
+                    { "data": "customID","width":"10%" },
+                    { "data": "customName","width":"30%" },
+                    { "data": "customGroup","width":"10%" },
 
-                ],
+                    { "data": "ref_number","width":"10%" },
+                    { "data": "amount","width":"8%" },
+                    { "data": "remain","width":"8%" },
+                    { "data": "start_date","width":"8%" },
+                    { "data": "end_date","width":"8%" },
+                    { "data": "link","width":"8%" },
 
-                "order": [
-                    [1, "asc"]
-                ] // set first column as a default sort by asc
-            }
+
+                ]
+
+            });
         });
-
     }
 /*
     $scope.updateDataSet1 = function($mode)

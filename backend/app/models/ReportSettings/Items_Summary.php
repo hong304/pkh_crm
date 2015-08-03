@@ -27,8 +27,8 @@ class Items_Summary {
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_group = (isset($indata['filterData']['group']) ? $indata['filterData']['group'] : '');
-        $this->productId = ($indata['filterData']['productId']=='') ? '%' : $indata['filterData']['productId'];
-        $this->productName = ($indata['filterData']['productName']=='') ? '%' : $indata['filterData']['productName'];
+        $this->productId = ($indata['filterData']['productId']=='') ? '' : $indata['filterData']['productId'];
+        $this->productName = ($indata['filterData']['productName']=='') ? '' : $indata['filterData']['productName'];
         $this->_date1 = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_date2 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         // check if user has clearance to view this zone        
@@ -46,6 +46,14 @@ class Items_Summary {
 
         $filter = $this->_indata['filterData'];
 
+        if(strlen($this->_group) < 2 && strlen($filter['name']) < 4 && strlen($filter['phone']) < 4 && strlen($filter['customerId']) < 3 && $this->productId=='' && $this->productName==''){
+            $empty = true;
+            $this->data=[];
+        }else{
+            $empty = false;
+        }
+
+        if(!$empty){
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','20','30','98'])
             ->leftJoin('Customer', function($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
@@ -63,42 +71,46 @@ class Items_Summary {
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
         });
 
-        $invoicesQuery = $invoicesQuery->get();
-        $return_goods =[];
-        $normal_goods = [];
-        foreach($invoicesQuery as $v){
-            if($v->invoiceStatus == '98'){
-                $return_goods[] = $v->invoiceId;
-            }else{
-                $normal_goods[] = $v->invoiceId;
-            }
-        }
+                  $invoicesQuery = $invoicesQuery->lists('invoiceStatus','invoiceId');
 
 
-                $invoiceitems = InvoiceItem::select('InvoiceItem.productId',DB::raw('SUM(productQty) AS productQtys'),'productUnitName','productQtyUnit','productName_chi')->wherein('invoiceId',$normal_goods)
+         $return_goods =[];
+            $normal_goods = [];
+               foreach($invoicesQuery as $k=>$v){
+                   if($v == '98'){
+                       $return_goods[] = $k;
+                   }else{
+                       $normal_goods[] = $k;
+                   }
+               }
 
-                    ->leftJoin('Product', function($join) {
-                        $join->on('Product.productId', '=', 'InvoiceItem.productId');
-                    })->where('InvoiceItem.productId', 'LIKE', $this->productId)
-                    ->where('productName_chi', 'LIKE',$this->productName)
-                    ->groupBy('productId')->groupBy('productQtyUnit')
-                    ->get()->toArray();
 
-        if(count($return_goods)>0){
-            $invoiceitems_return = InvoiceItem::select('productId',DB::raw('SUM(productQty) AS productQtys'),'productUnitName','productQtyUnit')->wherein('invoiceId',$return_goods)->groupBy('productId')->groupBy('productQtyUnit')->get();
-                   foreach($invoiceitems as &$invoiceQ)
-                   {
-                       foreach($invoiceitems_return as $g){
-                           if($g->productId == $invoiceQ['productId'] && $g->productQtyUnit == $invoiceQ['productQtyUnit'] ){
-                               $invoiceQ['productQtys'] -= $g->productQtys;
-                           }
-                       }
-                      }
-                    }
+                              $invoiceitems = InvoiceItem::select('InvoiceItem.productId',DB::raw('SUM(productQty) AS productQtys'),DB::raw('SUM(productQty*ProductPrice) AS productAmount'),'productUnitName','productQtyUnit','productName_chi')->wherein('invoiceId',$normal_goods)
+
+                                     ->leftJoin('Product', function($join) {
+                                         $join->on('Product.productId', '=', 'InvoiceItem.productId');
+                                     })->where('InvoiceItem.productId', 'LIKE','%' .  $this->productId. '%')
+                                     ->where('productName_chi', 'LIKE','%' . $this->productName. '%')
+                                     ->groupBy('productId')->groupBy('productQtyUnit')
+                                     ->get()->toArray();
+
+                   if(count($return_goods)>0){
+                      $invoiceitems_return = InvoiceItem::select('productId',DB::raw('SUM(productQty) AS productQtys'),DB::raw('SUM(productQty*ProductPrice) AS productAmount'),'productUnitName','productQtyUnit')->wherein('invoiceId',$return_goods)->groupBy('productId')->groupBy('productQtyUnit')->get();
+                             foreach($invoiceitems as &$invoiceQ)
+                             {
+                                 foreach($invoiceitems_return as $g){
+                                     if($g->productId == $invoiceQ['productId'] && $g->productQtyUnit == $invoiceQ['productQtyUnit'] ){
+                                         $invoiceQ['productQtys'] -= $g->productQtys;
+                                         $invoiceQ['productAmount'] -= $g->productAmount;
+                                     }
+                                 }
+                                }
+                              }
 
        $this->data = $invoiceitems;
 
        return $this->data;
+        }
     }
     
     public function registerFilter()

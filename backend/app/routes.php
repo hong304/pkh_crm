@@ -85,6 +85,15 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/queryCustomer.json', 'CustomerController@jsonQueryCustomer');
     Route::post('/manipulateCustomer.json', 'CustomerController@jsonManiulateCustomer');
 
+	 //Supplier Maintenance
+    Route::post('/querySupplier.json', 'SupplierController@jsonQuerySupplier');
+    Route::post('/checkSupplier.json', 'SupplierController@jsonCheckSupplier');
+    Route::post('/maniSupplier.json', 'SupplierController@jsonUpdate');
+    //Route::post('/generateSupplier.json', 'SupplierController@generateId');
+    
+    //Po Maintenance
+    Route::post('/queryPo.json', 'PoController@jsonQueryPo');
+	
     // Group Maintenance
     Route::post('/queryGroup.json', 'GroupController@jsonQueryGroup');
     Route::post('/manipulateGroup.json', 'GroupController@jsonManiulateGroup');
@@ -97,10 +106,19 @@ Route::group(array('before' => 'auth'), function()
 
     
     Route::post('/queryProductDepartment.json', 'ProductController@jsonQueryProductDepartment');
+    Route::post('/manipulateProductDepartment.json', 'ProductController@jsonManProductDepartment');
     
     // Invoice Printing Maintenance
     Route::post('/queryIPF.json', 'IPFController@jsonQueryIPF');
     Route::post('/manipulateIPF.json', 'IPFController@jsonManiulateIPF');
+	
+	  // Country Maintenance
+    Route::post('/queryCountry.json', 'countryController@jsonQueryCountry');
+    Route::post('/manipulateCountry.json', 'countryController@jsonManiulateCountry');
+    
+     // Currency Maintenance
+    Route::post('/queryCurrency.json', 'currencyController@jsonQueryCurrency');
+    Route::post('/manipulateCurrency.json', 'currencyController@jsonManiulateCurrency');
     
     // Staff Maintenance
     Route::post('/queryStaff.json', 'UserController@jsonQueryStaff');
@@ -110,6 +128,7 @@ Route::group(array('before' => 'auth'), function()
     // Printer
     Route::any('/instantPrint.json', 'PrintQueueController@instantPrint');
     Route::any('/rePrint.json', 'PrintQueueController@rePrint');
+    Route::any('/genA4Invoice.json', 'ReportController@genA4Invoice');
     Route::any('/getAllPrintJobsWithinMyZone.json', 'PrintQueueController@getAllPrintJobsWithinMyZone');
     Route::any('/printSelectedJobsWithinMyZone.json', 'PrintQueueController@printSelectedJobsWithinMyZone');
     Route::any('/getInvoiceStatusMatchPrint.json', 'PrintQueueController@getInvoiceStatusMatchPrint');
@@ -123,6 +142,7 @@ Route::group(array('before' => 'auth'), function()
     // Payment
     Route::post('/addCheque.json','PaymentController@addCheque');
     Route::any('querryClientClearance.json','PaymentController@getClientClearance');
+    Route::any('getClearance.json','PaymentController@getClearance');
     Route::any('querryCashCustomer.json','PaymentController@querryCashCustomer');
 
     //Data analysis
@@ -135,6 +155,10 @@ Route::group(array('before' => 'auth'), function()
     Route::get('invoice','DataWarehouseController@getInvoice');
 
     Route::get('/getHoliday.json','OrderController@jsonHoliday');
+	
+	  //Supplier
+    Route::get('/getChoice.json','SupplierController@jsonChoice');
+    Route::get('/getCurrency.json','SupplierController@jsonCurrency');
 
 
 });
@@ -156,13 +180,18 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
-  $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
+    $i = Invoice::with('payment')->where('invoiceId','I1507-038823')->get();
+    pd($i);
+
+ /* $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
     foreach ($result as $v) {
         echo $v['deliveryDate_date'].":".$v['zoneText'].":".$v['count(*)']."<br>";
-   }
+   }*/
 
 });
 
+
+Route::get('/dashboard', 'SystemController@getDashboard');
 
 Route::get('/setZone', function(){
     $zoneid = Input::get('id');

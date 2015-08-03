@@ -17,6 +17,8 @@ class Report_DailySummary
     private $_sumcod = 0;
     private $_countcredit = 0;
     private $_countcod = 0;
+    private $_countcodreturn = 0;
+    private $_countcodreplace = 0;
 
 
     public function __construct($indata)
@@ -95,8 +97,10 @@ class Report_DailySummary
 
                         if ($invoiceQ['client']->paymentTermId == 2 && $invoiceQ->paymentTerms == 2) {
                             $this->_sumcredit -= $invoiceQ->amount;
+                            $this->_countcredit += 1;
                         } else {
                             $this->_sumcod -= $invoiceQ->amount;
+                            $this->_countcodreturn += 1;
                         }
 
 
@@ -129,7 +133,10 @@ class Report_DailySummary
                             $this->_countcredit += 1;
                         } else {
                             $this->_sumcod += $invoiceQ->amount;
-                            $this->_countcod += 1;
+                            if ($invoiceQ->invoiceStatus == '96')
+                                $this->_countcodreplace += 1;
+                            else
+                                $this->_countcod += 1;
                         }
 
                         foreach ($invoiceQ['invoiceItem'] as $item) {
@@ -208,6 +215,8 @@ class Report_DailySummary
         $this->data['sumcod'] = $this->_sumcod;
         $this->data['countcredit'] = $this->_countcredit;
         $this->data['countcod'] = $this->_countcod;
+        $this->data['countcodreturn'] = $this->_countcodreturn;
+        $this->data['countcodreplace'] = $this->_countcodreplace;
         // pd($this->data);
 
         return [$this->data];

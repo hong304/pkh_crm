@@ -134,6 +134,30 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 
     }
 
+    $scope.getGroupPrefix = function(){
+        $http.post(querytarget, {mode: "getGroupPrefix", group: $scope.info.group})
+            .success(function(res){
+                $scope.prefix = res;
+            });
+    }
+
+    $scope.getNewId = function(){
+        $http.post(iutarget, {mode: "getNewId", groupPrefix: $scope.info.groupPrefix})
+            .success(function(res){
+               if(res.length == 1)
+                    $scope.info.productnewId = $scope.info.groupPrefix+'00'+res;
+                else if(res.length == 2)
+                    $scope.info.productnewId = $scope.info.groupPrefix+'0'+res;
+                else if(res.length > 2){
+                   if(isNaN($scope.info.groupPrefix))
+                       $scope.info.productnewId = $scope.info.groupPrefix+res;
+                   else
+                       $scope.info.productnewId = res;
+               }
+                $scope.checkIdexist();
+            });
+    }
+
     $scope.editProduct = function(productId)
     {
     	$scope.newId = "";
@@ -168,7 +192,15 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			  }).indexOf(res.productStatus);
         	
         	$scope.info.productStatus = status[pos];
-    		
+
+
+
+                var pos = $scope.systeminfo.productgroup.map(function(e) {
+                    return e.groupid;
+                }).indexOf(res.department+'-'+res.group+'-');
+
+                $scope.info.group = $scope.systeminfo.productgroup[pos];
+
     		$("#productFormModal").modal({backdrop: 'static'});
     		/*
     		var pos = $scope.systeminfo.availableZone.map(function(e) { 

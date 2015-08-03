@@ -72,6 +72,11 @@ class VanSellController extends BaseController
         if ($this->_output == 'create') {
             $selfdefine = Input::get('selfdefine');
 
+            $debug = new debug();
+            $debug->content = 'SelfDefine - zoneId:'.$this->_zone."shift:".$this->_shift;
+            $debug->content .= json_encode($selfdefine);
+            $debug->save();
+
             vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define',true)->delete();
 
             foreach($selfdefine as $d){
@@ -100,15 +105,17 @@ class VanSellController extends BaseController
             $debug->content .= json_encode(Input::get('data'));
             $debug->save();
 
-            p(Input::get('data'));
-
             foreach (Input::get('data') as $v) {
               //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define',false)->where('id', $v['id'])->first();
-                if($v['value'] == '')
+
+                if($v['value'] === '' || is_null($v['value'])){
                     $savevansell->qty = $v['org_qty'];
-                else
+                    $savevansell->self_enter = 0;
+                }else{
                     $savevansell->qty = $v['value'];
+                    $savevansell->self_enter = 1;
+                }
 
                 $savevansell->save();
             }
@@ -245,7 +252,7 @@ class VanSellController extends BaseController
                     $create->shift = $this->_shift;
                     $create->save();
                 } else {
-                    if($vansell->qty==$vansell->org_qty)
+                    if($vansell->qty==$vansell->org_qty && $vansell->self_enter == 0)
                         $vansell->qty = $v['counts'];
                     $vansell->org_qty = $v['counts'];
                     $vansell->save();

@@ -1,0 +1,209 @@
+<div class="modal fade bs-modal-lg " id="supplierFormModal" data-ng-init="" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+                            <h4 class="modal-title">供應商管理 - (<span >最後修改日期:<font id="format_date"></font> 修改人:{{customerInfo_def.username}}</span><span>增加供應商</span>)</h4>
+			</div>
+			<div class="modal-body">
+				<form action="javascript:;" class="form-horizontal">
+					<div class="form-body">
+
+                        <div class="form-group" data-ng-if="customerInfo.customerId == ''">
+                            <label class="col-md-2 control-label">供應商編號*</label>
+                            <div class="col-md-2">
+                                <input type="text" ng-model="customerInfo.productnewId" class="form-control" placeholder="Enter text" ng-change="checkIdexist()">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label" data-ng-if="productIdused == true"><span style="color: red">供應商編號已被使用</span></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                           
+                         
+                        </div>
+                                                <div class="form-group">
+							<label class="col-md-2 control-label">供應商編號</label>
+							<div class="col-md-10">
+								<input type="text" id="supplierCode" ng-model="customerInfo_def.supplierCode" class="form-control" placeholder="Enter text" disabled = "true">
+                                                                
+							</div>
+						</div>
+                                            
+                                            <div class="form-group"  data-ng-if="systemInfo.permission.allow_edit == true">
+							<label class="col-md-2 control-label">國家</label>
+							<div class="col-md-10">
+                                                                <select class="form-control" 
+									ng-model="customerInfo_def.countryId" 
+									class="form-control" id="countrySelect">	
+                                                                        <option value="HK">香港</option>
+									<option value="US">美國</option>
+                                                                        <option value="AF">非洲</option>
+								</select>
+							</div>
+						</div>
+                                            
+						<div class="form-group" data-ng-if="systemInfo.permission.allow_edit == true">
+							<label class="col-md-2 control-label">名稱 * </label>
+							<div class="col-md-10">
+								<input type="text" id="address_cht" ng-model="customerInfo_def.supplierName" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">地址1</label>
+							<div class="col-md-10">
+								<input type="text"  ng-model="customerInfo_def.address" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+                                            
+                                            <div class="form-group">
+							<label class="col-md-2 control-label">地址2</label>
+							<div class="col-md-10">
+								<input type="text"  ng-model="customerInfo_def.address1" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						  <div class="form-group">
+							<label class="col-md-2 control-label">地址3</label>
+							<div class="col-md-10">
+								<input type="text"  ng-model="customerInfo_def.address2" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+					
+						<div class="form-group">
+							<label class="col-md-2 control-label">聯絡人 (1)</label>
+							<div class="col-md-10">
+								<input type="text"  ng-model="customerInfo_def.contactPerson_1" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">聯絡人 (2)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo_def.contactPerson_2" class="form-control" placeholder="Enter text">
+							</div>
+						</div>
+                                            
+                                            <div class="form-group"  data-ng-if="systemInfo.permission.allow_edit == true">
+							<label class="col-md-2 control-label">貨幣 *</label>
+							<div class="col-md-10">
+                                                                <select class="form-control" 
+									ng-model="customerInfo_def.currencyId" id ="currencyArea"
+									class="form-control">	
+       
+                                                                       <option value="HK">港幣</option>
+									<option value="US">美元</option>
+                                                                        <option value="AF">非元</option>
+								</select>
+                                                        </div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">電話 (1)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo_def.phone_1" class="form-control phone" placeholder="0">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-2 control-label">電話 (2)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo_def.phone_2" class="form-control phone" placeholder="0">
+							</div>
+						</div>
+                                            
+    
+                                            	<div class="form-group">
+							<label class="col-md-2 control-label">電郵</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo_def.email" class="form-control" placeholder="Enter text" id="emailAdd">
+							</div>
+						</div>
+                                            
+                                             <div class="form-group">
+							<label class="col-md-2 control-label"> 傳真 (1)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo_def.fax_1" class="form-control phone" placeholder="0">
+							</div>
+						</div>
+                                            
+                                             <div class="form-group">
+							<label class="col-md-2 control-label"> 傳真 (2)</label>
+							<div class="col-md-10">
+								<input type="text" ng-model="customerInfo_def.fax_2" class="form-control phone" placeholder="0">
+							</div>
+						</div>
+                                           
+						
+						<div class="form-group" data-ng-if="systemInfo.permission.allow_edit == true">
+							<label class="col-md-2 control-label">狀態 *</label>
+							<div class="col-md-10">
+								<select class="form-control" 
+									ng-model="customerInfo_def.status" 
+									 class="form-control">		
+                                                                        <option value="1">Normal</option>
+									<option value="2">Suspended</option>
+                                                                </select>
+							</div>
+						</div>
+                                            <div  id="cashPayment" data-ng-if="systemInfo.permission.allow_edit == true">
+						<div class="form-group" >
+							<label class="col-md-2 control-label">付款方式 * </label>
+							<div class="col-md-10">
+								<select ng-model="customerInfo_def.payment" class="form-control" id="paymentgg">
+									<option value="Cash">Cash</option>
+									<option value="Credit">Credit</option>
+								</select>
+							</div>
+						</div>
+                                            
+                                             <div class="form-group" id="creditDay">
+							<label class="col-md-2 control-label"> 數期</label>
+							<div class="col-md-10">
+								<input type="number" ng-model="customerInfo_def.creditDay" class="form-control phone"  placeholder="0" min="0" />
+							</div>
+						</div>
+                                            
+                                             <div class="form-group" id="creditLimit">
+							<label class="col-md-2 control-label"> 貸款額貨幣</label>
+							<div class="col-md-10">
+								<input type="number" ng-model="customerInfo_def.creditLimit" class="form-control phone"  placeholder="0" min="0"/>
+							</div>
+						</div>
+                                            
+                                            <div class="form-group" id="creditAmount">
+							<label class="col-md-2 control-label"> 貸款限額 </label>
+							<div class="col-md-10">
+								<input type="number" ng-model="customerInfo_def.creditAmount" class="form-control phone"  placeholder="0" min="0" />
+							</div>
+						</div>
+                                           </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">供應商備註 </label>
+                            <div class="col-md-10">
+                                <textarea class="form-control" placeholder="" id="remark" cols="50"  ng-model="customerInfo_def.remark">{{customerInfo.remark}}</textarea>
+                            </div>
+                        </div>
+
+
+                    </div>
+				</form>
+				
+			</div>
+						<div class="modal-footer">
+					<h2>{{newId}}</h2>
+					<button type="button" class="btn blue" data-ng-if="submitbtn == true" data-ng-click="submitCustomerForm();">提交</button>
+					<button type="button" class="btn default" data-ng-if="submitbtn == true" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>
+

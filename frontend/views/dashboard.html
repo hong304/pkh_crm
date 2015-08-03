@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col-md-12">
 
-         <div  ng-if="picking == true"  class="Metronic-alerts alert alert-danger fade in">
+         <div  ng-if="picking_gen == true"  class="Metronic-alerts alert alert-danger fade in">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
             <span style="font-size:16px;">備貨單已產生
             </span></div>
@@ -27,16 +27,14 @@
 
                         <a href="#" data-ng-click="generalPickingStatus();" class="icon-btn" style="margin-left:25px;"><i class="fa fa-plus" style="font-size:30px;"></i><div>產生9樓備貨單</div></a>
 						
-						<a href="/#/reportFactory?id=pickinglist" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>1樓備貨單</div></a>
+	                    <a href="/#/reportvansell" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>預載單</div></a>
 
-                        <a href="/#/reportFactory?id=pickinglist9f" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>9樓備貨單</div></a>
 
-                        <a href="/#/reportFactory?id=customerReport" data-ng-if="systemInfo.permission.sa_up == true" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>客戶分析</div></a>
+						<!--
+						        <a href="/#/reportFactory?id=productReport" data-ng-if="systemInfo.permission.sa_up == true" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>產品分析</div></a>
 
-                        <a href="/#/reportFactory?id=productReport" data-ng-if="systemInfo.permission.sa_up == true" class="icon-btn" style="margin-left:25px;"><i class="fa fa-list-ol" style="font-size:30px;"></i><div>產品分析</div></a>
-					
-					
-						<!-- <a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-tags" style="font-size:30px;"></i><div>產品</div></a>
+
+						<a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-tags" style="font-size:30px;"></i><div>產品</div></a>
 						
 						<a href="javascript:;" class="icon-btn" style="margin-left:25px;"><i class="fa fa-users" style="font-size:30px;"></i><div>客戶</div></a>
 						

@@ -27,6 +27,12 @@ class Invoice extends Eloquent  {
             unset($invoice->invoiceTotalAmount);
             unset($invoice->backgroundcode);
             unset($invoice->dueDateDate);
+            unset($invoice->paymentTermsText);
+            unset($invoice->realAmount);
+            unset($invoice->remain);
+
+
+
         });
 
 	    Invoice::updated(function($model)
@@ -231,6 +237,14 @@ class Invoice extends Eloquent  {
 
             //zone text
             $model->zoneText = Config::get('zoneName.'.$model->zoneId);
+            $model->paymentTermsText = ($model->paymentTerms==2)?'CREDIT':'COD';
+
+            if($model->invoiceStatus == 98)
+                $model->realAmount = $model->amount * -1;
+            else
+                $model->realAmount = $model->amount;
+
+            $model->remain = $model->amount-$model->paid;
 	        // calculate invoice total
 
 
@@ -246,7 +260,7 @@ class Invoice extends Eloquent  {
 
                 $model->invoiceTotalAmount = round($model->invoiceTotalAmount*((100-$model->invoiceDiscount)/100),1);
 	        }
-	        
+
 	    }
 	
 	
@@ -264,4 +278,13 @@ class Invoice extends Eloquent  {
 
 
     }
+
+    public function Payment(){
+        return $this->belongsToMany('Payment')->withPivot('amount','paid')->withTimestamps();
+    }
+
+    public function getCustomerNameAttribute(){
+        return $this->client->customerName_chi;
+    }
+
 }

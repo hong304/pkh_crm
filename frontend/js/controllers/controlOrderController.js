@@ -397,7 +397,7 @@ $scope.an = false;
                     $scope.order.dueDate = inf.dueDateDate;
                     $scope.order.status = inf.invoiceStatus;
 
-                    $scope.order.zoneId = res.deliveryZone;
+                    $scope.order.zoneId = inf.zoneId;
                     $scope.order.zoneName = data.entrieinfo;
                     $scope.order.route = res.routePlanningPriority;
                     $scope.order.discount = inf.invoiceDiscount;

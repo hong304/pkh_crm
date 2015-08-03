@@ -1,0 +1,178 @@
+<div class="modal fade bs-modal-lg" id="chequeDetails" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">支票資料</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption font-green-sharp">
+                                <i class="icon-speech font-green-sharp"></i>
+                                <span class="caption-subject bold uppercase">支票</span>
+											<span class="caption-helper"><span>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>支票號碼</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{chequeDetails.ref_number}}</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>入票日</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{chequeDetails.created_at  * 1000 | date: 'yyyy.MM.dd'}}</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>開始日</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{chequeDetails.start_date}}</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>支票總額</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{chequeDetails.amount}}</label>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>結束日期</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{chequeDetails.end_date}}</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>餘額</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{chequeDetails.remain}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="col-md-12 ">
+                    <!-- BEGIN Portlet PORTLET-->
+                    <div class="portlet light bordered">
+                        <div class="portlet-title tabbable-line">
+                            <div class="caption">
+                                <i class="icon-pin font-yellow-lemon"></i>
+										<span class="caption-subject bold font-yellow-lemon uppercase">
+										其他資料 </span>
+                                <span class="caption-helper"></span>
+                            </div>
+                            <ul class="nav nav-tabs">
+                                <li>
+                                    <a data-target="#portlet_tab2" data-toggle="tab">
+                                        客户資料 </a>
+                                </li>
+                                <li class="active">
+                                    <a data-target="#portlet_tab1" data-toggle="tab">
+                                        訂單資料 </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="portlet_tab1">
+                                    <div>
+                                        <!--<h4></h4>-->
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                            <tr role="row" class="heading">
+                                                <th width="10%">訂單號碼</th>
+                                                <th width="5%">客戶號碼</th>
+                                                <th width="20%">客戶名稱</th>
+                                                <th width="5%">總數</th>
+                                                <th width="7%">已付</th>
+                                                <th width="7%">支付日期</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr data-ng-repeat="i in chequeDetails.invoice" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+                                                <td>
+                                                    {{i.invoiceId}}
+                                                </td>
+                                              <!--  <td >
+                                                    {{invoiceinfo.products[i.productId].productName_chi}} - {{i.productRemark}}
+                                                </td>-->
+                                                <td>
+                                                    {{i.customerId}}
+                                                </td>
+                                                <td>
+                                                        {{i.customerName}}
+                                                </td>
+                                                <td>
+                                                    ${{i.amount}}
+                                                </td>
+                                                <td>
+                                                    ${{i.pivot.paid}}
+                                                </td>
+
+                                                <td>
+                                                    {{i.pivot.created_at  * 1000 | date: 'yyyy.MM.dd'}}
+                                                </td>
+                                                                </tr>
+                                            <tr>
+                                                <!--<td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">總額: HK${{invoiceinfo.invoiceTotalAmount | number : 2}}  ({{invoiceinfo.invoiceDiscount}}%off)</td>-->
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <br/>
+                                        <div style="clear:both;"></div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="portlet_tab2">
+                                    <div>
+                                        <h4>客戶資料</h4>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                            <tr role="row" class="heading">
+
+                                                <th width="">客戶編號</th>
+                                                <th width="">客戶名稱</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr data-ng-repeat="p in chequeCustomers" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+                                                <td >{{p.customerId}}</td>
+                                                 <td >{{p.customerName_chi}}</td>
+                                                               </tr>
+                                            </tbody>
+                                        </table>
+                                        <br/>
+                                        <div style="clear:both;"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="clear:both;"></div>
+            </div>
+            <div class="modal-footer" >
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

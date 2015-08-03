@@ -102,12 +102,18 @@ class ProductManipulation {
 	public function save($info)
 	{
         
-	    $fields = ['productId','productPacking_carton', 'productCost_unit', 'productPacking_inner', 'productPacking_unit','productPacking_size','productPackingName_carton','productPackingName_inner','productPackingName_unit','productPackingInterval_carton','productPackingInterval_inner','productPackingInterval_unit','productStdPrice_carton','productStdPrice_inner','productStdPrice_unit','productMinPrice_carton','productMinPrice_inner','productMinPrice_unit','productName_chi','productName_eng','hasCommission','allowNegativePrice','allowSeparate'];
+	    $fields = ['productPacking_carton', 'productCost_unit', 'productPacking_inner', 'productPacking_unit','productPacking_size','productPackingName_carton','productPackingName_inner','productPackingName_unit','productPackingInterval_carton','productPackingInterval_inner','productPackingInterval_unit','productStdPrice_carton','productStdPrice_inner','productStdPrice_unit','productMinPrice_carton','productMinPrice_inner','productMinPrice_unit','productName_chi','productName_eng','hasCommission','allowNegativePrice','allowSeparate'];
 	    
 	    foreach($fields as $f)
 	    {
 	        $this->im->$f = $info[$f];
 	    }
+        if($this->action == 'create')
+            if(is_numeric($this->_productId))
+                $this->im->pattern_key = substr($this->_productId,0,4);
+            else
+                $this->im->pattern_key = substr($this->_productId,1,3);
+
         $this->im->productLocation = $info['productLocation']['value'];
         $this->im->productStatus = $info['productStatus']['value'];
         $this->im->updated_by = Auth::user()->id;

@@ -93,4 +93,32 @@ class SystemController extends BaseController {
         return Response::json($systeminfo);
     }
 
+    public function getDashboard(){
+        $today              = strtotime("00:00:00");
+        $yesterday          = strtotime("-1 day", $today);
+        $tomorrow = strtotime("+1 day",$today);
+
+
+        $result = Invoice::whereBetween('deliveryDate',[$yesterday,$tomorrow])->wherein('invoiceStatus',['2','1','20','30'])->orderBy('zoneId')->orderBy('deliveryDate')->get();
+
+        $nr = [];
+
+        foreach($result as $v){
+            $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount'] = (isset($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount'])?$nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount']:0) + $v->amount;
+            $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume'] = (isset($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume'])?$nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']:0) + 1;
+          //  $nr['total']['amount'] = (isset($nr['total']['amount'])?$nr['total']['amount']:0) + $v->amount;
+          //  $nr['total']['volume'] = (isset($nr['total']['volume'])?$nr['total']['volume']:0) + 1;
+
+            $nr['byTime'][$v->deliveryDate]['amount'] = (isset($nr['byTime'][$v->deliveryDate]['amount'])?$nr['byTime'][$v->deliveryDate]['amount']:0) + $v->amount;
+            $nr['byTime'][$v->deliveryDate]['volume'] = (isset($nr['byTime'][$v->deliveryDate]['volume'])?$nr['byTime'][$v->deliveryDate]['volume']:0) + 1;
+
+            $nr['byZone'][$v->zoneId]['name'] = $v->zoneText;
+        }
+
+        $nr1 = array_chunk($nr['byZone'],5,true);
+//pd($nr['byTime']);
+        return View::make('dashboard')->with('nr',$nr1)->with('total',$nr['byTime']);
+
+    }
+
 }

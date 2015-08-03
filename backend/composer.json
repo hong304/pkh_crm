@@ -4,7 +4,7 @@
   "require" : {
     "laravel/framework" : "=v4.2.16",
     "toddish/verify" : "=v2.4.1",
-    "anouar/fpdf" : "dev-master",
+    "anouar/fpdf" : "1.0.1",
     "shpasser/gae-support" : "=1.0.8",
     "intervention/image" : "2.1.1",
     "intervention/imagecache" : "=2.1.1",
