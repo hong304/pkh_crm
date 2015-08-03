@@ -29,6 +29,11 @@ App::before(function($request)
         $_SERVER['env'] = 'production';
         $_SERVER['frontend'] = 'http://frontend.pingkeehong.com';
         $_SERVER['backend'] = 'http://backend.pingkeehong.com';
+    }elseif($_SERVER['HTTP_HOST'] == 'pkh-b.sylam.net'){
+        @header('Access-Control-Allow-Origin: http://pkh-f.sylam.net');
+        $_SERVER['env'] = 'uat';
+        $_SERVER['frontend'] = 'http://pkh-f.sylam.net';
+        $_SERVER['backend'] = 'http://pkh-b.sylam.net';
     }
 	else
 	{
