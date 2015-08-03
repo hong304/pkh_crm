@@ -56,7 +56,7 @@ class ProductController extends BaseController {
         $filter = Input::get('filterData');
 
 
-        Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+      //  Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
 
         $zone = (isset($filter['zone']['zoneId']))?$filter['zone']['zoneId']:'-1';
         $data1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
@@ -111,14 +111,14 @@ class ProductController extends BaseController {
         });
 
         $invoices->whereBetween('Invoice.deliveryDate', [$data1,$data2]);
-        $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+      //  $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 
         /*    foreach($invoices->get()->toArray() as $v){
                  $cid[]=$v['customerId'];
               }*/
 
 
-        $invoices = $invoices->paginate($page_length);
+      //  $invoices = $invoices->paginate($page_length);
 
 
 
@@ -130,12 +130,21 @@ class ProductController extends BaseController {
            })->lists('customerName_chi','customerId');*/
 
 
-        foreach ($invoices as $invoice) {
+    /*    foreach ($invoices as $invoice) {
             $invoice->id = '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';
             $invoice->customerName_chi = $customers[$invoice->customerId];
-        }
+        }*/
 
-        return Response::json($invoices);
+
+        return Datatables::of($invoices)
+            ->addColumn('link', function ($invoice) {
+                return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';})
+            ->addColumn('customerName_chi', function ($invoice) use($customers) {
+                return $customers[$invoice->customerId];
+            })
+                    ->make(true);
+
+                //  return Response::json($invoices);
 
     }
 
