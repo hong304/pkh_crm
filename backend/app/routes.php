@@ -73,7 +73,7 @@ Route::group(array('before' => 'auth'), function()
     Route::any('/getReport.json', 'ReportController@loadReport');
     Route::any('/getPrintLog.json', 'ReportController@getPrintLog');
 
-    Route::any('/viewArchivedReport', 'ReportController@viewArchivedReport');
+    //Route::any('/viewArchivedReport', 'ReportController@viewArchivedReport');
     
     // Van sell
     Route::any('/getVansellreport.json', 'VanSellController@loadvanSellReport');
@@ -162,6 +162,8 @@ Route::group(array('before' => 'auth'), function()
 
 
 });
+
+Route::any('/viewArchivedReport', 'ReportController@viewArchivedReport');
 
 Route::get('/', function(){
    return Redirect::action('UserController@authenticationProcess'); 
