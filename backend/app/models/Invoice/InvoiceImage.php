@@ -436,12 +436,17 @@ if($i['invoiceDiscount'] > 0){
             $filenames[$page]['deliveryDate'] =  $this->deliveryDate;
            // $filenames[$page]['fullpath'] = $fullpath;
 
+            if($_SERVER['env']=='uat'){
+                $public_path = 'C:\xampp\htdocs\pkh_crm\backend\public/';
+            }else{
+                $public_path = public_path();
+            }
 
-            if (!file_exists(public_path() . '/'.date('Y-m', $this->deliveryDate)))
-                mkdir(public_path() . '/'.date('Y-m', $this->deliveryDate), 0777, true);
-            if (!file_exists(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate)))
-                mkdir(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate), 0777, true);
-            $i->save(public_path() . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate).'/'.$filename);
+            if (!file_exists($public_path . '/'.date('Y-m', $this->deliveryDate)))
+                mkdir($public_path . '/'.date('Y-m', $this->deliveryDate), 0777, true);
+            if (!file_exists($public_path . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate)))
+                mkdir($public_path . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate), 0777, true);
+            $i->save($public_path . '/'.date('Y-m', $this->deliveryDate).'/'.date('d', $this->deliveryDate).'/'.$filename);
 
             //$i->save($fullpath);
             $i->destroy();

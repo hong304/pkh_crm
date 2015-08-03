@@ -353,7 +353,13 @@ if(Input::get('group.id')!='')
                         $y = 0;
                     }
 
-                    $url =  public_path() . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
+                    if($_SERVER['env']=='uat'){
+                        $public_path = 'C:\xampp\htdocs\pkh_crm\backend\public/';
+                    }else{
+                        $public_path = public_path();
+                    }
+
+                    $url =  $public_path . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
 
                     $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
 
