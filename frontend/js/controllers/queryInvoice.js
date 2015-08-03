@@ -492,7 +492,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
                     { "data": "invoiceStatusText", "width":"6%" },
                     { "data": "shiftText", "width":"6%" },
                     { "data": "laststaff.name", "width":"8%" },
-                    { "data": "createdat_full",  "width":"13%" },
+                    { "data": "created_at",  "width":"13%" },
                     { "data": "updated_at",  "width":"13%" },
                     { "data": "link", "width":"5%" }
 

@@ -231,11 +231,13 @@ class ProductController extends BaseController {
             if($customerId != 'na')
             {
                 $iicm = ProductSearchCustomerMap::where('customerId', $customerId)->with('productDetail')->limit(20)->orderBy('sumation', 'desc')->get();
+
+
                 if($iicm->count() > 0)
                 {
                     foreach($iicm as $i)
                     {
-                        $productData[] = $i->product_detail->toArray();
+                        $productData[] = $i->productDetail->toArray();
                     }
 
                 }

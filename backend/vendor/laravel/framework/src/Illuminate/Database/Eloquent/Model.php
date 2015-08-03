@@ -2652,7 +2652,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 		{
 			return Carbon::createFromTimestamp($value);
 		}
-        
+
 		// If the value is in simply year, month, day format, we will instantiate the
 		// Carbon instances from that format. Again, this provides for simple date
 		// fields on the database, while still supporting Carbonized conversion.
@@ -2666,13 +2666,9 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 		// that is returned back out to the developers after we convert it here.
 		elseif ( ! $value instanceof DateTime)
 		{
-		    /*
 			$format = $this->getDateFormat();
-            
+
 			return Carbon::createFromFormat($format, $value);
-			*/
-		    $datetime = strtotime($value);
-		    return $datetime;
 		}
 
 		return Carbon::instance($value);

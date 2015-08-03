@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
-use Carbon\Carbon;
+
 class Product extends Eloquent  {
 
     protected $primaryKey = 'productId';
@@ -70,12 +70,6 @@ class Product extends Eloquent  {
         });
 	}
 
-    public function getUpdatedAtAttribute($attr) {
-
-            return date("Y-m-d h:i:s A", (int)$attr);
-
-
-    }
 
     public function getUpdatedByAttribute($attr) {
         return Config::get('userName.'.$attr);

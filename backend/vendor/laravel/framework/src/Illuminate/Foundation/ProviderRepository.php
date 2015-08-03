@@ -176,9 +176,8 @@ class ProviderRepository {
 	 */
 	public function loadManifest()
 	{
-		//$path = $this->manifestPath.'/services.json';
-	    $path = __DIR__ . '/../../../../../../app/storage/meta/services.json';
-        
+		$path = $this->manifestPath.'/services.json';
+
 		// The service manifest is a file containing a JSON representation of every
 		// service provided by the application and whether its provider is using
 		// deferred loading or should be eagerly loaded on each request to us.

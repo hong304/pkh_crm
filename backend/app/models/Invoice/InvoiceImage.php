@@ -152,9 +152,25 @@ $debug = 0;
                 $font->color('#000000');
             });
             
-            $max_length = 22;
-            $address_splits = str_split_unicode($i['client']['address_chi'], $max_length);
-            $address = implode("\n", $address_splits);  
+            $max_length = 18;
+          //  $address_splits = mb_substr($i['client']['address_chi'], $max_length,"UTF-8");
+
+         //   $address = implode("\n", $address_splits);
+
+            $string = $i['client']['address_chi'];
+            $strlen = mb_strlen($string);
+            while ($strlen) {
+                $array[] = mb_substr($string,0,1,"UTF-8");
+                $string = mb_substr($string,1,$strlen,"UTF-8");
+                $strlen = mb_strlen($string);
+            }
+            $address= '';
+            foreach($array as $k => $v){
+                if($k % $max_length == 0 && $k != 0)
+                    $address .= $v."\n";
+                else
+                    $address .= $v;
+            }
             
             $this->image[$p]->text($address, 155, 320, function($font) use($font_file) {
                 $font->file($font_file);

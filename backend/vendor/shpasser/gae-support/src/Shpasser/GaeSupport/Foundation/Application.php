@@ -132,11 +132,11 @@ class Application extends IlluminateApplication {
 
             if ($bucket) {
                 $storagePath = "gs://{$bucket}/storage";
-                /*
+
                 if (!file_exists($storagePath)) {
                     mkdir($storagePath);
                 }
-                */
+
                 $this->instance("path.storage", $storagePath);
             }
         }

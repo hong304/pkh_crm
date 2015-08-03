@@ -512,15 +512,9 @@ class Paginator implements ArrayableInterface, ArrayAccess, Countable, IteratorA
 	public function toArray()
 	{
 		return array(
-		    'recordsTotal' => $this->total, 
-		    'recordsFiltered' => $this->total,
-			'total' => $this->total, 
-		    'per_page' => $this->perPage,
-			'current_page' => $this->currentPage, 
-		    'last_page' => $this->lastPage,
-			'from' => $this->from, 
-		    'to' => $this->to, 
-		    'data' => $this->getCollection()->toArray(),
+			'total' => $this->total, 'per_page' => $this->perPage,
+			'current_page' => $this->currentPage, 'last_page' => $this->lastPage,
+			'from' => $this->from, 'to' => $this->to, 'data' => $this->getCollection()->toArray(),
 		);
 	}
 

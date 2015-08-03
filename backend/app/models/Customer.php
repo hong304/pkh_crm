@@ -67,7 +67,7 @@ class Customer extends Eloquent  {
             $model->zoneText = Config::get('zoneName.'.$model->deliveryZone);
             $model->updated_by_text = Config::get('userName.'.$model->updated_by);
 
-            $model->created_atText = date("Y-m-d H:i:s", $model->created_at);
+            //$model->created_atText = date("Y-m-d H:i:s", $model->created_at);
 
         }
 

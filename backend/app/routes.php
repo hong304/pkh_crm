@@ -50,7 +50,7 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/getProductsFromGroup.json', 'ProductController@jsonGetProductsfromGroup');
     Route::post('/findRecentProductsByCustomerId.json', 'ProductController@jsonFindRecentProductsByCustomerId');
     Route::any('/searchProductOrHotProduct.json', 'ProductController@jsonSearchProductOrHotItem');
-    
+
     // Invoice Information        
     Route::post('/placeOrder.json', 'OrderController@jsonNewOrder');
     Route::any('/getNotification.json', 'OrderController@jsonGetNotification');
@@ -180,8 +180,26 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
-    $i = Invoice::with('payment')->where('invoiceId','I1507-038823')->get();
-    pd($i);
+    $string = "鳳攸北街益發大廈14號(前裕景威) 鳳攸北街益發大廈14";
+    $strlen = mb_strlen($string);
+    while ($strlen) {
+        $array[] = mb_substr($string,0,1,"UTF-8");
+        $string = mb_substr($string,1,$strlen,"UTF-8");
+        $strlen = mb_strlen($string);
+    }
+    $bb= '';
+    foreach($array as $k => $v){
+        if($k % 16 == 0 && $k != 0)
+             $bb .= $v."\n";
+        else
+            $bb .= $v;
+    }
+  //  $address_splits = mb_substr("鳳攸北街益發大廈14號(前裕景威) 鳳攸北街益發大廈14", 10,"UTF-8");
+    pd($bb);
+   // $address = implode("\n", $address_splits);
+
+    // $i = Invoice::with('payment')->where('invoiceId','I1507-038823')->get();
+  //  pd($i);
 
  /* $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
     foreach ($result as $v) {

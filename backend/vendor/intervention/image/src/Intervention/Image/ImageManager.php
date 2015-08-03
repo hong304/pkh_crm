@@ -119,12 +119,10 @@ class ImageManager
      */
     private function checkRequirements()
     {
-        /*
         if ( ! function_exists('finfo_buffer')) {
             throw new \Intervention\Image\Exception\MissingDependencyException(
                 "PHP Fileinfo extension must be installed/enabled to use Intervention Image."
             );
         }
-        */
     }
 }

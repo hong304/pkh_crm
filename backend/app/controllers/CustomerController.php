@@ -205,10 +205,6 @@ class CustomerController extends BaseController
                 ->addColumn('link', function ($custome) {
                     return '<span onclick="editCustomer(\''.$custome->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                 })
-                 ->editColumn('updated_at', function ($custome) {
-                    return  date("Y-m-d", $custome->updated_at);
-                    //return $supplie->updated_at;
-                })
                 ->editColumn('status', function ($custome) {
                    // return  date("Y-m-d", $ip->to);
                     return ($custome->status == '1') ? $custome->status = '正常' : $custome->status = '暫停';
@@ -227,7 +223,7 @@ class CustomerController extends BaseController
                  ->make(true);
         } elseif ($mode == 'single') {
             $customer = Customer::where('customerId', Input::get('customerId'))->with('group')->first();
-            $customer['format_updated_at'] = date("Y-m-d",$customer['updated_at']);
+           // $customer['format_updated_at'] = date("Y-m-d",$customer['updated_at']);
           } elseif ($mode == 'checkId') {
             $customer = Customer::select('customerId')->where('customerId', Input::get('customerId'))->first();
             $customer = count($customer);
