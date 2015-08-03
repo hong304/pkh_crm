@@ -149,7 +149,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
                 "columns": [
 
 
-                    { "data": "id" },
+                    { "data": "link" },
                     { "data": "deliveryDate_date" },
                     { "data": "zoneId" },
                     { "data": "customerName_chi" },
