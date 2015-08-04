@@ -61,7 +61,7 @@ class ReportController extends BaseController {
         }
             if($mode == 'collection')
             {
-                Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+               // Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
 
                 $filter = Input::get('filterData');
 
@@ -90,8 +90,8 @@ class ReportController extends BaseController {
                 }
 
                 // created by
-                   $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-                $Printlogs = $Printlogs->with('zone')->orderBy('updated_at','desc')->paginate($page_length);
+                //   $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+                $Printlogs = $Printlogs->with('zone')->orderBy('updated_at','desc');
 
                 foreach($Printlogs as $v)
                 {
@@ -99,7 +99,16 @@ class ReportController extends BaseController {
                     $v->link = '<span onclick="reprint(\''.$v->job_id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 重印</span>';
                 }
 
-                return Response::json($Printlogs);
+                return Datatables::of($Printlogs)
+                    ->addColumn('view', function ($v) {
+                        return '<a href="'.$_SERVER['backend'].'/'.$v->file_path.'" target="_blank">View</a>';
+                    })
+                    ->addColumn('link', function ($v) {
+                        return '<span onclick="reprint(\''.$v->job_id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 重印</span>';
+                    })
+                    ->make(true);
+
+          
             }
 
 
