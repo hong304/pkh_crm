@@ -78,9 +78,10 @@ if(!$empty){
 
             foreach($invoices as $invoice)
             {
+                if(!isset($this->_acc[$invoice->customerId]))
+                    $this->_acc[$invoice->customerId] = 0;
+
                 if($invoice->deliveryDate < $this->_date1){
-                    if(!isset($this->_acc[$invoice->customerId]))
-                        $this->_acc[$invoice->customerId] = 0;
                     $this->_acc[$invoice->customerId] += $invoice->realAmount-$invoice->paid;
                 }elseif($invoice->deliveryDate >= $this->_date1){
                     $customerId = $invoice->customerId;
@@ -100,7 +101,7 @@ if(!$empty){
                             'customerRef' => $invoice->customerRef,
                             'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->amount ,
                             'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
-                            'accumulator' => $this->_acc[$invoice->customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
+                            'accumulator' => $this->_acc[$customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
                         ];
                 }
             }

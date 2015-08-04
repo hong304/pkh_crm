@@ -26,7 +26,7 @@ div.centre
     <tr>
         <?php foreach($row as $k => $v):?>
 
-                      <td style="background-color:<?php echo ($k%2==1)?'#FAFAFA':'#EFFBF8';?>"><div><span style="font-weight:bold"><?php printf('%s (%s)',$k,$v['name'])."<br/>"; ?></span></div>
+                      <td style="background-color:<?php echo ($k%2==1)?'#FAFAFA':'#EFFBFB';?>"><div><span style="font-weight:bold"><?php printf('%s (%s)',$k,$v['name'])."<br/>"; ?></span></div>
 <div style="border-top: 1px solid #ddd;" class="centre">
                       <?php
                               foreach($v['date'] as $k1 => $v1){
@@ -37,7 +37,7 @@ div.centre
                                       echo '今天:<span style="color: blue">'.$v1['volume'].'</span><br/>';
                                   }
                                   if($k1 == $tomorrow){
-                                      echo '明天:' . $v1['volume']. "<br/>";
+                                      echo '明天:<span style="color:#610655">'.$v1['volume'].'</span><br/>';
                                   }
                               }
                               ?>
@@ -75,7 +75,7 @@ div.centre
                             echo '今天:<span style="color: blue">'.$v['volume'].'</span><br/>';
                         }
                         if($k == $tomorrow){
-                            echo '明天:' . $v['volume']. "<br/>";
+                            echo '明天:<span style="color:#610655">' .$v['volume'].'</span><br/>';
                         }
              ?>
                 </td>
