@@ -98,6 +98,7 @@ class PaymentController extends BaseController {
 
 if($paidinfo['no']!=''){
             $payment = new Payment();
+    $payment->bankCode = $paidinfo['bankCode'];
             $payment->ref_number = $paidinfo['no'];
                 $payment->start_date = $paidinfo['receiveDate'];
                     $payment->end_date =  $paidinfo['receiveDate'];
@@ -109,9 +110,26 @@ if($paidinfo['no']!=''){
             $payment->save();
 }
 
+            if($paidinfo['cashAmount']!=''){
+                $payment1 = new Payment();
+                $payment1->bankCode = 'cash';
+                $payment1->ref_number = 'cash';
+                $payment1->start_date = $paidinfo['receiveDate'];
+                $payment1->end_date =  $paidinfo['receiveDate'];
+                $payment1->receive_date = $paidinfo['receiveDate'];
+                $payment1->amount = $paidinfo['cashAmount'];
+                $payment1->used = 1;
+                $payment1->remain = 0;
+                $payment1->customerId = $paid[0]['customerId'];
+                $payment1->save();
+            }
+
 
             foreach ($paid as $k=>$v){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
+                $i->paid += $paidinfo['cashAmount'];
+                $i->paid += $paidinfo['amount'];
+
                 if($v['paid'] > 0)
                     $i->invoiceStatus = $v['paid'];
                 if($v['paid'] == 30)
@@ -119,7 +137,9 @@ if($paidinfo['no']!=''){
                 $i->save();
 
                 if($paidinfo['no']!='')
-                $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$v['paid']]);
+                $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['amount']]);
+                if($paidinfo['cashAmount']!='')
+                $i->payment()->attach($payment1->id,['amount'=>$i->amount,'paid'=>$paidinfo['cashAmount']]);
             }
 
         }
@@ -128,13 +148,10 @@ if($paidinfo['no']!=''){
         {
             $filter = Input::get('filterData');
 
-            if($filter['clientId'] =='' && $filter['invoiceNumber'] == ''){
-                return Response::json();
-            }
 
             //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
 
-            $invoice = Invoice::select('customerName_chi','invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','customerId')->leftjoin('customer', 'customer.customerId', '=', 'invoice.customerId')->where('deliveryDate','>',strtotime("-7 days"));
+            $invoice = Invoice::select('customerName_chi','invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId')->leftjoin('customer', 'customer.customerId', '=', 'invoice.customerId')->where('deliveryDate','>',strtotime("-7 days"));
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -158,27 +175,15 @@ if($paidinfo['no']!=''){
             }
 
             // status
-            if($filter['status'] != '')
+            if($filter['invoiceNumber'] == '')
             {
+                $invoice->where('invoice.deliverydate', strtotime($filter['deliverydate']));
                 $invoice->where('invoiceStatus', $filter['status']);
-            }
-
-            if($filter['status'] == '99')
-            {
-                $invoice->withTrashed();
-            }
-
-            // client id
-            if($filter['clientId'] != '')
-            {
-                $invoice->where('invoice.customerId', $filter['clientId']);
-            }
-
-            // invoice number
-            if($filter['invoiceNumber'] != '')
-            {
+            }else{
                 $invoice->where('invoiceId', 'LIKE', '%'.$filter['invoiceNumber'].'%');
+
             }
+
 
             // created by
 

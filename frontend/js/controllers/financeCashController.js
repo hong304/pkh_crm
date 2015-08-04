@@ -25,14 +25,14 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.filterData = {
         'displayName'	:	'',
         'clientId'		:	'',
-        'status'		:	'',
+        'status'		:	'20',
         'zone'			:	'',
-        'deliverydate'	:	'last day',
-        'created_by'	:	'0',
+         'created_by'	:	'0',
         'invoiceNumber' :	'',
         'bankCode' : '003',
         'cashAmount' : '0',
-        'amount' : '0'
+        'amount' : '0',
+        'no' : ''
     };
 
 
@@ -46,21 +46,29 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
 
 
+    $('#date-picker').datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#date-picker").datepicker( "setDate", year + '-' + month + '-' + day);
+
+    $('#deliverydate').datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + day);
+
+    $scope.filterData.receiveDate = year+'-'+month+'-'+day;
+    $scope.filterData.deliverydate = year+'-'+month+'-'+day;
+
 
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
-
-
-
-        $('.date-picker').datepicker({
-            rtl: Metronic.isRTL(),
-            orientation: "left",
-            autoclose: true
-        });
-
-        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
+        $scope.updateDataSet();
 
     });
 
@@ -111,8 +119,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.updateDataSet = function(){
         $http.post(query, {mode:'collection', filterData: $scope.filterData})
             .success(function(res){
-
-
                 $scope.invoiceinfo = res;
                 $scope.invoicepaid.amount = 0;
                 $scope.invoicepaid.settle = 0;
@@ -128,6 +134,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     $scope.invoicepaid.amount = $scope.invoicepaid.amount + Number(item.amount);
                     $scope.invoicepaid.settle = $scope.invoicepaid.amount;
                     i++;
+                    $scope.invoicepaidcount = i;
                 });
 
 

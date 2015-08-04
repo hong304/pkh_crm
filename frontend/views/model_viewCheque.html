@@ -28,7 +28,7 @@
                                     <label>入票日</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <label>{{chequeDetails.created_at  * 1000 | date: 'yyyy.MM.dd'}}</label>
+                                    <label>{{chequeDetails.created_at}}</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -99,8 +99,8 @@
                                                 <th width="5%">客戶號碼</th>
                                                 <th width="20%">客戶名稱</th>
                                                 <th width="5%">總數</th>
-                                                <th width="7%">已付</th>
-                                                <th width="7%">支付日期</th>
+                                                <th width="5%">已付</th>
+                                                <th width="13%">支付日期</th>
 
                                             </tr>
                                             </thead>
@@ -126,7 +126,7 @@
                                                 </td>
 
                                                 <td>
-                                                    {{i.pivot.created_at  * 1000 | date: 'yyyy.MM.dd'}}
+                                                    {{i.pivot.created_at}}
                                                 </td>
                                                                 </tr>
                                             <tr>

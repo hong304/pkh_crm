@@ -24,10 +24,8 @@
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
                     <div class="radio-list">
-                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="" checked> 全部</label>
-                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status"  value="20"> 已收貨</label>
+                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status"  value="20" checked> 已收貨</label>
                         <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status"  value="30"> 完成</label>
-
                     </div>
                 </div>
             </div>
@@ -35,7 +33,52 @@
 
 
 
+        <!-- Zone -->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">車號</span>
+                </div>
+
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <select class="form-control"
+                            ng-model="filterData.zone"
+                            data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
+                            data-ng-change="updateZone();">
+                        <option value=''>檢視全部</option>
+
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <!-- Delivery Date -->
+
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">送貨日期</span>
+                </div>
+
+            </div>
+
+            <!-- date-picker -->
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group date" id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
 
 
@@ -120,7 +163,7 @@
 
 
 
-    <div class="col-md-10">
+    <div class="col-md-10" data-ng-if="invoicepaidcount==1">
         <div class="row">
             <div class="col-md-12">
                 <div class="portlet light">
@@ -149,7 +192,7 @@
                                         <label class="col-md-2 control-label">支付日期:
                                         </label>
                                         <div class="col-md-5">
-                                            <div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                            <div class="input-group input-medium date" id="date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="">
                                                 <input type="text" class="form-control"  ng-model="filterData.receiveDate"  readonly>
 											<span class="input-group-btn">
 												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
