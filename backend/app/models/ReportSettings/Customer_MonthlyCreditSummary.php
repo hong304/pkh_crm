@@ -52,10 +52,6 @@ if($this->_group == '' && $filter['name'] =='' && $filter['phone'] == ''&& $filt
     $empty = false;
 }
 
-/*
- *         })->leftJoin('customer_groups', function($join) {
-            $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
- */
 if(!$empty){
         $invoices = Invoice::leftJoin('Customer', function($join) {
             $join->on('Customer.customerId', '=', 'Invoice.customerId');
