@@ -75,7 +75,6 @@ if(!$empty){
                 ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
         })->where('paymentTerms',2)->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
 
-
             foreach($invoices as $invoice)
             {
                 if(!isset($this->_acc[$invoice->customerId]))
