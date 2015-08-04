@@ -110,7 +110,7 @@ if($paidinfo['no']!=''){
             $payment->save();
 }
 
-            if($paidinfo['cashAmount']!=''){
+            if($paidinfo['cashAmount']!=0){
                 $payment1 = new Payment();
                 $payment1->bankCode = 'cash';
                 $payment1->ref_number = 'cash';
@@ -138,7 +138,7 @@ if($paidinfo['no']!=''){
 
                 if($paidinfo['no']!='')
                 $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['amount']]);
-                if($paidinfo['cashAmount']!='')
+                if($paidinfo['cashAmount']!=0)
                 $i->payment()->attach($payment1->id,['amount'=>$i->amount,'paid'=>$paidinfo['cashAmount']]);
             }
 

@@ -110,13 +110,28 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             url: query,
             data: {paid:data,paidinfo:$scope.filterData,mode:'posting'}
         }).success(function () {
-             $scope.updateDataSet();
+            // $scope.updateDataSet();
+         $scope.invoicepaidcount = 0;
+
+             Metronic.alert({
+                 container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                 place: 'prepend', // append or prepent in container
+                 type: 'success',  // alert's type
+                 message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+                 close: true, // make alert closable
+                 reset: true, // close all previouse alerts first
+                 focus: true, // auto scroll to the alert after shown
+                 closeInSeconds: 0, // auto close after defined seconds
+                 icon: 'warning' // put icon before the message
+             });
+
         });
 
        // $scope.getPaymentInfo('autopost');
     }
 
     $scope.updateDataSet = function(){
+        Metronic.alert('close');
         $http.post(query, {mode:'collection', filterData: $scope.filterData})
             .success(function(res){
                 $scope.invoiceinfo = res;
@@ -136,9 +151,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     i++;
                     $scope.invoicepaidcount = i;
                 });
-
-
-
             });
     }
 
