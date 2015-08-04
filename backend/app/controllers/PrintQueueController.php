@@ -13,12 +13,18 @@ class PrintQueueController extends BaseController {
     public $invoiceIds = [];
     private $zone = '';
     private $shift = '';
-    private $group = false;
     private $startTime = '';
+    private $public_path = '';
    // private $temp = [];
 
     public function __construct()
     {
+
+        if($_SERVER['env']=='uat'){
+            $this->public_path = 'C:\xampp\htdocs\pkh_crm\backend\public/';
+        }else{
+            $this->public_path = public_path();
+        }
 
         if(isset(Auth::user()->temp_zone)){
             $this->zone = Auth::user()->temp_zone;
@@ -333,6 +339,8 @@ if(Input::get('group.id')!='')
 
     public function mergeImage ($Ids){
 
+
+
         $invoiceImage = Invoice::select('invoicePrintImage', 'zoneId','routePlanningPriority')->whereIn('invoiceId', $Ids)->OrderBy('routePlanningPriority')->get();
         foreach($invoiceImage as $k => $v){
             $image[] = unserialize($v->invoicePrintImage);
@@ -353,13 +361,7 @@ if(Input::get('group.id')!='')
                         $y = 0;
                     }
 
-                    if($_SERVER['env']=='uat'){
-                        $public_path = 'C:\xampp\htdocs\pkh_crm\backend\public/';
-                    }else{
-                        $public_path = public_path();
-                    }
-
-                    $url =  $public_path . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
+                    $url =  $this->public_path . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
 
                     $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
 
@@ -390,7 +392,7 @@ if(Input::get('group.id')!='')
 $raw_filename =Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
         $filename = 'pdf/'.Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
         //$path = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
-        $path = public_path($filename);
+        $path = $this->public_path.'/'.$filename;
         $pdf->Output($path, "F");
 
         $print_log = new Printlog();
@@ -436,7 +438,7 @@ $raw_filename =Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
                   $updates = ['status'=>'queued'];
               }
           }else{*/
-        if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $_SERVER['DOCUMENT_ROOT'].'/pdf/'.$job->file_name, FTP_BINARY)) {
+        if (@ftp_put($conn_id, str_pad($job->target_path, 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $this->public_path.'/pdf/'.$job->file_name, FTP_BINARY)) {
                 $updates = ['status'=>'sent', 'complete_time'=>time()];
             } else {
                 $updates = ['status'=>'queued'];
