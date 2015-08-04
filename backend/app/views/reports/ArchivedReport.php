@@ -22,7 +22,7 @@
                 <td><?php echo $row['remark']; ?></td>
                 <td><?php echo $row['user']['username']; ?></td>
                 <td><?php echo $row['created_at']; ?></td>
-                <td><a target="_blank" href="http://backend.pingkeehong.com/viewArchivedReport?rid=<?php echo $row['id']; ?>&shift=<?php echo $row['shift'];?>">View</a></td>
+                <td><a target="_blank" href="<?php echo $_SERVER['backend'];?>/viewArchivedReport?rid=<?php echo $row['id']; ?>&shift=<?php echo $row['shift'];?>">View</a></td>
             </tr>  
          <?php endforeach; ?>
     </tbody>
