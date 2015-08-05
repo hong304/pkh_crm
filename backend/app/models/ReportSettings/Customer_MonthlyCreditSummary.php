@@ -224,10 +224,11 @@ if(!$empty){
                 $last_minute =  $this->_date2;
             $times[$month] = array($first_minute, $last_minute);
         }
+        $csv = $this->_date1.',To,'.$this->_date2;
+        $csv .= "\r\n";
+        $csv .= 'CustomerID,Customer Name,Total Amount,Paid,Remain,'.date('Y') . '/' . ($this->_reportMonth).','.date('Y') . '/' . ($this->_reportMonth - 1).','.date('Y') . '/' . ($this->_reportMonth - 2).','.date('Y') . '/' . ($this->_reportMonth - 3) . "\r\n";
 
-        $csv = 'CustomerID,Customer Name,Total Amount,Paid,Remain,'.date('Y') . '/' . ($this->_reportMonth).','.date('Y') . '/' . ($this->_reportMonth - 1).','.date('Y') . '/' . ($this->_reportMonth - 2).','.date('Y') . '/' . ($this->_reportMonth - 3) . "\r\n";
-
-$j=1;
+$j=2;
 
         foreach($this->data as $client) {
 
@@ -270,13 +271,13 @@ $j=1;
         }
         $csv .= '"",';
         $csv .= '"合共總額",';
-        $csv .= '=SUM(C2:C'.$j.'),';
-        $csv .= '=SUM(D2:D'.$j.'),';
-        $csv .= '=SUM(E2:E'.$j.'),';
-        $csv .= '=SUM(F2:F'.$j.'),';
-        $csv .= '=SUM(G2:G'.$j.'),';
-        $csv .= '=SUM(H2:H'.$j.'),';
-        $csv .= '=SUM(I2:I'.$j.'),';
+        $csv .= '=SUM(C3:C'.$j.'),';
+        $csv .= '=SUM(D3:D'.$j.'),';
+        $csv .= '=SUM(E3:E'.$j.'),';
+        $csv .= '=SUM(F3:F'.$j.'),';
+        $csv .= '=SUM(G3:G'.$j.'),';
+        $csv .= '=SUM(H3:H'.$j.'),';
+        $csv .= '=SUM(I3:I'.$j.'),';
         $csv .= "\r\n";
 
         echo "\xEF\xBB\xBF";
