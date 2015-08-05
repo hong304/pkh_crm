@@ -88,7 +88,9 @@ if(!$empty){
                 if($invoice->deliveryDate < $this->_date1){
                     $this->_acc[$invoice->customerId] += $invoice->realAmount-$invoice->paid;
                 }elseif($invoice->deliveryDate >= $this->_date1){
+
                     $customerId = $invoice->customerId;
+
                     $this->_unPaid[$customerId]['customer'] = [
                         'customerId' => $customerId,
                         'customerName' => $invoice->customerName_chi,
@@ -98,8 +100,8 @@ if(!$empty){
                        'account_contact' => $invoice['client']->account_contact,
 
                     ];
-                    if($invoice->amount != $invoice->paid)
-                        $this->_unPaid[$customerId]['breakdown'][] = [
+
+                    $this->_unPaid[$customerId]['breakdown'][] = [
                             'invoiceDate' => $invoice->invoiceDate,
                             'invoice' => $invoice->invoiceId,
                             'customerRef' => $invoice->customerRef,
@@ -234,7 +236,7 @@ $j=2;
         foreach($this->data as $client) {
 
             for ($i = $this->_reportMonth; $i > 0; $i--) {
-                $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+                $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount','!=','paid')->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
                 foreach($data[$i] as $invoice)
                 {
@@ -359,8 +361,8 @@ $j=2;
 
 
                 for ($i = $this->_reportMonth; $i > 0; $i--) {
-                    $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
-
+                    
+                    $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount','!=','paid')->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
                     foreach($data[$i] as $invoice)
                     {
