@@ -149,15 +149,15 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
                 "columns": [
 
 
-                    { "data": "link" },
-                    { "data": "deliveryDate_date" },
-                    { "data": "zoneId" },
-                    { "data": "customerName_chi" },
-                    { "data": "productId" },
-                    { "data": "productName_chi" },
-                    { "data": "productPrice" },
-                    { "data": "productQty" },
-                    {"data": "productUnitName"},
+                    { "data": "link" ,"width": "8%"},
+                    { "data": "deliveryDate_date","width": "8%" },
+                    { "data": "zoneId" ,"width": "5%"},
+                    { "data": "customerName_chi","width": "20%" },
+                    { "data": "productId","width": "8%" },
+                    { "data": "productName_chi" ,"width": "15%"},
+                    { "data": "productPrice","width": "5%" },
+                    { "data": "productQty" ,"width": "5%"},
+                    {"data": "productUnitName","width": "5%"},
 
                 ],
 
