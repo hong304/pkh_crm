@@ -76,7 +76,7 @@ if(!$empty){
         });
         }
 
-    $invoices = $invoices->where('paymentTerms',2)->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
+    $invoices = $invoices->where('paymentTerms',2)->where('amount','!=','paid')->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
 
 
 
@@ -98,7 +98,7 @@ if(!$empty){
                        'account_contact' => $invoice['client']->account_contact,
 
                     ];
-                    if($invoice->amount != $invoice->paid || $invoice->invoiceStatus == '98')
+                    if($invoice->amount != $invoice->paid)
                         $this->_unPaid[$customerId]['breakdown'][] = [
                             'invoiceDate' => $invoice->invoiceDate,
                             'invoice' => $invoice->invoiceId,
@@ -111,6 +111,7 @@ if(!$empty){
             }
 
         $this->data = $this->_unPaid;
+
 }
        return $this->data;
 
