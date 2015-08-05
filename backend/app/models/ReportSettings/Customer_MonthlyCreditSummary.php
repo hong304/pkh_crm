@@ -224,7 +224,7 @@ if(!$empty){
                 $last_minute =  $this->_date2;
             $times[$month] = array($first_minute, $last_minute);
         }
-        $csv = $this->_date1.',To,'.$this->_date2;
+        $csv = date('Y-m-d',$this->_date1).',To,'.date('Y-m-d',$this->_date2);
         $csv .= "\r\n";
         $csv .= 'CustomerID,Customer Name,Total Amount,Paid,Remain,'.date('Y') . '/' . ($this->_reportMonth).','.date('Y') . '/' . ($this->_reportMonth - 1).','.date('Y') . '/' . ($this->_reportMonth - 2).','.date('Y') . '/' . ($this->_reportMonth - 3) . "\r\n";
 
