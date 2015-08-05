@@ -131,9 +131,13 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     }
 
     $scope.updateDataSet = function(){
+
+
         Metronic.alert('close');
         $http.post(query, {mode:'collection', filterData: $scope.filterData})
             .success(function(res){
+
+
                 $scope.invoiceinfo = res;
                 $scope.invoicepaid.amount = 0;
                 $scope.invoicepaid.settle = 0;
@@ -151,6 +155,10 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     i++;
                     $scope.invoicepaidcount = i;
                 });
+
+                if($scope.invoicepaidcount == 1){
+                    $('#paidform').show();
+                }
             });
     }
 

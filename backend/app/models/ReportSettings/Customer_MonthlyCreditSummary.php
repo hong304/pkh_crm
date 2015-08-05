@@ -361,7 +361,7 @@ $j=2;
 
 
                 for ($i = $this->_reportMonth; $i > 0; $i--) {
-                    
+
                     $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount','!=','paid')->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
                     foreach($data[$i] as $invoice)
