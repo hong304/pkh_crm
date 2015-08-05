@@ -53,6 +53,9 @@ if($this->_group == '' && $filter['name'] =='' && $filter['phone'] == ''&& $filt
 }
 
 if(!$empty){
+
+    //select('Customer.customerId','customer.phone_1','account_tel','account_fax','account_contact','customer.address_chi','customerName_chi','invoiceDate','amount','paid','invoiceId','customerRef','invoiceStatus','customer_groups.name')
+
         $invoices = Invoice::leftJoin('Customer', function($join) {
             $join->on('Customer.customerId', '=', 'Invoice.customerId');
         })->leftJoin('customer_groups', function($join) {
@@ -62,14 +65,21 @@ if(!$empty){
             //->whereBetween('Invoice.deliveryDate', [$this->_date1,$this->_date2]);
 
         if($this->_group != '')
-            $invoices->where('customer_groups.name','LIKE','%'.$this->_group.'%');
+            $invoices->where('customer_groups.name','LIKE',$this->_group.'%');
 
-    $invoices = $invoices->where(function ($query) use ($filter) {
+    if($filter['name'] != '' || $filter['phone'] != '' || $filter['customerId'] !=''){
+                 $invoices->where(function ($query) use ($filter) {
             $query
-                ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
-                ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
-                ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
-        })->where('paymentTerms',2)->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
+                ->where('customerName_chi', 'LIKE', $filter['name'] . '%')
+                ->where('Customer.phone_1', 'LIKE', $filter['phone'] . '%')
+                ->where('Customer.customerId', 'LIKE', $filter['customerId'] . '%');
+        });
+        }
+
+    $invoices = $invoices->where('paymentTerms',2)->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
+
+
+
             foreach($invoices as $invoice)
             {
                 if(!isset($this->_acc[$invoice->customerId]))
@@ -183,6 +193,11 @@ if(!$empty){
                 'name' => '列印  PDF 版本',
                 'warning'   =>  false,
             ],
+            [
+                'type' => 'csv',
+                'name' => '匯出帳齡搞要',
+                'warning'   =>  false,
+            ],
         ];
         
         return $downloadSetting;
@@ -194,7 +209,87 @@ if(!$empty){
         return View::make('reports/MonthlyCreditSummary')->with('data', $this->data)->render();
         
     }
-    
+
+
+    public function outputCsv(){
+
+        $this->_reportMonth = date("n",$this->_date2);
+
+        $times  = array();
+        for($month = 1; $month <= 12; $month++) {
+            $first_minute = mktime(0, 0, 0, $month, 1,date('Y'));
+            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),date('Y'));
+
+            if($this->_reportMonth==$month)
+                $last_minute =  $this->_date2;
+            $times[$month] = array($first_minute, $last_minute);
+        }
+
+        $csv = 'CustomerID,Customer Name,Total Amount,Paid,Remain,'.date('Y') . '/' . ($this->_reportMonth).','.date('Y') . '/' . ($this->_reportMonth - 1).','.date('Y') . '/' . ($this->_reportMonth - 2).','.date('Y') . '/' . ($this->_reportMonth - 3) . "\r\n";
+
+$j=1;
+
+        foreach($this->data as $client) {
+
+            for ($i = $this->_reportMonth; $i > 0; $i--) {
+                $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+
+                foreach($data[$i] as $invoice)
+                {
+                    $customerId = $invoice->customerId;
+                    $this->_monthly[$i][$customerId][]= [
+                        'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-$invoice->paid
+                    ];
+                }
+            }
+
+            $amount = 0;
+            $paid = 0;
+            $accu = 0;
+
+            foreach ($client['breakdown'] as $k => $v) {
+
+                    $amount += $v['invoiceAmount'];
+                    $paid += $v['paid'];
+                    $accu = $v['accumulator'];
+
+            }
+
+
+            $csv .= '"' . $client['customer']['customerId'] . '",';
+            $csv .= '"' . $client['customer']['customerName'] . '",';
+            $csv .= '"' . $amount . '",';
+            $csv .= '"' . $paid . '",';
+            $csv .= '"' . $accu . '",';
+            $csv .= '"' . number_format(isset($this->_monthly[$this->_reportMonth][$customerId])?end($this->_monthly[$this->_reportMonth][$customerId])['accumulator']:0, 2, '.', ',') . '",';
+            $csv .= '"' . number_format(isset($this->_monthly[$this->_reportMonth-1][$customerId])?end($this->_monthly[$this->_reportMonth-1][$customerId])['accumulator']:0, 2, '.', ',') . '",';
+            $csv .= '"' . number_format(isset($this->_monthly[$this->_reportMonth-2][$customerId])?end($this->_monthly[$this->_reportMonth-2][$customerId])['accumulator']:0, 2, '.', ',') . '",';
+            $csv .= '"' . number_format(isset($this->_monthly[$this->_reportMonth-3][$customerId])?end($this->_monthly[$this->_reportMonth-3][$customerId])['accumulator']:0, 2, '.', ',') . '",';
+            $csv .= "\r\n";
+            $j++;
+        }
+        $csv .= '"",';
+        $csv .= '"合共總額",';
+        $csv .= '=SUM(C2:C'.$j.'),';
+        $csv .= '=SUM(D2:D'.$j.'),';
+        $csv .= '=SUM(E2:E'.$j.'),';
+        $csv .= '=SUM(F2:F'.$j.'),';
+        $csv .= '=SUM(G2:G'.$j.'),';
+        $csv .= '=SUM(H2:H'.$j.'),';
+        $csv .= '=SUM(I2:I'.$j.'),';
+        $csv .= "\r\n";
+
+        echo "\xEF\xBB\xBF";
+
+        $headers = array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="aging.csv"',
+        );
+
+        return Response::make(rtrim($csv, "\n"), 200, $headers);
+
+
+    }
     
     # PDF Section
     public function generateHeader($pdf)
@@ -262,9 +357,7 @@ if(!$empty){
 
 
                 for ($i = $this->_reportMonth; $i > 0; $i--) {
-                    $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->leftJoin('Customer', function ($join) {
-                        $join->on('Invoice.customerId', '=', 'Customer.customerId');
-                    })->where('paymentTerms', 2)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+                    $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
 
                     foreach($data[$i] as $invoice)
