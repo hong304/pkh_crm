@@ -485,7 +485,13 @@ if(!$empty){
                 $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-2]['total'])?$this->_monthly[$this->_reportMonth-2]['total']:0, 1, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(220, $y);
-                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-3]['total'])?$this->_monthly[$this->_reportMonth-3]['total']:0, 1, '.', ','), 0, 0, "L");
+                if(isset($this->_monthly[$this->_reportMonth-3]['total']))
+                    if($this->_monthly[$this->_reportMonth-3]['total']!=0)
+                        $numsum =  '$' . number_format($this->_monthly[$this->_reportMonth-3]['total'], 1, '.', ',');
+                else
+                    $numsum = '';
+
+                $pdf->Cell(0, 0,$numsum , 0, 0, "L");
 
             }
 
