@@ -373,7 +373,7 @@ if(!$empty){
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, "客户", 0, 0, "L");
 
-                $pdf->setXY(130, $y);
+                $pdf->setXY(135, $y);
                 $pdf->Cell(0, 0, "結餘", 0, 0, "L");
 
                 $pdf->setXY(165, $y);
@@ -427,7 +427,7 @@ if(!$empty){
                 $pdf->setXY(100, $y);
                 $pdf->Cell(0, 0, 'Tel:' .$client['customer']['customerTel'], 0, 0, "L");
 
-                $pdf->setXY(140, $y);
+                $pdf->setXY(135, $y);
                 $pdf->Cell(0, 0, '$' . number_format($accu, 2, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(165, $y);
@@ -454,7 +454,7 @@ if(!$empty){
                 $pdf->setXY(100, $y);
                 $pdf->Cell(0, 0, '合共總額:', 0, 0, "L");
 
-                $pdf->setXY(140, $y);
+                $pdf->setXY(135, $y);
                 $pdf->Cell(0, 0, '$' . number_format($own_total, 2, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(165, $y);
