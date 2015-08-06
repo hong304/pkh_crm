@@ -359,7 +359,7 @@ if(!$empty){
         }
 
 
-        $bd = array_chunk($this->data,17,true);
+        $bd = array_chunk($this->data,19,true);
 
         $i = 1;
         $j=1;
@@ -419,7 +419,7 @@ if(!$empty){
 
                 $own_total += $accu;
 
-                $y += 2;
+                $y += 4;
 
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, $client['customer']['customerId'], 0, 0, "L");
@@ -463,14 +463,14 @@ if(!$empty){
 
                 $pdf->Line(10, $y+5, 285, $y+5);
 
-               $y +=4;
+               $y +=3;
             }
 
 
 
             if($j == count($bd)){
 
-                $y += 6;
+                $y += 4;
                 $pdf->setXY(70, $y);
                 $pdf->Cell(0, 0, '合共總額:', 0, 0, "L");
 
