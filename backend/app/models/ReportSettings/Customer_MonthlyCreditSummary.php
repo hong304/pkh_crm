@@ -332,22 +332,22 @@ if(!$empty){
         $pdf->setXY(10, $y);
         $pdf->Cell(0, 0, "客户", 0, 0, "L");
 
-        $pdf->setXY(160, $y);
+        $pdf->setXY(140, $y);
         $pdf->Cell(0, 0, "結餘", 0, 0, "L");
 
-        $pdf->setXY(180, $y);
+        $pdf->setXY(165, $y);
         $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth), 0, 0, "L");
 
-        $pdf->setXY(200, $y);
+        $pdf->setXY(190, $y);
         $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-1), 0, 0, "L");
 
-        $pdf->setXY(220, $y);
+        $pdf->setXY(215, $y);
         $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-2), 0, 0, "L");
 
         $pdf->setXY(240, $y);
         $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-3), 0, 0, "L");
 
-        $pdf->setXY(260, $y);
+        $pdf->setXY(265, $y);
         $pdf->Cell(0, 0, "以前", 0, 0, "L");
 
         $pdf->Line(10, 53, 285, 53);
@@ -357,7 +357,7 @@ if(!$empty){
         $y += 6;
 
 
-        $bd = array_chunk($this->data,10,true);
+        $bd = array_chunk($this->data,15,true);
 
         foreach ($bd as $k => $g) {
 
@@ -397,22 +397,22 @@ if(!$empty){
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, $client['customer']['customerId'], 0, 0, "L");
 
-                $pdf->setXY(160, $y);
+                $pdf->setXY(140, $y);
                 $pdf->Cell(0, 0, $accu, 0, 0, "L");
 
-                $pdf->setXY(180, $y);
+                $pdf->setXY(165, $y);
                 $pdf->Cell(0, 0,'$' . number_format(isset($this->_monthly[$this->_reportMonth][$customerId])?end($this->_monthly[$this->_reportMonth][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
 
-                $pdf->setXY(200, $y);
+                $pdf->setXY(190, $y);
                 $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-1][$customerId])?end($this->_monthly[$this->_reportMonth-1][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
 
-                $pdf->setXY(220, $y);
+                $pdf->setXY(215, $y);
                 $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-2][$customerId])?end($this->_monthly[$this->_reportMonth-2][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(240, $y);
                 $pdf->Cell(0, 0,'$' . number_format(isset($this->_monthly[$this->_reportMonth-3][$customerId])?end($this->_monthly[$this->_reportMonth-3][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
 
-                $y += 6;
+                $y += 8;
 
             }
         }
