@@ -156,7 +156,7 @@ $debug = 0;
           //  $address_splits = mb_substr($i['client']['address_chi'], $max_length,"UTF-8");
 
          //   $address = implode("\n", $address_splits);
-
+            $array = [];
             $string = $i['client']['address_chi'];
             $strlen = mb_strlen($string);
             while ($strlen) {
