@@ -352,32 +352,69 @@ if(!$empty){
 
         $pdf->Line(10, 53, 285, 53);
 
-        foreach($this->data as $client) {
 
-            for ($i = $this->_reportMonth; $i > 0; $i--) {
-                $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount','!=','paid')->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
-                foreach($data[$i] as $invoice)
-                {
-                    $customerId = $invoice->customerId;
-                    $this->_monthly[$i][$customerId][]= [
-                        'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-$invoice->paid
-                    ];
-                }
+        $y += 6;
+
+
+        $bd = array_chunk($this->data,10,true);
+
+        foreach ($bd as $k => $g) {
+
+            if ($k > 0) {
+                $pdf->AddPage('L');
+                $y = 20;
             }
 
-            $amount = 0;
-            $paid = 0;
-            $accu = 0;
 
-            foreach ($client['breakdown'] as $k => $v) {
+            foreach ($g as $client) {
+
+                for ($i = $this->_reportMonth; $i > 0; $i--) {
+                    $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount', '!=', 'paid')->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+
+                    foreach ($data[$i] as $invoice) {
+                        $customerId = $invoice->customerId;
+                        $this->_monthly[$i][$customerId][] = [
+                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount - $invoice->paid
+                        ];
+                    }
+                }
+
+                $amount = 0;
+                $paid = 0;
+                $accu = 0;
+
+                foreach ($client['breakdown'] as $k => $v) {
 
                     $amount += $v['invoiceAmount'];
                     $paid += $v['paid'];
                     $accu = $v['accumulator'];
 
-            }
+                }
 
+
+
+                $pdf->setXY(10, $y);
+                $pdf->Cell(0, 0, $client['customer']['customerId'], 0, 0, "L");
+
+                $pdf->setXY(160, $y);
+                $pdf->Cell(0, 0, $accu, 0, 0, "L");
+
+                $pdf->setXY(180, $y);
+                $pdf->Cell(0, 0,'$' . number_format(isset($this->_monthly[$this->_reportMonth][$customerId])?end($this->_monthly[$this->_reportMonth][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
+
+                $pdf->setXY(200, $y);
+                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-1][$customerId])?end($this->_monthly[$this->_reportMonth-1][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
+
+                $pdf->setXY(220, $y);
+                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-2][$customerId])?end($this->_monthly[$this->_reportMonth-2][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
+
+                $pdf->setXY(240, $y);
+                $pdf->Cell(0, 0,'$' . number_format(isset($this->_monthly[$this->_reportMonth-3][$customerId])?end($this->_monthly[$this->_reportMonth-3][$customerId])['accumulator']:0, 2, '.', ','), 0, 0, "L");
+
+                $y += 6;
+
+            }
         }
 
         $pdf->Output('','I');
