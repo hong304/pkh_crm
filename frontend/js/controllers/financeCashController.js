@@ -1,6 +1,16 @@
 'use strict';
 
 
+function editInvoicePayment(invoiceId)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.editInvoicePayment(invoiceId);
+    });
+}
+
+
+
 app.controller('financeCashController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state,$stateParams) {
 
     var query = endpoint + '/querryCashCustomer.json';
@@ -46,12 +56,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
 
 
-    $('#date-picker').datepicker({
-        rtl: Metronic.isRTL(),
-        orientation: "left",
-        autoclose: true
-    });
-    $("#date-picker").datepicker( "setDate", year + '-' + month + '-' + day);
 
     $('#deliverydate').datepicker({
         rtl: Metronic.isRTL(),
@@ -93,6 +97,23 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         Metronic.unblockUI();
     });
 
+    $scope.editInvoicePayment = function(invoiceId)
+    {
+
+
+        $('#invoicePayment').modal('show');
+
+        $('#invoicePayment').on('shown.bs.modal', function () {
+
+            $('#date-picker').datepicker({
+                rtl: Metronic.isRTL(),
+                orientation: "left",
+                autoclose: true
+            });
+            $("#date-picker").datepicker( "setDate", year + '-' + month + '-' + day);
+        })
+
+    }
 
     $scope.updateInvoiceNumber = function()
     {
@@ -129,7 +150,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
        // $scope.getPaymentInfo('autopost');
     }
 
-    $scope.updateDataSet = function(){
+   /* $scope.updateDataSet = function(){
 
 
         Metronic.alert('close');
@@ -159,6 +180,89 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     $('#paidform').show();
                 }
             });
+    }*/
+
+    $scope.updateDataSet = function()
+    {
+
+        $scope.invoicepaid[0] = $.extend(true, {}, $scope.invoiceStructure);
+        $scope.invoicepaid[0]['paid'] = 0;
+
+        Metronic.blockUI();
+        var grid = new Datatable();
+
+
+        //var info = grid.page.info();
+        if(!$scope.firstload)
+        {
+            $("#datatable_ajax").dataTable().fnDestroy();
+        }
+        else
+        {
+            $scope.firstload = false;
+        }
+        grid.init({
+            src: $("#datatable_ajax"),
+            onSuccess: function (grid) {
+                // execute some code after table records loaded
+                Metronic.unblockUI();
+            },
+            onError: function (grid) {
+                // execute some code on network or other general error
+                Metronic.unblockUI();
+            },
+            loadingMessage: 'Loading...',
+            dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options
+
+
+                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
+
+                "lengthMenu": [
+                    [20, 50],
+                    [20, 50] // change per page values here
+                ],
+                "pageLength": 50, // default record count per page
+
+                "ajax": {
+                    "url": query, // ajax source
+                    "type": 'POST',
+                    "data": {filterData: $scope.filterData, mode: "collection"},
+                    "xhrFields": {withCredentials: true}
+                },
+                "language": {
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有匹配結果",
+                    "sEmptyTable":     "沒有匹配結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(filtered from _MAX_ total records)",
+                    "Processing":   "處理中...",
+                    "Paginate": {
+                        "First":    "首頁",
+                        "Previous": "上頁",
+                        "Next":     "下頁",
+                        "Last":     "尾頁"
+                    }
+                },
+                "columns": [
+                    { "data": "invoiceId", "width":"8%" },
+                    { "data": "deliveryDate_date", "width":"7%" },
+                    { "data": "zoneId", "width":"5%" },
+                    { "data": "customerName_chi",  "width":"15%"},
+                    { "data": "amount", "width":"5%" },
+                    { "data": "remain", "width":"7%" },
+                    { "data": "invoiceStatusText", "width":"6%" },
+                     { "data": "link", "width":"5%" }
+
+
+                ],
+
+                "order": [
+                    [1, "asc"]
+                ] // set first column as a default sort by asc
+            }
+        });
+
     }
 
     $scope.updateNumSum = function()

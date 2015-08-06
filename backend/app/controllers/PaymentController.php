@@ -148,9 +148,6 @@ if($paidinfo['no']!=''){
         {
             $filter = Input::get('filterData');
 
-
-            //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
-
             $invoice = Invoice::select('customerName_chi','invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId')->leftjoin('customer', 'customer.customerId', '=', 'invoice.customerId')->where('deliveryDate','>',strtotime("-7 days"));
 
             // zone
@@ -187,11 +184,15 @@ if($paidinfo['no']!=''){
 
             // created by
 
-            $invoices = $invoice->orderby('invoiceId', 'desc')->get();
+            $invoices = $invoice->orderby('invoiceId', 'desc');
 
 
 
-            return Response::json($invoices);
+            return Datatables::of($invoices)
+
+                ->addColumn('link', function ($payment) {
+                    return '<span onclick="editInvoicePayment(\''.$payment->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
+                })->make(true);
         }
 
 

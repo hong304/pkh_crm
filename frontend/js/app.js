@@ -984,6 +984,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         files: [
 
 
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
                             'js/controllers/financeCashController.js',
                             'js/controllers/selectClientCtrl.js',
 
@@ -991,7 +994,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                             assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
                         ]
                     });
-                }],
+                }]
             }
         })
         
