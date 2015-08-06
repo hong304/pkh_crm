@@ -453,9 +453,10 @@ if(!$empty){
 
                 $pdf->setXY(220, $y);
                 if(isset($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']]))
-                    $numsum= '$'.number_format($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                    if($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']]!=0)
+                        $numsum= '$'.number_format($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
                 else
-                    $numsum= '';
+                        $numsum= '';
                 $pdf->Cell(0, 0, $numsum, 0, 0, "L");
 
                 $pdf->Line(10, $y+8, 285, $y+8);
