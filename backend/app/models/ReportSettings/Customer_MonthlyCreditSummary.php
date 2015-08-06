@@ -374,7 +374,7 @@ if(!$empty){
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, "客户", 0, 0, "L");
 
-                $pdf->setXY(110, $y);
+                $pdf->setXY(100, $y);
                 $pdf->Cell(0, 0, "結餘", 0, 0, "L");
 
                 $pdf->setXY(130, $y);
@@ -471,19 +471,19 @@ if(!$empty){
                 $pdf->setXY(100, $y);
                 $pdf->Cell(0, 0, '合共總額:', 0, 0, "L");
 
-                $pdf->setXY(135, $y);
+                $pdf->setXY(130, $y);
                 $pdf->Cell(0, 0, '$' . number_format($own_total, 2, '.', ','), 0, 0, "L");
 
-                $pdf->setXY(165, $y);
+                $pdf->setXY(160, $y);
                 $pdf->Cell(0, 0,'$' . number_format(isset($this->_monthly[$this->_reportMonth]['total'])?$this->_monthly[$this->_reportMonth]['total']:0, 1, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(190, $y);
                 $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-1]['total'])?$this->_monthly[$this->_reportMonth-1]['total']:0, 1, '.', ','), 0, 0, "L");
 
-                $pdf->setXY(215, $y);
+                $pdf->setXY(220, $y);
                 $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-2]['total'])?$this->_monthly[$this->_reportMonth-2]['total']:0, 1, '.', ','), 0, 0, "L");
 
-                $pdf->setXY(240, $y);
+                $pdf->setXY(250, $y);
                 $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-3]['total'])?$this->_monthly[$this->_reportMonth-3]['total']:0, 1, '.', ','), 0, 0, "L");
 
             }
