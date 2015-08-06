@@ -374,7 +374,7 @@ if(!$empty){
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, "客户", 0, 0, "L");
 
-                $pdf->setXY(135, $y);
+                $pdf->setXY(110, $y);
                 $pdf->Cell(0, 0, "結餘", 0, 0, "L");
 
                 $pdf->setXY(130, $y);
