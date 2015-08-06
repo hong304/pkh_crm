@@ -301,7 +301,9 @@ if(!$empty){
 
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
         $pdf->SetFont('chi','',14);
+        $pdf->setXY(10, 2);
         $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
+        $pdf->setXY(10, 10);
         $pdf->SetFont('chi','U',12);
         $pdf->Cell(0, 10,'帳齡分析搞要(應收)',0,1,"C");
 
@@ -417,7 +419,7 @@ if(!$empty){
 
                 $own_total += $accu;
 
-                $y += 6;
+                $y += 2;
 
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, $client['customer']['customerId'], 0, 0, "L");
@@ -461,14 +463,14 @@ if(!$empty){
 
                 $pdf->Line(10, $y+5, 285, $y+5);
 
-               $y +=2;
+               $y +=4;
             }
 
 
 
             if($j == count($bd)){
 
-                $y += 8;
+                $y += 6;
                 $pdf->setXY(70, $y);
                 $pdf->Cell(0, 0, '合共總額:', 0, 0, "L");
 
