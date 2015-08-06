@@ -358,7 +358,7 @@ if(!$empty){
 
         $bd = array_chunk($this->data,15,true);
 
-        $i = 0;
+        $i = 1;
         $j=1;
         $own_total = 0;
 
@@ -395,8 +395,9 @@ if(!$empty){
 
 
                 $pdf->setXY(280, $pdf->h-25);
-                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i+1, count($bd)) , 0, 0, "R");
+                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, count($bd)) , 0, 0, "R");
 
+                $i++;
 
 
             foreach ($g as $kk => $client) {
