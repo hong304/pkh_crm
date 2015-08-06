@@ -214,7 +214,8 @@ if(!$empty){
     }
 
 
-    public function outputCsv(){
+
+   /* public function outputCsv(){
 
         $this->_reportMonth = date("n",$this->_date2);
 
@@ -231,7 +232,7 @@ if(!$empty){
         $csv .= "\r\n";
         $csv .= 'CustomerID,Customer Name,Total Amount,Paid,Remain,'.date('Y') . '/' . ($this->_reportMonth).','.date('Y') . '/' . ($this->_reportMonth - 1).','.date('Y') . '/' . ($this->_reportMonth - 2).','.date('Y') . '/' . ($this->_reportMonth - 3) . "\r\n";
 
-$j=2;
+        $j=2;
 
         foreach($this->data as $client) {
 
@@ -253,9 +254,9 @@ $j=2;
 
             foreach ($client['breakdown'] as $k => $v) {
 
-                    $amount += $v['invoiceAmount'];
-                    $paid += $v['paid'];
-                    $accu = $v['accumulator'];
+                $amount += $v['invoiceAmount'];
+                $paid += $v['paid'];
+                $accu = $v['accumulator'];
 
             }
 
@@ -292,6 +293,94 @@ $j=2;
 
         return Response::make(rtrim($csv, "\n"), 200, $headers);
 
+
+    } */
+
+
+    public function outputCsv(){
+
+        $pdf = new PDF();
+        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
+        $pdf->AddPage('L');
+        $pdf->SetFont('chi','',18);
+        $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
+        $pdf->SetFont('chi','U',16);
+        $pdf->Cell(0, 10,'帳齡分析搞要(應收)',0,1,"C");
+
+       /* $pdf->SetFont('chi','U',13);
+        $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT) . ' (' . $this->_zoneName .')', 0, 2, "L");
+        $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date), 0, 2, "L");*/
+
+
+
+
+        $this->_reportMonth = date("n",$this->_date2);
+
+        $times  = array();
+        for($month = 1; $month <= 12; $month++) {
+            $first_minute = mktime(0, 0, 0, $month, 1,date('Y'));
+            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),date('Y'));
+
+            if($this->_reportMonth==$month)
+                $last_minute =  $this->_date2;
+            $times[$month] = array($first_minute, $last_minute);
+        }
+
+        $y=50;
+
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, "客户", 0, 0, "L");
+
+        $pdf->setXY(160, $y);
+        $pdf->Cell(0, 0, "結餘", 0, 0, "L");
+
+        $pdf->setXY(180, $y);
+        $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth), 0, 0, "L");
+
+        $pdf->setXY(200, $y);
+        $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-1), 0, 0, "L");
+
+        $pdf->setXY(220, $y);
+        $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-2), 0, 0, "L");
+
+        $pdf->setXY(240, $y);
+        $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-3), 0, 0, "L");
+
+        $pdf->setXY(260, $y);
+        $pdf->Cell(0, 0, "以前", 0, 0, "L");
+
+        $pdf->Line(10, 53, 285, 53);
+
+        foreach($this->data as $client) {
+
+            for ($i = $this->_reportMonth; $i > 0; $i--) {
+                $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount','!=','paid')->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+
+                foreach($data[$i] as $invoice)
+                {
+                    $customerId = $invoice->customerId;
+                    $this->_monthly[$i][$customerId][]= [
+                        'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-$invoice->paid
+                    ];
+                }
+            }
+
+            $amount = 0;
+            $paid = 0;
+            $accu = 0;
+
+            foreach ($client['breakdown'] as $k => $v) {
+
+                    $amount += $v['invoiceAmount'];
+                    $paid += $v['paid'];
+                    $accu = $v['accumulator'];
+
+            }
+
+        }
+
+        $pdf->Output('','I');
 
     }
     

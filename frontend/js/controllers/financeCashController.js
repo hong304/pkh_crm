@@ -110,10 +110,8 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             url: query,
             data: {paid:data,paidinfo:$scope.filterData,mode:'posting'}
         }).success(function () {
-            // $scope.updateDataSet();
-         $scope.invoicepaidcount = 0;
 
-             Metronic.alert({
+            Metronic.alert({
                  container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
                  place: 'prepend', // append or prepent in container
                  type: 'success',  // alert's type
@@ -125,6 +123,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                  icon: 'warning' // put icon before the message
              });
 
+             $('#paidform').hide();
         });
 
        // $scope.getPaymentInfo('autopost');
