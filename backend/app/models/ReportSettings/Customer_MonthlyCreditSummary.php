@@ -359,7 +359,7 @@ if(!$empty){
         }
 
 
-        $bd = array_chunk($this->data,19,true);
+        $bd = array_chunk($this->data,20,true);
 
         $i = 1;
         $j=1;
