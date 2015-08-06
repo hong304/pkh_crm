@@ -357,7 +357,7 @@ if(!$empty){
         }
 
 
-        $bd = array_chunk($this->data,15,true);
+        $bd = array_chunk($this->data,13,true);
 
         $i = 1;
         $j=1;
@@ -377,19 +377,19 @@ if(!$empty){
                 $pdf->setXY(135, $y);
                 $pdf->Cell(0, 0, "結餘", 0, 0, "L");
 
-                $pdf->setXY(165, $y);
+                $pdf->setXY(130, $y);
                 $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth), 0, 0, "L");
 
-                $pdf->setXY(190, $y);
+                $pdf->setXY(160, $y);
                 $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-1), 0, 0, "L");
 
-                $pdf->setXY(215, $y);
+                $pdf->setXY(190, $y);
                 $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-2), 0, 0, "L");
 
-                $pdf->setXY(240, $y);
+                $pdf->setXY(220, $y);
                 $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-3), 0, 0, "L");
 
-                $pdf->setXY(265, $y);
+                $pdf->setXY(250, $y);
                 $pdf->Cell(0, 0, "以前", 0, 0, "L");
 
                 $pdf->Line(10, 53, 285, 53);
@@ -426,12 +426,9 @@ if(!$empty){
                 $pdf->Cell(0, 0, $client['customer']['customerName'], 0, 0, "L");
 
                 $pdf->setXY(100, $y);
-                $pdf->Cell(0, 0, 'Tel:' .$client['customer']['customerTel'], 0, 0, "L");
-
-                $pdf->setXY(135, $y);
                 $pdf->Cell(0, 0, '$' . number_format($accu, 2, '.', ','), 0, 0, "L");
 
-                $pdf->setXY(165, $y);
+                $pdf->setXY(130, $y);
 
                 if(isset($this->_monthly[$this->_reportMonth]['byCustomer'][$client['customer']['customerId']]))
                     $numsum='$'.number_format($this->_monthly[$this->_reportMonth]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
@@ -440,21 +437,21 @@ if(!$empty){
 
                 $pdf->Cell(0, 0,$numsum , 0, 0, "L");
 
-                $pdf->setXY(190, $y);
+                $pdf->setXY(160, $y);
                 if(isset($this->_monthly[$this->_reportMonth-1]['byCustomer'][$client['customer']['customerId']]))
                     $numsum='$'.number_format($this->_monthly[$this->_reportMonth-1]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
                 else
                     $numsum= '';
                 $pdf->Cell(0, 0, $numsum , 0, 0, "L");
 
-                $pdf->setXY(215, $y);
+                $pdf->setXY(190, $y);
                 if(isset($this->_monthly[$this->_reportMonth-2]['byCustomer'][$client['customer']['customerId']]))
                     $numsum= '$'.number_format($this->_monthly[$this->_reportMonth-2]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
                 else
                     $numsum= '';
                 $pdf->Cell(0, 0, $numsum, 0, 0, "L");
 
-                $pdf->setXY(240, $y);
+                $pdf->setXY(220, $y);
                 if(isset($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']]))
                     $numsum= '$'.number_format($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
                 else
