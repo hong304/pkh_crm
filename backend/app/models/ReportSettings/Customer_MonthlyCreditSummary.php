@@ -300,13 +300,13 @@ if(!$empty){
     public function agingHeader($pdf){
 
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
-        $pdf->SetFont('chi','',16);
+        $pdf->SetFont('chi','',14);
         $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
-        $pdf->SetFont('chi','U',14);
+        $pdf->SetFont('chi','U',12);
         $pdf->Cell(0, 10,'帳齡分析搞要(應收)',0,1,"C");
 
         $y = 10;
-        $pdf->SetFont('chi','',10);
+        $pdf->SetFont('chi','',9);
         $pdf->setXY(10, $y);
         $pdf->Cell(0, 10,'載至日期 : '. date('Y-m-d',$this->_date2),0,1,"L");
 
@@ -357,7 +357,7 @@ if(!$empty){
         }
 
 
-        $bd = array_chunk($this->data,12,true);
+        $bd = array_chunk($this->data,17,true);
 
         $i = 1;
         $j=1;
@@ -368,7 +368,7 @@ if(!$empty){
 
                 $pdf->AddPage('L');
                 $this->agingHeader($pdf);
-                $y=35;
+                $y=30;
 
                 $pdf->SetFont('chi','',7);
                 $pdf->setXY(10, $y);
@@ -459,9 +459,9 @@ if(!$empty){
                         $numsum= '';
                 $pdf->Cell(0, 0, $numsum, 0, 0, "L");
 
-                $pdf->Line(10, $y+6, 285, $y+6);
+                $pdf->Line(10, $y+5, 285, $y+5);
 
-               $y +=3;
+               $y +=2;
             }
 
 
