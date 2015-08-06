@@ -359,7 +359,7 @@ if(!$empty){
         }
 
 
-        $bd = array_chunk($this->data,18,true);
+        $bd = array_chunk($this->data,17,true);
 
         $i = 1;
         $j=1;
@@ -372,7 +372,7 @@ if(!$empty){
                 $this->agingHeader($pdf);
                 $y=30;
 
-                $pdf->SetFont('chi','',7);
+                $pdf->SetFont('chi','',8);
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, "客户", 0, 0, "L");
 
