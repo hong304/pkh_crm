@@ -357,7 +357,7 @@ if(!$empty){
         }
 
 
-        $bd = array_chunk($this->data,13,true);
+        $bd = array_chunk($this->data,12,true);
 
         $i = 1;
         $j=1;
