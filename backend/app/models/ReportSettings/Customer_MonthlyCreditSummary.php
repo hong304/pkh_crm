@@ -461,7 +461,7 @@ if(!$empty){
                         $numsum= '';
                 $pdf->Cell(0, 0, $numsum, 0, 0, "L");
 
-                $pdf->Line(10, $y+5, 285, $y+5);
+                $pdf->Line(10, $y+7, 285, $y+7);
 
                $y +=3;
             }
@@ -470,7 +470,7 @@ if(!$empty){
 
             if($j == count($bd)){
 
-                $y += 4;
+                $y += 7;
                 $pdf->setXY(70, $y);
                 $pdf->Cell(0, 0, '合共總額:', 0, 0, "L");
 
