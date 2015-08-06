@@ -359,7 +359,7 @@ if(!$empty){
         }
 
 
-        $bd = array_chunk($this->data,20,true);
+        $bd = array_chunk($this->data,19,true);
 
         $i = 1;
         $j=1;
@@ -397,7 +397,7 @@ if(!$empty){
                 $pdf->Line(10, $y+2, 285, $y+2);
 
 
-                $pdf->setXY(280, $pdf->h-25);
+                $pdf->setXY(280, 10);
                 $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, count($bd)) , 0, 0, "R");
 
                 $i++;
