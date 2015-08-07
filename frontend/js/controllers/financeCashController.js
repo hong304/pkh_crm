@@ -1,11 +1,19 @@
 'use strict';
 
 
-function editInvoicePayment(invoiceId)
+function editInvoicePayment(invoiceId,customerId)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
-        scope.editInvoicePayment(invoiceId);
+        scope.editInvoicePayment(invoiceId,customerId);
+    });
+}
+
+function viewInvoicePayment(invoiceId)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.viewInvoicePayment(invoiceId);
     });
 }
 
@@ -97,10 +105,11 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         Metronic.unblockUI();
     });
 
-    $scope.editInvoicePayment = function(invoiceId)
+    $scope.editInvoicePayment = function(invoiceId,customerId)
     {
 
-
+        $scope.filterData.customerId = customerId;
+        $scope.filterData.invoiceId = invoiceId;
         $('#invoicePayment').modal('show');
 
         $('#invoicePayment').on('shown.bs.modal', function () {
@@ -115,6 +124,37 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     }
 
+    $scope.viewInvoicePayment = function(invoiceId)
+    {
+
+
+        Metronic.blockUI();
+        $http.post(query, {mode: "single", invoiceId: invoiceId})
+            .success(function(res, status, headers, config){
+
+        $scope.invoiceDetails = res;
+
+              Metronic.unblockUI();
+                $("#invoiceDetails").modal({backdrop: 'static'});
+
+            });
+
+    }
+
+    $scope.checkChequeExist = function (){
+
+        $http({
+            method: 'POST',
+            url: query,
+            data: {paidinfo:$scope.filterData,mode:'checkChequeExist'}
+        }).success(function (res) {
+            $scope.cheque = res;
+            if($scope.cheque.amount > 0)
+                $scope.filterData.amount = $scope.cheque.amount;
+        });
+
+    }
+
     $scope.updateInvoiceNumber = function()
     {
         $timeout.cancel(fetchDataTimer);
@@ -125,13 +165,14 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.autoPost = function(){
         var data = $scope.invoicepaid;
+        console.log($scope.filterData);
 
      $http({
             method: 'POST',
             url: query,
             data: {paid:data,paidinfo:$scope.filterData,mode:'posting'}
         }).success(function () {
-
+         $('#invoicePayment').modal('hide');
             Metronic.alert({
                  container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
                  place: 'prepend', // append or prepent in container
@@ -144,7 +185,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                  icon: 'warning' // put icon before the message
              });
 
-             $('#paidform').hide();
+             $scope.updateDataSet();
         });
 
        // $scope.getPaymentInfo('autopost');
@@ -248,11 +289,13 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     { "data": "invoiceId", "width":"8%" },
                     { "data": "deliveryDate_date", "width":"7%" },
                     { "data": "zoneId", "width":"5%" },
-                    { "data": "customerName_chi",  "width":"15%"},
+                    { "data": "customerName",  "width":"15%"},
                     { "data": "amount", "width":"5%" },
                     { "data": "remain", "width":"7%" },
                     { "data": "invoiceStatusText", "width":"6%" },
-                     { "data": "link", "width":"5%" }
+                    { "data": "paymentTermsText", "width":"6%" },
+                     { "data": "link", "width":"5%" },
+                    { "data": "details", "width":"5%" }
 
 
                 ],

@@ -1,0 +1,86 @@
+<div class="modal fade bs-modal-lg" id="invoiceDetails" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">付款詳情</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+
+                    <div class="portlet light bordered">
+
+                        <div class="portlet-title">
+                            <div class="caption font-green-sharp">
+                                <i class="icon-speech font-green-sharp"></i>
+                                <span class="caption-subject bold uppercase">支票資料</span>
+											<span class="caption-helper"></span>
+                            </div>
+                        </div>
+
+
+
+                        <div class="portlet-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active">
+                                    <div>
+                                        <!--<h4></h4>-->
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                            <tr role="row" class="heading">
+                                                <th width="10%">Bank Code</th>
+                                                <th width="5%">支票號碼</th>
+                                                <th width="5%">總數</th>
+                                                <th width="5%">已付</th>
+                                                <th width="13%">支付日期</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr data-ng-repeat="i in invoiceDetails" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+                                                <td>
+                                                    {{i.bankCode}}
+                                                </td>
+
+                                                <td>
+                                                    {{i.ref_number}}
+                                                </td>
+                                                <td>
+                                                    {{i.totalamount}}
+                                                </td>
+                                                <td>
+                                                    ${{i.paid}}
+                                                </td>
+                                                <td>
+                                                    {{i.receive_date}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <!--<td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">總額: HK${{invoiceinfo.invoiceTotalAmount | number : 2}}  ({{invoiceinfo.invoiceDiscount}}%off)</td>-->
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <br/>
+                                        <div style="clear:both;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div style="clear:both;"></div>
+            </div>
+            <div class="modal-footer" >
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

@@ -93,7 +93,7 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-cogs font-green-sharp"></i>
-                            <span class="caption-subject font-green-sharp bold uppercase">現金客列表</span>
+                            <span class="caption-subject font-green-sharp bold uppercase">訂單列表</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -121,9 +121,14 @@
                                     <th width="8%">
                                     現狀態
                                 </th>
+                                    <th>
+                                        付款方式
+                                    </th>
+                                    <th>
 
-                                    <th width="15%">
-                                        狀態
+                                    </th>
+                                    <th>
+
                                     </th>
 
 
@@ -170,3 +175,5 @@
 
 <!-- Select Client Modal -->
 <div ng-include="'/views/model_invoicePayment.html'"></div>
+<!-- Select Client Modal -->
+<div ng-include="'/views/model_invoiceDetails.html'"></div>

@@ -93,7 +93,7 @@ class PaymentController extends BaseController {
         $mode = Input::get('mode');
 
         if($mode == 'posting'){
-            $paid = Input::get('paid');
+
             $paidinfo = Input::get('paidinfo');
 
 if($paidinfo['no']!=''){
@@ -106,7 +106,7 @@ if($paidinfo['no']!=''){
                             $payment->amount = $paidinfo['amount'];
                                 $payment->used = 1;
                                     $payment->remain = 0;
-            $payment->customerId = $paid[0]['customerId'];
+            $payment->customerId = $paidinfo['customerId'];
             $payment->save();
 }
 
@@ -118,29 +118,26 @@ if($paidinfo['no']!=''){
                 $payment1->end_date =  $paidinfo['receiveDate'];
                 $payment1->receive_date = $paidinfo['receiveDate'];
                 $payment1->amount = $paidinfo['cashAmount'];
-                $payment1->used = 1;
-                $payment1->remain = 0;
-                $payment1->customerId = $paid[0]['customerId'];
+                if($paidinfo['amount'] <= $paidinfo['paid'])
+                    $payment1->used = 1;
+                $payment1->remain = $paidinfo['amount'] - $paidinfo['paid'];
+                $payment1->customerId = $paidinfo['customerId'];
                 $payment1->save();
             }
 
 
-            foreach ($paid as $k=>$v){
-                $i = Invoice::where('invoiceId',$v['id'])->first();
-                $i->paid += $paidinfo['cashAmount'];
-                $i->paid += $paidinfo['amount'];
 
-                if($v['paid'] > 0)
-                    $i->invoiceStatus = $v['paid'];
-                if($v['paid'] == 30)
-                    $i->paid_date = $v['date'];
+                $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
+                $i->paid += $paidinfo['cashAmount'];
+                $i->paid += $paidinfo['paid'];
+                $i->invoiceStatus = $paidinfo['status'];
                 $i->save();
 
                 if($paidinfo['no']!='')
-                $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['amount']]);
+                $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['paid']]);
                 if($paidinfo['cashAmount']!=0)
                 $i->payment()->attach($payment1->id,['amount'=>$i->amount,'paid'=>$paidinfo['cashAmount']]);
-            }
+
 
         }
 
@@ -148,7 +145,7 @@ if($paidinfo['no']!=''){
         {
             $filter = Input::get('filterData');
 
-            $invoice = Invoice::select('customerName_chi','invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId')->leftjoin('customer', 'customer.customerId', '=', 'invoice.customerId')->where('deliveryDate','>',strtotime("-7 days"));
+            $invoice = Invoice::select('invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms');
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -175,7 +172,8 @@ if($paidinfo['no']!=''){
             if($filter['invoiceNumber'] == '')
             {
                 $invoice->where('invoice.deliverydate', strtotime($filter['deliverydate']));
-                $invoice->where('invoiceStatus', $filter['status']);
+                $invoice->where('invoiceStatus', $filter['status'])
+                    ->where('paymentTerms','=',1);
             }else{
                 $invoice->where('invoiceId', 'LIKE', '%'.$filter['invoiceNumber'].'%');
 
@@ -189,13 +187,31 @@ if($paidinfo['no']!=''){
 
 
             return Datatables::of($invoices)
-
                 ->addColumn('link', function ($payment) {
-                    return '<span onclick="editInvoicePayment(\''.$payment->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
-                })->make(true);
+                    return '<span onclick="editInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
+                })->addColumn('details', function ($payment) {
+                    return '<span onclick="viewInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 詳情</span>';
+                })->addColumn('customerName', function ($payment) {
+                    return $payment->customer_name;
+                })
+
+                ->make(true);
         }
 
+        if($mode == 'checkChequeExist'){
+            $paidinfo = Input::get('paidinfo');
+            $p = Payment::where('bankCode',$paidinfo['bankCode'])->where('ref_number',$paidinfo['no'])->first();
+            return Response::json($p);
+        }
 
+        if($mode == 'single'){
+
+            $p=DB::table('invoice_payment')->select('invoice_payment.amount as totalamount','bankCode','ref_number','receive_date','paid')->leftJoin('payments', function($join) {
+                $join->on('payment_id', '=', 'payments.id');
+            })->where('invoice_id','=',Input::get('invoiceId'))->get();
+
+            return Response::json($p);
+        }
     }
 
     public function getClearance(){
