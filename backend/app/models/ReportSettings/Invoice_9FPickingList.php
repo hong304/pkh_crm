@@ -14,6 +14,8 @@ class Invoice_9FPickingList {
     public function __construct($indata)
     {
 
+
+
         $report = Report::where('id', $indata['reportId'])->first();
 
         $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -273,6 +275,11 @@ class Invoice_9FPickingList {
                 'name' => '列印  PDF 版本',
                 'warning'   =>  false,
             ],
+            [
+                'type' => 'csv',
+                'name' => 'Export Pick & count XLS',
+                'warning'   =>  false,
+            ],
         ];
 
         return $downloadSetting;
@@ -285,6 +292,84 @@ class Invoice_9FPickingList {
 
     }
 
+    public function outputCSV(){
+        require_once './Classes/PHPExcel/IOFactory.php';
+        require_once './Classes/PHPExcel.php';
+
+        $csv1 = DB::table('invoiceitem')->select('zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('shift',$this->_shift)->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->groupby('productId','productQtyUnit')->get();
+
+
+
+
+        $csv = '車號,送貨日期,產品編號,產品名稱,數量,單位' . "\r\n";
+        foreach ($csv1 as $v) {
+            $csv .= $v->zoneId.',';
+            $csv .= date('Y-m-d',$v->deliveryDate).',';
+            $csv .= $v->productId.',';
+            $csv .= $v->productName_chi.',';
+            $csv .= $v->SumQty.',';
+            $csv .= $v->productUnitName.',';
+            $csv .= "\r\n";
+
+        }
+      /* echo "\xEF\xBB\xBF";
+
+        $headers = array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="9F_picking.csv"',
+        );
+
+       return Response::make(rtrim($csv, "\n"), 200, $headers);*/
+
+$i=3;
+        $objPHPExcel = new PHPExcel ();
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '車號');
+        $objPHPExcel->getActiveSheet()->setCellValue('A2', '送貨日期');
+
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', $this->_zone);
+        $objPHPExcel->getActiveSheet()->setCellValue('B2', date('Y-m-d',$this->_date));
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '車號');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, '送貨日期');
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '產品編號');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '產品名稱');
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, '數量');
+        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, '單位');
+
+
+        $i += 1;
+        foreach ($csv1 as $k => $v) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v->zoneId);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, date('Y-m-d',$v->deliveryDate));
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v->productId);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v->productName_chi);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->SumQty);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v->productUnitName);
+            $i++;
+        }
+
+       /* foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+           // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
+            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }*/
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(35);
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="9F_picking_count.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+
+       //$objWriter->save('export.xls');
+
+
+     //   pd($csv);
+
+   }
 
     # PDF Section
     public function generateHeader($pdf)
