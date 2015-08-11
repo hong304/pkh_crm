@@ -52,6 +52,43 @@ class OrderController extends BaseController
 
         }
         foreach ($product as $p) {
+          /*  if($p!=0){
+
+                $overflow = false;
+                $getQty = invoiceitem::leftJoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftJoin('customer','invoice.customerId','=','customer.customerId')->where('invoice.customerId',$order['clientId'])->where('deliveryDate',strtotime($order['deliveryDate']))->where('productId',$p['code'])->get();//sum('productQty');
+               // $maxQty = product::select('maxSellingQty')->where('productId',$p['code'])->first();
+pd('s');
+                $carton = ($maxQty['productPacking_carton'] == false) ? 1:$maxQty['productPacking_carton'];
+                $inner = ($maxQty['productPacking_inner']==false) ? 1:$maxQty['productPacking_inner'];
+                $unit = ($maxQty['productPacking_unit'] == false) ? 1 : $maxQty['productPacking_unit'];
+
+                if ($p['unit'] == 'carton') {
+                    if($p['qty']*$inner*$unit > $maxQty['maxSellingQty']-$getQty)
+                        $overflow = true;
+                }
+
+                if ($p['unit'] == 'inner') {
+                    if($carton*$p['qty']*$unit > $maxQty['maxSellingQty']-$getQty)
+                        $overflow = true;
+                }
+
+                if ($p['unit'] == 'unit') {
+                    if($carton*$inner*$p['qty'] > $maxQty['maxSellingQty']-$getQty)
+                        $overflow = true;
+                }
+
+                if($overflow)
+                    return [
+                        'result' => false,
+                        'status' => 0,
+                        'invoiceNumber' => 0,
+                        'invoiceItemIds' => 0,
+                        'message' => $p['code'].'超過每日下單數量,限制為:'.$maxQty['maxSellingQty'],
+                    ];
+
+                if(!$overflow)
+                    pd($getQty);
+            }*/
             $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'], $p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted']);
         }
         $result = $ci->save();

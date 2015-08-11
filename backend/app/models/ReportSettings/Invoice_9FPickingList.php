@@ -63,7 +63,7 @@ class Invoice_9FPickingList {
 
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], '9F'=>[]];
-        Invoice::select('*')->where('version', true)->where('f9_picking_dl',false)->where('shift',$this->_shift)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        Invoice::select('*')->where('version',$this->_version)->where('shift',$this->_shift)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')
             ->chunk(50, function($invoicesQuery){
@@ -229,6 +229,7 @@ class Invoice_9FPickingList {
         }
 
         $ashift =[['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
+
 
         $filterSetting = [
             [

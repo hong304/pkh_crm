@@ -100,51 +100,28 @@ class HomeController extends BaseController {
         }
         if($mode == 'post')
         {
-
-            $f1 = false;
+            $invoiceId = [];
             $f9 = false;
             $deliveryDate = strtotime($info['date']);
 
-
-
-
-           // $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->get();
             $info_data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->whereIn('invoiceStatus',[1,2,96])
-                ->where('version',false)->get();
+                ->where('version',false)->lists('invoiceId');
 
-            foreach($info_data as $v){
-                 $q[]= $v->invoiceId;
-            }
+            $ii = InvoiceItem::wherein('invoiceId',$info_data)->get();
 
-            $ii = InvoiceItem::wherein('invoiceId',$q)->get();
-
-            foreach ($ii as $v){
-                if($v->productLocation == 1){
-                    $f1 = true;
-                }
-
-                if($v->productLocation == 9){
-                   $f9 = true;
-                }
-            }
-
-            if($f9){
-                // Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',4)->update(['f9_picking_dl'=>1]);
-                Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->where('version',true)->update(['f9_picking_dl'=>1]);
-            }
-
-         //   $data = Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2])->with('InvoiceItem')
-         //       ->update(['previous_status'=>DB::raw('invoiceStatus'),'invoiceStatus' => 4]);
-
-            Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2,96])->where('shift',$info['shift'])->with('InvoiceItem')
-             ->update(['previous_status'=>DB::raw('invoiceStatus'),'version' => true]);
 
             $user = pickingListVersionControl::where('date',$info['date'])->where('zone',$info['zone']['zoneId'])->where('shift',$info['shift'])->first();
 
+            foreach ($ii as $v){
+                if($v->productLocation == 9){
+                    $invoiceId[$v->invoiceId] = isset($user->f9_version)?$user->f9_version+1:'1';
+                    $f9 = true;
+                }else
+                    $invoiceId[$v->invoiceId] = 100;
+            }
+
             if($user == null){
                 $newp =  new pickingListVersionControl();
-                if($f1)
-                    $newp->f1_version = 1;
                 if($f9)
                     $newp->f9_version = 1;
                 $newp->date = $info['date'];
@@ -152,12 +129,21 @@ class HomeController extends BaseController {
                 $newp->shift = $info['shift'];
                 $newp->save();
             }else{
-                if($f1)
-                    $user->f1_version += 1;
                 if($f9)
                     $user->f9_version += 1;
                 $user->save();
             }
+
+            foreach($invoiceId as $k => $v){
+                // Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('invoiceStatus',4)->update(['f9_picking_dl'=>1]);
+                Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->where('shift',$info['shift'])->where('invoiceId',$k)->update(['previous_status'=>DB::raw('invoiceStatus'),'version'=>$v]);
+            }
+
+
+           // Invoice::where('deliveryDate',$deliveryDate)->where('zoneId',$info['zone']['zoneId'])->whereIn('invoiceStatus',[1,2,96])->where('shift',$info['shift'])->with('InvoiceItem')
+            // ->update(['previous_status'=>DB::raw('invoiceStatus'),'version' => true]);
+
+
 
             return Response::json($f9);
         }
