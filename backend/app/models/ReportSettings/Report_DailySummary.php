@@ -26,7 +26,7 @@ class Report_DailySummary
         ini_set("memory_limit", "-1");
 
         $report = Report::where('id', $indata['reportId'])->first();
-        $this->_reportTitle = $report->name;
+
 
 
 
@@ -45,7 +45,7 @@ class Report_DailySummary
 
 
         $this->_uniqueid = microtime(true);
-
+        $this->_reportTitle =  $report->name .' - '. $this->_zone. ' ('. date('Y-m-d',$this->_date) .' to '. date('Y-m-d',$this->_date1).')';
     }
 
     public function registerTitle()
