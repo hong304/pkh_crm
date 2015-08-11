@@ -940,7 +940,7 @@ if(bool)
             generalError = true;
         }
 
-        $scope.allowSubmission = false;
+       // $scope.allowSubmission = false;
 
 
         if(!$scope.order.invoiceDate || !$scope.order.deliveryDate || !$scope.order.dueDate || !$scope.order.status || !$scope.order.address || !$scope.order.clientId)
@@ -963,7 +963,6 @@ if(bool)
 
         if(!generalError)
         {
-
             $scope.order.print = v;
             $http.post(
                 endpoint + '/placeOrder.json', {

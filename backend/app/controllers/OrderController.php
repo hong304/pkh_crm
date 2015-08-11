@@ -20,6 +20,9 @@ class OrderController extends BaseController
     {
         $itemIds = [];
         $product = Input::get('product');
+
+       // pd($product);
+
         $order = Input::get('order');
         $timer = Input::get('timer');
         //  pd($order);
@@ -32,7 +35,7 @@ class OrderController extends BaseController
         foreach ($product as $p) {
             if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty']>0)
                 $itemIds[] = $p['dbid'];
-            if ($p['dbid'] == '' && $p['code'] != '')
+            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty']>0)
                 $have_item = true;
         }
 
@@ -41,7 +44,7 @@ class OrderController extends BaseController
                 return [
                     'result' => false,
                     'status' => 0,
-                    'invoiceNumber' => 0,
+                    'invoiceNumber' => $order['invoiceId'],
                     'invoiceItemIds' => 0,
                     'message' => '未有下單貨品',
                 ];
@@ -50,6 +53,15 @@ class OrderController extends BaseController
             else
                 InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->delete();
 
+        }else{
+            if (!$have_item)
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => 0,
+                    'invoiceItemIds' => 0,
+                    'message' => '未有下單貨品',
+                ];
         }
         foreach ($product as $p) {
           /*  if($p!=0){
@@ -94,7 +106,7 @@ pd('s');
         $result = $ci->save();
 
         // Update performance log
-        $perf = new InvoiceUserPerformance();
+    /*    $perf = new InvoiceUserPerformance();
         $perf->invoiceId = $result['invoiceNumber'];
         $perf->userid = Auth::user()->id;
         $perf->timestampe = time();
@@ -102,7 +114,7 @@ pd('s');
         $perf->submit = $timer['submit'];
         $perf->select_client = $timer['selected_client'];
         $perf->drilldown = json_encode($timer['product']);
-        $perf->save();
+        $perf->save();*/
 
 
 
