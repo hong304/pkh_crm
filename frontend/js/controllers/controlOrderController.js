@@ -642,8 +642,6 @@ $scope.an = false;
 
 
 
-            console.log(availableunit);
-
             //$scope.product[i].availableunit = availableunit.reverse();
             $scope.product[i].availableunit = availableunit;
             $scope.product[i].unit = $scope.product[i].availableunit[0];

@@ -278,7 +278,7 @@ class Invoice_9FPickingList {
             ],
             [
                 'type' => 'csv',
-                'name' => 'Export Pick & count XLS',
+                'name' => '匯出 Excel 核對表',
                 'warning'   =>  false,
             ],
         ];
@@ -297,7 +297,7 @@ class Invoice_9FPickingList {
         require_once './Classes/PHPExcel/IOFactory.php';
         require_once './Classes/PHPExcel.php';
 
-        $csv1 = DB::table('invoiceitem')->select('zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('shift',$this->_shift)->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->groupby('productId','productQtyUnit')->get();
+        $csv1 = DB::table('invoiceitem')->select('productQtyUnit','productPacking_carton','productPacking_inner','productPacking_unit','productPacking_size','zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('shift',$this->_shift)->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->groupby('productId','productQtyUnit')->get();
 
 
 
@@ -335,8 +335,10 @@ $i=3;
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, '送貨日期');
         $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '產品編號');
         $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '產品名稱');
-        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, '數量');
-        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, '單位');
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, '包裝');
+        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, '數量');
+        $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, '單位');
+        $objPHPExcel->getActiveSheet()->setCellValue('H'.$i, '核對數');
 
 
         $i += 1;
@@ -345,8 +347,25 @@ $i=3;
             $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, date('Y-m-d',$v->deliveryDate));
             $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v->productId);
             $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v->productName_chi);
-            $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->SumQty);
-            $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v->productUnitName);
+
+            if($v->productUnitName == '斤'){
+                $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, '');
+            }else{
+                if($v->productQtyUnit == 'carton'){
+                    $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_inner .' x '. $v->productPacking_unit .' ('.$v->productPacking_size.')');
+                }
+
+                if($v->productQtyUnit == 'inner'){
+                    $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_unit .' ('.$v->productPacking_size.')');
+                }
+
+                if($v->productQtyUnit == 'unit'){
+                    $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_size);
+                }
+            }
+
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v->SumQty);
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . $i, $v->productUnitName);
             $i++;
         }
 
@@ -358,6 +377,7 @@ $i=3;
         $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
         $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
         $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(35);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');

@@ -13,7 +13,7 @@ class InvoiceUnloader {
         }
         
         $this->invoiceId = $invoiceId;
-        $this->im = Invoice::wherein('invoiceId', $invoiceId)->get();
+        $this->im = Invoice::wherein('invoiceId', $invoiceId)->with('invoiceitem')->get();
         
         return $this;
     }

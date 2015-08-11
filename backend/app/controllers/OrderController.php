@@ -68,7 +68,7 @@ class OrderController extends BaseController
 
                 $overflow = false;
                 $getQty = invoiceitem::leftJoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftJoin('customer','invoice.customerId','=','customer.customerId')->where('invoice.customerId',$order['clientId'])->where('deliveryDate',strtotime($order['deliveryDate']))->where('productId',$p['code'])->get();//sum('productQty');
-               // $maxQty = product::select('maxSellingQty')->where('productId',$p['code'])->first();
+                $maxQty = product::select('maxSellingQty')->where('productId',$p['code'])->first();
 pd('s');
                 $carton = ($maxQty['productPacking_carton'] == false) ? 1:$maxQty['productPacking_carton'];
                 $inner = ($maxQty['productPacking_inner']==false) ? 1:$maxQty['productPacking_inner'];
@@ -100,7 +100,9 @@ pd('s');
 
                 if(!$overflow)
                     pd($getQty);
-            }*/
+            } */
+
+
             $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'], $p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted']);
         }
         $result = $ci->save();
