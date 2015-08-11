@@ -147,6 +147,8 @@ class Product extends Eloquent  {
 	            'unit' => $model->productMinPrice_unit,
 	        ];
 
+
+
             $newmodel[$model->productId] = $model;
 
 	    }
@@ -159,5 +161,16 @@ class Product extends Eloquent  {
 	{
 	    return $this->belongsToMany('Invoice');
 	}
+
+    public function getNormalizedUnitAttribute(){
+
+        $carton = ($this->productPacking_carton) ? $this->productPacking_carton:1;
+        $inner = ($this->productPacking_inner) ? $this->productPacking_inner:1;
+        $unit = ($this->productPacking_unit) ? $this->productPacking_unit:1;
+
+        return $carton*$inner*$unit;
+
+    }
+
 
 }

@@ -89,6 +89,28 @@ class InvoiceItem extends Eloquent  {
             }
             
             $model->backgroundcode = ($model->approvedSupervisorId == "0" ? "background:#FC7E8B" : "");
+
+               /*
+            $inner = ($model->productPacking_inner) ? $model->productPacking_inner:1;
+            $unit = ($model->productPacking_unit) ? $model->productPacking_unit:1;
+
+
+            if($model->invoice->invoiceStatus == 98){
+                if($model->productQtyUnit == 'carton')
+                    $model->realNormalizedUnit =  $model->productQty*$inner*$unit*-1;
+                if($model->productQtyUnit == 'inner')
+                    $model->realNormalizedUnit = $model->productQty*$unit*-1;
+                else
+                    $model->realNormalizedUnit = $model->$productQty * -1;
+            }else{
+                if($model->productQtyUnit == 'carton')
+                    $model->realNormalizedUnit = $model->productQty*$inner*$unit;
+                if($model->productQtyUnit == 'inner')
+                    $model->realNormalizedUnit = $model->productQty*$unit;
+                else
+                    $model->realNormalizedUnit = $model->$productQty;
+            }
+               */
             
         }
         
@@ -105,6 +127,30 @@ class InvoiceItem extends Eloquent  {
     {
         if($this->invoice->invoiceStatus == 98)
             return $this->productQty * -1;
+    }
+
+    public function getRealNormalizedUnitAttribute()
+    {
+
+        $inner = ($this->productDetail->productPacking_inner>0) ? $this->productDetail->productPacking_inner:1;
+        $unit = ($this->productDetail->productPacking_unit>0) ? $this->productDetail->productPacking_unit:1;
+
+        if($this->invoice->invoiceStatus == 98){
+            if($this->productQtyUnit == 'carton')
+                return $this->productQty*$inner*$unit*-1;
+            if($this->productQtyUnit == 'inner')
+                return $this->productQty*$unit*-1;
+            else
+                return $this->productQty * -1;
+        }else{
+            if($this->productQtyUnit == 'carton')
+                return $this->productQty*$inner*$unit;
+            if($this->productQtyUnit == 'inner')
+                return $this->productQty*$unit;
+            else
+                return $this->productQty;
+        }
+
     }
 	
 }
