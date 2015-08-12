@@ -116,9 +116,9 @@ class HomeController extends BaseController {
                 if($v->productLocation == 9){
                     $invoiceId[$v->invoiceId] = isset($user->f9_version)?$user->f9_version+1:'1';
                     $f9 = true;
-                    break;
                 }else
-                    $invoiceId[$v->invoiceId] = 100;
+                    if(!isset($invoiceId[$v->invoiceId]))
+                        $invoiceId[$v->invoiceId] = 100;
             }
 
             if($user == null){
