@@ -82,9 +82,9 @@ class CommissionController extends BaseController
             })->whereNotIn('invoiceStatus',['96','99'])
                 ->where('InvoiceItem.productPrice','!=',0)->where('zoneId', $this->zone)->where('hascommission',true)
                 ->whereBetween('Invoice.deliveryDate', [$this->date1, $this->date2])->orderBy('invoiceitem.productId')->get();      // $invoices = invoiceitem::where('invoiceId','I1508-009113')->first();
-            // pd($invoices->real_normalized_unit);
-            //  pd($invoices);
 
+
+            // pd($invoices->real_normalized_unit);
 
             foreach($invoices as $k => $v){
                 $invoiceQ[$v->productId]['productId'] = $v->productId;

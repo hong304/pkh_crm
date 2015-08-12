@@ -7,6 +7,7 @@ Metronic.unblockUI();
 app.controller('controlOrderController', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
     /* Register shortcut key */
     $(document).ready(function(){
+
         $('#order_form').keydown(function (e) {
             if (e.keyCode == 121) {
                 $scope.preSubmitOrder(1);
@@ -331,6 +332,11 @@ $scope.an = false;
 
 
     $scope.$on('$viewContentLoaded', function() {
+        $scope.systeminfo = $rootScope.systeminfo;
+        if($scope.systeminfo['user']['id']==23 ||  $scope.systeminfo['user']['id']==56){ //56
+            alert('Permission denied, please contact Rainbow');
+            $state.go("salesPanel", {}, {reload: true});
+            }
         // initialize core components
         Metronic.initAjax();
 
