@@ -18,44 +18,7 @@ class CommissionController extends BaseController
 
         ini_set('memory_limit', '-1');
 
-        $invoiceQ = [];
 
-        $invoices = invoiceitem::leftJoin('invoice', function ($join) {
-            $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
-        })->leftJoin('Product', function ($join) {
-            $join->on('InvoiceItem.productId', '=', 'Product.productId');
-        })->whereNotIn('invoiceStatus',['96','99'])
-            ->where('InvoiceItem.productPrice','!=',0)->where('zoneId', $this->zone)->where('hascommission',true)
-            ->whereBetween('Invoice.deliveryDate', [$this->date1, $this->date2])->get();
-
-      // $invoices = invoiceitem::where('invoiceId','I1508-009113')->first();
-       // pd($invoices->real_normalized_unit);
-      //  pd($invoices);
-
-
-        foreach($invoices as $k => $v){
-            $invoiceQ[$v->productId]['productId'] = $v->productId;
-            $invoiceQ[$v->productId]['productName_chi'] = $v->productName_chi;
-
-           if(!isset($invoiceQ[$v->productId]['normalizedQty'])){
-               $invoiceQ[$v->productId]['normalizedQty'] = 0;
-            }
-
-            $invoiceQ[$v->productId]['normalizedQty'] += $v->real_normalized_unit;
-
-            $carton = ($v->productPacking_carton) ? $v->productPacking_carton:1;
-            $inner = ($v->productPacking_inner) ? $v->productPacking_inner:1;
-            $unit = ($v->productPacking_unit) ? $v->productPacking_unit:1;
-
-            $invoiceQ[$v->productId]['normalizedUnit'] = $carton*$inner*$unit;
-            $invoiceQ[$v->productId]['productUnitName'] = $v->productPackingName_carton;
-        }
-
-        foreach($invoiceQ as &$vv){
-            $vv['productQtys'] = $vv['normalizedQty']/$vv['normalizedUnit'];
-        }
-
-pd($invoiceQ);
 
        /* $invoice_return = Invoice::select(DB::raw('SUM(productQty) AS productQtys'), 'productName_chi', 'InvoiceItem.productId', 'productUnitName', 'productQtyUnit', 'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPackingName_carton')->leftJoin('InvoiceItem', function ($join) {
             $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
@@ -74,8 +37,8 @@ pd($invoiceQ);
 
 
         if (Input::get('mode') == 'csv') {
-            $invoices = $invoices->toArray();
-//pd($invoices);
+
+           /* $invoices = $invoices->toArray();
             foreach ($invoices as &$v) {
 
                 $carton = ($v['productPacking_carton'] == false) ? 1:$v['productPacking_carton'];
@@ -107,11 +70,47 @@ pd($invoiceQ);
                 foreach ($g as &$h) {
                     $h['productQtyUnit_final'] = floor($cc);
                 }
+            }*/
+
+
+            $invoiceQ = [];
+
+            $invoices = invoiceitem::leftJoin('invoice', function ($join) {
+                $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
+            })->leftJoin('Product', function ($join) {
+                $join->on('InvoiceItem.productId', '=', 'Product.productId');
+            })->whereNotIn('invoiceStatus',['96','99'])
+                ->where('InvoiceItem.productPrice','!=',0)->where('zoneId', $this->zone)->where('hascommission',true)
+                ->whereBetween('Invoice.deliveryDate', [$this->date1, $this->date2])->orderBy('invoiceitem.productId')->get();      // $invoices = invoiceitem::where('invoiceId','I1508-009113')->first();
+            // pd($invoices->real_normalized_unit);
+            //  pd($invoices);
+
+
+            foreach($invoices as $k => $v){
+                $invoiceQ[$v->productId]['productId'] = $v->productId;
+                $invoiceQ[$v->productId]['productName_chi'] = $v->productName_chi;
+
+                if(!isset($invoiceQ[$v->productId]['normalizedQty'])){
+                    $invoiceQ[$v->productId]['normalizedQty'] = 0;
+                }
+
+                $invoiceQ[$v->productId]['normalizedQty'] += $v->real_normalized_unit;
+
+                $carton = ($v->productPacking_carton) ? $v->productPacking_carton:1;
+                $inner = ($v->productPacking_inner) ? $v->productPacking_inner:1;
+                $unit = ($v->productPacking_unit) ? $v->productPacking_unit:1;
+
+                $invoiceQ[$v->productId]['normalizedUnit'] = $carton*$inner*$unit;
+                $invoiceQ[$v->productId]['productPackingName_carton'] = $v->productPackingName_carton;
             }
 
-            return $this->exportCsv($a);
+            foreach($invoiceQ as &$vv){
+                $vv['productQtys'] = floor($vv['normalizedQty']/$vv['normalizedUnit']);
+            }
+
+            return $this->exportCsv($invoiceQ);
         } else {
-            return Datatables::of($invoiceQ)->make(true);
+           // return Datatables::of($invoiceQ)->make(true);
         }
 
 
@@ -128,11 +127,11 @@ pd($invoiceQ);
         $csv .= '日期,'.date('Y-m-d',$this->date1).',至,'.date('Y-m-d',$this->date2). "\r\n";
         $csv .= 'Product ID,Name,Total Qty,Unit' . "\r\n";
         foreach ($invoices as $item) {
-            if($item[0]['productQtyUnit_final'] != false){
-                $csv .= '"' . $item[0]['productId'] . '",';
-                $csv .= '"' . $item[0]['productName_chi'] . '",';
-                $csv .= '"' . $item[0]['productQtyUnit_final'] . '",';
-                $csv .= '"' . $item[0]['productPackingName_carton'] . '",';
+            if($item['productQtys'] != false){
+                $csv .= '"' . $item['productId'] . '",';
+                $csv .= '"' . $item['productName_chi'] . '",';
+                $csv .= '"' . $item['productPackingName_carton'] . '",';
+                $csv .= '"' . $item['productQtys'] . '",';
                 $csv .= "\r\n";
             }
         }
