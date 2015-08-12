@@ -90,6 +90,8 @@ app.controller('queryCommissionCtrl', function($scope, $rootScope, $http, Shared
 
     $scope.updateDataSet = function()
     {
+
+        /*
         Metronic.blockUI();
         var grid = new Datatable();
 
@@ -162,7 +164,7 @@ app.controller('queryCommissionCtrl', function($scope, $rootScope, $http, Shared
                 ] // set first column as a default sort by asc
             }
         });
-
+*/
     }
 
 
