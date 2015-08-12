@@ -425,7 +425,7 @@ console.log(res);
                     $scope.order.referenceNumber = inf.customerRef;
 
                     $scope.updatePaymentTerms();
-
+                    $scope.getAllLastItemPrice($scope.order.clientId);
                     if(res.paymentTermId == 1)
                     {
 
