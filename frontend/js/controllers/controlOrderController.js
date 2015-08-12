@@ -19,17 +19,17 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         });
 
         /*
-        var form = $('#orderinfo'),
-            original = form.serialize()
+         var form = $('#orderinfo'),
+         original = form.serialize()
 
-        form.submit(function(){
-            window.onbeforeunload = null
-        })
+         form.submit(function(){
+         window.onbeforeunload = null
+         })
 
-        window.onbeforeunload = function(){
-            if (form.serialize() != original)
-                return 'hi';
-        }*/
+         window.onbeforeunload = function(){
+         if (form.serialize() != original)
+         return 'hi';
+         }*/
     });
 
 
@@ -163,13 +163,13 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     // product: select, change_qty, change_unit
 
-$scope.an = false;
+    $scope.an = false;
 
     $scope.$on('$locationChangeStart', function( event ) {
         if($scope.an){
-           var answer = confirm("訂單還沒提交，確定要離開此頁？")
+            var answer = confirm("訂單還沒提交，確定要離開此頁？")
             if (!answer) {
-               event.preventDefault();
+                event.preventDefault();
             }
         }
     });
@@ -191,10 +191,7 @@ $scope.an = false;
         $scope.displayName = $scope.order.clientId + " (" + $scope.order.clientName + ")";
 
         $scope.order.paymentTerms = SharedService.clientPaymentTermId;
-        $scope.updatePaymentTerms();
 
-
-        //  console.log($scope.order);
 
         //disable changing payment terms if it is a COD client
         if(SharedService.clientPaymentTermId == 1)
@@ -222,6 +219,8 @@ $scope.an = false;
 
     });
 
+
+
     $scope.getSameDayInvoice = function(){
         var target = endpoint + '/getClientSameDayOrder.json';
 
@@ -243,6 +242,7 @@ $scope.an = false;
 
     $scope.$on('doneCustomerUpdate', function(){
 
+
         // get all products
         // $scope.loadProduct($scope.order.clientId);
 
@@ -257,9 +257,20 @@ $scope.an = false;
 
         // load last time invoice
         //$scope.getClientLastInvoice($scope.order.clientId);
-        $scope.getSameDayInvoice();
 
+        $scope.getSameDayInvoice();
+        $scope.updatePaymentTerms();
+        $scope.getAllLastItemPrice($scope.order.clientId);
     });
+
+    $scope.getAllLastItemPrice = function(customerId){
+        var target = endpoint + '/getAllLastItemPrice.json';
+        $http.post(target, {customerId: customerId})
+            .success(function(res){
+                $scope.allLastItemPrice = res;
+console.log(res);
+            });
+    }
 
     $scope.relocate = function(){
         if($scope.order.zoneId != $scope.order.defaultZoneId)
@@ -279,7 +290,8 @@ $scope.an = false;
      });
      }*/
 
-    $scope.getLastItem = function(productId,clientId,i,q){
+
+    $scope.getLastItem = function(productId,i,q){
 
         var target = endpoint + '/getLastItem.json';
         $http.post(target, {productId: productId, customerId: clientId})
@@ -295,13 +307,14 @@ $scope.an = false;
                     $scope.checkPrice(i);
                 }
                 if(q==0 && $("#productCode_"+i).val() != productId){
-                        $scope.getLastItem($("#productCode_"+i).val(),$scope.order.clientId,i,1);
-                       // $scope.updateStandardPrice(i);
+                    $scope.getLastItem($("#productCode_"+i).val(),$scope.order.clientId,i,1);
+                    // $scope.updateStandardPrice(i);
                     if (typeof res[0] == 'undefined'){
                         $scope.updateStandardPrice(i);
                     }
                 }
             });
+
 
     }
 
@@ -332,11 +345,6 @@ $scope.an = false;
 
 
     $scope.$on('$viewContentLoaded', function() {
-        $scope.systeminfo = $rootScope.systeminfo;
-        if($scope.systeminfo['user']['id']==54 ||  $scope.systeminfo['user']['id']==56){ //56
-            alert('Permission denied, please contact Rainbow');
-            $state.go("salesPanel", {}, {reload: true});
-            }
         // initialize core components
         Metronic.initAjax();
 
@@ -564,7 +572,7 @@ $scope.an = false;
                             }).indexOf('unit');
                         }
                         $scope.product[j]['unit'] = $scope.product[j]['availableunit'][pos];
-                       console.log($scope.product[j]['availableunit']);
+                        console.log($scope.product[j]['availableunit']);
                         $scope.checkPrice(j);
 
 
@@ -623,11 +631,11 @@ $scope.an = false;
 
             if($scope.order.status == '98' || $scope.order.status == '96') {
                 if(item.productPackingName_unit != '')
-                availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
+                    availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
                 if(item.productPackingName_inner != '')
-                availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
+                    availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
                 if(item.productPackingName_carton != '')
-                availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
+                    availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
             }else{
                 if(item.productPackingInterval_unit > 0)
                 {
@@ -653,9 +661,24 @@ $scope.an = false;
             $scope.product[i].unit = $scope.product[i].availableunit[0];
             $scope.updateStandardPrice(i);
 
-            if(flag != 'unload')
-                $scope.getLastItem(code,$scope.order.clientId,i,0);
+            if(flag != 'unload') {
+                // $scope.getLastItem(code, $scope.order.clientId, i, 0);
+                if($scope.allLastItemPrice[code.toUpperCase()]) {
+                    $scope.lastitem = $scope.allLastItemPrice[code.toUpperCase()];
+                    if( $scope.lastitem.qty > 0){
+                        $scope.product[i].unitprice =  $scope.lastitem.price;
+                        var pos = $scope.product[i]['availableunit'].map(function(e) {
+                            return e.value;
+                        }).indexOf( $scope.lastitem.unit_level);
+                        $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
+                        $scope.checkPrice(i);
+                    }
+                }else{
+                    $scope.lastitem = [];
+                }
 
+
+            }
             // console.log($scope.lastitem);
 
             // $scope.lastItemUnit = '5';
@@ -733,6 +756,7 @@ $scope.an = false;
     $scope.updateStandardPrice = function (i)
     {
 
+        console.log('updatePrice');
         var code = $scope.product[i]['code'];
         var item = $scope.retrievedProduct[code];
         var unit = $scope.product[i]['unit'].value;
@@ -870,8 +894,8 @@ $scope.an = false;
 
     $scope.preSubmitOrder = function(v){
 
-     //   var currentDate = new Date(new Date().getTime());
-    //    var day = currentDate.getDate();
+        //   var currentDate = new Date(new Date().getTime());
+        //    var day = currentDate.getDate();
 
         var currentDate = new Date(new Date().getTime());
         var day = currentDate.getDate();
@@ -901,27 +925,27 @@ $scope.an = false;
             var bool = (Number(order_dates) >= Number(dates));
             var msg = 'F6! 此訂單將不會被列印';
         }
-if(bool)
-        bootbox.dialog({
-            message: msg,
-            title: "提交訂單",
-            buttons: {
-                success: {
-                    label: "取消",
-                    className: "green",
-                    callback: function() {
+        if(bool)
+            bootbox.dialog({
+                message: msg,
+                title: "提交訂單",
+                buttons: {
+                    success: {
+                        label: "取消",
+                        className: "green",
+                        callback: function() {
 
-                    }
-                },
-                danger: {
-                    label: "確定",
-                    className: "red",
-                    callback: function() {
-                        $scope.submitOrder(v);
+                        }
+                    },
+                    danger: {
+                        label: "確定",
+                        className: "red",
+                        callback: function() {
+                            $scope.submitOrder(v);
+                        }
                     }
                 }
-            }
-        });
+            });
         else
             $scope.submitOrder(v);
 
@@ -944,7 +968,7 @@ if(bool)
             generalError = true;
         }
 
-       // $scope.allowSubmission = false;
+        // $scope.allowSubmission = false;
 
 
         if(!$scope.order.invoiceDate || !$scope.order.deliveryDate || !$scope.order.dueDate || !$scope.order.status || !$scope.order.address || !$scope.order.clientId)
@@ -979,7 +1003,7 @@ if(bool)
                     if(res.result == true)
                     {
                         $scope.an=false;
-                       // $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
+                        // $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
 
                         if(res.action == 'update'){
                             $state.go("queryInvoice", {}, {reload: true});

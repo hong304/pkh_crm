@@ -521,6 +521,18 @@ class Report_DailySummary
             $pdf->setXY(50, $y + 16);
             $pdf->Cell(0, 0, "$" . number_format($this->data['sumcredit'], 2, '.', ','), 0, 0, "L");
 
+            $pdf->setXY(10, $y + 22);
+            $pdf->Cell(0, 0, "現金退貨單:", 0, 0, "L");
+
+            $pdf->setXY(30, $y + 22);
+            $pdf->Cell(0, 0, $this->data['countcodreturn'] . "單", 0, 0, "L");
+
+            $pdf->setXY(10, $y + 28);
+            $pdf->Cell(0, 0, "現金補貨單:", 0, 0, "L");
+
+            $pdf->setXY(30, $y + 28);
+            $pdf->Cell(0, 0, $this->data['countcodreplace'] . "單", 0, 0, "L");
+
         }
 
         // handle 9F goods
