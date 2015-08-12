@@ -333,7 +333,7 @@ $scope.an = false;
 
     $scope.$on('$viewContentLoaded', function() {
         $scope.systeminfo = $rootScope.systeminfo;
-        if($scope.systeminfo['user']['id']==23 ||  $scope.systeminfo['user']['id']==56){ //56
+        if($scope.systeminfo['user']['id']==54 ||  $scope.systeminfo['user']['id']==56){ //56
             alert('Permission denied, please contact Rainbow');
             $state.go("salesPanel", {}, {reload: true});
             }
