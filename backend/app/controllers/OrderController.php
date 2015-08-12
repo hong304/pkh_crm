@@ -4,9 +4,9 @@ class OrderController extends BaseController
 {
 
     public function jsonHoliday(){
-       $holidays =  holiday::where('year',date("Y"))->first();
+        $holidays =  holiday::where('year',date("Y"))->first();
 
-            $h_array = explode(",", $holidays->date);
+        $h_array = explode(",", $holidays->date);
         foreach($h_array as &$v){
             $md = explode("-",$v);
             $m = str_pad($md[0], 2, '0', STR_PAD_LEFT);
@@ -21,7 +21,7 @@ class OrderController extends BaseController
         $itemIds = [];
         $product = Input::get('product');
 
-       // pd($product);
+        // pd($product);
 
         $order = Input::get('order');
         $timer = Input::get('timer');
@@ -30,7 +30,7 @@ class OrderController extends BaseController
         $ci = new InvoiceManipulation($order['invoiceId']);
         $ci->setInvoice($order);
 
-      // pd($product);
+        // pd($product);
         $have_item=false;
         foreach ($product as $p) {
             if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty']>0)
@@ -64,43 +64,43 @@ class OrderController extends BaseController
                 ];
         }
         foreach ($product as $p) {
-          /*  if($p!=0){
+            /*  if($p!=0){
 
-                $overflow = false;
-                $getQty = invoiceitem::leftJoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftJoin('customer','invoice.customerId','=','customer.customerId')->where('invoice.customerId',$order['clientId'])->where('deliveryDate',strtotime($order['deliveryDate']))->where('productId',$p['code'])->get();//sum('productQty');
-                $maxQty = product::select('maxSellingQty')->where('productId',$p['code'])->first();
-pd('s');
-                $carton = ($maxQty['productPacking_carton'] == false) ? 1:$maxQty['productPacking_carton'];
-                $inner = ($maxQty['productPacking_inner']==false) ? 1:$maxQty['productPacking_inner'];
-                $unit = ($maxQty['productPacking_unit'] == false) ? 1 : $maxQty['productPacking_unit'];
+                  $overflow = false;
+                  $getQty = invoiceitem::leftJoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftJoin('customer','invoice.customerId','=','customer.customerId')->where('invoice.customerId',$order['clientId'])->where('deliveryDate',strtotime($order['deliveryDate']))->where('productId',$p['code'])->get();//sum('productQty');
+                  $maxQty = product::select('maxSellingQty')->where('productId',$p['code'])->first();
+  pd('s');
+                  $carton = ($maxQty['productPacking_carton'] == false) ? 1:$maxQty['productPacking_carton'];
+                  $inner = ($maxQty['productPacking_inner']==false) ? 1:$maxQty['productPacking_inner'];
+                  $unit = ($maxQty['productPacking_unit'] == false) ? 1 : $maxQty['productPacking_unit'];
 
-                if ($p['unit'] == 'carton') {
-                    if($p['qty']*$inner*$unit > $maxQty['maxSellingQty']-$getQty)
-                        $overflow = true;
-                }
+                  if ($p['unit'] == 'carton') {
+                      if($p['qty']*$inner*$unit > $maxQty['maxSellingQty']-$getQty)
+                          $overflow = true;
+                  }
 
-                if ($p['unit'] == 'inner') {
-                    if($carton*$p['qty']*$unit > $maxQty['maxSellingQty']-$getQty)
-                        $overflow = true;
-                }
+                  if ($p['unit'] == 'inner') {
+                      if($carton*$p['qty']*$unit > $maxQty['maxSellingQty']-$getQty)
+                          $overflow = true;
+                  }
 
-                if ($p['unit'] == 'unit') {
-                    if($carton*$inner*$p['qty'] > $maxQty['maxSellingQty']-$getQty)
-                        $overflow = true;
-                }
+                  if ($p['unit'] == 'unit') {
+                      if($carton*$inner*$p['qty'] > $maxQty['maxSellingQty']-$getQty)
+                          $overflow = true;
+                  }
 
-                if($overflow)
-                    return [
-                        'result' => false,
-                        'status' => 0,
-                        'invoiceNumber' => 0,
-                        'invoiceItemIds' => 0,
-                        'message' => $p['code'].'超過每日下單數量,限制為:'.$maxQty['maxSellingQty'],
-                    ];
+                  if($overflow)
+                      return [
+                          'result' => false,
+                          'status' => 0,
+                          'invoiceNumber' => 0,
+                          'invoiceItemIds' => 0,
+                          'message' => $p['code'].'超過每日下單數量,限制為:'.$maxQty['maxSellingQty'],
+                      ];
 
-                if(!$overflow)
-                    pd($getQty);
-            } */
+                  if(!$overflow)
+                      pd($getQty);
+              } */
 
 
             $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'], $p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted']);
@@ -108,15 +108,15 @@ pd('s');
         $result = $ci->save();
 
         // Update performance log
-    /*    $perf = new InvoiceUserPerformance();
-        $perf->invoiceId = $result['invoiceNumber'];
-        $perf->userid = Auth::user()->id;
-        $perf->timestampe = time();
-        $perf->start = $timer['start'];
-        $perf->submit = $timer['submit'];
-        $perf->select_client = $timer['selected_client'];
-        $perf->drilldown = json_encode($timer['product']);
-        $perf->save();*/
+        /*    $perf = new InvoiceUserPerformance();
+            $perf->invoiceId = $result['invoiceNumber'];
+            $perf->userid = Auth::user()->id;
+            $perf->timestampe = time();
+            $perf->start = $timer['start'];
+            $perf->submit = $timer['submit'];
+            $perf->select_client = $timer['selected_client'];
+            $perf->drilldown = json_encode($timer['product']);
+            $perf->save();*/
 
 
 
@@ -164,7 +164,7 @@ pd('s');
 
     public function jsonGetNotification()
     {
-           $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'),'deliveryDate')
+        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'),'deliveryDate')
             ->wherein('invoiceStatus', ['1', '3'])
             ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
             ->where('deliveryDate','>=',strtotime("today 00:00"))
@@ -172,18 +172,18 @@ pd('s');
             ->with('zone')
             ->get();
 
-     //   $summary['countInDataMart'] = 0;
+        //   $summary['countInDataMart'] = 0;
 
 
 
         foreach ($invoices as $invoice) {
-                $summary[$invoice->invoiceStatus.'today']['breakdown'][$invoice->zoneId] = [
-                    'zoneId' => $invoice->zoneId,
-                    'counts' => $invoice->counts,
-                    'zoneText' => $invoice->zone->zoneName,
-                ];
-                $summary[$invoice->invoiceStatus.'today']['countInDataMart'] = (isset($summary[$invoice->invoiceStatus.'today']['countInDataMart']) ? $summary[$invoice->invoiceStatus.'today']['countInDataMart'] : 0) + $invoice->counts;
-            }
+            $summary[$invoice->invoiceStatus.'today']['breakdown'][$invoice->zoneId] = [
+                'zoneId' => $invoice->zoneId,
+                'counts' => $invoice->counts,
+                'zoneText' => $invoice->zone->zoneName,
+            ];
+            $summary[$invoice->invoiceStatus.'today']['countInDataMart'] = (isset($summary[$invoice->invoiceStatus.'today']['countInDataMart']) ? $summary[$invoice->invoiceStatus.'today']['countInDataMart'] : 0) + $invoice->counts;
+        }
 
 
 
@@ -234,7 +234,7 @@ pd('s');
                     ->orwhere('Invoice.invoiceStatus', '98');
             })->count();
 
-      //  $summary['open'] = Invoice::where('invoiceStatus', 2)->wherein('zoneId', explode(',', Auth::user()->temp_zone))->count();
+        //  $summary['open'] = Invoice::where('invoiceStatus', 2)->wherein('zoneId', explode(',', Auth::user()->temp_zone))->count();
 
         $summary['printjobs'] = $jobscount;
         $summary['logintime'] = Session::get('logintime');
@@ -280,9 +280,9 @@ pd('s');
             $dDateEnd = strtotime($filter['deliverydate2']);
             //dd($dDateBegin, $dDateEnd, date("Y-m-d H:i:s", $dDateBegin), date("Y-m-d H:i:s", $dDateEnd));
 
-          /*  if(isset($filter['deliverydate1']))
-                $invoice = Invoice::select('*');
-            else*/
+            /*  if(isset($filter['deliverydate1']))
+                  $invoice = Invoice::select('*');
+              else*/
             $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
 
             // invoice number
@@ -298,7 +298,7 @@ pd('s');
                     }else
                         $invoice = Invoice::select('*');
                 else
-                     $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
+                    $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
             }
 
             // zone
@@ -339,9 +339,9 @@ pd('s');
 
             $invoices = $invoice->with('client', 'laststaff')->orderby('invoiceId', 'desc');
 
-                return Datatables::of($invoices)
+            return Datatables::of($invoices)
                 ->addColumn('link', function ($invoice) {
-                   return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+                    return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
                 })       ->addColumn('id', function ($invoice) {
                     return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';
                 })
@@ -400,16 +400,15 @@ pd('s');
     {
 
         $customerId = Input::get('customerId');
-       // $productId = Input::get('productId');
-      //  $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99') and ii.created_at != '' and customerId = '" . $customerId . "' AND ii.productId = '" . $productId . "' order by ii.updated_at desc";
-      //  $items = DB::select(DB::raw($sql));
-        $products = lastitem::where('customerId',$customerId)->get()->toArray();
+        $productId = Input::get('productId');
+        //  $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99') and ii.created_at != '' and customerId = '" . $customerId . "' AND ii.productId = '" . $productId . "' order by ii.updated_at desc";
+        //  $items = DB::select(DB::raw($sql));
+        $items = lastitem::where('customerId',$customerId)->where('productId',$productId)->first();
+        if ($items == null)
+            return Response::json($items);
 
-        $products = Product::compileProductStandardForm($products);
-
-        return Response::json($products);
+        return Response::json($items);
     }
-
 
     public function jsonGetSameDayOrder()
     {
