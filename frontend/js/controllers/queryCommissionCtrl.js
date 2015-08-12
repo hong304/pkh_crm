@@ -118,6 +118,7 @@ app.controller('queryCommissionCtrl', function($scope, $rootScope, $http, Shared
 
 
                 "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
+                "bServerSide": true,
 
                 "lengthMenu": [
                     [20, 50],
