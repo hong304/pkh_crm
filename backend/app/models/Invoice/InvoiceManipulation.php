@@ -241,7 +241,7 @@ class InvoiceManipulation {
 	        $this->im->invoiceStatus = $this->determineStatus();
             $this->im->updated_by = Auth::user()->id;
 
-            Invoice::where('invoiceId',$this->invoiceId)->where('version',true)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);
+            Invoice::where('invoiceId',$this->invoiceId)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);
 
 	    }
 	}
