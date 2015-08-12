@@ -93,15 +93,15 @@ class ReportController extends BaseController {
                 //   $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
                 $Printlogs = $Printlogs->with('zone')->orderBy('updated_at','desc');
 
-                foreach($Printlogs as $v)
-                {
-                    $v->view = '<a href="'.$_SERVER['backend'].'/'.$v->file_path.'" target="_blank">View</a>';
-                    $v->link = '<span onclick="reprint(\''.$v->job_id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 重印</span>';
-                }
-
                 return Datatables::of($Printlogs)
                     ->addColumn('view', function ($v) {
-                        return '<a href="'.$_SERVER['backend'].'/'.$v->file_path.'" target="_blank">View</a>';
+                       // return '<a href="'.$_SERVER['backend'].'/'.$v->file_path.'" target="_blank">View</a>';
+                        if($_SERVER['env'] == 'uat')
+                            $url = 'http://backend.pingkeehong.com';
+                        else
+                            $url = $_SERVER['backend'];
+
+                        return '<a href="'.$url.'/'.$v->file_path.'" target="_blank">View</a>';
                     })
                     ->addColumn('link', function ($v) {
                         return '<span onclick="reprint(\''.$v->job_id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 重印</span>';
