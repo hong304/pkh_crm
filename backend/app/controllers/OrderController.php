@@ -400,15 +400,21 @@ class OrderController extends BaseController
     {
 
         $customerId = Input::get('customerId');
-        $productId = Input::get('productId');
+        // $productId = Input::get('productId');
         //  $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99') and ii.created_at != '' and customerId = '" . $customerId . "' AND ii.productId = '" . $productId . "' order by ii.updated_at desc";
         //  $items = DB::select(DB::raw($sql));
-        $items = lastitem::where('customerId',$customerId)->where('productId',$productId)->first();
-        if ($items == null)
-            return Response::json($items);
 
-        return Response::json($items);
+
+        $products = lastitem::where('customerId',$customerId)->get()->toArray();
+        if(count($products)==0){
+            $products=[];
+            return Response::json($products);
+        } else{
+            $products = Product::compileProductStandardForm($products);
+            return Response::json($products);
+        }
     }
+
 
     public function jsonGetSameDayOrder()
     {

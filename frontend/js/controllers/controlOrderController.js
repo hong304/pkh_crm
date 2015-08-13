@@ -119,6 +119,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.productCode = [];
     $scope.itemlist = [1, 2, 3];
     $scope.retrievedProduct = [];
+    $scope.allLastItemPrice = [];
     $scope.product = [];
     $scope.displayName = "";
     $scope.totalAmount = 0;
@@ -193,9 +194,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         $scope.order.paymentTerms = SharedService.clientPaymentTermId;
         $scope.updatePaymentTerms();
 
-
-        //  console.log($scope.order);
-
         //disable changing payment terms if it is a COD client
         if(SharedService.clientPaymentTermId == 1)
         {
@@ -222,6 +220,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     });
 
+
+
     $scope.getSameDayInvoice = function(){
         var target = endpoint + '/getClientSameDayOrder.json';
 
@@ -243,6 +243,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     $scope.$on('doneCustomerUpdate', function(){
 
+
         // get all products
         // $scope.loadProduct($scope.order.clientId);
 
@@ -257,9 +258,19 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         // load last time invoice
         //$scope.getClientLastInvoice($scope.order.clientId);
-        $scope.getSameDayInvoice();
 
+        $scope.getSameDayInvoice();
+        $scope.getAllLastItemPrice($scope.order.clientId);
     });
+
+    $scope.getAllLastItemPrice = function(customerId){
+        var target = endpoint + '/getAllLastItemPrice.json';
+        $http.post(target, {customerId: customerId})
+            .success(function(res){
+                $scope.allLastItemPrice = res;
+                console.log(res);
+            });
+    }
 
     $scope.relocate = function(){
         if($scope.order.zoneId != $scope.order.defaultZoneId)
@@ -279,7 +290,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
      });
      }*/
 
-    $scope.getLastItem = function(productId,clientId,i,q){
+
+    $scope.getLastItem = function(productId,i,q){
 
         var target = endpoint + '/getLastItem.json';
         $http.post(target, {productId: productId, customerId: clientId})
@@ -302,6 +314,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     }
                 }
             });
+
 
     }
 
@@ -412,7 +425,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     $scope.order.referenceNumber = inf.customerRef;
 
                     $scope.updatePaymentTerms();
-
+                    $scope.getAllLastItemPrice($scope.order.clientId);
                     if(res.paymentTermId == 1)
                     {
 
@@ -648,9 +661,24 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             $scope.product[i].unit = $scope.product[i].availableunit[0];
             $scope.updateStandardPrice(i);
 
-            if(flag != 'unload')
-                $scope.getLastItem(code,$scope.order.clientId,i,0);
+            if(flag != 'unload') {
+                // $scope.getLastItem(code, $scope.order.clientId, i, 0);
+                if($scope.allLastItemPrice[code.toUpperCase()]) {
+                    $scope.lastitem = $scope.allLastItemPrice[code.toUpperCase()];
+                    if( $scope.lastitem.qty > 0){
+                        $scope.product[i].unitprice =  $scope.lastitem.price;
+                        var pos = $scope.product[i]['availableunit'].map(function(e) {
+                            return e.value;
+                        }).indexOf( $scope.lastitem.unit_level);
+                        $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
+                        $scope.checkPrice(i);
+                    }
+                }else{
+                    $scope.lastitem = [];
+                }
 
+
+            }
             // console.log($scope.lastitem);
 
             // $scope.lastItemUnit = '5';
@@ -728,6 +756,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.updateStandardPrice = function (i)
     {
 
+        console.log('updatePrice');
         var code = $scope.product[i]['code'];
         var item = $scope.retrievedProduct[code];
         var unit = $scope.product[i]['unit'].value;
