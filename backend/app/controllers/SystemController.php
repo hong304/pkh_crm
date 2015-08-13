@@ -98,25 +98,41 @@ class SystemController extends BaseController {
         $yesterday          = strtotime("-1 day", $today);
         $tomorrow = strtotime("+1 day",$today);
 
+        $total = [];
 
-        $result = Invoice::whereBetween('deliveryDate',[$yesterday,$tomorrow])->wherein('invoiceStatus',['2','1','20','30'])->orderBy('zoneId')->orderBy('deliveryDate')->get();
+        $result = Invoice::select('amount','deliveryDate','zoneId')->whereBetween('deliveryDate',[$yesterday,$tomorrow])->wherein('invoiceStatus',['2','1','20','30'])->orderBy('zoneId')->orderBy('deliveryDate')->get();
 
         $nr = [];
 
         foreach($result as $v){
+            $total[$v->deliveryDate] = (isset($total[$v->deliveryDate])?$total[$v->deliveryDate]:0) + 1;
+        }
+
+        foreach($result as $v){
+
             $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount'] = (isset($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount'])?$nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount']:0) + $v->amount;
             $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume'] = (isset($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume'])?$nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']:0) + 1;
-          //  $nr['total']['amount'] = (isset($nr['total']['amount'])?$nr['total']['amount']:0) + $v->amount;
-          //  $nr['total']['volume'] = (isset($nr['total']['volume'])?$nr['total']['volume']:0) + 1;
+          //  $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['percentage'] =  $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']/$total[$v->deliveryDate] * 100;
+
+
+            if(isset($nr['byZone'][$v->zoneId]['date'][$today]['volume'])&&isset($nr['byZone'][$v->zoneId]['date'][$yesterday]['volume']))
+                if($nr['byZone'][$v->zoneId]['date'][$today]['volume'] > $nr['byZone'][$v->zoneId]['date'][$yesterday]['volume'])
+                    $nr['byZone'][$v->zoneId]['compare'] = 2;
+                else if($nr['byZone'][$v->zoneId]['date'][$today]['volume'] < $nr['byZone'][$v->zoneId]['date'][$yesterday]['volume'])
+                    $nr['byZone'][$v->zoneId]['compare'] = 0;
+                else
+                    $nr['byZone'][$v->zoneId]['compare'] = 1;
 
             $nr['byTime'][$v->deliveryDate]['amount'] = (isset($nr['byTime'][$v->deliveryDate]['amount'])?$nr['byTime'][$v->deliveryDate]['amount']:0) + $v->amount;
             $nr['byTime'][$v->deliveryDate]['volume'] = (isset($nr['byTime'][$v->deliveryDate]['volume'])?$nr['byTime'][$v->deliveryDate]['volume']:0) + 1;
 
             $nr['byZone'][$v->zoneId]['name'] = $v->zoneText;
+
+            $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['percentage'] = number_format($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']/$total[$v->deliveryDate]*100,2,'.',',').'%';
         }
 
         $nr1 = array_chunk($nr['byZone'],5,true);
-//pd($nr['byTime']);
+
         return View::make('dashboard')->with('nr',$nr1)->with('total',$nr['byTime']);
 
     }
