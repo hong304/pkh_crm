@@ -27,7 +27,7 @@ class InvoiceImage {
         $invoices = Invoice::where('invoiceId', $invoiceId)
                 ->with(['invoiceItem' => function ($query) use ($ids) {
                     $query->orderBy('productLocation','asc')->orderBy('productQtyUnit','asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId','asc');
-                }])->with('client', 'staff')
+                }])->with('client', 'staff', 'zone')
                 ->first();
 
       //  pd($invoices);
@@ -133,8 +133,12 @@ $debug = 0;
              * Position 155W 230H
              * Font Size: 37
             */
-    
-            $this->image[$p]->text("2455 2266", 155, 230, function($font) use($font_file) {
+            $tel = '2455 2266';
+    if($i['zone']['zonePhone'] != ''){
+        $tel = $i['zone']['zonePhone'];
+        $tel = chunk_split($tel, 4, ' ');
+    }
+            $this->image[$p]->text($tel, 155, 230, function($font) use($font_file) {
                 $font->file($font_file);
                 $font->size(37);
                 $font->color('#000000');
