@@ -5,16 +5,22 @@ Metronic.unblockUI();
 
 
 app.controller('controlOrderController', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
+
+    $scope.submited = false;
+
     /* Register shortcut key */
     $(document).ready(function(){
 
         $('#order_form').keydown(function (e) {
-            if (e.keyCode == 121) {
-                $scope.preSubmitOrder(1);
-            }
-            if (e.keyCode == 117) {
-                $scope.preSubmitOrder(0);
-                // v=1
+            if(!$scope.submited){
+                if (e.keyCode == 121) {
+                    $scope.preSubmitOrder(1);
+                    $scope.submited = true;
+                }
+                if (e.keyCode == 117) {
+                    $scope.preSubmitOrder(0);
+                    $scope.submited = true;
+                }
             }
         });
 
@@ -914,9 +920,6 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         var year = orderDate.getFullYear();
 
         var order_dates = ""+year+month+day;
-
-        console.log(order_dates);
-        console.log(dates);
 
         if(v){
             var bool = (Number(order_dates) < Number(dates));

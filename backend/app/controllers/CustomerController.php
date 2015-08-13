@@ -13,7 +13,7 @@ class CustomerController extends BaseController
     public function jsonCheckClient()
     {
 
-
+        $clientArray = [];
         # Request
         // $time_start = microtime(true);
         $keyword = Input::has('client_keyword') && Input::get('client_keyword') != '' ? Input::get('client_keyword') : 'na';
@@ -60,7 +60,9 @@ class CustomerController extends BaseController
                 ->get();
 
 
-        } else {
+        }
+
+        /*else {
             $clientArray = Customer::select('deliveryZone', 'phone_1', 'customerName_chi', 'customerId', 'address_chi', 'routePlanningPriority', 'remark', 'paymentTermId', 'shift', 'discount')
                 ->where('deliveryZone', Session::get('zone'))
                 ->where('status', '1')
@@ -68,7 +70,7 @@ class CustomerController extends BaseController
                 ->limit(15)
                 ->get();
 
-        }
+        }*/
         // $time_end = microtime(true);
         // $time = $time_end - $time_start;
         // syslog(LOG_INFO, "Search $keyword in $time seconds");

@@ -119,7 +119,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
 			    		method	:	"POST",
 			    		url		: 	endpoint + '/checkClient.json', 
 			        	data	:	{client_keyword: $scope.keyword},
-			        	cache	:	true,
+			        	cache	:	true
 			        	//timeout: canceler.promise,
 			    	}        	
 	        ).
