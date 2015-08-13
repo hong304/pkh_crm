@@ -475,7 +475,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 message: '載入產品中...'
             });
         }
-        else if($location.search().clientId)
+      else if($location.search().clientId)
         {
             var target = endpoint + '/findClientById.json';
 
@@ -493,7 +493,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     $scope.displayName = $scope.order.clientId + " (" + $scope.order.clientName + ")";
                     $scope.order.paymentTerms = res.paymentTermId;
                     $scope.updatePaymentTerms();
-
+                    $scope.getAllLastItemPrice($scope.order.clientId);
                     if(res.paymentTermId == 1)
                     {
 
@@ -524,7 +524,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 $('#keyword').focus();
             })
             $scope.loadProduct($location.search().clientId);
-
+            $scope.getAllLastItemPrice($location.search().clientId);
             /*Metronic.blockUI({
              target: '#orderportletbody',
              boxed: true,
@@ -971,7 +971,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             generalError = true;
         }
 
-        // $scope.allowSubmission = false;
+        $scope.allowSubmission = false;
 
 
         if(!$scope.order.invoiceDate || !$scope.order.deliveryDate || !$scope.order.dueDate || !$scope.order.status || !$scope.order.address || !$scope.order.clientId)
