@@ -3,19 +3,21 @@
 class OrderController extends BaseController
 {
 
-    public function jsonHoliday(){
-        $holidays =  holiday::where('year',date("Y"))->first();
+    public function jsonHoliday()
+    {
+        $holidays = holiday::where('year', date("Y"))->first();
 
         $h_array = explode(",", $holidays->date);
-        foreach($h_array as &$v){
-            $md = explode("-",$v);
+        foreach ($h_array as &$v) {
+            $md = explode("-", $v);
             $m = str_pad($md[0], 2, '0', STR_PAD_LEFT);
             $d = str_pad($md[1], 2, '0', STR_PAD_LEFT);
-            $v = $m.'-'.$d;
+            $v = $m . '-' . $d;
         }
         return Response::json($h_array);
 
     }
+
     public function jsonNewOrder()
     {
         $itemIds = [];
@@ -31,11 +33,11 @@ class OrderController extends BaseController
         $ci->setInvoice($order);
 
         // pd($product);
-        $have_item=false;
+        $have_item = false;
         foreach ($product as $p) {
-            if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty']>0)
+            if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
                 $itemIds[] = $p['dbid'];
-            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty']>0)
+            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
                 $have_item = true;
         }
 
@@ -48,12 +50,12 @@ class OrderController extends BaseController
                     'invoiceItemIds' => 0,
                     'message' => '未有下單貨品',
                 ];
-            else if(count($itemIds) == 0)
+            else if (count($itemIds) == 0)
                 InvoiceItem::where('invoiceId', $order['invoiceId'])->delete();
             else
                 InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->delete();
 
-        }else{
+        } else {
             if (!$have_item)
                 return [
                     'result' => false,
@@ -119,7 +121,6 @@ class OrderController extends BaseController
             $perf->save();*/
 
 
-
         return Response::json($result);
 
     }
@@ -128,12 +129,32 @@ class OrderController extends BaseController
     {
 
         $invoiceId = Input::get('invoiceId');
-        invoiceitem::where('invoiceId',$invoiceId)->delete();
-        $i = Invoice::where('invoiceId', $invoiceId)->first();
+
+        $i = Invoice::where('invoiceId', $invoiceId)->with('invoiceitem')->first();
         $i->previous_status = $i->invoiceStatus;
         $i->invoiceStatus = 99;
         $i->save();
         $i->delete();
+        invoiceitem::where('invoiceId', $invoiceId)->delete();
+
+        foreach ($i->invoiceitem as $v) {
+            $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $i->customerId . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
+            $item = DB::select(DB::raw($sql));
+
+            if (count($item) > 0) {
+                $lastitem = lastitem::where('customerId', $i->customerId)->where('productId', $item[0]->productId)->first();
+                $lastitem->unit_level = $item[0]->productQtyUnit;
+                $lastitem->unit_text = $item[0]->productUnitName;
+                $lastitem->price = $item[0]->productPrice;
+                $lastitem->qty = $item[0]->productQty;
+                $lastitem->discount = $item[0]->productDiscount;
+                $lastitem->updated_at = $item[0]->updated_at;
+                $lastitem->save();
+            } else
+                lastitem::where('customerId', $i->customerId)->where('productId', $v->productId)->delete();
+
+        }
+
 
     }
 
@@ -166,10 +187,10 @@ class OrderController extends BaseController
 
     public function jsonGetNotification()
     {
-        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'),'deliveryDate')
+        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'), 'deliveryDate')
             ->wherein('invoiceStatus', ['1', '3'])
             ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
-            ->where('deliveryDate','>=',strtotime("today 00:00"))
+            ->where('deliveryDate', '>=', strtotime("today 00:00"))
             ->groupBy('invoiceStatus', 'zoneId')
             ->with('zone')
             ->get();
@@ -177,23 +198,20 @@ class OrderController extends BaseController
         //   $summary['countInDataMart'] = 0;
 
 
-
         foreach ($invoices as $invoice) {
-            $summary[$invoice->invoiceStatus.'today']['breakdown'][$invoice->zoneId] = [
+            $summary[$invoice->invoiceStatus . 'today']['breakdown'][$invoice->zoneId] = [
                 'zoneId' => $invoice->zoneId,
                 'counts' => $invoice->counts,
                 'zoneText' => $invoice->zone->zoneName,
             ];
-            $summary[$invoice->invoiceStatus.'today']['countInDataMart'] = (isset($summary[$invoice->invoiceStatus.'today']['countInDataMart']) ? $summary[$invoice->invoiceStatus.'today']['countInDataMart'] : 0) + $invoice->counts;
+            $summary[$invoice->invoiceStatus . 'today']['countInDataMart'] = (isset($summary[$invoice->invoiceStatus . 'today']['countInDataMart']) ? $summary[$invoice->invoiceStatus . 'today']['countInDataMart'] : 0) + $invoice->counts;
         }
 
 
-
-
-        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'),'deliveryDate')
+        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'), 'deliveryDate')
             ->wherein('invoiceStatus', ['1', '3'])
             ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
-            ->where('deliveryDate','<',strtotime("today 00:00"))
+            ->where('deliveryDate', '<', strtotime("today 00:00"))
             ->groupBy('invoiceStatus', 'zoneId')
             ->with('zone')
             ->get();
@@ -243,7 +261,6 @@ class OrderController extends BaseController
         $summary['db_logintime'] = Auth::user()->logintime;
 
 
-
         return Response::json($summary);
     }
 
@@ -291,13 +308,13 @@ class OrderController extends BaseController
             if ($filter['invoiceNumber'] != '') {
                 $invoice = Invoice::select('*');
                 $invoice->where('invoiceId', 'LIKE', '%' . $filter['invoiceNumber'] . '%');
-            }else{
-                if(isset($filter['deliverydate1']))
-                    if($filter['deliverydate1'] == 'today'){
-                        $invoice = Invoice::select('*')->where('deliveryDate','>=',strtotime("today 00:00"));
-                    }elseif($filter['deliverydate1'] == 'yesterday'){
-                        $invoice = Invoice::select('*')->where('deliveryDate','<',strtotime("today 00:00"));
-                    }else
+            } else {
+                if (isset($filter['deliverydate1']))
+                    if ($filter['deliverydate1'] == 'today') {
+                        $invoice = Invoice::select('*')->where('deliveryDate', '>=', strtotime("today 00:00"));
+                    } elseif ($filter['deliverydate1'] == 'yesterday') {
+                        $invoice = Invoice::select('*')->where('deliveryDate', '<', strtotime("today 00:00"));
+                    } else
                         $invoice = Invoice::select('*');
                 else
                     $invoice = Invoice::where('deliveryDate', '>=', $dDateBegin)->where('deliveryDate', '<=', $dDateEnd);
@@ -323,10 +340,10 @@ class OrderController extends BaseController
 
             // status
             if ($filter['status'] == '100') {
-                $invoice->where(function ($query){
+                $invoice->where(function ($query) {
                     $query->where('previous_status', 1)->where('invoiceStatus', 2);
                 });
-            }else if ($filter['status'] != '0') {
+            } else if ($filter['status'] != '0') {
                 $invoice->where('invoiceStatus', $filter['status']);
             }
 
@@ -344,15 +361,15 @@ class OrderController extends BaseController
             return Datatables::of($invoices)
                 ->addColumn('link', function ($invoice) {
                     return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
-                })       ->addColumn('id', function ($invoice) {
-                    return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';
+                })->addColumn('id', function ($invoice) {
+                    return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">' . $invoice->invoiceId . '</a>';
                 })
                 ->make(true);
 
         } elseif ($mode == 'single') {
             $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
                 ->with(['invoiceItem' => function ($query) use ($ids) {
-                    $query->orderBy('productLocation','asc')->orderBy('productQtyUnit','asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId','asc');
+                    $query->orderBy('productLocation', 'asc')->orderBy('productQtyUnit', 'asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId', 'asc');
                 }])->with('products', 'client', 'staff', 'printqueue', 'audit', 'audit.User')
                 ->withTrashed()
                 ->first();
@@ -407,11 +424,11 @@ class OrderController extends BaseController
         //  $items = DB::select(DB::raw($sql));
 
 
-        $products = lastitem::where('customerId',$customerId)->get()->toArray();
-        if(count($products)==0){
-            $products=[];
+        $products = lastitem::where('customerId', $customerId)->get()->toArray();
+        if (count($products) == 0) {
+            $products = [];
             return Response::json($products);
-        } else{
+        } else {
             $products = Product::compileProductStandardForm($products);
             return Response::json($products);
         }
@@ -425,7 +442,7 @@ class OrderController extends BaseController
 
         $deliveryDate = strtotime($deliveryDate);
 
-        $invoice_id = Invoice::where('customerId', $customerId)->where('deliveryDate', $deliveryDate)->orderBy('invoiceId','desc')->first();
+        $invoice_id = Invoice::where('customerId', $customerId)->where('deliveryDate', $deliveryDate)->orderBy('invoiceId', 'desc')->first();
 
         // pd($invoice_id);
 
