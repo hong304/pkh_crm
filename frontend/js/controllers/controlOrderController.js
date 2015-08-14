@@ -784,6 +784,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     $scope.checkPrice = function(i)
     {
+
+        console.log('checkPrice');
+
         var code = $scope.product[i]['code'];
         var item = $scope.retrievedProduct[code];
 
@@ -809,7 +812,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
 
         // check if number
-        if(isNaN($scope.product[i]['unitprice']) && item.allowNegativePrice != '1')
+        if((isNaN($scope.product[i]['unitprice']) || $scope.product[i]['unitprice'] < 0 ) && item.allowNegativePrice != '1')
         {
             $scope.product[i]['unitprice'] = stdprice;
         }
