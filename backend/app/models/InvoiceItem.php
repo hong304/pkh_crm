@@ -1,10 +1,10 @@
 <?php
 
-//use Illuminate\Database\Eloquent\SoftDeletingTrait;
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
 class InvoiceItem extends Eloquent  {
 
-    //use SoftDeletingTrait;
+    use SoftDeletingTrait;
     
 	/**
 	 * The database table used by the model.
@@ -13,8 +13,9 @@ class InvoiceItem extends Eloquent  {
 	 */
 	protected $table = 'invoiceitem';
 	protected $primaryKey = 'invoiceItemId';
-	public $timestamps = false; 
-	
+	public $timestamps = false;
+    protected $dates = ['deleted_at'];
+
 	public static function boot()
 	{
 	    parent::boot();

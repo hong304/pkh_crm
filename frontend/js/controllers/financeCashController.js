@@ -50,7 +50,9 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         'bankCode' : '003',
         'cashAmount' : '0',
         'amount' : '0',
-        'no' : ''
+        'paid' : '0',
+        'no' : '',
+        'remain' : 0
     };
 
 
@@ -149,28 +151,44 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             data: {paidinfo:$scope.filterData,mode:'checkChequeExist'}
         }).success(function (res) {
             $scope.cheque = res;
-            if($scope.cheque.amount > 0)
+            console.log($scope.cheque);
+            if($scope.cheque.amount > 0){
                 $scope.filterData.amount = $scope.cheque.amount;
+                $scope.filterData.remain = $scope.cheque.remain;
+            }
         });
 
     }
 
     $scope.updateInvoiceNumber = function()
     {
+        $scope.cheque = {
+            'remain' : 0,
+            'amount' : 0
+        }
+        $scope.filterData.bankCode = '003';
+        $scope.filterData.cashAmount = '0';
+        $scope.filterData.amount = '0';
+        $scope.filterData.paid = '0';
+        $scope.filterData.no = '';
+        $scope.filterData.status = '20';
+
+
         $timeout.cancel(fetchDataTimer);
         fetchDataTimer = $timeout(function () {
             $scope.updateDataSet();
         }, fetchDataDelay);
+
     }
 
     $scope.autoPost = function(){
-        var data = $scope.invoicepaid;
+
         console.log($scope.filterData);
 
      $http({
             method: 'POST',
             url: query,
-            data: {paid:data,paidinfo:$scope.filterData,mode:'posting'}
+            data: {paidinfo:$scope.filterData,mode:'posting'}
         }).success(function () {
          $('#invoicePayment').modal('hide');
             Metronic.alert({

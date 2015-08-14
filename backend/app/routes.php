@@ -184,6 +184,9 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
+    invoiceitem::where('invoiceId',$i->invoiceId)->get()->delete();
+
+    die();
     $string = "鳳攸北街益發大廈14號(前裕景威) 鳳攸北街益發大廈14";
     $strlen = mb_strlen($string);
     while ($strlen) {

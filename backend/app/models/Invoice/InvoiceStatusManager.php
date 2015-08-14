@@ -70,12 +70,13 @@ class InvoiceStatusManager {
     public function Restore()
     {
 
-        $this->im = Invoice:: onlyTrashed()->wherein('invoiceId', $this->invoiceId)->with('invoiceItem')->get();
+        $this->im = Invoice::onlyTrashed()->wherein('invoiceId', $this->invoiceId)->get();
         foreach($this->im as $i)
         {
             $i->restore();
             $i->invoiceStatus = $i->previous_status;
             $i->save();
+            invoiceitem::where('invoiceId',$i->invoiceId)->restore();
         }
         return $this;
     }

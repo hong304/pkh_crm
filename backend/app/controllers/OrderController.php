@@ -126,7 +126,9 @@ class OrderController extends BaseController
 
     public function jsonVoidInvoice()
     {
+
         $invoiceId = Input::get('invoiceId');
+        invoiceitem::where('invoiceId',$invoiceId)->delete();
         $i = Invoice::where('invoiceId', $invoiceId)->first();
         $i->previous_status = $i->invoiceStatus;
         $i->invoiceStatus = 99;

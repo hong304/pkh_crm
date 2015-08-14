@@ -40,13 +40,17 @@ class InvoiceUnloader {
     
     public function cancel()
     {
-        foreach($this->im as $i)
+     /*   foreach($this->im as $i)
         {
+
+            invoiceitem::where('invoiceId',$i->invoiceId)->delete();
             $i->previous_status = $i->invoiceStatus;
             $i->invoiceStatus = '99';
             $i->deleted_at = date('Y-m-d H:i:s');
             $i->save();
-        }
+
+
+        }*/
     }
 
     public function backToNormal()
