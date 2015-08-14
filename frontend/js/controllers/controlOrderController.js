@@ -667,6 +667,24 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             $scope.product[i].unit = $scope.product[i].availableunit[0];
             $scope.updateStandardPrice(i);
 
+            // UX Auto Add Next COlumn
+            if(typeof $scope.product[i+1] == 'undefined')
+            {
+                $scope.newkey = $scope.itemlist.length + 1;
+                $scope.itemlist.push($scope.newkey);
+                $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
+                $scope.timer.product[$scope.newkey] = $.extend(true, {}, $scope.timerProductStructure);
+            }
+
+
+
+            // enable delete button, but delay that with 2 seconds
+            $timeout(function(){
+                $("#deletebtn_" + i).css('display', '');
+                $("#remarkbtn_" + i).css('display', '');
+                $("#unitprice_" + i).removeAttr('disabled');
+            }, 500);
+
             if(flag != 'unload') {
                 // $scope.getLastItem(code, $scope.order.clientId, i, 0);
                 if($scope.allLastItemPrice[code.toUpperCase()]) {
@@ -696,23 +714,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
 
 
-            // UX Auto Add Next COlumn
-            if(typeof $scope.product[i+1] == 'undefined')
-            {
-                $scope.newkey = $scope.itemlist.length + 1;
-                $scope.itemlist.push($scope.newkey);
-                $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
-                $scope.timer.product[$scope.newkey] = $.extend(true, {}, $scope.timerProductStructure);
-            }
 
-
-
-            // enable delete button, but delay that with 2 seconds
-            $timeout(function(){
-                $("#deletebtn_" + i).css('display', '');
-                $("#remarkbtn_" + i).css('display', '');
-                $("#unitprice_" + i).removeAttr('disabled');
-            }, 1000);
 
 
             //	console.log(i);
