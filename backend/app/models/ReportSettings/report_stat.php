@@ -23,7 +23,7 @@ class report_stat {
     
     public function compileResults()
     {
-if(Auth::user()->id == 46){
+if(Auth::user()->id == 46 || Auth::user()->id == 23){
     $sql =  "SELECT COUNT(*) AS 'updated_amount',name as 'name' FROM invoice i LEFT JOIN users c ON i.updated_by=c.id WHERE deliveryDate BETWEEN ".$this->_date." AND ".$this->_date1." AND invoiceStatus !=99 GROUP BY NAME ORDER BY COUNT(*) DESC";
     $updated_amount = DB::select(DB::raw($sql));
 
@@ -33,7 +33,7 @@ if(Auth::user()->id == 46){
     $sql = "SELECT COUNT(*) AS 'qty', sum(amount) as 'amount', i.zoneId, zoneName FROM invoice i LEFT JOIN  zone z ON i.zoneId = z.zoneId WHERE deliveryDate BETWEEN ".$this->_date." AND ".$this->_date1." AND invoiceStatus !=99 GROUP BY zoneName ORDER BY COUNT(*) DESC";
     $zone = DB::select(DB::raw($sql));
 }else{
-    die('die');
+    die('permission denied');
 }
         // get invoice from that date and that zone
   //SELECT COUNT(*) AS 'created amount',NAME FROM invoice i LEFT JOIN users c ON i.`created_by`=c.`id` WHERE deliveryDate BETWEEN UNIX_TIMESTAMP('2015-06-27') AND UNIX_TIMESTAMP('2015-07-04') AND invoiceStatus !=99 GROUP BY NAME ORDER BY COUNT(*) DESC;
