@@ -302,25 +302,25 @@ class Invoice_9FPickingList {
 
 
 
-        $csv = '車號,送貨日期,產品編號,產品名稱,數量,單位' . "\r\n";
-        foreach ($csv1 as $v) {
-            $csv .= $v->zoneId.',';
-            $csv .= date('Y-m-d',$v->deliveryDate).',';
-            $csv .= $v->productId.',';
-            $csv .= $v->productName_chi.',';
-            $csv .= $v->SumQty.',';
-            $csv .= $v->productUnitName.',';
-            $csv .= "\r\n";
+        /* $csv = '車號,送貨日期,產品編號,產品名稱,數量,單位' . "\r\n";
+           foreach ($csv1 as $v) {
+               $csv .= $v->zoneId.',';
+               $csv .= date('Y-m-d',$v->deliveryDate).',';
+               $csv .= $v->productId.',';
+               $csv .= $v->productName_chi.',';
+               $csv .= $v->SumQty.',';
+               $csv .= $v->productUnitName.',';
+               $csv .= "\r\n";
 
-        }
-      /* echo "\xEF\xBB\xBF";
+           }
+          echo "\xEF\xBB\xBF";
 
-        $headers = array(
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="9F_picking.csv"',
-        );
+           $headers = array(
+               'Content-Type' => 'text/csv',
+               'Content-Disposition' => 'attachment; filename="9F_picking.csv"',
+           );
 
-       return Response::make(rtrim($csv, "\n"), 200, $headers);*/
+          return Response::make(rtrim($csv, "\n"), 200, $headers);*/
 
 $i=3;
         $objPHPExcel = new PHPExcel ();
@@ -339,7 +339,7 @@ $i=3;
         $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, '數量');
         $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, '單位');
         $objPHPExcel->getActiveSheet()->setCellValue('H'.$i, '核對數');
-
+        $objPHPExcel->getActiveSheet()->setCellValue('I'.$i, '核對差異');
 
         $i += 1;
         foreach ($csv1 as $k => $v) {
@@ -366,6 +366,7 @@ $i=3;
 
             $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v->SumQty);
             $objPHPExcel->getActiveSheet()->setCellValue('G' . $i, $v->productUnitName);
+            $objPHPExcel->getActiveSheet()->setCellValue('I' . $i, '=F'.$i.'-H'.$i);
             $i++;
         }
 
