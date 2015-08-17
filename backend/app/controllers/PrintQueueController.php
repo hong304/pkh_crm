@@ -350,34 +350,37 @@ if(Input::get('group.id')!='')
         $pdf = new Fpdf();
 
         foreach ($image as $k => $v){
-            $section = 0;
-            for($i = 1; $i <= 2; $i++)
-            {
+           // $section = 0;
+
                 foreach($v['print_storage'] as $index => $get_filename)
                 {
-                    if($section == 0 || $section  % 2 == 0)
+
+                    for($i = 1; $i <= 2; $i++)
                     {
-                        $pdf->AddPage();
-                        $y = 0;
-                    }
 
-                    $url =  $this->public_path . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
+                        if($i == 1)
+                        {
+                            $pdf->AddPage();
+                            $y = 0;
+                        }
 
-                    $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
+                        $url =  $this->public_path . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
 
-                    // delete the image afterward
-                    // @unlink($url);
+                        $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
 
-                    if($pagesize == "A5")
-                    {
-                        $y += 148;
-                    }
-                    else
-                    {
-                        $y = 0;
-                    }
+                        // delete the image afterward
+                        // @unlink($url);
 
-                    $section++;
+                        if($pagesize == "A5")
+                        {
+                            $y += 148;
+                        }
+                        else
+                        {
+                            $y = 0;
+                        }
+
+                       // $section++;
 
                 }
             }
