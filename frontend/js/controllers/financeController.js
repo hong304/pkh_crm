@@ -252,8 +252,8 @@ var fetchDataTimer = '';
 
     $scope.autoPost = function(){
         if(!$scope.filterData.discount)
-            if($scope.totalAmount > $scope.filterData.amount) {
-                alert('輸入數目大於支票可用餘額');
+            if($scope.totalAmount != $scope.filterData.amount) {
+                alert('需付金額不等於支票銀碼');
                 return false;
             }
         var data = $scope.invoicepaid;
