@@ -382,13 +382,9 @@ $i=3;
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="9F_picking_count.xls"');
+        header('Content-Disposition: attachment;filename="'.date('Ymd',$this->_date).'-'. $this->_zone.'.xls"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
-
-       //$objWriter->save('export.xls');
-
-
      //   pd($csv);
 
    }
