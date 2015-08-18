@@ -167,6 +167,8 @@ Route::group(array('before' => 'auth'), function()
     Route::get('/getChoice.json','SupplierController@jsonChoice');
     Route::get('/getCurrency.json','SupplierController@jsonCurrency');
 
+    //Permission Control
+    Route::post('/getPermissionLists.json','permissionController@getPermissionList');
 
 });
 

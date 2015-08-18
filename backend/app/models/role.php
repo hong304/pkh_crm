@@ -10,4 +10,8 @@ public function user(){
     return $this->belongsToMany('user')->withTimestamps();
 }
 
+    public function permissions(){
+        return $this->belongsToMany('permissions')->withTimestamps();
+    }
+
 } 

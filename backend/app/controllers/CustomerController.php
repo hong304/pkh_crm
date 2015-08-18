@@ -176,7 +176,7 @@ class CustomerController extends BaseController
          //   $customer = $customer->paginate($page_length);
 
 
-            foreach ($customer as $c) {
+        /*    foreach ($customer as $c) {
                 if ($c->paymentTermId == '1') {
                     $c->paymentTerms = 'Cash';
                 } elseif ($c->paymentTermId == '2') {
@@ -201,11 +201,14 @@ class CustomerController extends BaseController
                         $c->link = '';
                 }
 
-            }
+            }*/
             
              return Datatables::of($customer)
                 ->addColumn('link', function ($custome) {
-                    return '<span onclick="editCustomer(\''.$custome->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    if(Auth::user()->can('edit_customer'))
+                        return '<span onclick="editCustomer(\''.$custome->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    else
+                        return '';
                 })
                 ->editColumn('status', function ($custome) {
                    // return  date("Y-m-d", $ip->to);

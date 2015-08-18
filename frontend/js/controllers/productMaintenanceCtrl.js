@@ -359,15 +359,13 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
                             { "data": "productId" },
                             { "data": "productName_chi" },
                             { "data": "productStatus" },
-                    { "data": "hasCommission" },
+                             { "data": "hasCommission" },
                             { "data": "productStdPrice_carton" },
                             { "data": "productStdPrice_inner" },
                             { "data": "productStdPrice_unit" },
-                    { "data": "updated_at" },
-                    { "data": "link" },
-
-                            
-                ],           
+                            { "data": "updated_at" },
+                            { "data": "link" },
+                ],
                 
                 "order": [
                     [1, "asc"]

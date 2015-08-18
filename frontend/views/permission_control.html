@@ -1,0 +1,57 @@
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="portlet light bordered">
+
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-speech font-green-sharp"></i> <span
+                        class="caption-subject bold uppercase"> Permission Control</span> <span
+                        class="caption-helper"></span>
+                </div>
+            </div>
+
+
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <table class="table table-striped table-hover table-bordered">
+                            <thead>
+                            <tr>
+                                <th style="width: 20%;">#</th>
+                                <th style="width: 20%;">Read</th>
+                                <th style="width: 20%;" >Edit</th>
+                                <th style="width: 20%;">Create</th>
+                                <th style="width: 20%;">Delete</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="(key,control) in permissionControl" style="font-size:15px">
+                                <td>{{control.groupName}}</td>
+                                <td>
+                                    <div class="control-label">
+                                        <input type="checkbox" ng-model="control.view_{{key}}" ng-true-value="yes" ng-false-value="no" ng-checked="control.view_{{key}}==1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="control-label">
+                                        <input type="checkbox" ng-model="control.edit_{{$index}}" ng-true-value="yes" ng-false-value="no" ng-checked="control.edit_{{$index}}==1">
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td></td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
