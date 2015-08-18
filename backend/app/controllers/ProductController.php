@@ -25,7 +25,9 @@ class ProductController extends BaseController {
             'productPackingName_inner', 'productPackingName_unit', 'productPackingName_carton',
             'productPackingInterval_carton', 'productPackingInterval_inner', 'productPackingInterval_unit',
             'productMinPrice_carton', 'productMinPrice_inner', 'productMinPrice_unit',
-            'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit','allowNegativePrice');
+            'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit','allowNegativePrice',
+            'supplierStdPrice_inner','supplierStdPrice_unit','productCost_unit',
+            'supplierPackingInterval_carton', 'supplierPackingInterval_inner', 'supplierPackingInterval_unit');
 
         $products->where('productStatus', 'o');
 
@@ -353,12 +355,23 @@ class ProductController extends BaseController {
                 ->addColumn('link', function ($p) {
                     return '<span onclick="editProduct(\''.$p->productId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';})
                 ->editColumn('productStatus', function ($p) {
-                    //  return  date("Y-m-d", $ip->from);
                     if($p->productStatus == 'o'){
                         return '正常';
                     }else{
                         return '暫停';
                     }
+                })->editColumn('hasCommission', function ($p) {
+                    if($p->hasCommission == 1){
+                        return '有';
+                    }else{
+                        return '';
+                    }
+                })->editColumn('productStdPrice_carton', function ($p) {
+                    return $p->productStdPrice_carton .' / '. $p->productPackingName_carton;
+                })->editColumn('productStdPrice_inner', function ($p) {
+                    return $p->productStdPrice_inner .' / '. $p->productPackingName_inner;
+                })->editColumn('productStdPrice_unit', function ($p) {
+                    return $p->productStdPrice_unit .' / '. $p->productPackingName_unit;
                 })
                 ->make(true);
 
