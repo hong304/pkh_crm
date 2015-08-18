@@ -23,7 +23,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
        'customerId' :'',
        'product' : '',
        'product_name' : '',
-       'shift' : '-1',
+       'shift' : '-1'
     };
 
 

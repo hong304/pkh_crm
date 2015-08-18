@@ -301,8 +301,8 @@ class ProductController extends BaseController {
         {
             $filter = Input::get('filterData');
 
-            Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
-            $product = Product::select('*')->where('deleted',false);
+          //  Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
+            $product = Product::where('deleted',false);
 
             if($filter['keyword'] != '')
             {
@@ -325,18 +325,15 @@ class ProductController extends BaseController {
             if ($filter['status']) {
                 $product->where('productStatus', $filter['status']);
             }
-            // query
 
             if($filter['productLocation'])
                 $product->where('productLocation', $filter['productLocation']);
 
 
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $product = $product->orderBy('updated_at','desc')->paginate($page_length);
+          //  $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+            $product = $product->orderBy('updated_at','desc');
 
-            $product = $product->toArray();
-
-            foreach($product['data'] as $c)
+          /*  foreach($product['data'] as $c)
             {
 
                 if($c['productStatus'] == 'o'){
@@ -346,11 +343,24 @@ class ProductController extends BaseController {
                 }
                 //  $c['delete'] = '<span onclick="delCustomer(\''.$c['productId'].'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
 
-                $c['link'] = '<span onclick="editProduct(\''.$c['productId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                $c['link'] =
                 $products[] = $c;
             }
 
-            $product['data'] = $products;
+            $product['data'] = $products;*/
+
+            return Datatables::of($product)
+                ->addColumn('link', function ($p) {
+                    return '<span onclick="editProduct(\''.$p->productId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';})
+                ->editColumn('productStatus', function ($p) {
+                    //  return  date("Y-m-d", $ip->from);
+                    if($p->productStatus == 'o'){
+                        return '正常';
+                    }else{
+                        return '暫停';
+                    }
+                })
+                ->make(true);
 
         }
         elseif($mode == 'single')
