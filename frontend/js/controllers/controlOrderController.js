@@ -271,10 +271,11 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     $scope.getAllLastItemPrice = function(customerId){
         var target = endpoint + '/getAllLastItemPrice.json';
+        $scope.allowSubmission = false;
         $http.post(target, {customerId: customerId})
             .success(function(res){
                 $scope.allLastItemPrice = res;
-                console.log(res);
+                $scope.allowSubmission = true;
             });
     }
 
