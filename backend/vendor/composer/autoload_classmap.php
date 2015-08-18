@@ -566,6 +566,7 @@ return array(
     'InvoiceImage' => $baseDir . '/app/models/Invoice/InvoiceImage.php',
     'InvoiceItem' => $baseDir . '/app/models/InvoiceItem.php',
     'InvoiceManipulation' => $baseDir . '/app/models/Invoice/InvoiceManipulation.php',
+	'PurchaseorderManipulation' => $baseDir . '/app/models/PurchaseOrder/PurchaseorderManipulation.php',
     'InvoicePdf' => $baseDir . '/app/models/Invoice/InvoicePdf.php',
     'InvoicePrintFormat' => $baseDir . '/app/models/InvoicePrintFormat.php',
     'InvoicePrinter' => $baseDir . '/app/models/Invoice/InvoicePrinter.php',
