@@ -21,7 +21,7 @@ class SupplierController extends BaseController
       
        //   Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
              //select(['ipfId','from', 'to', 'size']);
-           $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by'])
+          $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','suppliers.currencyId','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment'])
            ->leftJoin('countries', function($join) {
                 $join->on('countries.countryId', '=','suppliers.countryId');
             })
@@ -52,7 +52,8 @@ class SupplierController extends BaseController
                         $query->orwhere('contactPerson_1', 'LIKE', '%' . $filter['contact'] . '%')
                                ->orwhere('contactPerson_2', 'LIKE', '%' . $filter['contact'] . '%');
                      })
-                    ->where('supplierCode', 'LIKE', '%' . $filter['id'] . '%');
+                    ->where('supplierCode', 'LIKE', '%' . $filter['id'] . '%')
+					 ->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
             });
             
 
@@ -61,10 +62,7 @@ class SupplierController extends BaseController
                 ->addColumn('link', function ($supplie) {
                     return '<span onclick="editSupplier(\''.$supplie->supplierCode.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                 })
-                 ->editColumn('updated_at', function ($supplie) {
-                    return  date("Y-m-d", $supplie->updated_at);
-                    //return $supplie->updated_at;
-                })
+              
                  ->editColumn('status', function ($supplie) {
                    // return  date("Y-m-d", $ip->to);
                     return ($supplie->status == '1') ? $supplie->status = '正常' : $supplie->status = '暫停';
@@ -94,8 +92,8 @@ class SupplierController extends BaseController
                 $joinss->on('users.id', '=','suppliers.updated_by');  
             })
             ->first();
-            $store = date("Y-m-d", $supplier->updated_at);
-            $supplier['format_date'] = $store;
+           // $store = date("Y-m-d", $supplier->updated_at);
+            $supplier['format_date'] = $supplier->updated_at;
             return Response::json($supplier);
             
             

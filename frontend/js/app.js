@@ -395,7 +395,34 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }]
         }
     })
-    
+.state('searchPo', {		
+        url: "/searchPo",		
+        templateUrl: "views/searchPo.html",            		
+        data: {pageTitle: '檢視訂單資料', pageSubTitle: ''},		
+        controller: "searchPoCtrl",		
+        resolve: {		
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {		
+                return $ocLazyLoad.load({		
+                    name: 'app',		
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'		
+                    files: [		
+                        		
+                      assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',		
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',		
+        assets + '/css/dataTable/bootstrap.min.css',		
+                        assets + '/css/dataTable/dataTables.bootstrap.css',		
+                        assets + '/js/dataTable/jquery.dataTables.min.js',		
+                        assets + '/js/dataTable/dataTables.bootstrap.js',		
+                        		
+                        'js/controllers/searchPoCtrl.js',		
+                         'js/controllers/selectSupplierControl.js',		
+                         'js/controllers/selectProductCtrl.js',		
+                        		
+                    ] 		
+                });		
+            }]		
+        }		
+    })        
     .state('generatePickingList', {
         url: "/pickingList",
         templateUrl: "views/pickingList.html",            
@@ -970,6 +997,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                 }]
                }
         })
+		
+		
 
         .state('customerCashListing', {
             url: "/customerCashListing",
@@ -1009,11 +1038,15 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                     name: 'app',
                     insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                     files: [
-                        assets + '/css/dataTable/style.css',
-						assets + '/global/plugins/datatables/all.min.js',
-						assets + '/global/scripts/datatable.js',
-                        assets + '/global/plugins/bootbox/bootbox.min.js',
-                        assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
+                     assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+
+
+        assets + '/css/dataTable/bootstrap.min.css',
+                        assets + '/css/dataTable/dataTables.bootstrap.css',
+                        assets + '/js/dataTable/jquery.dataTables.min.js',
+                        assets + '/js/dataTable/dataTables.bootstrap.js',
 
                         'js/controllers/supplierMain.js' // Js controller
                       
@@ -1075,6 +1108,38 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 
                         'js/controllers/currencyController.js',
 
+                    ] 
+                });
+            }]
+        }
+    }) 
+	
+	  
+     .state('PoMain', {
+        url: "/PoMain",
+        templateUrl: "views/poForm.html",            
+        data: {pageTitle: '採購單', pageSubTitle: ''},
+
+        controller: "PoMain",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'app',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                    files: [
+                        assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        assets + '/global/plugins/fuelux/js/spinner.min.js',
+                        assets + '/dependencies/jquery.cookie.min.js',
+                        assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
+                        assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+                        assets + '/global/plugins/bootbox/bootbox.min.js',
+                        
+                        'js/controllers/PoMain.js',
+                        'js/controllers/selectSupplierControl.js',
+                         'js/controllers/selectProductCtrl.js',
+                         
+                  //      'js/controllers/selectProductCtrl.js',
                     ] 
                 });
             }]

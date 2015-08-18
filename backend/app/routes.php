@@ -64,6 +64,10 @@ Route::group(array('before' => 'auth'), function()
 
     Route::post('/voidInvoice.json', 'OrderController@jsonVoidInvoice');
     Route::post('/getLastItem.json', 'OrderController@jsonGetLastItem');
+	
+	    //Purchase order Information
+    Route::post('/newPoOrder.json', 'newPoController@jsonNewPo');
+    Route::post('/getSinglePo.json', 'newPoController@getSinglePo');
 
     
     //Route::any('/getInvoices.json', 'OrderController@jsonListOrders');
@@ -93,8 +97,9 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/maniSupplier.json', 'SupplierController@jsonUpdate');
     //Route::post('/generateSupplier.json', 'SupplierController@generateId');
     
-    //Po Maintenance
-    Route::post('/queryPo.json', 'PoController@jsonQueryPo');
+     //Po Maintenance
+    Route::post('/queryPo.json', 'newPoController@jsonQueryPo');
+    Route::post('/voidPo.json', 'newPoController@voidPo');
 	
     // Group Maintenance
     Route::post('/queryGroup.json', 'GroupController@jsonQueryGroup');

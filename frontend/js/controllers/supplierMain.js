@@ -174,7 +174,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
     	$scope.submitbtn = true;
         $scope.action = "update";
         $scope.newId = "";
-        $(".phone").inputmask("99999999");
+//        $(".phone").inputmask("99999999");
        
     	$http.post(q2, {mode: "single", supplierCode: customerId})
     	.success(function(res, status, headers, config){    
@@ -192,7 +192,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 
   
              paymentChange();
-             $("#format_date").html(res.format_date);
+              $("#format_date").html(res.format_date.date);
          
     	});
     	
@@ -282,7 +282,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
         
 
 
-        $(".phone").inputmask("99999999");
+//        $(".phone").inputmask("99999999");
     	$("#supplierFormModal").modal({backdrop: 'static'});
         $("#supplierFormModal .modal-title").find("span").eq(1).show();
         $("#supplierFormModal .modal-title").find("span").eq(0).hide();

@@ -12,7 +12,8 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     var csuggestion = -1;
     var customerTableKeyDownExist = false;
 
-
+        laodCountry();
+      loadCurrency();
     if(customerTableKeyDownExist == false) {
     $("#selectclientmodel").keydown(function (e) {
         if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true) {
@@ -76,57 +77,123 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     	//$('#selectclientmodel').modal('show');
     }
     
-    $scope.selectClient = function(c)
+    $scope.selectSupplier = function(c)
     {
     	$('#selectclientmodel').modal('hide');
-        $('#selectclientmodel').on('hidden.bs.modal', function () {
+        $('#selectclientmodel').on('hidden.bs.modal', function () { // Jump to bottom of page
             $('#productCode_1').focus();
             csuggestion = -1;
         })
-    	$scope.keyword = {
-            'zone' :'',
-            'id' :'',
-            'keyword':''
-        };
     	$scope.searchClient("");
-    	SharedService.setValue('clientId', c.customerId, 'handleCustomerUpdate');
-    	SharedService.setValue('clientName', c.customerName_chi, 'handleCustomerUpdate');
-    	SharedService.setValue('clientAddress', c.address_chi, 'handleCustomerUpdate');
-    	SharedService.setValue('clientZoneId', c.deliveryZone, 'handleCustomerUpdate');
-    	SharedService.setValue('clientZoneName', c.zoneText, 'handleCustomerUpdate');
-    	SharedService.setValue('clientRoute', c.routePlanningPriority, 'handleCustomerUpdate');
-        SharedService.setValue('clientRemark', c.remark, 'handleCustomerUpdate');
-    	SharedService.setValue('clientPaymentTermId', c.paymentTermId, 'handleCustomerUpdate');
-        SharedService.setValue('clientShift', c.shift, 'handleCustomerUpdate');
-    	SharedService.setValue('clientDiscount', c.discount, 'handleCustomerUpdate');
+    	SharedService.setValue('supplierCode', c.supplierCode, 'handleSupplierUpdate');
+    	SharedService.setValue('supplierName', c.supplierName, 'handleSupplierUpdate');
+    	SharedService.setValue('countryName', c.countryName, 'handleSupplierUpdate');
+    	SharedService.setValue('address', c.address, 'handleSupplierUpdate');
+        SharedService.setValue('currencyName', c.currencyName, 'handleSupplierUpdate');
+        SharedService.setValue('currencyId', c.currencyId, 'handleSupplierUpdate');
+        SharedService.setValue('contactPerson_1', c.contactPerson_1, 'handleSupplierUpdate');
+        SharedService.setValue('status', c.status, 'handleSupplierUpdate');
+        SharedService.setValue('payment', c.payment, 'handleSupplierUpdate');
+         
     	
-    	SharedService.setValue('clientSelectionCompleted', true, 'doneCustomerUpdate');
-    	
+    	//SharedService.setValue('clientSelectionCompleted', true, 'doneCustomerUpdate');
     }
+    function laodCountry()
+    {
+        $http(
+	    	{
+			method	:	"POST",
+			url		: endpoint + '/queryCountry.json', 
+			data	:	{mode: 'collection'},
+			        	cache	:	true,
+			        	//timeout: canceler.promise,
+			    	}        	
+	        ).
+	        success(function(res, status, headers, config) {
+	        	
+                  csuggestion = -1;
+                  $scope.countryData = res.aaData;
+                  SharedService.setValue('allCountry', $scope.countryData, 'handleSupplierUpdate');
+                  
+	        	//$timeout($scope.openSelectionModal, 1000);
+	        	//$scope.openSelectionModal();
+	        }).
+	        error(function(res, status, headers, config) {
+	          // called asynchronously if an error occurs
+	          // or server returns response with an error status.
+	        });
+                
+    }
+    function loadCurrency()
+    {
+         $http(
+	    	{
+			method	:	"POST",
+			url		: endpoint + '/queryCurrency.json', 
+			data	:	{mode: 'collection'},
+			        	cache	:	true,
+			        	//timeout: canceler.promise,
+			    	}        	
+	        ).
+	        success(function(res, status, headers, config) {
+	        	
+                  csuggestion = -1;
+                  $scope.currencyData = res.aaData;
+                  SharedService.setValue('allCurrency', $scope.currencyData, 'handleSupplierUpdate');
+	        	//$timeout($scope.openSelectionModal, 1000);
+	        	//$scope.openSelectionModal();
+	        }).
+	        error(function(res, status, headers, config) {
+	          // called asynchronously if an error occurs
+	          // or server returns response with an error status.
+	        });
+                
+    }
+   	$scope.keyword = {
+        'name': '',
+        'id': '',
+        'phone': '',
+        'country' : '',
+        'contact' : '',
+        'sorting' : '',
+        'current_sorting' : 'asc',
+        'status': '1',
+        'countryName' : '',
+	};
     
-    $scope.searchClient = function(keyword)
+   $scope.searchClient = function(keyword)
     {   
-
+        
     	$timeout.cancel(fetchDataTimer);
     	fetchDataTimer = $timeout(function () {
 	    	if(keyword != "")
 	    	{
 	    		$scope.clientHeader = "搜尋結果";
 	    	}
-
+              
+                if($scope.keyword.country != null)
+                {
+                      if($scope.keyword.country.countryName != "" && $scope.keyword.country.countryName != null)
+                      {
+                          $scope.keyword.countryName = $scope.keyword.country.countryName;
+                      }
+                }else
+                {
+                    $scope.keyword.countryName = "";
+                }
 	    	$http(
 	    			{
 			    		method	:	"POST",
-			    		url		: 	endpoint + '/checkSupplier.json', 
-			        	data	:	{client_keyword: $scope.keyword},
+			    		url		: 	endpoint + '/querySupplier.json', 
+			        	data	:	{mode: 'collection','filterData' :$scope.keyword},
 			        	cache	:	true,
 			        	//timeout: canceler.promise,
 			    	}        	
 	        ).
 	        success(function(res, status, headers, config) {
-	        	$scope.clientSuggestion = res;
+	        	$scope.clientSuggestion = res.aaData;
                   csuggestion = -1;
-
+             
 
 	        	//$timeout($scope.openSelectionModal, 1000);
 	        	//$scope.openSelectionModal();
