@@ -16,24 +16,10 @@ app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedSer
             }
         });
 
-        /*
-        var form = $('#orderinfo'),
-            original = form.serialize()
 
-        form.submit(function(){
-            window.onbeforeunload = null
-        })
-
-        window.onbeforeunload = function(){
-            if (form.serialize() != original)
-                return 'hi';
-        }*/
     });
 
-
-    laodCountry();
-    
-    
+   
     $scope.order = {
         poCode: '',
         supplierName:'',
@@ -57,61 +43,7 @@ app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedSer
        contactPerson_1:'',
     };
 
-   // var target = endpoint + '/poMain.json';
-
- /*   $http.get(target)
-        .success(function(res){
-
-            var today = new Date();
-            var plus = today.getDay() == 6 ? 2 : 1;
-
-            var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-            if(today.getHours() > 11 || today.getDay() == 0)
-            {
-                var nextDay = currentDate;
-            }
-            else
-            {
-                var nextDay = today;
-            }
-            var flag = true;
-            var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-            do{
-                flag= true;
-                $.each( res, function( key, value ) {
-                    if(value == working_date){
-                        flag = false;
-                        var today = new Date(nextDay.getFullYear()+'-'+working_date);
-                        nextDay = new Date(today);
-                        nextDay.setDate(today.getDate()+1);
-
-                        if(nextDay.getDay() == 0)
-                            nextDay.setDate(today.getDate()+2);
-
-                        working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-                    }
-                });
-            }while(flag == false);
-
-            var day = ("0" + (nextDay.getDate())).slice(-2);
-            var month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
-            var year = nextDay.getFullYear();
-
-            $('.date-picker').datepicker({
-                rtl: Metronic.isRTL(),
-                orientation: "left",
-                autoclose: true
-            });
-
-            $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
-
-
-            $scope.order.deliveryDate = year + '-' + month + '-' + day;
-            $scope.order.dueDate = year + '-' + month + '-' + day;
-            $scope.order.invoiceDate = $scope.order.deliveryDate;
-        });
-*/
-
+    
  //Sunday is not allowed
     var today = new Date();
     var plus = today.getDay() == 6 ? 2 : 1;
@@ -160,7 +92,7 @@ app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedSer
 
      $("#deliverydate3").datepicker({
         rtl: Metronic.isRTL(),
-        orientation: "left",
+        orientation: "right",
         autoclose: true
     });
     $("#deliverydate3").datepicker( "setDate", year4 + '-' + month4 + '-' + day4 );
@@ -352,7 +284,7 @@ $scope.an = false;
  
         var temp_number = $scope.totalAmount;
 
-        $scope.totalAmount =temp_number.toFixed(1);
+        $scope.totalAmount =temp_number.toFixed(2);
 
     }
 
@@ -481,6 +413,7 @@ $scope.an = false;
             $http.post(target, {poCode: $location.search().poCode})
                 .success(function(data, status, headers, config){
                   if(data.count > 0) {
+
                     $scope.poData = data.pos[0];
                   
 
@@ -508,38 +441,67 @@ $scope.an = false;
                     $scope.displayName = $scope.poData.supplierCode + " (" + $scope.order.supplierName + ")";
                     $scope.order.supplierCode = $scope.poData.supplierCode;
                     $scope.order.poRemark = $scope.poData.poRemark;
+                
                     
-                    if($scope.order.poStatus != 99)
-                    {
-                        $("#statusField").attr('disabled',false);
-                    }
-                 
-             $scope.$on('handleSupplierUpdate', function(){
-
-                    $scope.an=true;
-                    $scope.countryDataList = SharedService.allCountry;
-                    $scope.allCurrencyList = SharedService.allCurrency;
-         
-                      for(var t = 0;t<$scope.countryDataList.length;t++)
+                    $http(
                       {
-                        if($scope.countryDataList[t].countryId == $scope.supplierData.countryId)
+			method	:	"POST",
+			url		: endpoint + '/queryCountry.json', 
+			data	:	{mode: 'collection'},
+			        	cache	:	true,
+			        	//timeout: canceler.promise,
+		     }        	
+	             ).
+                     success(function(res, status, headers, config) {
+                  $scope.countryData = res.aaData;
+                  $scope.countryDataList = $scope.countryData;
+                    if($scope.countryData !== '')
+                    {
+                     for(var t = 0;t<$scope.countryData.length;t++)
+                      {
+                        if($scope.countryData[t].countryId == $scope.supplierData.countryId)
                         {
                             $scope.countryData = $scope.countryDataList[t];
                         }
                        }
-                  
-                    for(var t = 0;t<$scope.allCurrencyList.length;t++)
-                    {
-                        if($scope.allCurrencyList[t].currencyId == $scope.supplierData.currencyId)
-                        {
-                            $scope.currencyData = $scope.allCurrencyList[t];
-                        }
                     }
+	        }).
+	        error(function(res, status, headers, config) {
+	          // called asynchronously if an error occurs
+	          // or server returns response with an error status.
+	        });
+                
+                 $http(
+	    	      {
+			method	:	"POST",
+			url		: endpoint + '/queryCurrency.json', 
+			data	:	{mode: 'collection'},
+			        	cache	:	true,
+			        	//timeout: canceler.promise,
+		      }        	
+	        ).
+	        success(function(res, status, headers, config) {
+	        	$scope.currencyData = res.aaData;
+                        $scope.allCurrencyList = $scope.currencyData;
+                        for(var t = 0;t<$scope.allCurrencyList.length;t++)
+                        {
+                            if($scope.allCurrencyList[t].currencyId == $scope.supplierData.currencyId)
+                            {
+                                $scope.currencyData = $scope.allCurrencyList[t];
+                            }
+                        }
                       $scope.order.currencyId = $scope.currencyData.currencyId;
-                    
+                
+	        }).
+	        error(function(res, status, headers, config) {
+	        
+	        });
+                
+                    if($scope.order.poStatus != 99)
+                    {
+                        $("#statusField").attr('disabled',false);
+                    }
 
-                });
-                  
                     if($scope.order.poStatus == 99)
                     {
                         //$scope.allowSubmission = false;
@@ -549,11 +511,7 @@ $scope.an = false;
                         // load customer product, first load full db, second load invoice-items
                         $scope.loadProduct($scope.order.poCode, $scope.poitems);
                         Metronic.unblockUI();
-                  
 
-                    $timeout(function(){
-                        //$(".productCodeField").inputmask("*");
-                    }, 2000);
                 }
                 });
 
@@ -774,27 +732,6 @@ $scope.an = false;
         })
     });
     
-     function laodCountry()
-    {
-        $http(
-	    	{
-			method	:	"POST",
-			url		: endpoint + '/queryCountry.json', 
-			data	:	{mode: 'collection'},
-			        	cache	:	true,
-			        	//timeout: canceler.promise,
-			    	}        	
-	        ).
-	        success(function(res, status, headers, config) {
-                  $scope.countryData = res.aaData;
-
-	        }).
-	        error(function(res, status, headers, config) {
-	          // called asynchronously if an error occurs
-	          // or server returns response with an error status.
-	        });
-                
-    }
 
 
     $scope.updateStandardPrice = function (i)
@@ -802,7 +739,6 @@ $scope.an = false;
         
         var code = $scope.product[i]['code'];
         var item = $scope.retrievedProduct[code];
-        console.log($scope.retrievedProduct[code]);
         var unit = $scope.product[i]['unit'].value;
       //  console.log(item);
         // *** to be updated - non-hard-coding
@@ -839,21 +775,7 @@ $scope.an = false;
         $("#requireapprove_" + i).remove();
 
         var saleprice = ($scope.product[i]['unitprice'] * getDiscount($scope.product[i]['discount_1']) * getDiscount($scope.product[i]['discount_2']) * getDiscount($scope.product[i]['discount_3'])) - $scope.product[i]['allowance_1'] - $scope.product[i]['allowance_2'] - $scope.product[i]['allowance_3'];
-        // if saleprice < std price, need approval
-       /* if(saleprice < stdprice  && $scope.product[i].deleted == 0)
-        {
-            $("#unitpricediv_" + i).prepend('<i id="requireapprove_'+i+'" class="fa fa-info-circle" style="color:red;"></i>');
-            $scope.submitButtonText = '提交 (需批核) (F10)';
-            $scope.submitButtonColor = 'green';
-        }
-
-
-        // if he got permission of bypassing approval, eventually display no approval button
-        if($scope.systeminfo.permission.allow_by_pass_invoice_approval == true)
-        {
-            $scope.submitButtonText = '提交';
-            $scope.submitButtonColor = 'blue';
-        }*/
+   
 
     }
     
@@ -864,6 +786,7 @@ $scope.an = false;
     
     $scope.updateQtyy = function(i,discountCon)
     {
+     
          if(discountCon == "discount1")
          {
            $scope.order.discount_1 =   isNaN(i) ?   1 : $scope.order.discount_1;
@@ -878,7 +801,17 @@ $scope.an = false;
              $scope.order.allowance_2 =   isNaN(i) ?   1 : $scope.order.allowance_2;
          }
     }
+    
+       $scope.updateQty = function(i,ele)
+    {
+        var qty = $scope.product[i][ele];
 
+        if(isNaN(qty))
+        {
+            $scope.product[i][ele] = 1;
+        }
+
+    }
     $scope.updateUnit = function(i)
     {
         $scope.updateStandardPrice(i);
@@ -940,7 +873,7 @@ $scope.an = false;
         }*/
 if(bool)
         bootbox.dialog({
-            message: '提交訂單',
+            message: '是否確定輸入無誤?',
             title: "提交訂單",
             buttons: {
                 success: {
