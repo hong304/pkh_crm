@@ -26,15 +26,18 @@ app.controller('permissionController', function($scope, $rootScope, $http, Share
             .success(function(res, status, headers, config){
 
                 console.log(res);
-                res.forEach(function(item,key) {
-                    $scope.permissionControl[key] = $.extend(true, {}, $scope.permissionControl_def);
+              //  return false;
+
+
+               // res.forEach(function(item,key) {
+                   /* $scope.permissionControl[key] = $.extend(true, {}, $scope.permissionControl_def);
                     $scope.permissionControl[key]['action']['view'] = item.action.view;
                     $scope.permissionControl[key]['action']['edit'] = item.action.edit;
                     $scope.permissionControl[key]['action']['add'] = item.action.add;
                     $scope.permissionControl[key]['action']['delete'] = item.action.delete;
                     $scope.permissionControl[key]['groupName'] = item.groupName;
-                    $scope.permissionControl[key]['name'] = item.name;
-                });
+                    $scope.permissionControl[key]['name'] = item.name;*/
+              //  });
 
                 console.log($scope.permissionControl);
             });

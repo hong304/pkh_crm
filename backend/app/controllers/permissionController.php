@@ -19,20 +19,33 @@ class permissionController extends Controller {
         if(Input::get('mode')=='posting'){
             pd(Input::get('data'));
         }
-       // $lists = permission::with('role')->get()->toArray();
-        $lists[0]['groupName']='客戶管理';
-        $lists[0]['name']='customer';
-        $lists[0]['action']['view']=1;
-        $lists[0]['action']['edit']=1;
-        $lists[0]['action']['add']=1;
-        $lists[0]['action']['delete']=0;
 
-        $lists[1]['groupName']='產品管理';
+
+
+        $list1 = permission::get();
+        foreach ($list1 as $k => $v){
+            $lists[$v->permissionGroup]['action'][$v->name]='';
+        }
+
+        $list = permission::leftJoin('permission_role','permissions.id','=','permission_role.permission_id')->where('role_id','3')->get();
+
+  //      pd($list);
+foreach($list as $k =>$v){
+    $lists[$v->permissionGroup]['action'][$v->name] = $v->role_id;
+}
+
+        foreach ($lists as $k1 => $v1){
+            $arr[] = $v1;
+        }
+
+        pd($arr);
+
+       /* $lists[1]['groupName']='產品管理';
         $lists[1]['name']='product';
         $lists[1]['action']['view']=1;
         $lists[1]['action']['edit']=0;
         $lists[1]['action']['add']=0;
-        $lists[1]['action']['delete']=0;
+        $lists[1]['action']['delete']=0;*/
 
         return Response::json($lists);
     }
