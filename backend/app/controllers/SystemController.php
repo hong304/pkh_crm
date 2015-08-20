@@ -129,9 +129,14 @@ class SystemController extends BaseController {
             $nr['byZone'][$v->zoneId]['name'] = $v->zoneText;
 
             $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['percentage'] = number_format($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']/$total[$v->deliveryDate]*100,2,'.',',').'%';
+            if($v->deliveryDate == $today)
+            $nr['byZone'][$v->zoneId]['date'][$today]['against_percentage'] = number_format(($nr['byZone'][$v->zoneId]['date'][$today]['volume']-$nr['byZone'][$v->zoneId]['date'][$yesterday]['volume'])/$nr['byZone'][$v->zoneId]['date'][$today]['volume']*100,2,'.',',').'%';
+
         }
 
         $nr1 = array_chunk($nr['byZone'],5,true);
+
+
 
         return View::make('dashboard')->with('nr',$nr1)->with('total',$nr['byTime']);
 
