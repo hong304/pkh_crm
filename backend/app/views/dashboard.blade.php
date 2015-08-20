@@ -16,9 +16,14 @@ div.centre
     text-align: left;
     line-height:2;
 }
-.pre{
+.preu{
     font-size: 15px;
-    color:black;
+    color:green;
+    margin-left:0px;
+}
+.pred{
+    font-size: 15px;
+    color:red;
     margin-left:0px;
 }
 .arrow_u10{background:url('http://www.aastocks.com/tc/images/common/arr_change3.png') -1px 0px no-repeat;width:14px;height:17px;display:inline-block;font-size:16px}
@@ -55,14 +60,14 @@ div.centre
                                   }
                                   if($k1 == $today){
                                       if($v['compare']==2)
-                                          $arrow = '<span class="arrow_u10" style="margin-left:5px;"></span>';
+                                          $arrow = ' <span class="preu">('.$v1['against_percentage'].')</span></span><span class="arrow_u10" style="margin-left:5px;"></span>';
                                       else if ($v['compare'] == 0){
-                                          $arrow = '<span class="arrow_d10" style="margin-left:5px;"></span>';
+                                          $arrow = ' <span class="pred">('.$v1['against_percentage'].')</span></span><span class="arrow_d10" style="margin-left:5px;"></span>';
                                       }else
                                           $arrow = '';
 
 
-                                      echo '今天:<span style="color: blue;margin-left:10px;">'.$v1['volume'].' <span class="pre">('.$v1['against_percentage'].')</span></span>'.$arrow.'<br/>';
+                                      echo '今天:<span style="color: blue;margin-left:10px;">'.$v1['volume'].$arrow.'<br/>';
                                   }
                                   if($k1 == $tomorrow){
                                       echo '明天:<span style="color:#610655;margin-left:10px;">'.$v1['volume'].'</span><br/>';
