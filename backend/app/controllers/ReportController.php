@@ -12,13 +12,50 @@ class ReportController extends BaseController {
         4 = Sales
         5 = Supervisor
         */
+        $filter = ['pickinglist','pickinglist9f','printlog','archivedreport','customerbreakdown','dailylist','reportstat'];
 
-        if (Auth::user()->role[0]->id == 4){
+        if(Auth::user()->can('view_monthlyReport'))
+           array_push($filter,'creditsummary');
+
+        if(Auth::user()->can('view_commission'))
+            array_push($filter,'commission');
+
+        if(Auth::user()->can('view_auditReport'))
+           array_push($filter,'auditReport');
+
+        if(Auth::user()->can('view_cashreceiptsummary'))
+           array_push($filter,'cashreceiptsummary');
+
+        if(Auth::user()->can('view_costprice'))
+           array_push($filter,'costprice');
+
+        if(Auth::user()->can('view_customerReport'))
+        array_push($filter,'customerReport');
+
+        if(Auth::user()->can('view_itemssummary'))
+        array_push($filter,'itemssummary');
+
+        if(Auth::user()->can('view_productReport'))
+        array_push($filter,'productReport');
+
+       // if(Auth::user()->can('view_reportstat'))
+       // array_push($filter,'reportstat');
+
+      //  if(Auth::user()->can('view_vanselllist'))
+       //     array_push($filter,'vanselllist');
+
+
+
+
+
+        $reports = Report::select('*')->orderBy('id', 'asc')->whereIn('id',$filter)->get();
+
+      /*  if (Auth::user()->role[0]->id == 4){
             $filter = ['productReport','customerReport','commission','creditsummary','itemssummary','reportstat'];
             $reports = Report::select('*')->orderBy('id', 'asc')->whereNotIn('id',$filter)->get();
         }else{
             $reports = Report::select('*')->orderBy('id', 'asc')->get();
-        }
+        }*/
 
 
 

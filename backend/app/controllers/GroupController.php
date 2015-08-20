@@ -70,8 +70,6 @@ class GroupController extends BaseController {
         if ($mode == 'collection') {
             $filter = Input::get('filterData');
 
-
-            Paginator::setCurrentPage((Input::get('start') + 10) / Input::get('length'));
             $customer = customerGroup::select('*');
 
 
@@ -88,27 +86,25 @@ class GroupController extends BaseController {
                     ->where('name', 'LIKE', '%' . $filter['name'] . '%');
             });
 
-            // query
+            return Datatables::of($customer)
+                ->addColumn('link', function ($produc) {
+                    if(Auth::user()->can('edit_group'))
+                        return '<span onclick="editGroup(\'' . $produc->id . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    else
+                        return '';
+                })->editColumn('groupStatus',function($c){
+                    if ($c->groupStatus == '1')
+                        return '正常';
+                    else
+                        return '暫停';
+            }) ->addColumn('delete', function ($produc) {
+                    if(Auth::user()->can('delete_group'))
+                        return '<span onclick="delGroup(\'' . $produc->id . '\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+                    else
+                        return '';
+                })
+                ->make(true);
 
-            $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $customer = $customer->paginate($page_length);
-
-
-            foreach ($customer as $c) {
-                if ($c->groupStatus == '1')
-                    $c->groupStatus = '正常';
-                else
-                    $c->groupStatus = '暫停';
-
-                if ($c->deleted_at != '') {
-                    $c->delete = '';
-                    $c->link = '';
-                } else {
-                    $c->delete = '<span onclick="delGroup(\'' . $c->id . '\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
-                    $c->link = '<span onclick="editGroup(\'' . $c->id . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
-                }
-
-            }
         } elseif ($mode == 'single') {
             $customer = customerGroup::where('id', Input::get('GroupId'))->first();
         }

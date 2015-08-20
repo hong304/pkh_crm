@@ -169,6 +169,7 @@ Route::group(array('before' => 'auth'), function()
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');
+    Route::get('/getUserGroup.json','permissionController@getUserGroup');
 
 });
 

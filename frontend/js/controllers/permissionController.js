@@ -7,41 +7,29 @@ app.controller('permissionController', function($scope, $rootScope, $http, Share
     $scope.permissionControl_def = {
         groupName: '',
         action : {
-            view: '',
-            edit: '',
-            add: '',
-            delete: ''
         }
-
     }
+
+    $scope.filterData={
+        'level' : ''
+    }
+
     var querytarget = endpoint + '/getPermissionLists.json';
+    var getUserGroup = endpoint + '/getUserGroup.json';
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
 
-
-
-        $http.post(querytarget, {})
+        $http.get(getUserGroup)
             .success(function(res, status, headers, config){
-
-                console.log(res);
-              //  return false;
-
-
-               // res.forEach(function(item,key) {
-                   /* $scope.permissionControl[key] = $.extend(true, {}, $scope.permissionControl_def);
-                    $scope.permissionControl[key]['action']['view'] = item.action.view;
-                    $scope.permissionControl[key]['action']['edit'] = item.action.edit;
-                    $scope.permissionControl[key]['action']['add'] = item.action.add;
-                    $scope.permissionControl[key]['action']['delete'] = item.action.delete;
-                    $scope.permissionControl[key]['groupName'] = item.groupName;
-                    $scope.permissionControl[key]['name'] = item.name;*/
-              //  });
-
-                console.log($scope.permissionControl);
+                if(res == false){
+                   $location.path('/#/salesPanel');
+                }
+                $scope.usergroup = res;
+                $scope.filterData.level = $scope.usergroup[0];
+                $scope.updateDataSet();
             });
-
     });
 
     $scope.postPermission = function(){
@@ -58,6 +46,30 @@ app.controller('permissionController', function($scope, $rootScope, $http, Share
         $scope.systeminfo = $rootScope.systeminfo;
     }, true);
 
+    $scope.updateDataSet = function(){
+
+
+        $http.post(querytarget, {roleId:$scope.filterData.level})
+        .success(function(res, status, headers, config){
+                console.log(res);
+            res.forEach(function(item,key) {
+                var view = eval('item.action.view_'+item.name);
+                var edit = eval('item.action.edit_'+item.name);
+                var add = eval('item.action.add_'+item.name);
+                var delete1 = eval('item.action.delete_'+item.name);
+
+
+                $scope.permissionControl[key] = $.extend(true, {}, $scope.permissionControl_def);
+                $scope.permissionControl[key]['action']['view_'+item.name] =  view;
+                $scope.permissionControl[key]['action']['edit_'+item.name] = edit;
+                $scope.permissionControl[key]['action']['add_'+item.name] = add;
+                $scope.permissionControl[key]['action']['delete_'+item.name] = delete1;
+                $scope.permissionControl[key]['groupName'] = item.groupName;
+                $scope.permissionControl[key]['name'] = item.name;
+                $scope.permissionControl[key]['roleId'] = item.roleId;
+            });
+        });
+    }
 
 
 });

@@ -353,8 +353,11 @@ class ProductController extends BaseController {
 
             return Datatables::of($product)
                 ->addColumn('link', function ($p) {
-                    return '<span onclick="editProduct(\''.$p->productId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';})
-                ->editColumn('productStatus', function ($p) {
+                    if(Auth::user()->can('edit_product'))
+                    return '<span onclick="editProduct(\''.$p->productId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                        else
+                    return '';
+                })->editColumn('productStatus', function ($p) {
                     if($p->productStatus == 'o'){
                         return '正常';
                     }else{
@@ -406,12 +409,15 @@ class ProductController extends BaseController {
 
         if($mode == 'collection')
         {
-            $filter = Input::get('filterData');
+
             $product = ProductGroup::select('*')->orderBy($sorting,$currentSorting);
 
               return Datatables::of($product)
                 ->addColumn('link', function ($produc) {
-                    return '<span onclick="editProductGroup(\''.$produc['productDepartmentId'].'\',\''.$produc['productGroupId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    if(Auth::user()->can('edit_productGroup'))
+                         return '<span onclick="editProductGroup(\''.$produc['productDepartmentId'].'\',\''.$produc['productGroupId'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    else
+                        return '';
                 })
                 ->make(true);
 

@@ -19,7 +19,7 @@
 							<span class="caption-subject font-green-sharp bold uppercase">員工列表</span>
 						</div>
 						<div class="actions">
-							<a href="javascript:;" ng-click="addStaff();" class="btn btn-default btn-circle">
+							<a href="javascript:;" ng-click="addStaff();" class="btn btn-default btn-circle" data-ng-if="systemInfo.permission.add_staff == true">
 							<i class="fa fa-plus"></i>
 							<span class="hidden-480"> 新增員工 </span> </a>
 						</div>		

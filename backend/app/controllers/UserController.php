@@ -84,7 +84,10 @@ class UserController extends BaseController {
     	            return Redirect::action('UserController@authenticationProcess')->with('flash_error', 'Invalid Credential. Please try again');
     	        }
 	        }              
-	    }
+	    }elseif(!Auth::guest()){
+            return Redirect::to($_SERVER['frontend']);
+            exit;
+        }
 	    return View::make('user/AuthenticationForm');
 	}
 	
@@ -278,8 +281,16 @@ class UserController extends BaseController {
                 }else{
                     $c->disabled = '暫停';
                 }
-                $c->delete = '<span onclick="delCustomer(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
-                $c->link = '<span onclick="editStaff(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                if(Auth::user()->can('delete_staff'))
+                    $c->delete = '<span onclick="delCustomer(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+                else
+                    $c->delete = '';
+
+                if(Auth::user()->can('edit_staff'))
+                    $c->link = '<span onclick="editStaff(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                else
+                    $c->link = '';
+
                 $c->m_role = '';
                 foreach($c->role as $v)
 	                $c->m_role =  $v->name;

@@ -271,12 +271,12 @@
 											<li>
 												<h3>客戶相關</h3>
 											</li>
-											<li>
+                                            <li ng-if="systemInfo.permission.view_customer == true">
 												<a href="/#/customerMaintenance" class="iconify">
 												<i class="icon-home"></i>
 												客戶管理 </a>
 											</li>
-                                            <li  data-ng-if="systemInfo.permission.customer_maintenance == true">
+                                            <li  data-ng-if="systemInfo.permission.view_group == true">
                                                 <a href="/#/groupMaintenance" class="iconify">
                                                     <i class="icon-home"></i>
                                                     集團管理 </a>
@@ -288,12 +288,12 @@
 											<li>
 												<h3>產品相關</h3>
 											</li>
-											<li>
+                                            <li  data-ng-if="systemInfo.permission.view_product == true">
 												<a href="/#/productMaintenance" class="iconify">
 												<i class="icon-cursor-move"></i>
 												產品設定 </a>
 											</li>
-											<li>
+                                            <li  data-ng-if="systemInfo.permission.view_productGroup == true">
 												<a href="/#/productDepartmentMaintenance" class="iconify">
 												<i class="icon-pin"></i>
 												類別設定 </a>
@@ -301,24 +301,29 @@
 											
 										</ul>
 									</div>
-									<div class="col-md-3"  data-ng-if="systemInfo.permission.staff_maintenance == true">
+									<div class="col-md-3">
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>用戶相關</h3>
 											</li>
-											<li>
+											<li ng-if="systemInfo.permission.view_staff == true">
 												<a href="/#/user-maintenance/listing" class="iconify">
 												<i class="icon-speech"></i>
-												用戶設定 </a>
+												員工設定 </a>
 											</li>
+                                            <li ng-if="systemInfo.permission.allow_permission == true">
+                                                <a href="/#/permission_control" class="iconify">
+                                                    <i class="icon-speech"></i>
+                                                    權限管理 </a>
+                                            </li>
 										</ul>
 									</div>
-									<div class="col-md-3"  data-ng-if="systemInfo.permission.invoice_maintenance == true">
+									<div class="col-md-3" >
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>訂單相關</h3>
 											</li>
-											<li>
+                                            <li  data-ng-if="systemInfo.permission.view_adv == true">
 												<a href="/#/invoicePrintMaintenance" class="iconify">
 												<i class="icon-speech"></i>
 												收據及廣告設定 </a>

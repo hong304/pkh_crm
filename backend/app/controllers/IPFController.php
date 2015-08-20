@@ -23,7 +23,10 @@ class IPFController extends BaseController {
             $ipf = InvoicePrintFormat:: select(['ipfId','from', 'to', 'size']);
             return Datatables::of($ipf)
                 ->addColumn('link', function ($ip) {
-                    return '<span onclick="editIPF(\''.$ip->ipfId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    if(Auth::user()->can('edit_adv'))
+                        return '<span onclick="editIPF(\''.$ip->ipfId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    else
+                        return '';
                 })
                 ->editColumn('from', function ($ip) {
                     return  date("Y-m-d", $ip->from);

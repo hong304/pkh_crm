@@ -8,28 +8,58 @@
 
 class permissionController extends Controller {
 
-    /**
-     * Setup the layout used by the controller.
-     *
-     * @return void
-     */
 
-    public function getPermissionList(){
 
-        if(Input::get('mode')=='posting'){
-            pd(Input::get('data'));
+    public function getUserGroup(){
+
+        if(Auth::user()->can('allow_permission')){
+            return Response::json(0);
+            exit;
         }
 
+        $roles = role::get();
+        foreach($roles as $pg)
+        {
+            $userGroup[] = [
+                'id' => $pg->id,
+                'name' => $pg->name
+            ];
+        }
+        return Response::json($userGroup);
+    }
 
+    public function getPermissionList(){
+        if(Auth::user()->can('allow_permission')){
+            return Response::json(0);
+            exit;
+        }
+        if(Input::get('mode')=='posting'){
+            $data = Input::get('data');
+            foreach($data as $k => $v){
+                foreach($v['action'] as $k1 =>$v1){
+                    $iq = permission::where('name',$k1)->first();
+                    if($iq != null){
+                        $iq->role()->detach($v['roleId']);
+                    if($v1 != '')
+                        $iq->role()->attach($v1);
+                    }
+                }
+            }
+        }
 
-        $list1 = permission::get();
+$role_id = Input::get('roleId')['id'];
+
+        $list1 = permission::whereNotNull('nameGroup')->get();
         foreach ($list1 as $k => $v){
+            $lists[$v->permissionGroup]['name']=$v->nameGroup;
+            $lists[$v->permissionGroup]['roleId']=$role_id;
+            $lists[$v->permissionGroup]['groupName']=$v->permissionGroup;
             $lists[$v->permissionGroup]['action'][$v->name]='';
         }
 
-        $list = permission::leftJoin('permission_role','permissions.id','=','permission_role.permission_id')->where('role_id','3')->get();
+        $list = permission::leftJoin('permission_role','permissions.id','=','permission_role.permission_id')->where('role_id',$role_id)->whereNotNull('nameGroup')->get();
 
-  //      pd($list);
+
 foreach($list as $k =>$v){
     $lists[$v->permissionGroup]['action'][$v->name] = $v->role_id;
 }
@@ -38,16 +68,7 @@ foreach($list as $k =>$v){
             $arr[] = $v1;
         }
 
-        pd($arr);
-
-       /* $lists[1]['groupName']='產品管理';
-        $lists[1]['name']='product';
-        $lists[1]['action']['view']=1;
-        $lists[1]['action']['edit']=0;
-        $lists[1]['action']['add']=0;
-        $lists[1]['action']['delete']=0;*/
-
-        return Response::json($lists);
+      return Response::json($arr);
     }
 
 }
