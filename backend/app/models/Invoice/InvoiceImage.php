@@ -329,8 +329,8 @@ $debug = 0;
                     $i['amount'] *= -1;
                     $item['productQty'] *= -1;
             }
-                $qty_text = number_format($item['productQty'],1,'.','') . ' ' .str_replace(' ', '', $item['productInfo']['productPackingName_' . $item['productQtyUnit']]);
-                $this->image[$p]->text($qty_text, 1176, $position['y'], function($font) use($font_file) {
+                $qty_text = number_format($item['productQty'],1,'.',',') . ' ' .str_replace(' ', '', $item['productInfo']['productPackingName_' . $item['productQtyUnit']]);
+                $this->image[$p]->text($qty_text, 1170, $position['y'], function($font) use($font_file) {
                     $font->file($font_file);
                     $font->size(30);
                     $font->color('#000000');
@@ -341,9 +341,14 @@ $debug = 0;
                  * Add Product Price
                 */
                 $price = round($item['productPrice'],1);
-                $this->image[$p]->text('$'.number_format($price,1,'.',','), 1310, $position['y'], function($font) use($font_file) {
+                if(strlen($price)>5){
+                    $size = 25;
+                }else
+                    $size = 30;
+
+                $this->image[$p]->text('$'.number_format($price,1,'.',','), 1318, $position['y'], function($font) use($font_file,$size) {
                     $font->file($font_file);
-                    $font->size(30);
+                    $font->size($size);
                     $font->color('#000000');
                     $font->align('right');
                 });
