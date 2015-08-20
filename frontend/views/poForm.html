@@ -72,7 +72,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             供應商名稱
                                         </label>
-                                         <div class="col-md-6">
+                                         <div class="col-md-7">
                                             <input type="text" ng-model="order.supplierName" class="form-control" placeholder="" disabled="true">
                                         </div>
                                     </div>
@@ -83,7 +83,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                         國家
                                         </label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <select class="form-control" id="countries" ng-model="countryData"
                                             data-ng-options="c.countryName for c in countryDataList track by c.countryId" 
                                             disabled="true">
@@ -97,7 +97,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             聯絡人
                                         </label>
-                                          <div class="col-md-6">
+                                          <div class="col-md-7">
                                             <input type="text" ng-model="order.contactPerson_1" class="form-control" disabled= "true" placeholder="">
                                         </div>
                                     </div>
@@ -111,7 +111,7 @@
                                             採購日期
                                         </label>
                                         
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-7">
                                            <div class="input-group  date " id="deliverydate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
                             <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="order.poDate" data-ng-change="updateDelvieryDate();">
 						<span class="input-group-btn">
@@ -128,7 +128,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             預算到貨日期
                                         </label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                            <div class="input-group date " id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
                                                 <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="order.etaDate" data-ng-change="updateDelvieryDate();">
 						<span class="input-group-btn">
@@ -144,7 +144,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             實際到貨日期
                                         </label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <div id="deliverydate1" class="input-group date" data-date-format="yyyy-mm-dd" data-date-start-date="">
                                                 <input type="text" class="form-control ng-pristine ng-valid" data-ng-change="updateDeliveryDate();"  ng-model="order.actualDate" readonly >
                                                 <span class="input-group-btn">
@@ -163,7 +163,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             收貨日期
                                         </label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <div id="deliverydate3" class="input-group date " data-date-format="yyyy-mm-dd" data-date-start-date="">
                                                 <input type="text" class="form-control ng-pristine ng-valid" data-ng-change="updateDeliveryDate();" ng-model="order.receiveDate"  readonly>
                                                 <span class="input-group-btn">
@@ -383,7 +383,7 @@
                                             <div id="spinner_{{i}}">
                                                 <div class="input-group" style="width:100px;">
                                                      <input type="tel" onClick="this.select();" id="qty_{{i}}" class="spinner-input form-control" maxlength="5"
-                                                     ng-model="product[i]['qty']" ng-change="updateQty(i);"
+                                                     ng-model="product[i]['qty']" ng-change="updateQty(i,'qty');"
                                                      ng-blur="checkQtyInterval(i);">
 
                                                 </div>
@@ -406,16 +406,16 @@
                                     <td>
                                         <div class="">
                                             <div class="input-icon right" id="unitpricediv_{{i}}">
-                                                <input type="tel" onClick="this.select();" id="unitprice_{{i}}" ng-model="product[i]['unitprice']" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['unitprice']" value="{{product[i]['unitprice']}}" maxlength="6" disabled >
+                                                <input type="tel" onClick="this.select();"  id="unitprice_{{i}}" ng-model="product[i]['unitprice']" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['unitprice']" value="{{product[i]['unitprice']}}" maxlength="6" disabled >
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class=" ">
                                             <div class="input-group">
-                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['discount_1']" value="{{product[i]['discount_1']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['discount']" maxlength="6">
-                                                  <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['discount_2']" value="{{product[i]['discount_2']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['discount1']" maxlength="6">
-                                                   <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['discount_3']" value="{{product[i]['discount_3']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['discount21']" maxlength="6">
+                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['discount_1']" ng-change="updateQty(i,'discount_1')" value="{{product[i]['discount_1']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['discount']" maxlength="6">
+                                                  <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['discount_2']" ng-change="updateQty(i,'discount_2')" value="{{product[i]['discount_2']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['discount1']" maxlength="6">
+                                                   <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['discount_3']" ng-change="updateQty(i,'discount_3')" value="{{product[i]['discount_3']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['discount21']" maxlength="6">
                                                 <span class="input-group-addon">% OFF</span>
                                             </div>
                                         </div>
@@ -423,9 +423,9 @@
                                        <td>
                                         <div class=" ">
                                             <div class="input-group">
-                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_1']" value="{{product[i]['allowance_1']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance']" maxlength="6">
-                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_2']" value="{{product[i]['allowance_2']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance1']" maxlength="6">
-                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_3']" value="{{product[i]['allowance_3']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance2']" maxlength="6">
+                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_1']" value="{{product[i]['allowance_1']}}" ng-change="updateQty(i,'allowance_1')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance']" maxlength="6">
+                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_2']" value="{{product[i]['allowance_2']}}" ng-change="updateQty(i,'allowance_2')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance1']" maxlength="6">
+                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_3']" value="{{product[i]['allowance_3']}}" ng-change="updateQty(i,'allowance_3')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance2']" maxlength="6">
                                             </div>
                                         </div>
                                     </td>
