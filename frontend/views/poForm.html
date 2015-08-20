@@ -72,7 +72,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             供應商名稱
                                         </label>
-                                         <div class="col-md-6">
+                                         <div class="col-md-7">
                                             <input type="text" ng-model="order.supplierName" class="form-control" placeholder="" disabled="true">
                                         </div>
                                     </div>
@@ -83,7 +83,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                         國家
                                         </label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <select class="form-control" id="countries" ng-model="countryData"
                                             data-ng-options="c.countryName for c in countryDataList track by c.countryId" 
                                             disabled="true">
@@ -97,7 +97,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             聯絡人
                                         </label>
-                                          <div class="col-md-6">
+                                          <div class="col-md-7">
                                             <input type="text" ng-model="order.contactPerson_1" class="form-control" disabled= "true" placeholder="">
                                         </div>
                                     </div>
@@ -111,7 +111,7 @@
                                             採購日期
                                         </label>
                                         
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-7">
                                            <div class="input-group  date " id="deliverydate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
                             <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="order.poDate" data-ng-change="updateDelvieryDate();">
 						<span class="input-group-btn">
@@ -128,7 +128,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             預算到貨日期
                                         </label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                            <div class="input-group date " id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
                                                 <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="order.etaDate" data-ng-change="updateDelvieryDate();">
 						<span class="input-group-btn">
@@ -144,7 +144,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             實際到貨日期
                                         </label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <div id="deliverydate1" class="input-group date" data-date-format="yyyy-mm-dd" data-date-start-date="">
                                                 <input type="text" class="form-control ng-pristine ng-valid" data-ng-change="updateDeliveryDate();"  ng-model="order.actualDate" readonly >
                                                 <span class="input-group-btn">
@@ -163,7 +163,7 @@
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             收貨日期
                                         </label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <div id="deliverydate3" class="input-group date " data-date-format="yyyy-mm-dd" data-date-start-date="">
                                                 <input type="text" class="form-control ng-pristine ng-valid" data-ng-change="updateDeliveryDate();" ng-model="order.receiveDate"  readonly>
                                                 <span class="input-group-btn">
