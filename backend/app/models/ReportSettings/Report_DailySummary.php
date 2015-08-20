@@ -23,6 +23,9 @@ class Report_DailySummary
 
     public function __construct($indata)
     {
+
+
+
         ini_set("memory_limit", "-1");
 
         $report = Report::where('id', $indata['reportId'])->first();
