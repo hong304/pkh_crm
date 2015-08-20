@@ -193,7 +193,10 @@ class PaymentController extends BaseController {
 
             return Datatables::of($invoices)
                 ->addColumn('link', function ($payment) {
-                    return '<span onclick="editInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
+                    if(Auth::user()->can('edit_cashCustomer'))
+                        return '<span onclick="editInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
+                    else
+                        return '';
                 })->addColumn('details', function ($payment) {
                     return '<span onclick="viewInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 詳情</span>';
                 })->addColumn('customerName', function ($payment) {

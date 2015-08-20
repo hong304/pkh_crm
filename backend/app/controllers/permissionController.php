@@ -12,7 +12,7 @@ class permissionController extends Controller {
 
     public function getUserGroup(){
 
-        if(Auth::user()->can('allow_permission')){
+        if(!Auth::user()->can('allow_permission')){
             return Response::json(0);
             exit;
         }
@@ -29,7 +29,7 @@ class permissionController extends Controller {
     }
 
     public function getPermissionList(){
-        if(Auth::user()->can('allow_permission')){
+        if(!Auth::user()->can('allow_permission')){
             return Response::json(0);
             exit;
         }

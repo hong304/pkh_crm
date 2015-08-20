@@ -17,7 +17,10 @@ class ReportFactory{
         $this->_reportId = $reportId;
         
         $report = Report::where('id', $this->_reportId)->firstOrFail();
-        
+
+        if(!Auth::user()->can('view_'.$this->_reportId))
+          pd('Permission Denied');
+
         $module = $report->module;
 
         $this->_module = new $module(Input::all());

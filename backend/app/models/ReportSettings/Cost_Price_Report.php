@@ -18,6 +18,8 @@ class Cost_Price_Report
 
     public function __construct($indata)
     {
+        if(!Auth::user()->can('view_costprice'))
+            pd('Permission Denied');
 
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;

@@ -18,6 +18,10 @@ class Customer_MonthlyCreditSummary {
     public function __construct($indata)
     {
 
+        if(!Auth::user()->can('view_creditsummary')){
+            pd('Permission Denied');
+        }
+
 //pd($indata);
         
         $report = Report::where('id', $indata['reportId'])->first();

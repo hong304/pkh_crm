@@ -234,12 +234,12 @@
 
                                     <div class="col-md-12">
                                         <ul class="mega-menu-submenu">
-                                            <li>
+                                            <li ng-if="systemInfo.permission.view_cheque == true">
                                                 <a href="/#/chequeListing" class="iconify">
                                                     <i class="icon-home"></i>
                                                     支票列表 </a>
                                             </li>
-                                           <li>
+                                            <li ng-if="systemInfo.permission.view_cashCustomer == true">
                                                 <a href="/#/customerCashListing" class="iconify">
                                                     <i class="icon-home"></i>
                                                    訂單列表 </a>

@@ -18,13 +18,12 @@ app.controller('reportSelectionCtrl', function($scope, $http, SharedService, $ti
     
     $scope.viewReport = function(id)
     {
-
-        console.log(id);
-
         if(id == 'vanselllist'){
             $location.url('/reportvansell');
         }else if(id == 'commission'){
             $location.url('/queryCommission');
+        }else  if(id == 'printlog') {
+            $location.url('/reportPrintlog');
         }else
             $location.url('/reportFactory?id=' + id);
 

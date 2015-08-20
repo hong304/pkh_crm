@@ -9,6 +9,8 @@ class Analysis_product {
      
     public function __construct($indata)
     {
+        if(!Auth::user()->can('view_productReport'))
+            pd('Permission Denied');
         
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;

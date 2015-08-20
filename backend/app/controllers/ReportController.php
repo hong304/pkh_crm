@@ -14,7 +14,7 @@ class ReportController extends BaseController {
         */
         $filter = ['pickinglist','pickinglist9f','printlog','archivedreport','customerbreakdown','dailylist','reportstat'];
 
-        if(Auth::user()->can('view_monthlyReport'))
+        if(Auth::user()->can('view_creditsummary'))
            array_push($filter,'creditsummary');
 
         if(Auth::user()->can('view_commission'))

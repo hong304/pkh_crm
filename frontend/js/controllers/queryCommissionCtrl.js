@@ -1,7 +1,7 @@
 'use strict';
 app.controller('queryCommissionCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 
-    var querytarget = endpoint + '/queryCommission.json';
+   // var querytarget = endpoint + '/queryCommission.json';
     var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
 

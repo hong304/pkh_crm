@@ -7,6 +7,11 @@ class CommissionController extends BaseController
     public $date2 = '';
 
     public function __construct(){
+
+        if(!Auth::user()->can('view_commission')){
+            pd('Permission Denied');
+        }
+
         $filter = Input::get('filterData');
         $this->zone = (isset($filter['zone']['zoneId'])) ? $filter['zone']['zoneId'] : '0';
         $this->date1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
