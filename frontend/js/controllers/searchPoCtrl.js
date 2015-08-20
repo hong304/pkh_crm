@@ -32,6 +32,8 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
     });
 
     var queryPo = $scope.endpoint + "/queryPo.json";
+    
+ 
 
     $scope.keyword = {
         supplier: '',
@@ -42,7 +44,6 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         current_sorting: 'desc',
         endPodate:'',
         startPodate:'',
-        
     };
 
     $scope.invoiceinfo = {
@@ -57,6 +58,9 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         invoice_item: '',
         invoice: '',
     };
+    
+    
+     
    
        var today = new Date();
      var plus = today.getDay() == 6 ? 3 : 2;
@@ -86,8 +90,15 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
      });
      $("#endPodate").datepicker( "setDate", year + '-' + month + '-' + day );
      
-     $scope.keyword.startPodate = yyear+'-'+ymonth+'-'+yday;
-     $scope.keyword.endPodate = year+'-'+month+'-'+day;
+        $scope.keyword.startPodate = yyear+'-'+ymonth+'-'+yday;
+        $scope.keyword.endPodate = year+'-'+month+'-'+day;
+
+        if($location.search().poDate  !== undefined)
+        {
+            $scope.keyword.endPodate = $location.search().poDate;
+            $scope.keyword.startPodate = $location.search().poDate;
+            $scope.keyword.sorting = "purchaseorders.updated_at";  
+        }
      
      $scope.$watch(function() {
      return $rootScope.systeminfo;
@@ -345,7 +356,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         // received client selection broadcast. update to the invoice portlet
         $scope.an = true;
         $scope.keyword.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
-       
+  
         $scope.updateDataSet();
     });
 
