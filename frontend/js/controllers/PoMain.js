@@ -96,7 +96,8 @@ app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedSer
         autoclose: true
     });
     $("#deliverydate3").datepicker( "setDate", year4 + '-' + month4 + '-' + day4 );
-
+     
+     
     $scope.order.etaDate = yyear+'-'+ymonth+'-'+yday;
     $scope.order.poDate = year+'-'+month+'-'+day;
     $scope.order.actualDate = year3+'-'+month3+'-'+day3;
@@ -611,6 +612,7 @@ $scope.an = false;
 
         $scope.currentSelectProductRow = i;
         SharedService.setValue('currentSelectProductRow', i, 'updateProductSelection');
+       
     }
 
 
@@ -864,13 +866,7 @@ $scope.an = false;
 
          var bool = true;
 
-      /*  if(v){
-            var bool = (Number(order_dates) < Number(dates));
-            var msg = 'F10! 此訂單將會被列印';
-        }else{
-            var bool = (Number(order_dates) >= Number(dates));
-            var msg = 'F6! 此訂單將不會被列印';
-        }*/
+     
 if(bool)
         bootbox.dialog({
             message: '是否確定輸入無誤?',
@@ -941,6 +937,10 @@ $scope.submitOrder(v);
         
         if(!generalError)
         {
+    
+            SharedService.setValue('poDate', $scope.order.poDate, 'handlePoUpdate');
+            
+            
             $scope.order.print = v;
             $http.post(
                 endpoint + '/newPoOrder.json', {
@@ -956,7 +956,10 @@ $scope.submitOrder(v);
                        // $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
 
                         if(res.action == 'update'){
-                            $state.go("searchPo", {}, {reload: true});
+                            
+                           // $state.go("searchPo", {}, {reload: true});
+                           
+                           $location.url("/searchPo?poDate="+$scope.order.poDate);
                         }else{
                              $scope.poCodeAfter = res.poCode;
              
