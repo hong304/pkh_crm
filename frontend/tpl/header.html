@@ -4,7 +4,7 @@
 		<!-- BEGIN LOGO -->
 		<div class="page-logo">
 			<!-- <a href="#"><img src="/assets/admin/layout3/img/logo-default.png" alt="logo" class="logo-default"></a> -->
-			<img src="/assets/admin/layout3/img/logo-default.png" alt="logo" class="logo-default">
+            <a href="#/salesPanel"><img src="/assets/admin/layout3/img/logo-default.png" alt="logo" class="logo-default"></a>
 			<span style="font-size:25px;">炳記行貿易有限公司</span>
 		</div>
 		<!-- END LOGO -->
@@ -163,42 +163,42 @@
 		<!-- DOC: Remove dropdown-menu-hover and data-close-others="true" attributes below to disable the dropdown opening on mouse hover -->
 		<div class="hor-menu">
 			<ul class="nav navbar-nav">
-				<li class="active">
-					<a href="#/salesPanel"><i class="fa fa-home"></i>主控台</a>
-				</li>
+                <!-- <li class="active">
+                <a href="#/salesPanel"><i class="fa fa-home"></i>主控台</a>
+            </li>
+
+
+            <li class="menu-dropdown">
+                <a href="/#/newOrder" ng-click="$state.go('newOrder', {}, {reload: true});">新訂單</a>
+            </li>
+
+            <li class="menu-dropdown">
+                <a href="/#/queryInvoice" ng-click="$state.go('queryInvoice', {}, {reload: true});">搜尋訂單</a>
+            </li>
+
+            <li class="menu-dropdown">
+                <a href="/#/reportSelection" ng-click="$state.go('reportSelection', {}, {reload: true});">報告系統</a>
+            </li>
+
+            <li class="menu-dropdown" data-ng-if="systemInfo.permission.customer_maintenance == true">
+                <a href="/#/customerMaintenance" ng-click="$state.go('customerMaintenance', {}, {reload: true});">客戶設定</a>
+            </li>
+
+            <li class="menu-dropdown" data-ng-if="systemInfo.permission.product_maintenance == true">
+                <a href="/#/productMaintenance" ng-click="$state.go('productMaintenance', {}, {reload: true});">產品設定</a>
+            </li>
+
+            <li class="menu-dropdown" data-ng-if="systemInfo.permission.staff_maintenance == true">
+                <a href="/#/user-maintenance/listing" ng-click="$state.go('userListing', {}, {reload: true});">用戶設定</a>
+            </li>
+
+            <li class="menu-dropdown" data-ng-if="systemInfo.permission.invoice_maintenance == true">
+                <a href="/#/invoicePrintMaintenance" ng-click="$state.go('invoicePrintMaintenance', {}, {reload: true});">訂單設定</a>
+            </li>
+             -->
 				
-				<!-- 
 				<li class="menu-dropdown">
-					<a href="/#/newOrder" ng-click="$state.go('newOrder', {}, {reload: true});">新訂單</a>
-				</li>
-								
-				<li class="menu-dropdown">
-					<a href="/#/queryInvoice" ng-click="$state.go('queryInvoice', {}, {reload: true});">搜尋訂單</a>
-				</li>
-				
-				<li class="menu-dropdown">
-					<a href="/#/reportSelection" ng-click="$state.go('reportSelection', {}, {reload: true});">報告系統</a>
-				</li>
-				
-				<li class="menu-dropdown" data-ng-if="systemInfo.permission.customer_maintenance == true">
-					<a href="/#/customerMaintenance" ng-click="$state.go('customerMaintenance', {}, {reload: true});">客戶設定</a>
-				</li>
-				
-				<li class="menu-dropdown" data-ng-if="systemInfo.permission.product_maintenance == true">
-					<a href="/#/productMaintenance" ng-click="$state.go('productMaintenance', {}, {reload: true});">產品設定</a>
-				</li>
-				
-				<li class="menu-dropdown" data-ng-if="systemInfo.permission.staff_maintenance == true">
-					<a href="/#/user-maintenance/listing" ng-click="$state.go('userListing', {}, {reload: true});">用戶設定</a>
-				</li>
-				
-				<li class="menu-dropdown" data-ng-if="systemInfo.permission.invoice_maintenance == true">
-					<a href="/#/invoicePrintMaintenance" ng-click="$state.go('invoicePrintMaintenance', {}, {reload: true});">訂單設定</a>
-				</li>
-				 -->
-				
-				<li class="menu-dropdown">
-					<a href="/#/newOrder" ng-click="$state.go('newOrder', {}, {reload: true});"><i class="fa fa-plus"></i>新訂單 (F4)</a>
+					<a href="/#/newOrder" ng-click="$state.go('newOrder', {}, {reload: true});"><i class="fa fa-plus"></i>增加訂單</a>
 				</li>
 				
 				<li class="menu-dropdown">
@@ -206,8 +206,21 @@
 				</li>
 
                 <li class="menu-dropdown">
-                    <a href="/#/queryProduct"><i class="fa fa-search"></i>搜尋產品 </a>
+                    <a href="/#/queryProduct"><i class="fa fa-search"></i>銷售產品 </a>
                 </li>
+
+
+                <li class="menu-dropdown" data-ng-if="systemInfo.permission.add_po == true">
+                    <a href="/#/PoMain" ng-click="$state.go('PoMain', {}, {reload: true});" class="iconify">
+                        <i class="fa fa-plus"></i>
+                        增加購單 </a>
+                </li>
+                <li class="menu-dropdown" data-ng-if="systemInfo.permission.view_po == true">
+                    <a href="/#/searchPo" class="iconify">
+                        <i class="fa fa-search"></i>
+                        搜尋購單 </a>
+                </li>
+
 
 				<!--<li class="menu-dropdown">
 					<a data-ng-click="updateStatusFindReport(11);" href=""><i class="fa fa-code-fork"></i>訂單流程</a>	
@@ -216,7 +229,7 @@
 
 
                 <li class="menu-dropdown">
-                    <a href="/#/reportSelection" ><i class="fa fa-star-half-o"></i>報告系統</a>
+                    <a href="/#/reportSelection" ><i class="fa fa-star-half-o"></i>報表系統</a>
                 </li>
 
                 <li class="menu-dropdown mega-menu-dropdown"  data-ng-if="systemInfo.permission.supervisor_up == true">
@@ -224,7 +237,7 @@
 
                     <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
                         <i class="fa fa-cogs"></i>
-                        財務相關 <i class="fa fa-angle-down"></i>
+                        財務功能 <i class="fa fa-angle-down"></i>
                     </a>
                     <ul class="dropdown-menu" style="min-width: 200px">
                         <li>
@@ -335,16 +348,7 @@
 											<li>
 												<h3>供應商相關</h3>
 											</li>
-											    <li>
-                                                                                             <a href="/#/PoMain" class="iconify">
-                                                                                             <i class="icon-home"></i>
-                                                                                            採購單 </a>
-                                                                                         </li>
-                                                                                            <li>
-                                                                                             <a href="/#/searchPo" class="iconify">
-                                                                                             <i class="icon-home"></i>
-                                                                                            搜尋採購單 </a>
-                                                                                         </li>
+
 											<li>
                                                                                              <a href="/#/supplierMain" class="iconify">
                                                                                              <i class="icon-home"></i>
@@ -370,7 +374,7 @@
 					</ul>
 				</li>
 
-                <li class="menu-dropdown mega-menu-dropdown"  data-ng-if="systemInfo.permission.supervisor_up == true">
+              <!--  <li class="menu-dropdown mega-menu-dropdown"  data-ng-if="systemInfo.permission.supervisor_up == true">
 
 
                     <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
