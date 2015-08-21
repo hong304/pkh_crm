@@ -104,11 +104,11 @@ class ProductController extends BaseController {
         if($this->_shift != '-1')
             $invoices->where('Invoice.shift',$this->_shift);
 
-
+        $invoices->whereNull('InvoiceItem.deleted_at');
 
         $invoices->where(function ($query) use ($filter) {
             $query
-                ->where('Product.productId', 'LIKE', $filter['product'] . '%')
+                ->where('InvoiceItem.productId', 'LIKE', $filter['product'] . '%')
                 ->where('productName_chi', 'LIKE', $filter['product_name'] . '%');
         });
 

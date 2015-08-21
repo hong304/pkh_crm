@@ -112,6 +112,12 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
         $scope.filterData.customerId = customerId;
         $scope.filterData.invoiceId = invoiceId;
+
+        $http.post(query, {mode: "paymentHistory", customerId: customerId,invoiceId:invoiceId})
+            .success(function(res){
+                $scope.paymentDetails = res;
+            });
+
         $('#invoicePayment').modal('show');
 
         $('#invoicePayment').on('shown.bs.modal', function () {

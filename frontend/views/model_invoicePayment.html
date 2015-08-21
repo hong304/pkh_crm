@@ -10,21 +10,79 @@
 
 			<div class="modal-body">
 
-
-
                 <form action="javascript:;" class="form-horizontal">
-
-
-
-
                     <div class="form-body">
 
+
+
+                        <div class="col-md-12">
+
+                            <div class="portlet light bordered">
+
+                                <div class="portlet-title">
+                                    <div class="caption font-green-sharp">
+                                        <i class="icon-speech font-green-sharp"></i>
+                                        <span class="caption-subject bold uppercase">客戶結欠詳情</span>
+                                        <span class="caption-helper"></span>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="portlet-body">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active">
+                                            <div>
+                                                <!--<h4></h4>-->
+                                                <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                    <tr role="row" class="heading">
+                                                        <th width="10%">送貨日期</th>
+                                                        <th width="5%">訂單編號</th>
+                                                        <th width="5%">總數</th>
+                                                        <th width="5%">已付</th>
+                                                        <th width="13%">尚欠</th>
+
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr data-ng-repeat="i in paymentDetails" style="line-height:35px;font-size:15px;{{i.backgroundcode}}"  ng-style="i.invoiceId === filterData.invoiceId && {'background-color':'yellow'}">
+                                                        <td>
+                                                            {{i.deliveryDate_date}}
+                                                        </td>
+
+                                                        <td>
+                                                            {{i.invoiceId}}
+                                                        </td>
+                                                        <td>
+                                                            {{i.amount}}
+                                                        </td>
+                                                        <td>
+                                                            ${{i.paid}}
+                                                        </td>
+                                                        <td>
+                                                            {{i.owe}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <!--<td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">總額: HK${{invoiceinfo.invoiceTotalAmount | number : 2}}  ({{invoiceinfo.invoiceDiscount}}%off)</td>-->
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                                <br/>
+                                                <div style="clear:both;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-md-2 control-label">狀態:</label>
 
                                 <div class="col-md-3">
-                                   <div class="control-label pull-left"> <label><input ng-model="filterData.status" type="radio" name="status" id="status" value="20" >已收貨</label>
+                                   <div class="control-label pull-left"> <label><input ng-model="filterData.status" type="radio" name="status" id="status" value="20" >已收貨未付款</label>
                                     <label><input ng-model="filterData.status" type="radio" name="status" id="status1" value="30" >完成</label></div>
                                 </div>
                         </div>
