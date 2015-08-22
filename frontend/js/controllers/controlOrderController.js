@@ -272,10 +272,13 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $scope.getAllLastItemPrice = function(customerId){
         var target = endpoint + '/getAllLastItemPrice.json';
         $scope.allowSubmission = false;
+        $("#productCode_1").attr('disabled', 'true');
         $http.post(target, {customerId: customerId})
             .success(function(res){
                 $scope.allLastItemPrice = res;
                 $scope.allowSubmission = true;
+                $("#productCode_1").removeAttr('disabled');
+                $('#productCode_1').focus();
             });
     }
 
@@ -512,7 +515,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     }
 
                     Metronic.unblockUI();
-                    $('#productCode_1').focus();
+
                 });
 
             $scope.loadProduct($location.search().clientId);

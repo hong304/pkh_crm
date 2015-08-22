@@ -80,7 +80,7 @@ app.controller('selectClientCtrl', function($scope, $http, SharedService, $timeo
     {
     	$('#selectclientmodel').modal('hide');
         $('#selectclientmodel').on('hidden.bs.modal', function () {
-            $('#productCode_1').focus();
+            //$('#productCode_1').focus();
             csuggestion = -1;
         })
     	$scope.keyword = {
