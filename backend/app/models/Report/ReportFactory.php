@@ -127,7 +127,9 @@ class ReportFactory{
                 exit;
             }else if($output == 'csv'){
                return $this->_module->outputCsv();
-                }
+            }else if($output == 'excel'){
+                return $this->_module->outputExcel();
+            }
         }
     }
     

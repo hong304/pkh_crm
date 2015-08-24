@@ -60,30 +60,41 @@ class Invoice_CashReceiptSummary {
                 if($this->_shift != '-1')
                     $invoicesQuery->where('shift',$this->_shift);
 
-        $invoicesQuery = $invoicesQuery->with('invoiceItem', 'client')->get();
+        $invoicesQuery = $invoicesQuery->with('client')->get();
 
 
                    $acc = 0;
+                     $acc1 = 0;
                    foreach($invoicesQuery as $invoiceQ)
                    {
+
+                       $this->_invoices[] = $invoiceQ->invoiceId;
+                       $this->_zoneName = $invoiceQ->zone->zoneName;
+
+                       // first, store all invoices
+                       $invoiceId = $invoiceQ->invoiceId;
+                       $invoices[$invoiceId] = $invoiceQ;
+                       $client = $invoiceQ['client'];
+
                        if($invoiceQ->invoiceStatus == 20){
                            $paid = $invoiceQ->paid;
+
+                           $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain;
+
+                           $this->_backaccount[] = [
+                               'customerId' => $client->customerId,
+                               'name' => $client->customerName_chi,
+                               'invoiceNumber' => $invoiceId,
+                               'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain ,
+                               'accumulator' =>number_format($acc1,2,'.',','),
+                               'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain,2,'.',','),
+                           ];
+
                        }else{
                            $paid = $invoiceQ->remain;
                        }
 
-                       $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid;
-
-                           $this->_invoices[] = $invoiceQ->invoiceId;
-                           $this->_zoneName = $invoiceQ->zone->zoneName;
-
-                           // first, store all invoices
-                           $invoiceId = $invoiceQ->invoiceId;
-                           $invoices[$invoiceId] = $invoiceQ;
-                           $client = $invoiceQ['client'];
-
-
-
+                           $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid;
                            $this->_account[] = [
                                'customerId' => $client->customerId,
                                'name' => $client->customerName_chi,
@@ -92,37 +103,8 @@ class Invoice_CashReceiptSummary {
                                'accumulator' =>number_format($acc,2,'.',','),
                                'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid,2,'.',','),
                            ];
+
                       }
-
-
-        $invoicesQuery = Invoice::where('invoiceStatus','20')->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
-        if($this->_shift != '-1')
-            $invoicesQuery->where('shift',$this->_shift);
-        $invoicesQuery = $invoicesQuery->with('invoiceItem', 'client')->get();
-                 $acc = 0;
-                foreach($invoicesQuery as $invoiceQ)
-                {
-                    $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain;
-
-
-                    $this->_invoices[] = $invoiceQ->invoiceId;
-                    $this->_zoneName = $invoiceQ->zone->zoneName;
-
-                    // first, store all invoices
-                    $invoiceId = $invoiceQ->invoiceId;
-                    $invoices[$invoiceId] = $invoiceQ;
-                    $client = $invoiceQ['client'];
-
-
-                    $this->_backaccount[] = [
-                        'customerId' => $client->customerId,
-                        'name' => $client->customerName_chi,
-                        'invoiceNumber' => $invoiceId,
-                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain ,
-                        'accumulator' =>number_format($acc,2,'.',','),
-                        'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain,2,'.',','),
-                    ];
-                }
 
         //補收
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20'])->where('paid','>',0)->where('paymentTerms',1)->where('zoneId', $zone);
@@ -204,6 +186,105 @@ class Invoice_CashReceiptSummary {
        return $this->data;
     }
 
+    public function outputExcel(){
+        $invoices = Invoice::where('paymentTerms',1)->where('deliveryDate','<',$this->_date)->where('invoiceStatus',20)->orderBy('zoneId')->get();
+
+        $balance_bf = [];
+
+        foreach($invoices as $v){
+
+            if(!isset($balance_bf[$v->zoneId]))
+                $balance_bf[$v->zoneId] = 0;
+
+            $balance_bf[$v->zoneId] += $v->remain;
+        }
+
+        $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->where('paid','>',0)->with('payment')->WhereHas('payment', function($q)
+        {
+            $q->where('start_date', date('Y-m-d',$this->_date));
+        })->get();
+
+
+        foreach($invoices as $invoiceQ){
+            foreach($invoiceQ->payment as $v1){
+                if($v1->start_date == '2015-08-19'){
+                    $previous[$v->zoneId] = (isset($previous[$v->zoneId]))?$previous[$v->zoneId]:0;
+                    $previous[$v->zoneId] += $v1->pivot->paid;
+                }
+            }
+        }
+
+        $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',$this->_date)->get();
+        $NoOfInvoices = [];
+        foreach ($invoices as $invoiceQ){
+            if($invoiceQ->invoiceStatus == 20) {
+                $paid = $invoiceQ->paid;
+            }else{
+                $paid = $invoiceQ->remain;
+            }
+            if(!isset($NoOfInvoices[$invoiceQ->zoneId]))
+                $NoOfInvoices[$invoiceQ->zoneId] = 0;
+
+            $NoOfInvoices[$invoiceQ->zoneId] += 1;
+
+            if(!isset( $info[$invoiceQ->zoneId]['totalAmount']))
+                $info[$invoiceQ->zoneId]['totalAmount'] = 0;
+            if(!isset( $info[$invoiceQ->zoneId]['paid']))
+                $info[$invoiceQ->zoneId]['paid'] = 0;
+
+            $info[$invoiceQ->zoneId] = [
+                'truck' => $invoiceQ->zoneId,
+                'noOfInvoices' => $NoOfInvoices[$invoiceQ->zoneId],
+                'balanceBf' => isset($balance_bf[$invoiceQ->zoneId])?$balance_bf[$invoiceQ->zoneId]:0,
+                'totalAmount' => $info[$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount),
+                'previous'=>isset($previous[$invoiceQ->zoneId])?$previous[$invoiceQ->zoneId]:0,
+                'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid,
+            ];
+        }
+        ksort($info);
+
+        require_once './Classes/PHPExcel/IOFactory.php';
+        require_once './Classes/PHPExcel.php';
+
+        $i=3;
+        $objPHPExcel = new PHPExcel ();
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '送貨日期');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', date('Y-m-d',$this->_date));
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, 'Truck');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, 'No. of invoices');
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'Balance B/F');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Today sales');
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, 'Receive for today sales');
+        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, 'Receive for previous sales');
+        $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, 'Balance C/F');
+
+        $i += 1;
+        foreach ($info as $k => $v) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['truck']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['noOfInvoices']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['balanceBf']);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v['totalAmount']);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v['paid']);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v['previous']);
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . $i, '=C'.$i.'+D'.$i.'-E'.$i.'-F'.$i);
+            $i++;
+        }
+
+         foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+            // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
+             $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+         }
+
+//        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.date('Ymd',$this->_date).'.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+    }
 
     public function outputCsv(){
 
@@ -314,6 +395,12 @@ class Invoice_CashReceiptSummary {
                 'name' => '匯出  Excel 版本',
                 'warning'   =>  false,
             ],
+            [
+                'type' => 'excel',
+                'name' => 'Cash sales daily receive report',
+                'warning'   =>  false,
+            ],
+
         ];
         
         return $downloadSetting;

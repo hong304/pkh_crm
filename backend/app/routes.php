@@ -192,34 +192,65 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
-    invoiceitem::where('invoiceId',$i->invoiceId)->get()->delete();
+    $invoices = Invoice::where('paymentTerms',1)->where('deliveryDate','<',strtotime('2015-08-19'))->where('invoiceStatus',20)->orderBy('zoneId')->get();
 
-    die();
-    $string = "鳳攸北街益發大廈14號(前裕景威) 鳳攸北街益發大廈14";
-    $strlen = mb_strlen($string);
-    while ($strlen) {
-        $array[] = mb_substr($string,0,1,"UTF-8");
-        $string = mb_substr($string,1,$strlen,"UTF-8");
-        $strlen = mb_strlen($string);
+    $balance_bf = [];
+
+    foreach($invoices as $v){
+
+        if(!isset($balance_bf[$v->zoneId]))
+            $balance_bf[$v->zoneId] = 0;
+
+        $balance_bf[$v->zoneId] += $v->remain;
     }
-    $bb= '';
-    foreach($array as $k => $v){
-        if($k % 16 == 0 && $k != 0)
-             $bb .= $v."\n";
-        else
-            $bb .= $v;
+
+    $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->where('paid','>',0)->with('payment')->WhereHas('payment', function($q)
+    {
+        $q->where('start_date', '=', '2015-08-19');
+    })->get();
+
+    $acc1 = 0;
+    foreach($invoices as $invoiceQ){
+     //   $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain;
+        foreach($invoiceQ->payment as $v1){
+            if($v1->start_date == '2015-08-19'){
+                $previous[$v->zoneId] = (isset($previous[$v->zoneId]))?$previous[$v->zoneId]:0;
+                $previous[$v->zoneId] += $v1->pivot->paid;
+            }
+        }
     }
-  //  $address_splits = mb_substr("鳳攸北街益發大廈14號(前裕景威) 鳳攸北街益發大廈14", 10,"UTF-8");
-    pd($bb);
-   // $address = implode("\n", $address_splits);
 
-    // $i = Invoice::with('payment')->where('invoiceId','I1507-038823')->get();
-  //  pd($i);
+    $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',strtotime('2015-08-19'))->get();
+    $NoOfInvoices = [];
+    foreach ($invoices as $invoiceQ){
+        if($invoiceQ->invoiceStatus == 20) {
+            $paid = $invoiceQ->paid;
+        }else{
+            $paid = $invoiceQ->remain;
+        }
+        if(!isset($NoOfInvoices[$invoiceQ->zoneId]))
+            $NoOfInvoices[$invoiceQ->zoneId] = 0;
 
- /* $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
-    foreach ($result as $v) {
-        echo $v['deliveryDate_date'].":".$v['zoneText'].":".$v['count(*)']."<br>";
-   }*/
+        $NoOfInvoices[$invoiceQ->zoneId] += 1;
+
+        if(!isset( $info[$invoiceQ->zoneId]['totalAmount']))
+            $info[$invoiceQ->zoneId]['totalAmount'] = 0;
+        if(!isset( $info[$invoiceQ->zoneId]['paid']))
+            $info[$invoiceQ->zoneId]['paid'] = 0;
+
+        $info[$invoiceQ->zoneId] = [
+            'truck' => $invoiceQ->zoneId,
+            'noOfInvoices' => $NoOfInvoices[$invoiceQ->zoneId],
+            'balanceBf' => isset($balance_bf[$invoiceQ->zoneId])?$balance_bf[$invoiceQ->zoneId]:0,
+            'totalAmount' => $info[$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount),
+            'previous'=>isset($previous[$invoiceQ->zoneId])?$previous[$invoiceQ->zoneId]:0,
+            'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid,
+        ];
+    }
+
+    ksort($info);
+
+
 
 });
 
