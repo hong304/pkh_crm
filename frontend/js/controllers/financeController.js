@@ -393,7 +393,7 @@ $scope.updateGroupName = function(){
                     "type": 'POST',
                     "data": {mode: "getChequeList",action: $location.search().action,filterData: $scope.filterData},
                     "xhrFields": {withCredentials: true}
-                },
+                    },
                 "iDisplayLength": 25,
                 "pagingType": "full_numbers",
                 "language": {
