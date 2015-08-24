@@ -157,6 +157,10 @@ var fetchDataTimer = '';
         $scope.getChequeList();
     });
 
+    $rootScope.$on('$locationChangeSuccess', function(){
+        $scope.getChequeList();
+
+    });
 
     $scope.$watch(function() {
         return $rootScope.systeminfo;
@@ -387,7 +391,7 @@ $scope.updateGroupName = function(){
                 "ajax": {
                     "url": query, // ajax source
                     "type": 'POST',
-                    "data": {mode: "getChequeList",filterData: $scope.filterData},
+                    "data": {mode: "getChequeList",action: $location.search().action,filterData: $scope.filterData},
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 25,

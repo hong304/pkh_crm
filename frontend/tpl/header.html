@@ -248,14 +248,19 @@
                                     <div class="col-md-12">
                                         <ul class="mega-menu-submenu">
                                             <li ng-if="systemInfo.permission.view_cheque == true">
-                                                <a href="/#/chequeListing" class="iconify">
+                                                <a href="/#/chequeListing?action=credit" class="iconify">
                                                     <i class="icon-home"></i>
-                                                    支票列表 </a>
+                                                    結帳列表(月結) </a>
+                                            </li>
+                                            <li ng-if="systemInfo.permission.view_cashCustomerCheque == true">
+                                                <a href="/#/chequeListing?action=cod" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    結帳列表(現金客) </a>
                                             </li>
                                             <li ng-if="systemInfo.permission.view_cashCustomer == true">
                                                 <a href="/#/customerCashListing" class="iconify">
                                                     <i class="icon-home"></i>
-                                                   訂單列表 </a>
+                                                   訂單列表(現金客) </a>
                                             </li>
                                         </ul>
                                     </div>

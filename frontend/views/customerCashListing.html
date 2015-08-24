@@ -69,8 +69,15 @@
             <!-- date-picker -->
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
-                    <div class="input-group date" id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                    <div class="input-group  date " id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
                         <input type="text" class="form-control" readonly ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                    </div>
+                    至
+                    <div class="input-group  date " id="deliverydate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate2" data-ng-change="updateDelvieryDate();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
@@ -78,6 +85,7 @@
 
                 </div>
             </div>
+
         </div>
 
 

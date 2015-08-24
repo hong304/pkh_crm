@@ -98,6 +98,7 @@ class PaymentController extends BaseController {
 
             if($paidinfo['no']!=''){
                 $payment = new Payment();
+                $payment->paymentType = 'COD';
                 $payment->bankCode = $paidinfo['bankCode'];
                 $payment->ref_number = $paidinfo['no'];
                 $payment->start_date = $paidinfo['receiveDate'];
@@ -120,6 +121,7 @@ class PaymentController extends BaseController {
 
             if($paidinfo['cashAmount']!=0){
                 $payment1 = new Payment();
+                $payment1->paymentType = 'COD';
                 $payment1->bankCode = 'cash';
                 $payment1->ref_number = 'cash';
                 $payment1->start_date = $paidinfo['receiveDate'];
@@ -176,7 +178,7 @@ class PaymentController extends BaseController {
             // status
             if($filter['invoiceNumber'] == '')
             {
-                $invoice->where('invoice.deliverydate', strtotime($filter['deliverydate']));
+                $invoice->whereBetween('invoice.deliverydate', [strtotime($filter['deliverydate']),strtotime($filter['deliverydate2'])]);
                 $invoice->where('invoiceStatus', $filter['status'])
                     ->where('paymentTerms','=',1);
             }else{
@@ -341,12 +343,18 @@ class PaymentController extends BaseController {
 
         }
 
+        //支票列表
         if($mode == 'getChequeList')
         {
 
-
+            if(Input::get('action')=='cod')
+                if(!Auth::user()->can('view_cashCustomerCheque'))
+                    pd('Access denied');
+            else if(Input::get('action')=='credit')
+                if(!Auth::user()->can('view_cheque'))
+                    pd('Access denied');
             $filter = Input::get('filterData');
-            $payments = Payment::select('payments.id as id','ref_number','start_date','end_date','customerId','groupId','amount','remain');
+            $payments = Payment::select('payments.id as id','ref_number','start_date','end_date','customerId','groupId','amount','remain')->where('paymentType',Input::get('action'));
             //cheque status
             if($filter['status'] != 2)
             {

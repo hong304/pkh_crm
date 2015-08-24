@@ -78,6 +78,15 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.filterData.deliverydate = year+'-'+month+'-'+day;
 
 
+    $("#deliverydate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+    $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
+
+
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();

@@ -56,7 +56,7 @@ class Invoice_CashReceiptSummary {
             });*/
 
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
                 if($this->_shift != '-1')
                     $invoicesQuery->where('shift',$this->_shift);
 
@@ -66,7 +66,13 @@ class Invoice_CashReceiptSummary {
                    $acc = 0;
                    foreach($invoicesQuery as $invoiceQ)
                    {
-                       $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+                       if($invoiceQ->invoiceStatus == 20){
+                           $paid = $invoiceQ->paid;
+                       }else{
+                           $paid = $invoiceQ->remain;
+                       }
+
+                       $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid;
 
                            $this->_invoices[] = $invoiceQ->invoiceId;
                            $this->_zoneName = $invoiceQ->zone->zoneName;
@@ -76,13 +82,15 @@ class Invoice_CashReceiptSummary {
                            $invoices[$invoiceId] = $invoiceQ;
                            $client = $invoiceQ['client'];
 
+
+
                            $this->_account[] = [
                                'customerId' => $client->customerId,
                                'name' => $client->customerName_chi,
                                'invoiceNumber' => $invoiceId,
-                               'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
+                               'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid ,
                                'accumulator' =>number_format($acc,2,'.',','),
-                                'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+                               'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid,2,'.',','),
                            ];
                       }
 
@@ -94,7 +102,7 @@ class Invoice_CashReceiptSummary {
                  $acc = 0;
                 foreach($invoicesQuery as $invoiceQ)
                 {
-                    $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
+                    $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain;
 
 
                     $this->_invoices[] = $invoiceQ->invoiceId;
@@ -105,47 +113,81 @@ class Invoice_CashReceiptSummary {
                     $invoices[$invoiceId] = $invoiceQ;
                     $client = $invoiceQ['client'];
 
+
                     $this->_backaccount[] = [
                         'customerId' => $client->customerId,
                         'name' => $client->customerName_chi,
                         'invoiceNumber' => $invoiceId,
-                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
+                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain ,
                         'accumulator' =>number_format($acc,2,'.',','),
-                        'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
+                        'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain,2,'.',','),
                     ];
                 }
 
-        $invoicesQuery = Invoice::where('invoiceStatus','30')->where('paid_date',date('Y-m-d',$date))->where('paymentTerms',1)->where('zoneId', $zone);
+        //補收
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20'])->where('paid','>',0)->where('paymentTerms',1)->where('zoneId', $zone);
+
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
-        $invoicesQuery = $invoicesQuery->with('invoiceItem', 'client')->get();
+        $invoicesQuery = $invoicesQuery->with('client','payment')->WhereHas('payment', function($q) use($date)
+        {
+            $q->where('start_date', '=', date('Y-m-d',$date));
+        })->get();
+
+
 
         $acc = 0;
+        $acc1 = 0;
         foreach($invoicesQuery as $invoiceQ)
         {
-            $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount;
 
+            foreach($invoiceQ->payment as $v1){
+                if($v1->ref_number == 'cash' and $v1->start_date == date('Y-m-d',$date)){
+                    $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid;
+                    $this->_invoices[] = $invoiceQ->invoiceId;
+                    $this->_zoneName = $invoiceQ->zone->zoneName;
 
-            $this->_invoices[] = $invoiceQ->invoiceId;
-            $this->_zoneName = $invoiceQ->zone->zoneName;
+                    // first, store all invoices
+                    $invoiceId = $invoiceQ->invoiceId;
+                    $invoices[$invoiceId] = $invoiceQ;
+                    $client = $invoiceQ['client'];
 
-            // first, store all invoices
-            $invoiceId = $invoiceQ->invoiceId;
-            $invoices[$invoiceId] = $invoiceQ;
-            $client = $invoiceQ['client'];
+                    $this->_paidInvoice[] = [
+                        'customerId' => $client->customerId,
+                        'name' => $client->customerName_chi,
+                        'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
+                        'invoiceNumber' => $invoiceId,
+                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid ,
+                        'accumulator' =>number_format($acc,2,'.',','),
+                        'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid,2,'.',','),
+                    ];
+                }else if ($v1->start_date == date('Y-m-d',$date)){
+                    $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid;
+                    $this->_invoices[] = $invoiceQ->invoiceId;
+                    $this->_zoneName = $invoiceQ->zone->zoneName;
 
-            $this->_paidInvoice[] = [
-                'customerId' => $client->customerId,
-                'name' => $client->customerName_chi,
-                'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
-                'invoiceNumber' => $invoiceId,
-                'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount ,
-                'accumulator' =>number_format($acc,2,'.',','),
-                'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount,2,'.',','),
-            ];
+                    // first, store all invoices
+                    $invoiceId = $invoiceQ->invoiceId;
+                    $invoices[$invoiceId] = $invoiceQ;
+                    $client = $invoiceQ['client'];
+
+                    $this->_paidInvoice_cheque[] = [
+                        'customerId' => $client->customerId,
+                        'name' => $client->customerName_chi,
+                        'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
+                        'invoiceNumber' => $invoiceId,
+                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid ,
+                        'accumulator' =>number_format($acc1,2,'.',','),
+                        'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid,2,'.',','),
+                        'bankCode' => $v1->bankCode,
+                        'chequeNo' => $v1->ref_number,
+                    ];
+                }
+            }
+
         }
 
-//pd($this->_account);
+
 
       /*  foreach($this->_account as &$v){
             if(isset($this->_returnaccount[$v['customerId']]))
@@ -279,7 +321,7 @@ class Invoice_CashReceiptSummary {
     
     public function outputPreview()
     {
-        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->with('paidInvoice',$this->_paidInvoice)->render();
+        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->render();
     }
     
     
