@@ -402,7 +402,7 @@ class Invoice_CashReceiptSummary {
 
     public function outputCsv(){
 
-        $csv = 'CustomerID,Customer Name,Invoice No.,Total Amount,no. check,db>in,in>db,Invoice No. on hand,Invoice amount on hand,' . "\r\n";
+        $csv = 'CustomerID,Customer Name,Invoice No.,Total Amount,no. check,db>in,in>db,Invoice No. on hand,Invoice amount on hand,Duplication check' . "\r\n";
         $totalinvoice = count($this->data)+1;
         $ii = 2;
         foreach ($this->data as $o) {
@@ -413,6 +413,9 @@ class Invoice_CashReceiptSummary {
             $csv .= '"' . substr($o['invoiceNumber'], -5) . '",';
             $csv .= '"=VLOOKUP(E'.$ii.',H$2:H$'.$totalinvoice.',1,FALSE)",';
             $csv .= '"=VLOOKUP(H'.$ii.',E$2:E$'.$totalinvoice.',1,FALSE)",';
+            $csv .= ",";
+            $csv .= ",";
+            $csv .= '"=COUNTIF(H2:H$'.$totalinvoice.',H'.$ii.')>1",';
             $csv .= "\r\n";
             $ii++;
         }
