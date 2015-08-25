@@ -297,7 +297,7 @@ class Invoice_9FPickingList {
         require_once './Classes/PHPExcel/IOFactory.php';
         require_once './Classes/PHPExcel.php';
 
-        $csv1 = DB::table('invoiceitem')->select('productQtyUnit','productPacking_carton','productPacking_inner','productPacking_unit','productPacking_size','zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('shift',$this->_shift)->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->groupby('productId','productQtyUnit')->get();
+        $csv1 = DB::table('invoiceitem')->select('productQtyUnit','productPacking_carton','productPacking_inner','productPacking_unit','productPacking_size','zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('shift',$this->_shift)->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->whereNull('invoiceitem.deleted_at')->groupby('productId','productQtyUnit')->get();
 
 
 
