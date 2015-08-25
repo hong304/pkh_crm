@@ -166,6 +166,13 @@ Route::group(array('before' => 'auth'), function()
 	  //Supplier
     Route::get('/getChoice.json','SupplierController@jsonChoice');
     Route::get('/getCurrency.json','SupplierController@jsonCurrency');
+    
+        //Shipping
+     Route::post('/jsonSelectPo.json','shippingController@jsonSelectPo');
+     Route::post('/jsonNewShip.json','shippingController@newShipment');
+     Route::post('/jsonQueryShip.json','shippingController@jsonQueryShip');
+     Route::post('/jsonGetSingleShip.json','shippingController@jsonGetSingleShip');
+     Route::post('/deleteShip.json','shippingController@deleteShip');
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');

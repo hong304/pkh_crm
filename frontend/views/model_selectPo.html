@@ -1,0 +1,132 @@
+
+<div class="modal fade bs-modal-lg" id="selectPoModel"  data-ng-controller="selectPoControl" tabindex="-1" role="dailog" aria-hidden="false">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+				<h4 class="modal-title">查找供應商</h4>
+			</div>
+			<div class="modal-body">
+			
+				<form class="form-horizontal" role="form">
+					<div class="form-body">
+						<div class="">
+							<div class="form-group ">
+
+
+
+
+
+                                <div class="col-md-2">
+                                    <select class="form-control"
+                                            ng-model="keyword.country"
+                                            data-ng-options="c.countryName for c in countryData track by c.countryId"
+                                            data-ng-change="searchClient();">
+                                        <option value=''>檢視全部</option>
+                                        <option value=''>NA</option>
+                                    </select>
+                                </div>
+
+
+								<div class="col-md-4">
+									<div class="input-icon right">
+										<i class="icon-exclamation-sign"></i> 
+										<input autocomplete="off" ng-model="keyword.id" debounce="500" immediate="true"  id="keywordId"
+										type="text" placeholder="供應商編號" class="form-control" ng-change="searchClient(keyword)"
+										/>
+                         			</div>
+								</div>
+
+
+                                <div class="col-md-3">
+                                    <div class="input-icon right">
+                                        <i class="icon-exclamation-sign"></i>
+                                        <input autocomplete="off" ng-model="keyword.name" debounce="500" immediate="true"  id="keyword"
+                                               type="text" placeholder="名稱 " class="form-control" ng-change="searchClient(keyword)"
+                                                />
+                                    </div>
+                                </div>
+                                                            
+                               <div class="col-md-3">
+                                    <div class="input-icon right">
+                                        <i class="icon-exclamation-sign"></i>
+                                        <input autocomplete="off" ng-model="keyword.phone" debounce="500" immediate="true"  id="keyword"
+                                               type="text" placeholder="電話號碼" class="form-control" ng-change="searchClient(keyword)"
+                                                />
+                                    </div>
+                                </div>
+
+
+
+							</div>
+						</div>
+						<div class="">
+							<div class="md-col-9">
+                               <!-- <h4>{{clientHeader}}</h4>-->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-advance table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th style="width:10%;">#</th>
+                                            <th style="width:40%;">供應商名稱</th>
+                                            <th style="width:40%;">國家</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody data-ng-if="!clientSuggestion">
+                                        <tr>
+                                            <td>未有找到供應商資料</td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody>
+                                          <tr data-ng-repeat="supplier in clientSuggestion" ng-click="selectSupplier(supplier)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
+                                            <td>{{supplier.supplierCode}}</td>
+                                            <td>{{supplier.supplierName}} ({{supplier.phone_1}}) ({{supplier.status}})</td>
+                                            <td>{{supplier.countryName}}</td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                    <h4 class="modal-title">查找採購單</h4>
+                                    
+                                
+                                    
+                                     <table class="table table-striped table-bordered table-advance table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th style="width:10%;">#</th>
+                                            <th style="width:30%;">供應商名稱</th>
+                                            <th style="width:30%;">採購單日期</th>
+                                            <th style="width:30%;">預算到港日期</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody data-ng-if="!purchaseorder">
+                                        <tr>
+                                            <td>請選擇供應商以展示相關採購單資料</td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody>  
+                                           <tr data-ng-repeat="pos in purchaseorder" ng-click="selectPo(pos)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
+                                            <td>{{pos.poCode}}</td>
+                                            <td>{{pos.supplierName}} ({{pos.supplierCode}})</td>
+                                            <td>{{pos.poDate}}</td>
+                                            <td>{{pos.etaDate}}</td>                                         
+                                           </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+							</div>
+						</div> 
+					</div>
+				</form>		
+				
+			</div>
+			<div class="modal-footer">
+					<button type="button" class="btn default" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>
