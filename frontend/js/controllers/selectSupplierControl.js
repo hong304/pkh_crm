@@ -94,6 +94,7 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
         SharedService.setValue('contactPerson_1', c.contactPerson_1, 'handleSupplierUpdate');
         SharedService.setValue('status', c.status, 'handleSupplierUpdate');
         SharedService.setValue('payment', c.payment, 'handleSupplierUpdate');
+        SharedService.setValue('location', c.location, 'handleSupplierUpdate');
          
     	
     	//SharedService.setValue('clientSelectionCompleted', true, 'doneCustomerUpdate');

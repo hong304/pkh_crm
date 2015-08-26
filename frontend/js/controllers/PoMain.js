@@ -41,6 +41,7 @@ app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedSer
        totalAmount:$scope.totalAmount,
        poReference:'',
        contactPerson_1:'',
+       location:'',
     };
 
     
@@ -347,7 +348,9 @@ $scope.an = false;
         $scope.productStructure.currencyId = SharedService.currencyId;
         $scope.order.contactPerson_1 = SharedService.contactPerson_1;
         $scope.order.status = SharedService.status;
+        $scope.order.location = SharedService.location;
         $scope.order.payment = SharedService.payment;
+        $scope.order.location = SharedService.location;
         $scope.displayName = $scope.order.supplierCode + " (" + $scope.order.supplierName + ")";
         if($scope.order.supplierCode === undefined)
         {
@@ -429,7 +432,7 @@ $scope.an = false;
                     $scope.order.etaDate = $scope.poData.etaDate;
                     $scope.order.poAmount = $scope.poData.poAmount;
                     $scope.order.poDate = $scope.poData.poDate;
-
+                    $scope.order.location = $scope.poData.location;
                     $scope.order.poStatus = $scope.poData.poStatus;
 
                     $scope.order.contactPerson_1 = $scope.supplierData.contactPerson_1;
@@ -934,7 +937,7 @@ $scope.submitOrder(v);
                 $scope.product[k].currencyId = $scope.order.currencyId;
            
         }
-        
+
         if(!generalError)
         {
     
