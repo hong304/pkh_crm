@@ -131,7 +131,7 @@ class Invoice_9FPickingList {
 
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                    'counts' => (isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId.'-'.$v][$unit]) ? $this->goods['9F'][$customerId.$invoiceId]['items'][$productId.'-'.$v][$unit]['counts'] : 0) + $item->productQty,
                                     'stdPrice' => $productDetail->productStdPrice[$unit],
                                 ];
 
@@ -297,7 +297,7 @@ class Invoice_9FPickingList {
         require_once './Classes/PHPExcel/IOFactory.php';
         require_once './Classes/PHPExcel.php';
 
-        $csv1 = DB::table('invoiceitem')->select('productQtyUnit','productPacking_carton','productPacking_inner','productPacking_unit','productPacking_size','zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('shift',$this->_shift)->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->whereNull('invoiceitem.deleted_at')->groupby('productId','productQtyUnit')->get();
+        $csv1 = DB::table('invoiceitem')->select('productQtyUnit','productPacking_carton','productPacking_inner','productPacking_unit','productPacking_size','zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->whereNull('invoiceitem.deleted_at')->groupby('productId','productQtyUnit')->get();
 
 
 
