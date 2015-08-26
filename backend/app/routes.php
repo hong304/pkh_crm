@@ -199,65 +199,61 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
-    $invoices = Invoice::where('paymentTerms',1)->where('deliveryDate','<',strtotime('2015-08-19'))->where('invoiceStatus',20)->orderBy('zoneId')->get();
+    $first_date = shipping::orderBy('etaDate')->first();
 
-    $balance_bf = [];
+    $s = shipping::where('actualDate','!=','')->get();
+    $eta = shipping::whereNull('actualDate')->get();
+   // pd($s->toArray());
+//pd($eta->toArray());
 
-    foreach($invoices as $v){
-
-        if(!isset($balance_bf[$v->zoneId]))
-            $balance_bf[$v->zoneId] = 0;
-
-        $balance_bf[$v->zoneId] += $v->remain;
-    }
-
-    $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->where('paid','>',0)->with('payment')->WhereHas('payment', function($q)
-    {
-        $q->where('start_date', '=', '2015-08-19');
-    })->get();
-
-    $acc1 = 0;
-    foreach($invoices as $invoiceQ){
-     //   $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain;
-        foreach($invoiceQ->payment as $v1){
-            if($v1->start_date == '2015-08-19'){
-                $previous[$v->zoneId] = (isset($previous[$v->zoneId]))?$previous[$v->zoneId]:0;
-                $previous[$v->zoneId] += $v1->pivot->paid;
+    $date1 =strtotime($first_date->etaDate);
+    $sDate = $date1+24*60*60*6;
+    while ($date1 <= $sDate) {
+        $date[] = date('Y-m-d',$date1);
+        foreach($s as $v){
+            if($v->actualDate == date('Y-m-d',$date1)){
+                $sarr[$v->shippingId][date('Y-m-d',$date1)]['no'] = $v->container_numbers;
+                $sarr[$v->shippingId][date('Y-m-d',$date1)]['mode'] = 'actual';
             }
         }
-    }
 
-    $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',strtotime('2015-08-19'))->get();
-    $NoOfInvoices = [];
-    foreach ($invoices as $invoiceQ){
-        if($invoiceQ->invoiceStatus == 20) {
-            $paid = $invoiceQ->paid;
-        }else{
-            $paid = $invoiceQ->remain;
+        foreach($eta as $v){
+                if ($v->etaDate == date('Y-m-d',$date1)){
+                    $sarr[$v->shippingId][date('Y-m-d',$date1)]['no'] = $v->container_numbers;
+                    $sarr[$v->shippingId][date('Y-m-d',$date1)]['mode'] = 'eta';
+                }
         }
-        if(!isset($NoOfInvoices[$invoiceQ->zoneId]))
-            $NoOfInvoices[$invoiceQ->zoneId] = 0;
-
-        $NoOfInvoices[$invoiceQ->zoneId] += 1;
-
-        if(!isset( $info[$invoiceQ->zoneId]['totalAmount']))
-            $info[$invoiceQ->zoneId]['totalAmount'] = 0;
-        if(!isset( $info[$invoiceQ->zoneId]['paid']))
-            $info[$invoiceQ->zoneId]['paid'] = 0;
-
-        $info[$invoiceQ->zoneId] = [
-            'truck' => $invoiceQ->zoneId,
-            'noOfInvoices' => $NoOfInvoices[$invoiceQ->zoneId],
-            'balanceBf' => isset($balance_bf[$invoiceQ->zoneId])?$balance_bf[$invoiceQ->zoneId]:0,
-            'totalAmount' => $info[$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount),
-            'previous'=>isset($previous[$invoiceQ->zoneId])?$previous[$invoiceQ->zoneId]:0,
-            'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid,
-        ];
+        $date1 = $date1+24*60*60;
     }
 
-    ksort($info);
+   // pd($sarr);
+   ?>
+
+    <table><tr><td></td>
+            <?php foreach($date as $v){
+        echo '<td>'.$v.'</td>';
+    }
+      ?>  </tr>
+    <?php foreach($sarr as $kk => $vv){
+        echo '<tr>';
+        echo '<td>'.$kk.'</td>';
+        for($i=0;$i<7;$i++){
+            if(isset($vv[$date[$i]])) {
+                if ($vv[$date[$i]]['mode'] == 'actual')
+                    echo '<td>' . $vv[$date[$i]]['no'] . '*</td>';
+                else
+                    echo '<td>' . $vv[$date[$i]]['no'] . '</td>';
+            }else
+                echo '<td></td>';
+        }
+        echo '</tr>';
+    }?>
 
 
+    </table>
+
+
+<?php
 
 });
 

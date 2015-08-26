@@ -1,6 +1,14 @@
 'use strict';
 
 
+function editCountry(id)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.editCountry(id);
+    });
+}
+
 function editInvoicePayment(invoiceId,customerId)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
@@ -116,6 +124,10 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         Metronic.unblockUI();
     });
 
+    $scope.editCountry = function(id){
+        console.log(id);
+    }
+
     $scope.editInvoicePayment = function(invoiceId,customerId)
     {
 
@@ -148,7 +160,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         Metronic.blockUI();
         $http.post(query, {mode: "single", invoiceId: invoiceId})
             .success(function(res, status, headers, config){
-
+console.log(res);
         $scope.invoiceDetails = res;
 
               Metronic.unblockUI();

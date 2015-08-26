@@ -33,6 +33,7 @@
                                                 <th width="5%">總數</th>
                                                 <th width="5%">已付</th>
                                                 <th width="13%">支付日期</th>
+                                                <th width="5%"></th>
 
                                             </tr>
                                             </thead>
@@ -53,6 +54,9 @@
                                                 </td>
                                                 <td>
                                                     {{i.receive_date}}
+                                                </td>
+                                                <td>
+                                                    <span ng-click="editCountry(i.id)" class="btn btn-xs default"><i class="fa fa-search"></i> 刪除</span>
                                                 </td>
                                             </tr>
                                             <tr>

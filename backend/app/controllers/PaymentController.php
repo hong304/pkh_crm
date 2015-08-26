@@ -216,7 +216,7 @@ class PaymentController extends BaseController {
 
         if($mode == 'single'){
 
-            $p=DB::table('invoice_payment')->select('invoice_payment.amount as totalamount','bankCode','ref_number','receive_date','paid')->leftJoin('payments', function($join) {
+            $p=DB::table('invoice_payment')->select('invoice_payment.amount as totalamount','bankCode','ref_number','receive_date','paid','id')->leftJoin('payments', function($join) {
                 $join->on('payment_id', '=', 'payments.id');
             })->where('invoice_id','=',Input::get('invoiceId'))->get();
 
