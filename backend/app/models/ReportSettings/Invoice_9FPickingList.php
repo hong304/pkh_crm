@@ -131,7 +131,7 @@ class Invoice_9FPickingList {
 
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId.'-'.$v][$unit]) ? $this->goods['9F'][$customerId.$invoiceId]['items'][$productId.'-'.$v][$unit]['counts'] : 0) + $item->productQty,
+                                    'counts' => $item->productQty,
                                     'stdPrice' => $productDetail->productStdPrice[$unit],
                                 ];
 
