@@ -21,7 +21,7 @@ class SupplierController extends BaseController
       
        //   Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
              //select(['ipfId','from', 'to', 'size']);
-          $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','suppliers.currencyId','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment'])
+          $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','suppliers.currencyId','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
            ->leftJoin('countries', function($join) {
                 $join->on('countries.countryId', '=','suppliers.countryId');
             })
@@ -87,7 +87,7 @@ class SupplierController extends BaseController
         $keyword = Input::has('supplierCode') && Input::get('supplierCode') != '' ? Input::get('supplierCode') : 'na'; // 
 
             // $keyword = str_replace(array('?', '*'), '%', $keyword);
-        $supplier = Supplier::select('supplierCode','supplierName','address','address1','address2','phone_1','phone_2','suppliers.email','countryId','fax_1','fax_2','payment','currencyId','creditDay','creditLimit','creditAmount','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','remark','users.username')->where('supplierCode', Input::get('supplierCode'))
+        $supplier = Supplier::select('supplierCode','supplierName','address','address1','address2','phone_1','phone_2','suppliers.email','countryId','fax_1','fax_2','payment','currencyId','creditDay','creditLimit','creditAmount','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','remark','users.username','location')->where('supplierCode', Input::get('supplierCode'))
             ->join('users', function($joinss) {
                 $joinss->on('users.id', '=','suppliers.updated_by');  
             })
@@ -148,6 +148,7 @@ class SupplierController extends BaseController
                     'fax_1' => 'size:8',
                     'fax_2' => 'size:8',
                      'email' => 'email',
+                     'location' => 'required',
 	        ];
          
       
