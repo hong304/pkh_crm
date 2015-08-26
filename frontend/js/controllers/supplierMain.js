@@ -110,6 +110,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                         'fax_1': '',
                         'fax_2' :'',
                         'remark':'',
+                        'location':'',
                        
 	};
 	$scope.customerInfo_copy = {
@@ -133,6 +134,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                         'fax_1': '',
                         'fax_2' :'',
                          'remark':'',
+                          'location':'',
 	};
    
 	$scope.submitbtn = true;

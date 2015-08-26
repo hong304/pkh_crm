@@ -88,7 +88,7 @@ class newPoController extends BaseController {
              }
 
 
-            $purchaseOrder = Purchaseorder::select(['poCode', 'poDate', 'etaDate', 'actualDate', 'poStatus', 'suppliers.supplierName', 'purchaseorders.updated_at', 'users.username','poAmount'])
+            $purchaseOrder = Purchaseorder::select(['poCode', 'poDate', 'etaDate', 'actualDate', 'poStatus', 'suppliers.supplierName', 'purchaseorders.updated_at', 'users.username','poAmount','purchaseorders.location'])
                     ->leftJoin('suppliers', function($join) {
                         $join->on('suppliers.supplierCode', '=', 'purchaseorders.supplierCode');
                     })
