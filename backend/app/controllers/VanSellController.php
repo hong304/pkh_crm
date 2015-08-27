@@ -236,7 +236,7 @@ class VanSellController extends BaseController
 
         $this->_data = $this->goods['1F'];
 
-        $newIds =[];
+        $allIds =[];
         foreach ($this->_data as $g) {
             foreach ($g as $k => $v) {
                 $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define',false)->first();
@@ -258,23 +258,24 @@ class VanSellController extends BaseController
                     $vansell->save();
                 }
 
-                $newIds[] = $v['productId'];
+                $allIds[] = $v['productId'];
             }
         }
 
         $dbIds = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define',false)->lists('productId');
 
-
-        $result = array_diff($dbIds, $newIds);
+        $result = array_diff($dbIds, $allIds);
 
         if (count($result) > 0)
             foreach ($result as $vv) {
                 $del = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('productId', $vv)->where('self_define',false)->first();
-                if ($del->qty > 0) {
-
-                } else {
+                if($del->self_enter == false)
                     $del->delete();
+                else{
+                    $del->org_qty = 0;
+                    $del->save();
                 }
+
             }
 
         $vansells = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->where('self_define',false)->orderBy('productId', 'asc')->get();
