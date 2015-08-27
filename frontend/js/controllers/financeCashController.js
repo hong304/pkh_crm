@@ -187,6 +187,24 @@ console.log(res);
 
     }
 
+    $scope.sendRealFile = function()
+    {
+       /* $http({
+            method: 'POST',
+            url: endpoint + '/getPaymentDetails.json',
+            data: {filterData:$scope.filterData,mode:'excel'}
+        }).success(function (res) {
+
+        });*/
+        var queryObject = {
+            filterData	:	$scope.filterData
+        };
+         var queryString = $.param( queryObject );
+          window.open(endpoint + "/getPaymentDetails.json?" + queryString);
+
+
+    }
+
     $scope.updateInvoiceNumber = function()
     {
         $scope.cheque = {

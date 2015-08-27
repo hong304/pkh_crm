@@ -115,7 +115,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         feight_currency                 :      '',
         feight_amount                   :      0,
         deleted 	                :     0,
-        remark:'',
+        remark:''
     };
    
 
@@ -126,7 +126,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         start		:	Date.now(),
         selected_client	:	'',
         product		:	[],
-        submit		:	'',
+        submit		:	''
     }
 
     // product: select, change_qty, change_unit
@@ -174,7 +174,6 @@ $scope.an = false;
 
     $scope.itemlist.forEach(function(key){
         $scope.product[key] = $.extend(true, {}, $scope.productStructure);
-        $scope.timer.product[key] = $.extend(true, {}, $scope.timerProductStructure);
     });
 
 
@@ -252,6 +251,7 @@ $scope.an = false;
                         
                         Metronic.unblockUI();
                         $scope.loadProduct($scope.shipping.shippingId, $scope.shippingItems);
+                    $("#deletebtn_4").css('display', '');
                 });
 
 
@@ -277,14 +277,17 @@ $scope.an = false;
 
     $scope.loadProduct = function(shippingId, defaultProduct)
     {
+
+
                    if(defaultProduct.length > 0)
 	           {
 			var j = 1; // j should be put here		    
                     defaultProduct.forEach(function(item) {
    
                       //  $scope.productCode[j] = item.productId;
-                        
-                        
+
+
+
                         $scope.product[j]['dbid'] = item.id;
                         $scope.product[j]['containerId'] = item.containerId;
                         $scope.product[j]['serial_no'] = item.serial_no;
@@ -303,24 +306,31 @@ $scope.an = false;
                             $scope.itemlist.push($scope.newkey);
                             $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
                         }
+                        $timeout(function(){
+                            $("#deletebtn_" + j).css('display', '');
+                            $("#remarkbtn_" + j).css('display', '');
+                        }, 500);
+
+                        console.log($scope.product);
+
                         var value = 3 + j;
                         $("#deliverydate"+ value).datepicker({
                             rtl: Metronic.isRTL(),
                             orientation: "right",
                             autoclose: true
                         })
-            
-                        $("#deletebtn_" + j).css('display', 'block');
-                        $("#remarkbtn_" + j).css('display', 'block');
+
+
 
                         j++;
 
                     });
 
                     }else{
-			alert('沒有貨櫃');
+			            alert('沒有貨櫃');
                     }
                 Metronic.unblockUI('#orderportletbody');
+
     }
 
     $scope.selectProduct = function(i) {
@@ -553,17 +563,6 @@ $scope.an = false;
     $scope.deleteRow = function(i)
     {
 
-       for(var key = i; key<=$scope.itemlist.length; key++)
-         {
-
-         $scope.product[key] = $.extend(true, {}, $scope.product[key+1]);
-         $scope.productCode[key] = $scope.productCode[key+1];
-
-         }
-
-         $scope.product[$scope.itemlist.length] = $.extend(true, {}, $scope.productStructure);
-         $scope.productCode[$scope.itemlist.length] = '';
-        
         $scope.product[i].deleted = 1;
        
      
