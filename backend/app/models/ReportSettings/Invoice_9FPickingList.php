@@ -351,7 +351,13 @@ $i=3;
             if($v->productUnitName == '斤'){
                 $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, '');
             }else{
-                if($v->productQtyUnit == 'carton'){
+
+                if($v->productPacking_inner>1)
+                    $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_inner .' x '. $v->productPacking_unit .' ('.$v->productPacking_size.')');
+                else
+                    $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_unit .' ('.$v->productPacking_size.')');
+
+                /*if($v->productQtyUnit == 'carton'){
                     $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_inner .' x '. $v->productPacking_unit .' ('.$v->productPacking_size.')');
                 }
 
@@ -361,7 +367,7 @@ $i=3;
 
                 if($v->productQtyUnit == 'unit'){
                     $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_size);
-                }
+                }*/
             }
 
             $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v->SumQty);
