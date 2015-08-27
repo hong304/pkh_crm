@@ -125,7 +125,24 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     });
 
     $scope.editCountry = function(id){
-        console.log(id);
+        $http.post(endpoint + "/delPayment.json", { id: id})
+            .success(function(res, status, headers, config){
+                $scope.del = res;
+                if(res) {
+                    $('#invoiceDetails').modal('hide');
+                    Metronic.alert({
+                        container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                        place: 'prepend', // append or prepent in container
+                        type: 'success',  // alert's type
+                        message: '<span style="font-size:16px;">刪除成功</span>',  // alert's message
+                        close: true, // make alert closable
+                        reset: true, // close all previouse alerts first
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 0, // auto close after defined seconds
+                        icon: 'warning' // put icon before the message
+                    });
+                }
+            });
     }
 
     $scope.editInvoicePayment = function(invoiceId,customerId)
@@ -160,7 +177,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         Metronic.blockUI();
         $http.post(query, {mode: "single", invoiceId: invoiceId})
             .success(function(res, status, headers, config){
-console.log(res);
+
         $scope.invoiceDetails = res;
 
               Metronic.unblockUI();

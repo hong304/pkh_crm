@@ -2,14 +2,28 @@
 
 class financeCashController extends BaseController {
 
-    public function __construct()
-    {
+    private $_date = '';
+    private $_date1 = '';
+    private $_status = '';
+
+    public function delPayment(){
+        $payment_id = Input::get('id');
+        $payment = Payment::where('id',$payment_id)->with('invoice')->get()->first();
+        $i = Invoice::where('invoiceId',$payment->invoice[0]->invoiceId)->first();
+        $i->paid = $i->paid -$payment->invoice[0]->pivot->paid;
+        $i->save();
+        $payment->invoice()->detach($payment->invoice[0]->invoiceId);
+        $payment->delete();
+        return Response::json(1);
+    }
+
+    public function getPaymentDetails(){
+
         $filter = Input::get('filterData');
+
         $this->_date = (isset($filter['deliverydate']) ? strtotime($filter['deliverydate']) : strtotime("today"));
         $this->_date1 = (isset($filter['deliverydate2']) ? strtotime($filter['deliverydate2']) : strtotime("today"));
         $this->_status = $filter['status'];
-    }
-    public function getPaymentDetails(){
 
         $invoice = Invoice::select('invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms')
             ->whereBetween('invoice.deliverydate', [$this->_date, $this->_date1])
