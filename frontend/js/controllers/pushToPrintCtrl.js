@@ -52,16 +52,16 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
 
-                       var queryObject = {
+                     /*  var queryObject = {
                             shift	:	$scope.shift,
                             mode	:	'96-98'
                         };
                         var queryString = $.param( queryObject );
 
-                        window.open(endpoint + "/printSelectedJobsWithinMyZone.json?" + queryString);
+                        window.open(endpoint + "/printSelectedJobsWithinMyZone.json?" + queryString); */
 
 
-                    /*
+
                      Metronic.blockUI({
                      target : '#printArea',
                      boxed: true,
@@ -71,10 +71,10 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                      $http({
                             method: 'POST',
                             url: printSelect,
-                            data: {mode:'96-98',shift:$scope.shift}
+                            data: {mode:'96-98',zone:$scope.zone,shift:$scope.shift}
                         }).success(function(res, status, headers, config){
                             $scope.updatePrintQueue();
-                        });*/
+                        });
                     }
                 }
             }
@@ -267,7 +267,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                 });
 
             $scope.job9698 = res['queued9698'];
-            $scope.printed = res['printed'];
+           // $scope.printed = res['printed'];
 
             Metronic.unblockUI('#printArea');
             });
