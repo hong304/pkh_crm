@@ -111,15 +111,33 @@ if(Input::get('group.id')!='')
                 $query->where('Invoice.invoiceStatus','2')
                     ->orwhere('Invoice.invoiceStatus','1')
                     ->orwhere('Invoice.invoiceStatus','20')
-                    ->orwhere('Invoice.invoiceStatus','30')
-                    ->orwhere('Invoice.invoiceStatus','98')
-                    ->orwhere('Invoice.invoiceStatus','96')
-                    ->orwhere('Invoice.invoiceStatus','97');
+                    ->orwhere('Invoice.invoiceStatus','30');
             })
             ->where('Invoice.shift',$this->shift)
             ->orderBy('insert_time', 'desc')
             ->get();
 
+
+
+        $job9698 =  PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','users.name','PrintQueue.status')
+            ->where('PrintQueue.status','!=','dead:regenerated')
+            ->where('PrintQueue.status','!=','downloaded;passive')
+            ->leftJoin('Invoice', function($join) {
+            $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+        })->leftJoin('users', function($join) {
+            $join->on('users.id', '=', 'Invoice.updated_by');
+        })->leftJoin('Customer', function($join) {
+            $join->on('Customer.customerId', '=', 'Invoice.customerId');
+        })
+
+            ->where(function($query){
+                $query->where('Invoice.invoiceStatus','96')
+                    ->orwhere('Invoice.invoiceStatus','97')
+                    ->orwhere('Invoice.invoiceStatus','98');
+            })
+            ->where('Invoice.shift',$this->shift)
+            ->orderBy('insert_time', 'desc')
+            ->get();
 
 
         $printed = PrintQueue::select('job_id','Invoice.invoiceId','customerName_chi','zoneId','Invoice.routePlanningPriority','PrintQueue.updated_at','deliveryDate','users.name','PrintQueue.status')
@@ -140,7 +158,6 @@ if(Input::get('group.id')!='')
             ->where(function($query){
                 $query->where('Invoice.invoiceStatus','2')
                     ->orwhere('Invoice.invoiceStatus','1')
-                    //->orwhere('Invoice.invoiceStatus','4')
                     ->orwhere('Invoice.invoiceStatus','98')
                     ->orwhere('Invoice.invoiceStatus','96')
                     ->orwhere('Invoice.invoiceStatus','97');
@@ -153,6 +170,7 @@ if(Input::get('group.id')!='')
 
         $jobs['queued'] = $job;
         $jobs['printed'] = $printed;
+        $jobs['queued9698'] = $job9698;
         //  pd($jobs);
 
         return Response::json($jobs);
@@ -164,6 +182,31 @@ if(Input::get('group.id')!='')
 
         $mode = Input::get('mode');
         $this->startTime = time();
+
+
+        if($mode == '96-98'){
+                $result = PrintQueue::select('Invoice.invoiceId')->wherein('status', ['queued', 'fast-track'])
+                    ->leftJoin('Invoice', function($join) {
+                        $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+                    })
+                    ->where(function($query){
+                        $query->where('Invoice.invoiceStatus','97')
+                            ->orwhere('Invoice.invoiceStatus','96')
+                            ->orwhere('Invoice.invoiceStatus','98');
+                    })->where('Invoice.deliveryDate',strtotime("00:00:00"))
+                    ->where('Invoice.shift',$this->shift)
+                    ->lists('Invoice.invoiceId');
+
+
+                if($result)
+                    $this->mergeImageOthers($result);
+                else
+                    pd('PDF已產生,請查看列印記錄/沒有新訂單');
+
+
+        }
+
+
         if($mode == 'today'){
             foreach(explode(',', $this->zone) as $k => $v){
                 $result = PrintQueue::select('Invoice.invoiceId')->where('target_path',$v)->wherein('status', ['queued', 'fast-track'])
@@ -171,10 +214,7 @@ if(Input::get('group.id')!='')
                         $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
                     })
                     ->where(function($query){
-                        $query->where('Invoice.invoiceStatus','2')
-                            ->orwhere('Invoice.invoiceStatus','97')
-                            ->orwhere('Invoice.invoiceStatus','96')
-                            ->orwhere('Invoice.invoiceStatus','98');
+                        $query->where('Invoice.invoiceStatus','2');
                     })->where('Invoice.deliveryDate',strtotime("00:00:00"))
                     ->where('Invoice.shift',$this->shift)
                     ->lists('Invoice.invoiceId');
@@ -191,10 +231,7 @@ if(Input::get('group.id')!='')
                             $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
                         })
                         ->where(function($query){
-                            $query->where('Invoice.invoiceStatus','2')
-                                ->orwhere('Invoice.invoiceStatus','97')
-                                ->orwhere('Invoice.invoiceStatus','96')
-                                ->orwhere('Invoice.invoiceStatus','98');
+                            $query->where('Invoice.invoiceStatus','2');
                         })->where('Invoice.deliveryDate',strtotime("00:00:00"))
                         ->where('Invoice.shift',$this->shift)
                         ->get();
@@ -205,8 +242,6 @@ if(Input::get('group.id')!='')
                         $updatepq->save();
                     }
                 }
-
-
             }
         }
 
@@ -335,6 +370,125 @@ if(Input::get('group.id')!='')
         if(!isset($summary[0]['countInDataMart']))$summary[0]['countInDataMart'] = 0;
 
         return Response::json($summary);
+    }
+
+
+    public function mergeImageOthers ($Ids){
+
+
+
+        $invoiceImage = Invoice::select('invoicePrintImage', 'zoneId','routePlanningPriority')->whereIn('invoiceId', $Ids)->OrderBy('routePlanningPriority')->get();
+        foreach($invoiceImage as $k => $v){
+            $image[] = unserialize($v->invoicePrintImage);
+        }
+
+        $pagesize = "A5";
+        $pdf = new Fpdf();
+
+        foreach ($image as $k => $v){
+            // $section = 0;
+
+            foreach($v['print_storage'] as $index => $get_filename)
+            {
+
+                for($i = 1; $i <= 2; $i++)
+                {
+
+                    if($i == 1)
+                    {
+                        $pdf->AddPage();
+                        $y = 0;
+                    }
+
+                    $url =  $this->public_path . '/'.date('Y-m', $v['deliveryDate'][0]).'/'.date('d', $v['deliveryDate'][0]).'/'.$get_filename;
+
+                    $pdf->Image($url, 3, $y -2, 207, 0, 'PNG');
+
+                    // delete the image afterward
+                    // @unlink($url);
+
+                    if($pagesize == "A5")
+                    {
+                        $y += 148;
+                    }
+                    else
+                    {
+                        $y = 0;
+                    }
+
+                    // $section++;
+
+                }
+            }
+        }
+
+        // $temp_filename = $k[0].'-'.str_pad($this->route, 2, "0", STR_PAD_LEFT).'-'.$k[1];
+        $raw_filename =Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
+        $filename = 'pdf/'.Auth::user()->id.'-'.$invoiceImage[0]->zoneId.'-'.time().'.pdf';
+        //$path = storage_path().'/invoices_images/'. str_replace('I', '', $k[0]) .'/'.$filename;
+        $path = $this->public_path.'/'.$filename;
+
+
+
+
+        Invoice::wherein('invoiceId',$Ids)->update(['printed'=>1]);
+        $updatepqs = PrintQueue::wherein('PrintQueue.invoiceId',$Ids)->wherein('status', ['queued', 'fast-track'])
+            ->leftJoin('Invoice', function($join) {
+                $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
+            })
+            ->where(function($query){
+                $query->where('Invoice.invoiceStatus','97')
+                    ->orwhere('Invoice.invoiceStatus','96')
+                    ->orwhere('Invoice.invoiceStatus','98');
+            })->where('Invoice.deliveryDate',strtotime("00:00:00"))
+            ->where('Invoice.shift',$this->shift)
+            ->get();
+
+        foreach($updatepqs as $updatepq){
+            $updatepq->target_time =time();
+            $updatepq->status = 'downloaded;passive';
+            $updatepq->save();
+        }
+
+        $print_log = new Printlog();
+        $print_log->file_path = $filename;
+        $print_log->file_name = $raw_filename;
+        $print_log->status = '96-98 invoices';
+        $print_log->target_path = '0';
+        $print_log->invoiceIds = implode(',',$Ids);
+        $print_log->count = count($Ids);
+        $print_log->shift = $this->shift;
+        $print_log->consume_time = time() - $this->startTime;
+        $print_log->save();
+
+        $pdf->Output($path, "IF");
+
+        /*$job = Printlog::where('job_id', $print_log->id)->first();
+
+        $ftp_user_name = 'pkh';
+        $ftp_user_pass = 'pkh2015';
+
+        $ftp_server = '192.168.1.47';
+        $conn_id = ftp_connect($ftp_server);
+        if(!$conn_id)
+        {
+            $debug = new Debug();
+            $debug->content = 'Can not connect to FTP'.$ftp_server.$_SERVER['SERVER_ADDR'];
+            $debug->save();
+            DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'queued']);
+            die('Can not connect to FTP');
+        }
+        ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
+
+        DB::table('Printlogs')->where('job_id', $job->job_id)->update(['status'=>'sending']);
+
+        if (@ftp_put($conn_id, str_pad('23', 3, '0', STR_PAD_LEFT).'/'.$job->job_id.'-'.$job->shift.'-'.$job->count.'.pdf', $this->public_path.'/pdf/'.$job->file_name, FTP_BINARY)) {
+            $updates = ['status'=>'sent', 'complete_time'=>time()];
+        } else {
+            $updates = ['status'=>'queued'];
+        }
+        // }
+        DB::table('Printlogs')->where('job_id', $job->job_id)->update($updates);*/
     }
 
     public function mergeImage ($Ids){

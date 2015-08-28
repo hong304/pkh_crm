@@ -32,6 +32,56 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     	//$interval.cancel(intervalPromise);
     });
 
+    $scope.generalOtherInvoices = function(){
+
+        bootbox.dialog({
+            message: "列印發票後將不能復原，確定要列印發票嗎？",
+            title: "列印發票",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
+
+                    }
+                },
+                danger: {
+                    label: "確定",
+                    className: "red",
+                    callback: function() {
+
+
+
+                       var queryObject = {
+                            shift	:	$scope.shift,
+                            mode	:	'96-98'
+                        };
+                        var queryString = $.param( queryObject );
+
+                        window.open(endpoint + "/printSelectedJobsWithinMyZone.json?" + queryString);
+
+
+                    /*
+                     Metronic.blockUI({
+                     target : '#printArea',
+                     boxed: true,
+                     message: '退貨單,補貨單資料整合中'
+                     });
+
+                     $http({
+                            method: 'POST',
+                            url: printSelect,
+                            data: {mode:'96-98',shift:$scope.shift}
+                        }).success(function(res, status, headers, config){
+                            $scope.updatePrintQueue();
+                        });*/
+                    }
+                }
+            }
+        });
+
+    }
+
     $scope.printToday = function(){
 
 
@@ -82,7 +132,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                                 Metronic.blockUI({
                                     target : '#printArea',
                                     boxed: true,
-                                    message: '資料整合中,需時1分鐘...'
+                                    message: '資料整合中,需時2分鐘...'
                                 });
 
                                 $http({
@@ -144,7 +194,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
     }
-
+/*
     $scope.printGroup = function(){
 
         bootbox.dialog({
@@ -185,7 +235,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
 
-    }
+    }*/
 
     $scope.updateZone = function(){
         $scope.updatePrintQueue();
@@ -216,7 +266,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                     i++;
                 });
 
-
+            $scope.job9698 = res['queued9698'];
             $scope.printed = res['printed'];
 
             Metronic.unblockUI('#printArea');

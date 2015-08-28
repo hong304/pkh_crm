@@ -69,7 +69,12 @@
                         </div>
                     </div>
 
-
+                    <div class="actions">
+                        <div class="btn-group">
+                            <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="generalOtherInvoices();" data-ng-if="systemInfo.permission.sa_up == true">
+                                <i class="fa fa-print"></i> 產生補退貨單 </a>&nbsp;
+                        </div>
+                    </div>
                    <!-- <div class="actions" data-ng-if="systemInfo.permission.staff_maintenance == true">
                         <div class="btn-group">
                             <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="printGroup();">
@@ -86,6 +91,11 @@
                             <li class="active">
                                 <a data-target="#tab_general" data-toggle="tab">
                                     等待列印 </a>
+                            </li>
+
+                            <li>
+                                <a data-target="#tab_job9698" data-toggle="tab">
+                                    等待列印(補退單) </a>
                             </li>
 
                             <li>
@@ -146,6 +156,59 @@
                                     </tbody>
                                 </table>
                             </div>
+
+
+
+                            <div class="tab-pane" id="tab_job9698">
+                                <div class="row">
+                                    <div id="tab_images_uploader_filelist2" class="col-md-6 col-sm-12">
+                                    </div>
+                                </div>
+                                <table class="table table-bordered table-hover" style="font-size:15px;">
+                                    <thead>
+                                    <tr role="row" class="heading">
+                                        <th width="5%">#</th>
+                                        <th width="10%">訂單編號</th>
+                                        <th width="15%">Customer name</th>
+                                        <th width="5%">車號</th>
+                                        <th width="5%">車線</th>
+                                        <th width="15%">列印時間</th>
+                                        <th width="10%">送貨日期</th>
+
+                                        <th width="10%">用戶</th>
+                                        <th width="20%">現時狀態</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr data-ng-repeat="q in job9698">
+                                        <td>{{q.job_id}}</td>
+                                        <td>{{q.invoiceId}}</td>
+                                        <td>{{q.customerName_chi}}</td>
+                                        <td>{{q.zoneId}}</td>
+                                        <td>{{q.routePlanningPriority}}</td>
+                                        <td>{{q.updated_at}}</td>
+                                        <td>{{q.deliveryDate * 1000 | date: 'yyyy.MM.dd'}}</td>
+                                        <td>{{q.name}}</td>
+                                        <td>
+                                                        <span data-ng-if="q.status == 'downloaded;passive'">
+                                                            已下載至列印伺服器
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'dead:regenerated'">
+                                                            被取代
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'dead:pending'">
+                                                            等待批刻(不會列印)
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'queued'">
+                                                            等待下載
+                                                        </span>
+                                        </td>
+                                    <tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
 
                             <div class="tab-pane" id="tab_loginrecord">
                                 <div class="row">
