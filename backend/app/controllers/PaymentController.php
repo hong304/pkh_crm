@@ -170,7 +170,7 @@ class PaymentController extends BaseController {
             $invoice = Invoice::select('invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms');
 
             // zone
-            /*    $permittedZone = explode(',', Auth::user()->temp_zone);
+               $permittedZone = explode(',', Auth::user()->temp_zone);
 
                 if(isset($filter['zone']) && $filter['zone'] != '')
                 {
@@ -188,7 +188,7 @@ class PaymentController extends BaseController {
                 else
                 {
                     $invoice->wherein('zoneId', $permittedZone);
-                }*/
+                }
 
             // status
             if($filter['invoiceNumber'] == '')
