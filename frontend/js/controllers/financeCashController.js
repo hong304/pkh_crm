@@ -39,7 +39,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     var fetchDataDelay = 500;
 
     $scope.payment = [];
-    $scope.discount = [];
+    $scope.discount = 0;
     $scope.invoicepaid = [];
     $scope.invoiceStructure = {
         'id' :'',
@@ -245,27 +245,121 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.autoPost = function(){
 
-     $http({
-            method: 'POST',
-            url: query,
-            data: {paidinfo:$scope.filterData,mode:'posting'}
-        }).success(function () {
-         $('#invoicePayment').modal('hide');
-            Metronic.alert({
-                 container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
-                 place: 'prepend', // append or prepent in container
-                 type: 'success',  // alert's type
-                 message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
-                 close: true, // make alert closable
-                 reset: true, // close all previouse alerts first
-                 focus: true, // auto scroll to the alert after shown
-                 closeInSeconds: 0, // auto close after defined seconds
-                 icon: 'warning' // put icon before the message
-             });
+if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != $scope.paymentDetails[0]['owe']) || ($scope.filterData.paid>0 && $scope.filterData.paid != $scope.paymentDetails[0]['owe']) ){
 
-             $scope.updateDataSet();
+        bootbox.dialog({
+            message: "支付數目與尚欠款項有差異，請按下列選擇",
+            title: "提交付款",
+            buttons: {
+
+                main: {
+                    label: " 給予折扣",
+                    className: "btn-primary",
+                    callback: function() {
+
+                        $http({
+                            method: 'POST',
+                            url: query,
+                            data: {paidinfo:$scope.filterData,mode:'posting',discount:$scope.paymentDetails[0]['owe'],paymentStatus:'30'}
+                        }).success(function () {
+                            $('#invoicePayment').modal('hide');
+                            Metronic.alert({
+                                container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                                place: 'prepend', // append or prepent in container
+                                type: 'success',  // alert's type
+                                message: '<span style="font-size:16px;">提交成功(給予折扣)</span>',  // alert's message
+                                close: true, // make alert closable
+                                reset: true, // close all previouse alerts first
+                                focus: true, // auto scroll to the alert after shown
+                                closeInSeconds: 0, // auto close after defined seconds
+                                icon: 'warning' // put icon before the message
+                            });
+                            $scope.updateDataSet();
+                        });
+
+                    }
+                },
+
+                success: {
+                    label: " 部分支付",
+                    className: "green",
+                    callback: function() {
+                        $http({
+                            method: 'POST',
+                            url: query,
+                            data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'20'}
+                        }).success(function () {
+                            $('#invoicePayment').modal('hide');
+                            Metronic.alert({
+                                container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                                place: 'prepend', // append or prepent in container
+                                type: 'success',  // alert's type
+                                message: '<span style="font-size:16px;">部分支付成功</span>',  // alert's message
+                                close: true, // make alert closable
+                                reset: true, // close all previouse alerts first
+                                focus: true, // auto scroll to the alert after shown
+                                closeInSeconds: 0, // auto close after defined seconds
+                                icon: 'warning' // put icon before the message
+                            });
+                            $scope.updateDataSet();
+                        });
+
+                    }
+                },
+
+                danger: {
+                    label: "返回",
+                    className: "red",
+                    callback: function() {
+
+                    }
+                }
+            }
         });
+}else if($scope.filterData.paid==0 || $scope.filterData.cashAmount ==0){
+    $http({
+        method: 'POST',
+        url: query,
+        data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'20'}
+    }).success(function () {
+        $('#invoicePayment').modal('hide');
+        Metronic.alert({
+            container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+            place: 'prepend', // append or prepent in container
+            type: 'success',  // alert's type
+            message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+            close: true, // make alert closable
+            reset: true, // close all previouse alerts first
+            focus: true, // auto scroll to the alert after shown
+            closeInSeconds: 0, // auto close after defined seconds
+            icon: 'warning' // put icon before the message
+        });
+        $scope.updateDataSet();
+    });
+}else{
+    $http({
+        method: 'POST',
+        url: query,
+        data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'30'}
+    }).success(function () {
+        $('#invoicePayment').modal('hide');
+        Metronic.alert({
+            container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+            place: 'prepend', // append or prepent in container
+            type: 'success',  // alert's type
+            message: '<span style="font-size:16px;">成功全數支付</span>',  // alert's message
+            close: true, // make alert closable
+            reset: true, // close all previouse alerts first
+            focus: true, // auto scroll to the alert after shown
+            closeInSeconds: 0, // auto close after defined seconds
+            icon: 'warning' // put icon before the message
+        });
+        $scope.updateDataSet();
+    });
+}
+/*
 
+ */
        // $scope.getPaymentInfo('autopost');
     }
 

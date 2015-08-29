@@ -232,7 +232,7 @@ Route::get('/test', function(){
         $date1 = $date1+24*60*60;
     }
 
-   // pd($sarr);
+    pd($sarr);
    ?>
 
     <table><tr><td></td>

@@ -1034,7 +1034,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                         files: [
 
-
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
                             assets + '/global/plugins/datatables/all.min.js',
                             assets + '/global/scripts/datatable.js',
 

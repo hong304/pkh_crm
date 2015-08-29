@@ -95,6 +95,7 @@ class PaymentController extends BaseController {
         if($mode == 'posting'){
 
             $paidinfo = Input::get('paidinfo');
+            $discount_taken = Input::get('discount');
 
             if($paidinfo['no']!=''){
                 $payment = new Payment();
@@ -116,6 +117,7 @@ class PaymentController extends BaseController {
                     $payment->remain = $paidinfo['amount'] - $paidinfo['paid'];
 
                 $payment->customerId = $paidinfo['customerId'];
+
                 $payment->save();
             }
 
@@ -137,14 +139,26 @@ class PaymentController extends BaseController {
             $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
             $i->paid += $paidinfo['cashAmount'];
             $i->paid += $paidinfo['paid'];
-            $i->invoiceStatus = $paidinfo['status'];
+            $i->invoiceStatus = $paidinfo['paymentStatus'];
+            if($discount_taken>0)
+                $i->discount = 1;
             $i->save();
 
-            if($paidinfo['no']!='')
-                $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['paid']]);
-            if($paidinfo['cashAmount']!=0)
-                $i->payment()->attach($payment1->id,['amount'=>$i->amount,'paid'=>$paidinfo['cashAmount']]);
+            if($paidinfo['no']!=''){
+                if($discount_taken>0){
+                    $discount_taken = $discount_taken-$paidinfo['paid'];
+                    $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['paid'],'discount_taken'=>$discount_taken]);
+                }else
+                    $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['paid']]);
 
+            }if($paidinfo['cashAmount']!=0){
+                if($discount_taken>0) {
+                    $discount_taken = $discount_taken - $paidinfo['cashAmount'];
+                    $i->payment()->attach($payment1->id, ['amount' => $i->amount, 'paid' => $paidinfo['cashAmount'],'discount_taken'=>$discount_taken]);
+                }else{
+                    $i->payment()->attach($payment1->id, ['amount' => $i->amount, 'paid' => $paidinfo['cashAmount']]);
+                }
+            }
 
         }
 
