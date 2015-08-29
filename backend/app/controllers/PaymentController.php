@@ -194,13 +194,13 @@ class PaymentController extends BaseController {
             if($filter['invoiceNumber'] == '')
             {
                 $invoice->whereBetween('invoice.deliverydate', [strtotime($filter['deliverydate']),strtotime($filter['deliverydate2'])]);
-                $invoice->where('invoiceStatus', $filter['status'])
-                    ->where('paymentTerms','=',1);
+                $invoice->where('invoiceStatus', $filter['status']);
+
             }else{
                 $invoice->where('invoiceId', 'LIKE', '%'.$filter['invoiceNumber'].'%');
 
             }
-
+                $invoice->where('paymentTerms','=',1);
 
             // created by
 

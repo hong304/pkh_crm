@@ -154,6 +154,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         $http.post(query, {mode: "paymentHistory", customerId: customerId,invoiceId:invoiceId})
             .success(function(res){
                 $scope.paymentDetails = res;
+                console.log(res);
             });
 
         $('#invoicePayment').modal('show');
