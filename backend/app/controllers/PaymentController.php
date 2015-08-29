@@ -139,7 +139,7 @@ class PaymentController extends BaseController {
             $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
             $i->paid += $paidinfo['cashAmount'];
             $i->paid += $paidinfo['paid'];
-            $i->invoiceStatus = $paidinfo['paymentStatus'];
+            $i->invoiceStatus = Input::get('paymentStatus');
             if($discount_taken>0)
                 $i->discount = 1;
             $i->save();
