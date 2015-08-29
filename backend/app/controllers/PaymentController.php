@@ -189,7 +189,7 @@ class PaymentController extends BaseController {
 
             // created by
 
-            $invoices = $invoice->orderby('invoiceId', 'desc');
+            $invoices = $invoice->orderby('deliveryDate', 'asc');
 
 
 

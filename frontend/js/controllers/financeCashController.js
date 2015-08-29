@@ -72,18 +72,18 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     if (month < 10) { month = '0' + month; }
     var year = nextDay.getFullYear();
 
-
-
+    var d = new Date();
+    d.setMonth( d.getMonth( ) - 1 );
+    var lastMonth = d.getMonth( ) + 1;
 
     $('#deliverydate').datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
-    $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + day);
+    $("#deliverydate").datepicker( "setDate", d.getFullYear() + '-' + lastMonth + '-' + d.getDate());
 
-    $scope.filterData.receiveDate = year+'-'+month+'-'+day;
-    $scope.filterData.deliverydate = year+'-'+month+'-'+day;
+    $scope.filterData.deliverydate = d.getFullYear()+'-'+lastMonth+'-'+d.getDate();
 
 
     $("#deliverydate2").datepicker({
@@ -244,8 +244,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     }
 
     $scope.autoPost = function(){
-
-        console.log($scope.filterData);
 
      $http({
             method: 'POST',
