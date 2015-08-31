@@ -183,7 +183,7 @@ class VanSellController extends BaseController
 
         // get invoice from that date and that zone
         $this->goods = ['1F' => [], '9F' => []];
-        $invoices = Invoice::select('*')->wherein('invoiceStatus', ['2','1','96'])->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoices = Invoice::select('*')->wherein('invoiceStatus', ['2','1','96','97'])->where('zoneId', $zone)->where('deliveryDate', $date);
 
         if($this->_shift != '-1')
             $invoices->where('shift', $this->_shift);

@@ -19,6 +19,7 @@ class Report_DailySummary
     private $_countcod = 0;
     private $_countcodreturn = 0;
     private $_countcodreplace = 0;
+    private $_countcodreplenishment = 0;
 
 
     public function __construct($indata)
@@ -138,6 +139,8 @@ class Report_DailySummary
                             $this->_sumcod += $invoiceQ->amount;
                             if ($invoiceQ->invoiceStatus == '96')
                                 $this->_countcodreplace += 1;
+                            else if($invoiceQ->invoiceStatus == '97')
+                                $this->_countcodreplenishment += 1;
                             else
                                 $this->_countcod += 1;
                         }
@@ -157,6 +160,15 @@ class Report_DailySummary
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
                                     'counts' => (isset($this->goods[$productId . '(補貨)'][$unit]) ? $this->goods[$productId . '(補貨)'][$unit]['counts'] : 0) + $item->productQty,
+                                ];
+                            }else if ($invoiceQ->invoiceStatus == '97') {
+                                $this->goods[$productId . '(換貨)'][$unit] = [
+                                    'productId' => $productId . '(換貨)',
+                                    'name' => $productDetail->productName_chi,
+                                    'productPrice' => $item->productPrice,
+                                    'unit' => $unit,
+                                    'unit_txt' => $item->productUnitName,
+                                    'counts' => (isset($this->goods[$productId . '(換貨)'][$unit]) ? $this->goods[$productId . '(換貨)'][$unit]['counts'] : 0) + $item->productQty,
                                 ];
                             }else if ($item->productPrice == 0) {
                                 $this->goods[$productId . '(零元)'][$unit] = [
@@ -220,6 +232,7 @@ class Report_DailySummary
         $this->data['countcod'] = $this->_countcod;
         $this->data['countcodreturn'] = $this->_countcodreturn;
         $this->data['countcodreplace'] = $this->_countcodreplace;
+        $this->data['countcodreplenishment'] = $this->_countcodreplenishment;
         // pd($this->data);
 
         return [$this->data];

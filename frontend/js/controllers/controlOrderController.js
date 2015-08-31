@@ -365,6 +365,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 $scope.instatusmsg = '訂單需要批核';
             }else if($stateParams.instatus=='98'){
                 $scope.instatusmsg = '已新增退貨單';
+            }else if($stateParams.instatus=='96'){
+                $scope.instatusmsg = '已新增補貨單';
+            }else if($stateParams.instatus=='97'){
+                $scope.instatusmsg = '已新增換貨單';
             }
             Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
@@ -639,7 +643,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             var availableunit = [];
             //console.log(item);
 
-            if($scope.order.status == '98' || $scope.order.status == '96') {
+            if($scope.order.status == '98' || $scope.order.status == '96' || $scope.order.status == '97') {
                 if(item.productPackingName_unit != '')
                     availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
                 if(item.productPackingName_inner != '')
@@ -902,6 +906,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             $scope.order.invoiceRemark = '退貨單'
         if($scope.order.status == '96')
             $scope.order.invoiceRemark = '補貨單';
+        if($scope.order.status == '97')
+            $scope.order.invoiceRemark = '換貨單';
         if($scope.order.status == '2')
             $scope.order.invoiceRemark = ''
     }
