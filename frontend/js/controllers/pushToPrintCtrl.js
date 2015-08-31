@@ -8,7 +8,6 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
 
     $scope.prints = {
-        'id' : '',
         'collect' : ''
     }
 
@@ -171,7 +170,6 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                     className: "red",
                     callback: function() {
 
-
                         Metronic.blockUI({
                             target : '#printArea',
                             boxed: true,
@@ -257,18 +255,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
             data: {zone:$scope.zone,shift:$scope.shift,group:$scope.group}
         }).success(function(res){
     		$scope.queue = res['queued'];
-                var i = 0;
-                res['queued'].forEach(function(item) {
-                    $scope.checkid[i] = $.extend(true, {}, $scope.prints);
-                    $scope.checkid[i]['id'] = item.job_id;
-                    $scope.checkid[i]['collect'] = 0;
-
-                    i++;
-                });
-
             $scope.job9698 = res['queued9698'];
-           // $scope.printed = res['printed'];
-
             Metronic.unblockUI('#printArea');
             });
     }

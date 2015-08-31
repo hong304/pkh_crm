@@ -248,14 +248,14 @@ if(Input::get('group.id')!='')
         }
 
         if($mode == 'selected'){
-            $ojobId = Input::get('print');
+            $ojobId  = array_filter(Input::get('print'));
+
             $jobId[] = '';
             foreach ($ojobId as $k=>$v)
                 if($v['collect'])
-                    $jobId[] =  $v['id'];
+                    $jobId[] =  $k;
 
             array_shift($jobId);
-
 
             $jobs = PrintQueue::wherein('job_id', $jobId)->get();
 

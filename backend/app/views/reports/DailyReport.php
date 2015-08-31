@@ -41,7 +41,8 @@
                 <span style="font-weight:bold;font-size:15px;">現金總數:<br />
                 月結總數:<br />
                 現金退貨單:<br />
-                現金補貨單:</span>
+                現金補貨單:<br />
+                現金換貨單:</span>
             </td>
 
             <td style="text-align:left;">
@@ -52,6 +53,8 @@
                     <?php echo number_format($data['countcodreturn']); ?>單
                     <br />
                     <?php echo number_format($data['countcodreplace']); ?>單
+                       <br />
+                    <?php echo number_format($data['countcodreplenishment']); ?>單
                 </span>
             </td>
         </tr>

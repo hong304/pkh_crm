@@ -72,7 +72,7 @@
                     <div class="actions">
                         <div class="btn-group">
                             <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="generalOtherInvoices();" data-ng-if="systemInfo.permission.sa_up == true">
-                                <i class="fa fa-print"></i> 產生補退貨單 </a>&nbsp;
+                                <i class="fa fa-print"></i> 列印補/換/退貨單 </a>&nbsp;
                         </div>
                     </div>
                    <!-- <div class="actions" data-ng-if="systemInfo.permission.staff_maintenance == true">
@@ -95,7 +95,7 @@
 
                             <li>
                                 <a data-target="#tab_job9698" data-toggle="tab">
-                                    等待列印(補/退單) </a>
+                                    等待列印(補/換/退單) </a>
                             </li>
 
                             <!--<li>
@@ -150,7 +150,7 @@
                                                             等待下載
                                                         </span>
                                         </td>
-                                        <td><input type="checkbox" data-ng-model="checkid[k]['collect']" /></td>
+                                        <td><input type="checkbox" data-ng-model="checkid[q.job_id]['collect']" /></td>
                                     <tr>
 
                                     </tbody>
@@ -172,15 +172,16 @@
                                         <th width="15%">客戶名稱</th>
                                         <th width="5%">車號</th>
                                         <th width="5%">車線</th>
-                                        <th width="15%">列印時間</th>
+                                        <th width="15%">建立時間</th>
                                         <th width="10%">送貨日期</th>
 
                                         <th width="10%">用戶</th>
                                         <th width="20%">現時狀態</th>
+                                        <th width="5%">選取</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr data-ng-repeat="q in job9698">
+                                    <tr data-ng-repeat="(k,q) in job9698">
                                         <td>{{q.job_id}}</td>
                                         <td>{{q.invoiceId}}</td>
                                         <td>{{q.customerName_chi}}</td>
@@ -203,6 +204,7 @@
                                                             等待下載
                                                         </span>
                                         </td>
+                                        <td><input type="checkbox" data-ng-model="checkid[q.job_id]['collect']" /></td>
                                     <tr>
 
                                     </tbody>
