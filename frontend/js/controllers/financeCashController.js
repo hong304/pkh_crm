@@ -251,7 +251,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             if(item.invoiceId==$scope.filterData.invoiceId)
                 owe = item.owe;
         });
-     
+
 if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != owe) || ($scope.filterData.paid>0 && $scope.filterData.paid != owe) ){
 
         bootbox.dialog({
