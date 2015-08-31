@@ -132,9 +132,7 @@ class PaymentController extends BaseController {
                     $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['paid'],'discount_taken'=>$discount_taken]);
                 }else
                     $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['paid']]);
-            }
-
-            if($paidinfo['cashAmount']!=0){
+            }else if($paidinfo['cashAmount']!=0){
                 $payment1 = new Payment();
                 $payment1->paymentType = 'COD';
                 $payment1->bankCode = 'cash';
@@ -159,6 +157,10 @@ class PaymentController extends BaseController {
                 }else{
                     $i->payment()->attach($payment1->id, ['amount' => $i->amount, 'paid' => $paidinfo['cashAmount']]);
                 }
+            }else if($paidinfo['amount'] ==0 && $paidinfo['cashAmount']==0){
+                $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
+                 $i->invoiceStatus = Input::get('paymentStatus');
+                  $i->save();
             }
 
         }

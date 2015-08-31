@@ -317,7 +317,8 @@ if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != $scope.pay
                 }
             }
         });
-}else if($scope.filterData.paid==0 || $scope.filterData.cashAmount ==0){
+}else if($scope.filterData.paid==0 && $scope.filterData.cashAmount ==0){
+    console.log('hi');
     $http({
         method: 'POST',
         url: query,

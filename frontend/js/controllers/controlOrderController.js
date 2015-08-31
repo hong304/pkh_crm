@@ -429,6 +429,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     $scope.order.status = inf.invoiceStatus;
 
                     if(!$scope.systeminfo.permission.sa_up && $scope.order.status > 3){
+                        $scope.allowSubmission = false;
                         return false;
                     }
 
