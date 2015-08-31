@@ -234,7 +234,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         $http.post(target, {customerId: $scope.order.clientId, deliveryDate:$scope.order.deliveryDate})
             .success(function(res, status, headers, config){
                 $scope.sameDayInvoice = res;
-                //console.log(res);
+                console.log(res);
             });
     }
     // Recalculate the total amount if any part of the product object has been changed.
@@ -407,6 +407,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 boxed: true,
                 message: '下載資料中...'
             });
+
+
+
             // get full invoice information
             var target = endpoint + '/getSingleInvoice.json';
 
@@ -424,6 +427,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     $scope.order.deliveryDate = inf.deliveryDate_date;
                     $scope.order.dueDate = inf.dueDateDate;
                     $scope.order.status = inf.invoiceStatus;
+
+                    if(!$scope.systeminfo.permission.sa_up && $scope.order.status > 3){
+                        return false;
+                    }
 
                     $scope.order.zoneId = inf.zoneId;
                     $scope.order.zoneName = data.entrieinfo;

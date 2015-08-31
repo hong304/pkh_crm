@@ -442,7 +442,7 @@ class OrderController extends BaseController
 
         $deliveryDate = strtotime($deliveryDate);
 
-        $invoice_id = Invoice::where('customerId', $customerId)->where('deliveryDate', $deliveryDate)->orderBy('invoiceId', 'desc')->first();
+        $invoice_id = Invoice::where('customerId', $customerId)->where('deliveryDate', $deliveryDate)->whereIn('invoiceStatus',[1,2])->orderBy('invoiceId', 'desc')->first();
 
         // pd($invoice_id);
 
