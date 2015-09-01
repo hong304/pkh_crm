@@ -78,6 +78,16 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     d.setMonth( d.getMonth( ) - 1 );
     var lastMonth = d.getMonth( ) + 1;
 
+    var y_day = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
+
+    var ymonth = y_day.getMonth() + 1;
+    var yyear = y_day.getFullYear();
+    var yday = y_day.getDate();
+
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+
     $('#deliverydate').datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
@@ -167,7 +177,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                 orientation: "left",
                 autoclose: true
             });
-            $("#date-picker").datepicker( "setDate", year + '-' + month + '-' + day);
+            $("#date-picker").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
         })
 
     }
