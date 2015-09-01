@@ -214,7 +214,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
             'clientId'		:	'0',
             'status'		:	'0',
             'zone'			:	'',
-            deliverydate : year+'-'+month+'-'+yday,
+            deliverydate : yyear+'-'+ymonth+'-'+yday,
             deliverydate2 : year+'-'+month+'-'+day,
             'created_by'	:	'0',
             'invoiceNumber' :	'',
