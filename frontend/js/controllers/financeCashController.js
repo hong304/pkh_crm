@@ -150,13 +150,12 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.editInvoicePayment = function(invoiceId,customerId)
     {
 
-        $scope.filterData.customerId = customerId;
         $scope.filterData.invoiceId = invoiceId;
 
         $http.post(query, {mode: "paymentHistory", customerId: customerId,invoiceId:invoiceId})
             .success(function(res){
                 $scope.paymentDetails = res;
-                console.log(res);
+
             });
 
         $('#invoicePayment').modal('show');
@@ -242,7 +241,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         $timeout.cancel(fetchDataTimer);
         fetchDataTimer = $timeout(function () {
             $scope.updateDataSet();
-        }, fetchDataDelay);
+        }, 1000);
 
     }
 
