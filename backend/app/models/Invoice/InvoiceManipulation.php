@@ -481,6 +481,7 @@ class InvoiceManipulation {
             //$q->file_path = $url;
             $q->target_path = $x->zoneId;
             $q->insert_time = time();
+            $q->invoiceStatus = $x->invoiceStatus;
             if($x->invoiceStatus == '1'){
                 $q->status = "dead:pending";
             }else

@@ -260,15 +260,24 @@ if(Input::get('group.id')!='')
             $jobs = PrintQueue::wherein('job_id', $jobId)->get();
 
             foreach($jobs as $vv){
-                $groupIds[$vv->target_path][]=$vv->invoiceId;
+                if($vv->invoiceStatus==2)
+                     $groupIds[2][$vv->target_path][]=$vv->invoiceId;
+                else
+                    $groupIds[1][$vv->target_path][]=$vv->invoiceId;
             }
 
-          //  pd($groupIds);
-            foreach($groupIds as $gg){
+if(isset($groupIds[2])){
+            foreach($groupIds[2] as $gg){
                 $this->mergeImage($gg);
                 Invoice::wherein('invoiceId',$gg)->update(['printed'=>1]);
             }
             PrintQueue::wherein('job_id', $jobId)->update(['target_time'=>time(),'status'=>'downloaded;passive']);
+}else if($groupIds[1]){
+    foreach($groupIds[1] as $gg)
+        $this->mergeImageOthers($gg);
+
+}
+
 
         }
 

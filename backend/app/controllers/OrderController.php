@@ -251,6 +251,7 @@ class OrderController extends BaseController
                 $query->where('Invoice.invoiceStatus', '2')
                     //->orwhere('Invoice.invoiceStatus','4')
                     ->orwhere('Invoice.invoiceStatus', '97')
+                    ->orwhere('Invoice.invoiceStatus', '96')
                     ->orwhere('Invoice.invoiceStatus', '98');
             })->count();
 
