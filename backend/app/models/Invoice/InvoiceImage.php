@@ -181,6 +181,16 @@ $debug = 0;
                 $font->size(30);
                 $font->color('#000000');
             });
+if($i['invoiceStatus']=='96' || $i['invoiceStatus']=='97' ||$i['invoiceStatus']=='98')
+    $status = $i['invoiceStatusText'].'單';
+else
+    $status = '';
+            $this->image[$p]->text($status, 745, 320, function($font) use($font_file) {
+                $font->file($font_file);
+                $font->size(60);
+                $font->color('#000000');
+            });
+
     
             $this->image[$p]->text("車線 " .str_pad($i['zoneId'], 2, '0', STR_PAD_LEFT) ."/".str_pad($i['routePlanningPriority'], 2, '0', STR_PAD_LEFT), 1002, 350, function($font) use($font_file) {
                 $font->file($font_file);
