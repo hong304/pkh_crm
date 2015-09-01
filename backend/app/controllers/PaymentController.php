@@ -193,23 +193,20 @@ class PaymentController extends BaseController {
                 }
 
             // status
-            if($filter['invoiceNumber'] == '')
+            if($filter['invoiceNumber'] == '' || $filter['customerId']=='' || $filter['customerName']=='')
             {
                 $invoice->whereBetween('invoice.deliverydate', [strtotime($filter['deliverydate']),strtotime($filter['deliverydate2'])]);
                 $invoice->where('invoiceStatus', $filter['status']);
 
-            }else{
+            }else if ($filter['invoiceNumber'] != ''){
                 $invoice->where('invoiceId', 'LIKE', '%'.$filter['invoiceNumber'].'%');
-
-            }
-                $invoice->where('paymentTerms','=',1);
-
-            if($filter['customerId']!='' || $filter['customerName']!='')
+            }else if($filter['customerId']!='' || $filter['customerName']!=''){
                 $invoice->WhereHas('client', function($q) use($filter)
                 {
                     $q->where('customerId', 'LIKE', '%'.$filter['customerId'].'%')->where('customerName_chi', 'LIKE', '%'.$filter['customerName'].'%');
                 });
-
+            }
+                $invoice->where('paymentTerms','=',1);
             // created by
 
             $invoices = $invoice->orderby('deliveryDate', 'asc');
