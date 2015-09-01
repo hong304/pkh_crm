@@ -19,6 +19,38 @@
 
         </div>
 
+
+
+        <!-- Separate Client -->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">客戶資料</span>
+                </div>
+
+            </div>
+        <div class="portlet-body">
+            <div class="form-group ">
+                <div class="col-md-12 alert alert-success alert-borderless">
+                    <div class="input-icon right">
+                        <i class="icon-exclamation-sign"></i>
+                        <input autocomplete="off" ng-model="filterData.customerId" data-ng-change="updateCustomer();" debounce="500" immediate="true"  id="keywordId"
+                               type="text" placeholder="客戶編號" class="form-control"
+                                />
+                    </div>
+                    <div class="input-icon right">
+                        <i class="icon-exclamation-sign"></i>
+                        <input autocomplete="off" ng-model="filterData.customerName" data-ng-change="updateCustomer();" debounce="500" immediate="true"  id="name"
+                               type="text" placeholder="名稱" class="form-control"
+                                />
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+</div>
         <!-- Client
         <div ng-include="'/views/module/search_client.html'" ></div> -->
 

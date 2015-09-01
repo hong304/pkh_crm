@@ -60,7 +60,9 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         'amount' : '0',
         'paid' : '0',
         'no' : '',
-        'remain' : 0
+        'remain' : 0,
+        'customerId':'',
+        'customerName':''
     };
 
 
@@ -242,6 +244,12 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             $scope.updateDataSet();
         }, fetchDataDelay);
 
+    }
+
+    $scope.updateCustomer = function(){
+        fetchDataTimer = $timeout(function () {
+            $scope.updateDataSet();
+        }, fetchDataDelay);
     }
 
     $scope.autoPost = function(){

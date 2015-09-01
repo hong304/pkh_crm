@@ -204,6 +204,12 @@ class PaymentController extends BaseController {
             }
                 $invoice->where('paymentTerms','=',1);
 
+            if($filter['customerId']!='' || $filter['customerName']!='')
+                $invoice->WhereHas('client', function($q) use($filter)
+                {
+                    $q->where('customerId', 'LIKE', '%'.$filter['customerId'].'%')->where('customerName_chi', 'LIKE', '%'.$filter['customerName'].'%');
+                });
+
             // created by
 
             $invoices = $invoice->orderby('deliveryDate', 'asc');
