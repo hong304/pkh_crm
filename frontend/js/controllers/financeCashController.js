@@ -265,7 +265,12 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                 owe = item.owe;
         });
 
-if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != owe) || ($scope.filterData.paid>0 && $scope.filterData.paid != owe) ){
+        if($scope.filterData.no != ''){
+            $scope.filterData.amount = owe;
+            $scope.filterData.paid = owe;
+        }
+
+        if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != owe) || ($scope.filterData.paid>0 && $scope.filterData.paid != owe) ){
 
         bootbox.dialog({
             message: "支付數目與尚欠款項有差異，請按下列選擇",
