@@ -1,7 +1,5 @@
 'use strict';
 
-// due to datatable limitation, call scope function from outside javascript function
-// ref: http://jsfiddle.net/austinnoronha/nukRe/light/
 function viewInvoice(invoiceId)
 {
 	var scope = angular.element(document.getElementById("queryInfo")).scope();
