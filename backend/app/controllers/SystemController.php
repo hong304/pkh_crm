@@ -167,4 +167,38 @@ class SystemController extends BaseController {
 
     }
 
+    public function NormalizedUnit($productId,$qty,$unit){
+
+            $v = Product::where('productId',$productId)->first();
+
+            $inner = ($v['productPacking_inner']==false) ? 1:$v['productPacking_inner'];
+            $unit_packing = ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit'];
+
+            if ($unit == 'carton') {
+                $return = $qty*$inner*$unit_packing;
+            }elseif($unit == 'inner') {
+                $return = $qty*$unit_packing;
+            }elseif($unit == 'unit') {
+                $return = $qty;
+            }
+
+        return $return;
+    }
+
+    public function finalUnit($productId,$qty,$unit){
+
+        $v = Product::where('productId',$productId)->first();
+
+        $inner = ($v['productPacking_inner']==false) ? 1:$v['productPacking_inner'];
+        $unit_packing = ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit'];
+
+        if ($unit == 'carton') {
+            $return = $qty*$inner*$unit_packing;
+        }elseif($unit == 'inner') {
+            $return = $qty*$unit_packing;
+        }elseif($unit == 'unit') {
+            $return = $qty;
+        }
+
+    }
 }

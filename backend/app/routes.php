@@ -205,6 +205,12 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
+$c = new SystemController();
+
+    pd($c->normalizedUnit('A001','5','carton'));
+
+    die();
+
     $first_date = shipping::orderBy('etaDate')->first();
 
     $s = shipping::where('actualDate','!=','')->get();
