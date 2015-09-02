@@ -388,6 +388,7 @@ class InvoiceImage
             });
         }
 
+        
         if ($i['invoiceStatus'] == 98)
             $i['amount'] *= -1;
 
