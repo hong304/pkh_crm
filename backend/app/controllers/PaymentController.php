@@ -205,6 +205,7 @@ class PaymentController extends BaseController {
                 {
                     $q->where('customerId', 'LIKE', '%'.$filter['customerId'].'%')->where('customerName_chi', 'LIKE', '%'.$filter['customerName'].'%');
                 });
+                $invoice->whereIn('invoiceStatus', [2,20]);
             }
                 $invoice->where('paymentTerms','=',1);
             // created by
