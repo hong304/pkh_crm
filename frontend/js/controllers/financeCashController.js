@@ -546,7 +546,7 @@ var i =0;
             'zone'			:	'',
             'deliverydate'	:	'last day',
             'created_by'	:	'0',
-            'invoiceNumber' :	'',
+            'invoiceNumber' :	''
         };
         $scope.updateDataSet();
     }
