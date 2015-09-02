@@ -265,7 +265,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                 owe = item.owe;
         });
 
-        if($scope.filterData.no != ''){
+        if($scope.filterData.no != '' && $scope.filterData.amount == 0){
             $scope.filterData.amount = owe;
             $scope.filterData.paid = owe;
         }
