@@ -432,23 +432,8 @@ class PrintQueueController extends BaseController
 
 
         Invoice::wherein('invoiceId', $Ids)->update(['printed' => 1]);
-        $updatepqs = PrintQueue::wherein('PrintQueue.invoiceId', $Ids)->wherein('status', ['queued', 'fast-track'])
-            ->leftJoin('Invoice', function ($join) {
-                $join->on('PrintQueue.invoiceId', '=', 'Invoice.invoiceId');
-            })
-            ->where(function ($query) {
-                $query->where('Invoice.invoiceStatus', '97')
-                    ->orwhere('Invoice.invoiceStatus', '96')
-                    ->orwhere('Invoice.invoiceStatus', '98');
-            })->where('Invoice.deliveryDate', strtotime("00:00:00"))
-            ->where('Invoice.shift', $this->shift)
-            ->get();
 
-        foreach ($updatepqs as $updatepq) {
-            $updatepq->target_time = time();
-            $updatepq->status = 'downloaded;passive';
-            $updatepq->save();
-        }
+        PrintQueue::wherein('invoiceId', $Ids)->update(['target_time' => time(), 'status' => 'downloaded;passive']);
 
         $print_log = new Printlog();
         $print_log->file_path = $filename;
