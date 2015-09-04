@@ -206,14 +206,18 @@ class Invoice_CashReceiptSummary {
         })->get();
 
 
+
+
         foreach($invoices as $invoiceQ){
             foreach($invoiceQ->payment as $v1){
                 if($v1->start_date == date('Y-m-d',$this->_date)){
-                    $previous[$v->zoneId] = (isset($previous[$v->zoneId]))?$previous[$v->zoneId]:0;
-                    $previous[$v->zoneId] += $v1->pivot->paid;
+                    $previous[$invoiceQ->zoneId] = (isset($previous[$invoiceQ->zoneId]))?$previous[$invoiceQ->zoneId]:0;
+                    $previous[$invoiceQ->zoneId] += $v1->pivot->paid;
                 }
             }
         }
+
+
 
         $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',$this->_date)->get();
         $NoOfInvoices = [];
