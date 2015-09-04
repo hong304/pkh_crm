@@ -21,6 +21,7 @@ class OrderController extends BaseController
     public function jsonNewOrder()
     {
         $itemIds = [];
+        $newItems = [];
         $product = Input::get('product');
 
         // pd($product);
@@ -32,13 +33,15 @@ class OrderController extends BaseController
         $ci = new InvoiceManipulation($order['invoiceId']);
         $ci->setInvoice($order);
 
-        // pd($product);
+
         $have_item = false;
         foreach ($product as $p) {
             if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
                 $itemIds[] = $p['dbid'];
-            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
+
+            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] > 0){
                 $have_item = true;
+            }
         }
 
         if ($order['invoiceId'] != '') {
@@ -50,10 +53,16 @@ class OrderController extends BaseController
                     'invoiceItemIds' => 0,
                     'message' => '未有下單貨品',
                 ];
-            else if (count($itemIds) == 0)
-                InvoiceItem::where('invoiceId', $order['invoiceId'])->delete();
-            else
-                InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->delete();
+            else if (count($itemIds) == 0){
+                $i = InvoiceItem::where('invoiceId', $order['invoiceId']);
+                $deletedItemFromDB = $i->get()->toArray();
+                $i->delete();
+            }else{
+                $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId']);
+                $deletedItemFromDB = $i->get()->toArray();
+                $i->delete();
+            }
+            pd($deletedItemFromDB);
 
         } else {
             if (!$have_item)
