@@ -705,6 +705,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 // $scope.getLastItem(code, $scope.order.clientId, i, 0);
                 if($scope.allLastItemPrice[code.toUpperCase()]) {
                     $scope.lastitem = $scope.allLastItemPrice[code.toUpperCase()];
+                    console.log($scope.lastitem);
                     if( $scope.lastitem.qty > 0){
                         $scope.product[i].unitprice =  $scope.lastitem.price;
                         var pos = $scope.product[i]['availableunit'].map(function(e) {

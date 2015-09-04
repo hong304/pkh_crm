@@ -362,6 +362,7 @@ class InvoiceManipulation {
                         $lastitem->discount = $i['productDiscount'];
                         $lastitem->updated_at = time();;
                     }
+                    $lastitem->deliveryDate = $this->temp_invoice_information['deliveryDate'];
                     $lastitem->save();
                 }
 
