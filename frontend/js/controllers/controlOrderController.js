@@ -234,7 +234,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         $http.post(target, {customerId: $scope.order.clientId, deliveryDate:$scope.order.deliveryDate})
             .success(function(res, status, headers, config){
                 $scope.sameDayInvoice = res;
-                //console.log(res);
+                console.log(res);
             });
     }
     // Recalculate the total amount if any part of the product object has been changed.
@@ -365,6 +365,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 $scope.instatusmsg = '訂單需要批核';
             }else if($stateParams.instatus=='98'){
                 $scope.instatusmsg = '已新增退貨單';
+            }else if($stateParams.instatus=='96'){
+                $scope.instatusmsg = '已新增補貨單';
+            }else if($stateParams.instatus=='97'){
+                $scope.instatusmsg = '已新增換貨單';
             }
             Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
@@ -403,6 +407,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 boxed: true,
                 message: '下載資料中...'
             });
+
+
+
             // get full invoice information
             var target = endpoint + '/getSingleInvoice.json';
 
@@ -420,6 +427,11 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                     $scope.order.deliveryDate = inf.deliveryDate_date;
                     $scope.order.dueDate = inf.dueDateDate;
                     $scope.order.status = inf.invoiceStatus;
+
+                    if(!$scope.systeminfo.permission.sa_up && $scope.order.status > 3){
+                        $scope.allowSubmission = false;
+                        return false;
+                    }
 
                     $scope.order.zoneId = inf.zoneId;
                     $scope.order.zoneName = data.entrieinfo;
@@ -639,7 +651,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             var availableunit = [];
             //console.log(item);
 
-            if($scope.order.status == '98' || $scope.order.status == '96') {
+            if($scope.order.status == '98' || $scope.order.status == '96' || $scope.order.status == '97') {
                 if(item.productPackingName_unit != '')
                     availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
                 if(item.productPackingName_inner != '')
@@ -693,6 +705,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
                 // $scope.getLastItem(code, $scope.order.clientId, i, 0);
                 if($scope.allLastItemPrice[code.toUpperCase()]) {
                     $scope.lastitem = $scope.allLastItemPrice[code.toUpperCase()];
+                    console.log($scope.lastitem);
                     if( $scope.lastitem.qty > 0){
                         $scope.product[i].unitprice =  $scope.lastitem.price;
                         var pos = $scope.product[i]['availableunit'].map(function(e) {
@@ -902,6 +915,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             $scope.order.invoiceRemark = '退貨單'
         if($scope.order.status == '96')
             $scope.order.invoiceRemark = '補貨單';
+        if($scope.order.status == '97')
+            $scope.order.invoiceRemark = '換貨單';
         if($scope.order.status == '2')
             $scope.order.invoiceRemark = ''
     }

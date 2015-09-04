@@ -46,6 +46,18 @@
 							</div>
 						</div>
                                             
+                                            <div class="form-group"  data-ng-if="systemInfo.permission.allow_edit == true">
+							<label class="col-md-2 control-label">地區</label>
+							<div class="col-md-10">
+                                                                <select class="form-control" 
+									ng-model="customerInfo_def.location" 
+									class="form-control" id="countrySelect">	
+                                                                        <option value="1">本地</option>
+									<option value="2">海外</option>
+								</select>
+							</div>
+						</div>
+                                            
 						<div class="form-group" data-ng-if="systemInfo.permission.allow_edit == true">
 							<label class="col-md-2 control-label">名稱 * </label>
 							<div class="col-md-10">

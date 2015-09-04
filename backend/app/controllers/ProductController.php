@@ -209,8 +209,10 @@ class ProductController extends BaseController {
         if($invoices)
         {
             // get all items from invoices db
-            $products = InvoiceItem::wherein('invoiceId', $invoiceId)
-                ->orderBy('created_at', 'desc')
+            $products = InvoiceItem::wherein('Invoice.invoiceId', $invoiceId)->leftJoin('invoice', function($join) {
+                $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
+            })
+                ->orderBy('deliveryDate', 'desc')
                 ->with('productDetail')
                 ->get();
             foreach($products as $product)

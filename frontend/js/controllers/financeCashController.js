@@ -1,6 +1,14 @@
 'use strict';
 
 
+function editCountry(id)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.editCountry(id);
+    });
+}
+
 function editInvoicePayment(invoiceId,customerId)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
@@ -31,7 +39,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     var fetchDataDelay = 500;
 
     $scope.payment = [];
-    $scope.discount = [];
+    $scope.discount = 0;
     $scope.invoicepaid = [];
     $scope.invoiceStructure = {
         'id' :'',
@@ -52,7 +60,9 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         'amount' : '0',
         'paid' : '0',
         'no' : '',
-        'remain' : 0
+        'remain' : 0,
+        'customerId':'',
+        'customerName':''
     };
 
 
@@ -64,18 +74,27 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     if (month < 10) { month = '0' + month; }
     var year = nextDay.getFullYear();
 
-
-
+    var d = new Date();
+    d.setMonth( d.getMonth( ) - 1 );
+    var lastMonth = d.getMonth( ) + 1;
 
     $('#deliverydate').datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
-    $("#deliverydate").datepicker( "setDate", year + '-' + month + '-' + day);
+    $("#deliverydate").datepicker( "setDate", d.getFullYear() + '-' + lastMonth + '-' + d.getDate());
 
-    $scope.filterData.receiveDate = year+'-'+month+'-'+day;
-    $scope.filterData.deliverydate = year+'-'+month+'-'+day;
+    $scope.filterData.deliverydate = d.getFullYear()+'-'+lastMonth+'-'+d.getDate();
+
+
+    $("#deliverydate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+    $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
 
 
 
@@ -107,15 +126,42 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         Metronic.unblockUI();
     });
 
+    $scope.editCountry = function(id){
+        $http.post(endpoint + "/delPayment.json", { id: id})
+            .success(function(res, status, headers, config){
+                $scope.del = res;
+                if(res) {
+                    $('#invoiceDetails').modal('hide');
+                    Metronic.alert({
+                        container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                        place: 'prepend', // append or prepent in container
+                        type: 'success',  // alert's type
+                        message: '<span style="font-size:16px;">刪除成功</span>',  // alert's message
+                        close: true, // make alert closable
+                        reset: true, // close all previouse alerts first
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 0, // auto close after defined seconds
+                        icon: 'warning' // put icon before the message
+                    });
+                }
+            });
+    }
+
     $scope.editInvoicePayment = function(invoiceId,customerId)
     {
 
-        $scope.filterData.customerId = customerId;
+        var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
+
+        var ymonth = start_date.getMonth() + 1;
+        var yyear = start_date.getFullYear();
+        var yday = start_date.getDate();
+
         $scope.filterData.invoiceId = invoiceId;
 
         $http.post(query, {mode: "paymentHistory", customerId: customerId,invoiceId:invoiceId})
             .success(function(res){
                 $scope.paymentDetails = res;
+
             });
 
         $('#invoicePayment').modal('show');
@@ -127,7 +173,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                 orientation: "left",
                 autoclose: true
             });
-            $("#date-picker").datepicker( "setDate", year + '-' + month + '-' + day);
+            $("#date-picker").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
         })
 
     }
@@ -166,6 +212,24 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     }
 
+    $scope.sendRealFile = function()
+    {
+       /* $http({
+            method: 'POST',
+            url: endpoint + '/getPaymentDetails.json',
+            data: {filterData:$scope.filterData,mode:'excel'}
+        }).success(function (res) {
+
+        });*/
+        var queryObject = {
+            filterData	:	$scope.filterData
+        };
+         var queryString = $.param( queryObject );
+          window.open(endpoint + "/getPaymentDetails.json?" + queryString);
+
+
+    }
+
     $scope.updateInvoiceNumber = function()
     {
         $scope.cheque = {
@@ -183,35 +247,145 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         $timeout.cancel(fetchDataTimer);
         fetchDataTimer = $timeout(function () {
             $scope.updateDataSet();
-        }, fetchDataDelay);
+        }, 1000);
 
+    }
+
+    $scope.updateCustomer = function(){
+        fetchDataTimer = $timeout(function () {
+            $scope.updateDataSet();
+        }, fetchDataDelay);
     }
 
     $scope.autoPost = function(){
 
-        console.log($scope.filterData);
-
-     $http({
-            method: 'POST',
-            url: query,
-            data: {paidinfo:$scope.filterData,mode:'posting'}
-        }).success(function () {
-         $('#invoicePayment').modal('hide');
-            Metronic.alert({
-                 container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
-                 place: 'prepend', // append or prepent in container
-                 type: 'success',  // alert's type
-                 message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
-                 close: true, // make alert closable
-                 reset: true, // close all previouse alerts first
-                 focus: true, // auto scroll to the alert after shown
-                 closeInSeconds: 0, // auto close after defined seconds
-                 icon: 'warning' // put icon before the message
-             });
-
-             $scope.updateDataSet();
+        var owe = 0;
+        $scope.paymentDetails.forEach(function(item) {
+            if(item.invoiceId==$scope.filterData.invoiceId)
+                owe = item.owe;
         });
 
+        if($scope.filterData.no != '' && $scope.filterData.amount == 0){
+            $scope.filterData.amount = owe;
+            $scope.filterData.paid = owe;
+        }
+
+        if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != owe) || ($scope.filterData.paid>0 && $scope.filterData.paid != owe) ){
+
+        bootbox.dialog({
+            message: "支付數目與尚欠款項有差異，請按下列選擇",
+            title: "提交付款",
+            buttons: {
+
+                main: {
+                    label: " 給予折扣",
+                    className: "btn-primary",
+                    callback: function() {
+
+                        $http({
+                            method: 'POST',
+                            url: query,
+                            data: {paidinfo:$scope.filterData,mode:'posting',discount:$scope.paymentDetails[0]['owe'],paymentStatus:'30'}
+                        }).success(function () {
+                            $('#invoicePayment').modal('hide');
+                            Metronic.alert({
+                                container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                                place: 'prepend', // append or prepent in container
+                                type: 'success',  // alert's type
+                                message: '<span style="font-size:16px;">提交成功(給予折扣)</span>',  // alert's message
+                                close: true, // make alert closable
+                                reset: true, // close all previouse alerts first
+                                focus: true, // auto scroll to the alert after shown
+                                closeInSeconds: 0, // auto close after defined seconds
+                                icon: 'warning' // put icon before the message
+                            });
+                            $scope.updateDataSet();
+                        });
+
+                    }
+                },
+
+                success: {
+                    label: " 部分支付",
+                    className: "green",
+                    callback: function() {
+                        $http({
+                            method: 'POST',
+                            url: query,
+                            data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'20'}
+                        }).success(function () {
+                            $('#invoicePayment').modal('hide');
+                            Metronic.alert({
+                                container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                                place: 'prepend', // append or prepent in container
+                                type: 'success',  // alert's type
+                                message: '<span style="font-size:16px;">部分支付成功</span>',  // alert's message
+                                close: true, // make alert closable
+                                reset: true, // close all previouse alerts first
+                                focus: true, // auto scroll to the alert after shown
+                                closeInSeconds: 0, // auto close after defined seconds
+                                icon: 'warning' // put icon before the message
+                            });
+                            $scope.updateDataSet();
+                        });
+
+                    }
+                },
+
+                danger: {
+                    label: "返回",
+                    className: "red",
+                    callback: function() {
+
+                    }
+                }
+            }
+        });
+}else if($scope.filterData.paid==0 && $scope.filterData.cashAmount ==0){
+
+    $http({
+        method: 'POST',
+        url: query,
+        data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'20'}
+    }).success(function () {
+        $('#invoicePayment').modal('hide');
+        Metronic.alert({
+            container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+            place: 'prepend', // append or prepent in container
+            type: 'success',  // alert's type
+            message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+            close: true, // make alert closable
+            reset: true, // close all previouse alerts first
+            focus: true, // auto scroll to the alert after shown
+            closeInSeconds: 0, // auto close after defined seconds
+            icon: 'warning' // put icon before the message
+        });
+        $scope.updateDataSet();
+    });
+}else{
+    $http({
+        method: 'POST',
+        url: query,
+        data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'30'}
+    }).success(function () {
+        $('#invoicePayment').modal('hide');
+        Metronic.alert({
+            container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+            place: 'prepend', // append or prepent in container
+            type: 'success',  // alert's type
+            message: '<span style="font-size:16px;">成功全數支付</span>',  // alert's message
+            close: true, // make alert closable
+            reset: true, // close all previouse alerts first
+            focus: true, // auto scroll to the alert after shown
+            closeInSeconds: 0, // auto close after defined seconds
+            icon: 'warning' // put icon before the message
+        });
+        $scope.updateDataSet();
+    });
+}
+/*
+
+ */
        // $scope.getPaymentInfo('autopost');
     }
 
@@ -280,7 +454,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             dataTable: { // here you can define a typical datatable settings from http://datatables.net/usage/options
 
 
-                "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
+                "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
 
                 "lengthMenu": [
                     [20, 50],
@@ -372,7 +546,7 @@ var i =0;
             'zone'			:	'',
             'deliverydate'	:	'last day',
             'created_by'	:	'0',
-            'invoiceNumber' :	'',
+            'invoiceNumber' :	''
         };
         $scope.updateDataSet();
     }

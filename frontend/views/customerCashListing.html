@@ -2,6 +2,55 @@
 
 
     <div class="col-md-2">
+
+        <!--export excel-->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-red-sunglo bold uppercase">匯出Excel</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <button class="btn  blue-steel btn-block" data-ng-click="sendRealFile();">匯出</button>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <!-- Separate Client -->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">客戶資料</span>
+                </div>
+
+            </div>
+        <div class="portlet-body">
+            <div class="form-group ">
+                <div class="col-md-12 alert alert-success alert-borderless">
+                    <div class="input-icon right">
+                        <i class="icon-exclamation-sign"></i>
+                        <input autocomplete="off" ng-model="filterData.customerId" data-ng-change="updateCustomer();" debounce="500" immediate="true"  id="keywordId"
+                               type="text" placeholder="客戶編號" class="form-control" select-on-click
+                                />
+                    </div>
+                    <div class="input-icon right">
+                        <i class="icon-exclamation-sign"></i>
+                        <input autocomplete="off" ng-model="filterData.customerName" data-ng-change="updateCustomer();" debounce="500" immediate="true"  id="name"
+                               type="text" placeholder="名稱" class="form-control" select-on-click
+                                />
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+</div>
         <!-- Client
         <div ng-include="'/views/module/search_client.html'" ></div> -->
 
@@ -69,8 +118,15 @@
             <!-- date-picker -->
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
-                    <div class="input-group date" id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                    <div class="input-group  date " id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
                         <input type="text" class="form-control" readonly ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                    </div>
+                    至
+                    <div class="input-group  date " id="deliverydate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate2" data-ng-change="updateDelvieryDate();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
@@ -78,6 +134,7 @@
 
                 </div>
             </div>
+
         </div>
 
 
@@ -93,7 +150,7 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-cogs font-green-sharp"></i>
-                            <span class="caption-subject font-green-sharp bold uppercase">訂單列表</span>
+                            <span class="caption-subject font-green-sharp bold uppercase">現金單列表</span>
                         </div>
                     </div>
                     <div class="portlet-body">

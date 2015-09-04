@@ -152,6 +152,12 @@ Route::group(array('before' => 'auth'), function()
     Route::any('getClearance.json','PaymentController@getClearance');
     Route::any('querryCashCustomer.json','PaymentController@querryCashCustomer');
 
+
+    //Cash Sales
+    Route::any('getPaymentDetails.json','financeCashController@getPaymentDetails');
+    Route::post('delPayment.json','financeCashController@delPayment');
+
+
     //Data analysis
     Route::any('/searchProductDataProduct.json', 'DataWarehouseController@jsonSearchDataProduct');
 
@@ -166,6 +172,13 @@ Route::group(array('before' => 'auth'), function()
 	  //Supplier
     Route::get('/getChoice.json','SupplierController@jsonChoice');
     Route::get('/getCurrency.json','SupplierController@jsonCurrency');
+    
+        //Shipping
+     Route::post('/jsonSelectPo.json','shippingController@jsonSelectPo');
+     Route::post('/jsonNewShip.json','shippingController@newShipment');
+     Route::post('/jsonQueryShip.json','shippingController@jsonQueryShip');
+     Route::post('/jsonGetSingleShip.json','shippingController@jsonGetSingleShip');
+     Route::post('/deleteShip.json','shippingController@deleteShip');
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');
@@ -192,34 +205,67 @@ Route::get('/json_decode', function(){
 
 Route::get('/test', function(){
 
-    invoiceitem::where('invoiceId',$i->invoiceId)->get()->delete();
+$c = new SystemController();
+
+    pd($c->normalizedUnit('A001','5','carton'));
 
     die();
-    $string = "鳳攸北街益發大廈14號(前裕景威) 鳳攸北街益發大廈14";
-    $strlen = mb_strlen($string);
-    while ($strlen) {
-        $array[] = mb_substr($string,0,1,"UTF-8");
-        $string = mb_substr($string,1,$strlen,"UTF-8");
-        $strlen = mb_strlen($string);
-    }
-    $bb= '';
-    foreach($array as $k => $v){
-        if($k % 16 == 0 && $k != 0)
-             $bb .= $v."\n";
-        else
-            $bb .= $v;
-    }
-  //  $address_splits = mb_substr("鳳攸北街益發大廈14號(前裕景威) 鳳攸北街益發大廈14", 10,"UTF-8");
-    pd($bb);
-   // $address = implode("\n", $address_splits);
 
-    // $i = Invoice::with('payment')->where('invoiceId','I1507-038823')->get();
-  //  pd($i);
+    $first_date = shipping::orderBy('etaDate')->first();
 
- /* $result = Invoice::select(DB::RAW('count(*)'),'deliveryDate','zoneId')->where('invoiceStatus','!=','99')->groupBy('zoneId','deliveryDate')->orderBy('deliveryDate','asc')->get()->toArray();
-    foreach ($result as $v) {
-        echo $v['deliveryDate_date'].":".$v['zoneText'].":".$v['count(*)']."<br>";
-   }*/
+    $s = shipping::where('actualDate','!=','')->get();
+    $eta = shipping::whereNull('actualDate')->get();
+   // pd($s->toArray());
+//pd($eta->toArray());
+
+    $date1 =strtotime($first_date->etaDate);
+    $sDate = $date1+24*60*60*6;
+    while ($date1 <= $sDate) {
+        $date[] = date('Y-m-d',$date1);
+        foreach($s as $v){
+            if($v->actualDate == date('Y-m-d',$date1)){
+                $sarr[$v->shippingId][date('Y-m-d',$date1)]['no'] = $v->container_numbers;
+                $sarr[$v->shippingId][date('Y-m-d',$date1)]['mode'] = 'actual';
+            }
+        }
+
+        foreach($eta as $v){
+                if ($v->etaDate == date('Y-m-d',$date1)){
+                    $sarr[$v->shippingId][date('Y-m-d',$date1)]['no'] = $v->container_numbers;
+                    $sarr[$v->shippingId][date('Y-m-d',$date1)]['mode'] = 'eta';
+                }
+        }
+        $date1 = $date1+24*60*60;
+    }
+
+    pd($sarr);
+   ?>
+
+    <table><tr><td></td>
+            <?php foreach($date as $v){
+        echo '<td>'.$v.'</td>';
+    }
+      ?>  </tr>
+    <?php foreach($sarr as $kk => $vv){
+        echo '<tr>';
+        echo '<td>'.$kk.'</td>';
+        for($i=0;$i<7;$i++){
+            if(isset($vv[$date[$i]])) {
+                if ($vv[$date[$i]]['mode'] == 'actual')
+                    echo '<td>' . $vv[$date[$i]]['no'] . '*</td>';
+                else
+                    echo '<td>' . $vv[$date[$i]]['no'] . '</td>';
+            }else
+                echo '<td></td>';
+        }
+        echo '</tr>';
+    }?>
+
+
+    </table>
+
+
+<?php
 
 });
 

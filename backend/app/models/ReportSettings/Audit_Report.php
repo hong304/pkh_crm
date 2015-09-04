@@ -60,7 +60,7 @@ class Audit_Report {
         if(!$empty){
 
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','20','98','96'])
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','30','20','98','96','97'])
             ->leftJoin('Customer', function($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
             })->leftJoin('customer_groups', function($join) {

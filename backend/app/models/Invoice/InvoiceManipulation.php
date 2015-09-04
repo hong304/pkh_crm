@@ -241,7 +241,8 @@ class InvoiceManipulation {
 	        $this->im->invoiceStatus = $this->determineStatus();
             $this->im->updated_by = Auth::user()->id;
 
-            Invoice::where('invoiceId',$this->invoiceId)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);
+            if($this->im->version>0)
+                Invoice::where('invoiceId',$this->invoiceId)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);
 
 	    }
 	}
@@ -340,7 +341,7 @@ class InvoiceManipulation {
                 }
 
                 //update last item price
-                if($this->temp_invoice_information['status'] != '98' && $this->temp_invoice_information['status'] != '96' && $i['deleted'] == '0'){
+                if($this->temp_invoice_information['status'] != '98' && $this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97'  && $i['deleted'] == '0'){
 
                     $lastitem = lastitem::where('customerId',$this->im->customerId)->where('productId',$i['productId'])->first();
                     if($lastitem==null){
@@ -361,6 +362,7 @@ class InvoiceManipulation {
                         $lastitem->discount = $i['productDiscount'];
                         $lastitem->updated_at = time();;
                     }
+                    $lastitem->deliveryDate = $this->temp_invoice_information['deliveryDate'];
                     $lastitem->save();
                 }
 
@@ -480,6 +482,7 @@ class InvoiceManipulation {
             //$q->file_path = $url;
             $q->target_path = $x->zoneId;
             $q->insert_time = time();
+            $q->invoiceStatus = $x->invoiceStatus;
             if($x->invoiceStatus == '1'){
                 $q->status = "dead:pending";
             }else

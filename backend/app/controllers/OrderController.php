@@ -21,24 +21,27 @@ class OrderController extends BaseController
     public function jsonNewOrder()
     {
         $itemIds = [];
+
         $product = Input::get('product');
 
         // pd($product);
 
         $order = Input::get('order');
         $timer = Input::get('timer');
-        //  pd($order);
+
         // Create the invoice
         $ci = new InvoiceManipulation($order['invoiceId']);
         $ci->setInvoice($order);
 
-        // pd($product);
+
         $have_item = false;
         foreach ($product as $p) {
             if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
                 $itemIds[] = $p['dbid'];
-            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
+
+            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] > 0){
                 $have_item = true;
+            }
         }
 
         if ($order['invoiceId'] != '') {
@@ -50,10 +53,34 @@ class OrderController extends BaseController
                     'invoiceItemIds' => 0,
                     'message' => '未有下單貨品',
                 ];
-            else if (count($itemIds) == 0)
-                InvoiceItem::where('invoiceId', $order['invoiceId'])->delete();
-            else
-                InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->delete();
+            else if (count($itemIds) == 0){
+                $i = InvoiceItem::where('invoiceId', $order['invoiceId']);
+                $deletedItemFromDB = $i->get();
+                $i->delete();
+            }else{
+                $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId']);
+                $deletedItemFromDB = $i->get();
+                $i->delete();
+            }
+
+            foreach ($deletedItemFromDB as $v) {
+                $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $order['clientId'] . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
+                $item = DB::select(DB::raw($sql));
+
+                if (count($item) > 0) {
+                    $lastitem = lastitem::where('customerId', $order['clientId'])->where('productId', $item[0]->productId)->first();
+                    $lastitem->unit_level = $item[0]->productQtyUnit;
+                    $lastitem->unit_text = $item[0]->productUnitName;
+                    $lastitem->price = $item[0]->productPrice;
+                    $lastitem->qty = $item[0]->productQty;
+                    $lastitem->discount = $item[0]->productDiscount;
+                    $lastitem->deliveryDate = date('Y-m-d',$item[0]->deliveryDate);
+                    $lastitem->updated_at = $item[0]->updated_at;
+                    $lastitem->save();
+                } else
+                    lastitem::where('customerId', $order['clientId'])->where('productId', $v->productId)->delete();
+
+            }
 
         } else {
             if (!$have_item)
@@ -138,7 +165,7 @@ class OrderController extends BaseController
         invoiceitem::where('invoiceId', $invoiceId)->delete();
 
         foreach ($i->invoiceitem as $v) {
-            $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $i->customerId . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
+            $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $i->customerId . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
             $item = DB::select(DB::raw($sql));
 
             if (count($item) > 0) {
@@ -149,6 +176,7 @@ class OrderController extends BaseController
                 $lastitem->qty = $item[0]->productQty;
                 $lastitem->discount = $item[0]->productDiscount;
                 $lastitem->updated_at = $item[0]->updated_at;
+                $lastitem->deliveryDate = date('Y-m-d',$item[0]->deliveryDate);
                 $lastitem->save();
             } else
                 lastitem::where('customerId', $i->customerId)->where('productId', $v->productId)->delete();
@@ -251,6 +279,7 @@ class OrderController extends BaseController
                 $query->where('Invoice.invoiceStatus', '2')
                     //->orwhere('Invoice.invoiceStatus','4')
                     ->orwhere('Invoice.invoiceStatus', '97')
+                    ->orwhere('Invoice.invoiceStatus', '96')
                     ->orwhere('Invoice.invoiceStatus', '98');
             })->count();
 
@@ -442,7 +471,7 @@ class OrderController extends BaseController
 
         $deliveryDate = strtotime($deliveryDate);
 
-        $invoice_id = Invoice::where('customerId', $customerId)->where('deliveryDate', $deliveryDate)->orderBy('invoiceId', 'desc')->first();
+        $invoice_id = Invoice::where('customerId', $customerId)->where('deliveryDate', $deliveryDate)->whereIn('invoiceStatus',[1,2])->orderBy('invoiceId', 'desc')->first();
 
         // pd($invoice_id);
 

@@ -157,6 +157,7 @@ class PurchaseorderManipulation
                 $this->po->supplierCode = $this->temp_invoice_information['supplierCode'];
 	        $this->po->currencyId = $this->temp_invoice_information['currencyId'];
                 $this->po->poAmount = $this->temp_invoice_information['totalAmount'];
+                $this->po->location = $this->temp_invoice_information['location'];
 	        $this->po->created_by = Auth::user()->id;
                 $this->po->updated_by = Auth::user()->id;
 	        $this->po->created_at = time();
@@ -178,7 +179,8 @@ class PurchaseorderManipulation
                 $this->po->receiveDate = $this->temp_invoice_information['receiveDate'];
                 $this->po->supplierCode = $this->temp_invoice_information['supplierCode'];
 	        $this->po->currencyId = $this->temp_invoice_information['currencyId'];
-                 $this->po->poAmount = $this->temp_invoice_information['totalAmount'];
+                $this->po->poAmount = $this->temp_invoice_information['totalAmount'];
+                $this->po->location = $this->temp_invoice_information['location'];
                 $this->po->updated_by = Auth::user()->id;
 	        $this->po->updated_at = time();
            // Invoice::where('invoiceId',$this->invoiceId)->where('version',true)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);

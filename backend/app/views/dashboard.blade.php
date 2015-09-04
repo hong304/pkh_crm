@@ -88,7 +88,7 @@ div.centre
     <table class="table table-bordered" style="font-size:20px;">
 
         <thead>
-        <th class="heading">Total Volume</th>
+        <th class="heading">總量</th>
         </thead>
         <tbody>
 
@@ -119,4 +119,43 @@ div.centre
         </tbody>
     </table>
 </div>
+
+
+    <div class="col-md-3">
+        <table class="table table-bordered" style="font-size:20px;">
+
+            <thead>
+            <th class="heading" colspan="3">十大銷量</th>
+            <tr>
+                <td>地區</td>
+                <td>銷量</td>
+                <td>百份比</td>
+            </tr>
+            </thead>
+            <tbody>
+
+
+            <?php
+            $i = 0;
+            foreach($top as $k => $v){
+            $i++;?>
+            <tr>
+                <td >
+<?=$v['zoneName']?>
+                </td>
+                <td >
+                    <?=$v['total']?>
+                </td>
+                <td >
+                    <?=$v['percentage']?>
+                </td>
+            </tr>
+            <?php } ?>
+
+
+            </tbody>
+        </table>
+    </div>
+
+
 </div>

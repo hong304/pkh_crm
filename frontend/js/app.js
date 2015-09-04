@@ -1034,7 +1034,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                         files: [
 
-
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
                             assets + '/global/plugins/datatables/all.min.js',
                             assets + '/global/scripts/datatable.js',
 
@@ -1161,6 +1161,68 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         'js/controllers/selectSupplierControl.js',
                          'js/controllers/selectProductCtrl.js',
                          
+                  //      'js/controllers/selectProductCtrl.js',
+                    ] 
+                });
+            }]
+        }
+    }) 
+    
+     .state('shipping', {
+        url: "/shipping",
+        templateUrl: "views/shippingForm.html",            
+        data: {pageTitle: '船務管理', pageSubTitle: ''},
+
+        controller: "shipping",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'app',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                    files: [
+                        assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        assets + '/global/plugins/fuelux/js/spinner.min.js',
+                        assets + '/dependencies/jquery.cookie.min.js',
+                        assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
+                        assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+                        assets + '/global/plugins/bootbox/bootbox.min.js',
+                        
+                        'js/controllers/shipping.js',
+                   //     'js/controllers/selectSupplierControl.js',
+                        'js/controllers/selectPoControl.js', 
+                  //      'js/controllers/selectProductCtrl.js',
+                    ] 
+                });
+            }]
+        }
+    }) 
+    
+      .state('searchship', {
+        url: "/searchship",
+        templateUrl: "views/searchship.html",            
+        data: {pageTitle: '搜尋船務', pageSubTitle: ''},
+
+        controller: "searchship",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'app',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                    files: [
+                   	 assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+
+
+        assets + '/css/dataTable/bootstrap.min.css',
+                        assets + '/css/dataTable/dataTables.bootstrap.css',
+                        assets + '/js/dataTable/jquery.dataTables.min.js',
+                        assets + '/js/dataTable/dataTables.bootstrap.js',
+                        
+                        'js/controllers/searchship.js',
+                        'js/controllers/selectSupplierControl.js',
+                      //  'js/controllers/selectPoControl.js', 
                   //      'js/controllers/selectProductCtrl.js',
                     ] 
                 });

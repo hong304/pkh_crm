@@ -88,7 +88,7 @@ return [
     '97' => [
         'statusCode'            => '97',
         'descriptionEnglish'    => 'credit note',
-        'descriptionChinese'    => '退款',
+        'descriptionChinese'    => '換貨',
         'explanation'          => 'This is credit note',
         'triggered_by'          => 'SA+',
     ],

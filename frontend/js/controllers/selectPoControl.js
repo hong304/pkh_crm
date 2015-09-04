@@ -1,10 +1,10 @@
 'use strict';
 
-app.controller('selectSupplierControl', function($scope, $http, SharedService, $timeout) {
+app.controller('selectPoControl', function($scope, $http, SharedService, $timeout) {
 	
 	$scope.clientSuggestion = [];
 	$scope.clientHeader = "建議客戶";
-	
+	$scope.purchaseorder = [];
 	$scope.lock = false;
 	
 	var fetchDataDelay = 250;   // milliseconds
@@ -13,10 +13,9 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     var customerTableKeyDownExist = false;
 
         laodCountry();
-      loadCurrency();
     if(customerTableKeyDownExist == false) {
-    $("#selectclientmodel").keydown(function (e) {
-        if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true) {
+    $("#selectPomodel").keydown(function (e) {
+        if(($("#selectPomodel").data('bs.modal') || {}).isShown == true) {
             if (e.keyCode == 38) // up
             {
                 e.preventDefault();
@@ -46,19 +45,6 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     });
 }
 
-/* var isCtrl = false;$(document).keyup(function (e) {
-     if(e.which == 17) isCtrl=false;
- }).keydown(function (e) {
-     if(e.which == 17) isCtrl=true;
-     if(e.which == 83 && isCtrl == true) {
-         alert('Keyboard shortcuts + JQuery are even more cool!');
-         return false;
-     }
- });*/
-
-
-
-
     $scope.$on('$viewContentLoaded', function() {   
         // initialize core components
 
@@ -73,32 +59,48 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     
     
     
-    $scope.openSelectionModal = function() {
-    	//$('#selectclientmodel').modal('show');
-    }
+      $scope.pos = 
+        {
+           poCode:'',
+           poDate:'',
+           receiveDate:'',
+        };
     
     $scope.selectSupplier = function(c)
     {
-    	$('#selectclientmodel').modal('hide');
-        $('#selectclientmodel').on('hidden.bs.modal', function () { // Jump to bottom of page
-            $('#productCode_1').focus();
-            csuggestion = -1;
-        })
+    	$('#selectPomodel').modal('show');
     	$scope.searchClient("");
     	SharedService.setValue('supplierCode', c.supplierCode, 'handleSupplierUpdate');
     	SharedService.setValue('supplierName', c.supplierName, 'handleSupplierUpdate');
-    	SharedService.setValue('countryName', c.countryName, 'handleSupplierUpdate');
-    	SharedService.setValue('address', c.address, 'handleSupplierUpdate');
-        SharedService.setValue('currencyName', c.currencyName, 'handleSupplierUpdate');
-        SharedService.setValue('currencyId', c.currencyId, 'handleSupplierUpdate');
-        SharedService.setValue('contactPerson_1', c.contactPerson_1, 'handleSupplierUpdate');
-        SharedService.setValue('status', c.status, 'handleSupplierUpdate');
-        SharedService.setValue('payment', c.payment, 'handleSupplierUpdate');
-        SharedService.setValue('location', c.location, 'handleSupplierUpdate');
-         
-    	
-    	//SharedService.setValue('clientSelectionCompleted', true, 'doneCustomerUpdate');
+        
+        $scope.loadPurchaseOrder(c.supplierCode,c.supplierName);
+       
+        $timeout(function(){
+            $('#selectPomodel').modal('show');
+            $('#selectPomodel').on('shown.bs.modal', function () {
+            $('#keyword').focus();
+            })
+        }, 1000);
+
     }
+    
+    $scope.selectPo = function(e)
+    {
+        SharedService.setValue('supplierPoCode', e.poCode, 'handlePoUpdate');
+        $('#selectPoModel').modal('hide');
+    }
+    
+    $scope.loadPurchaseOrder = function(ele,sname)
+    {
+        if(ele !==undefined)
+        {
+             $http.post(endpoint + '/jsonSelectPo.json', {input: ele , supplier:sname})
+             .success(function(data, status, headers, config){
+              $scope.purchaseorder = data;
+              });
+        }
+    }
+   
     function laodCountry()
     {
         $http(
@@ -108,14 +110,13 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
 			data	:	{mode: 'collection'},
 			        	cache	:	true,
 			        	//timeout: canceler.promise,
-			    	}        	
+                }        	
 	        ).
 	        success(function(res, status, headers, config) {
 	        	
                   csuggestion = -1;
                   $scope.countryData = res.aaData;
                   SharedService.setValue('allCountry', $scope.countryData, 'handleSupplierUpdate');
-                  
 	        	//$timeout($scope.openSelectionModal, 1000);
 	        	//$scope.openSelectionModal();
 	        }).
@@ -123,8 +124,10 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
 	          // called asynchronously if an error occurs
 	          // or server returns response with an error status.
 	        });
-                
     }
+    
+      
+        
     function loadCurrency()
     {
          $http(
@@ -134,7 +137,7 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
 			data	:	{mode: 'collection'},
 			        	cache	:	true,
 			        	//timeout: canceler.promise,
-			    	}        	
+	         }        	
 	        ).
 	        success(function(res, status, headers, config) {
 	        	
@@ -150,6 +153,8 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
 	        });
                 
     }
+    
+    
    	$scope.keyword = {
         'name': '',
         'id': '',
@@ -164,23 +169,21 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     
    $scope.searchClient = function(keyword)
     {   
-        
     	$timeout.cancel(fetchDataTimer);
     	fetchDataTimer = $timeout(function () {
 	    	if(keyword != "")
 	    	{
 	    		$scope.clientHeader = "搜尋結果";
 	    	}
-              
                 if($scope.keyword.country != null)
                 {
                       if($scope.keyword.country.countryName != "" && $scope.keyword.country.countryName != null)
                       {
-                          $scope.keyword.countryName = $scope.keyword.country.countryName;
+                          $scope.keyword.country = $scope.keyword.country.countryName;
                       }
                 }else
                 {
-                    $scope.keyword.countryName = "";
+                    $scope.keyword.country = "";
                 }
 	    	$http(
 	    			{

@@ -112,8 +112,6 @@ class SystemController extends BaseController {
 
             $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount'] = (isset($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount'])?$nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['amount']:0) + $v->amount;
             $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume'] = (isset($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume'])?$nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']:0) + 1;
-          //  $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['percentage'] =  $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']/$total[$v->deliveryDate] * 100;
-
 
             if(isset($nr['byZone'][$v->zoneId]['date'][$today]['volume'])&&isset($nr['byZone'][$v->zoneId]['date'][$yesterday]['volume']))
                 if($nr['byZone'][$v->zoneId]['date'][$today]['volume'] > $nr['byZone'][$v->zoneId]['date'][$yesterday]['volume'])
@@ -128,18 +126,79 @@ class SystemController extends BaseController {
 
             $nr['byZone'][$v->zoneId]['name'] = $v->zoneText;
 
-            $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['percentage'] = number_format($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']/$total[$v->deliveryDate]*100,2,'.',',').'%';
+            $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['percentage'] = number_format($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']/$total[$v->deliveryDate]*100,1,'.',',').'%';
             if($v->deliveryDate == $today)
-            $nr['byZone'][$v->zoneId]['date'][$today]['against_percentage'] = number_format(($nr['byZone'][$v->zoneId]['date'][$today]['volume']-$nr['byZone'][$v->zoneId]['date'][$yesterday]['volume'])/$nr['byZone'][$v->zoneId]['date'][$today]['volume']*100,2,'.',',').'%';
+            $nr['byZone'][$v->zoneId]['date'][$today]['against_percentage'] = number_format(($nr['byZone'][$v->zoneId]['date'][$today]['volume']-$nr['byZone'][$v->zoneId]['date'][$yesterday]['volume'])/$nr['byZone'][$v->zoneId]['date'][$today]['volume']*100,1,'.',',').'%';
 
         }
 
         $nr1 = array_chunk($nr['byZone'],5,true);
 
+        $result = Invoice::select('deliveryDate','zoneId',DB::raw('count(*) as total'))->where('deliveryDate',$today)->wherein('invoiceStatus',['2','1','20','30'])->groupBy('zoneId')->orderBy(DB::raw('count(*)'),'desc')->get();
 
+        $total = 0;
+        foreach($result as $v){
+            $total += $v->total;
+        }
 
-        return View::make('dashboard')->with('nr',$nr1)->with('total',$nr['byTime']);
+        $i =0;
+      foreach($result as $v){
+          $i++;
+          if($i>10){
+              if(!isset($top['other']['total'])){
+                  $top['other']['total'] = 0;
+              }
+
+              $top['other'] = [
+                  'zoneName'=>'Others',
+                  'total' => $top['other']['total']+=$v->total,
+                  'percentage' => number_format($top['other']['total']/$total*100,1,'.',',').'%',
+              ];
+          }else{
+              $top[$v->zoneId] = [
+                  'zoneName' => $v->zoneText,
+                  'total' => $v->total,
+                  'percentage' => number_format($v->total/$total*100,1,'.',',').'%',
+              ];
+          }
+      }
+
+        return View::make('dashboard')->with('nr',$nr1)->with('total',$nr['byTime'])->with('top',$top);
 
     }
 
+    public function NormalizedUnit($productId,$qty,$unit){
+
+            $v = Product::where('productId',$productId)->first();
+
+            $inner = ($v['productPacking_inner']==false) ? 1:$v['productPacking_inner'];
+            $unit_packing = ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit'];
+
+            if ($unit == 'carton') {
+                $return = $qty*$inner*$unit_packing;
+            }elseif($unit == 'inner') {
+                $return = $qty*$unit_packing;
+            }elseif($unit == 'unit') {
+                $return = $qty;
+            }
+
+        return $return;
+    }
+
+    public function finalUnit($productId,$qty,$unit){
+
+        $v = Product::where('productId',$productId)->first();
+
+        $inner = ($v['productPacking_inner']==false) ? 1:$v['productPacking_inner'];
+        $unit_packing = ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit'];
+
+        if ($unit == 'carton') {
+            $return = $qty*$inner*$unit_packing;
+        }elseif($unit == 'inner') {
+            $return = $qty*$unit_packing;
+        }elseif($unit == 'unit') {
+            $return = $qty;
+        }
+
+    }
 }

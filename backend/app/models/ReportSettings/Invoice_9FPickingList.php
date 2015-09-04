@@ -131,7 +131,7 @@ class Invoice_9FPickingList {
 
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                    'counts' => $item->productQty,
                                     'stdPrice' => $productDetail->productStdPrice[$unit],
                                 ];
 
@@ -297,7 +297,7 @@ class Invoice_9FPickingList {
         require_once './Classes/PHPExcel/IOFactory.php';
         require_once './Classes/PHPExcel.php';
 
-        $csv1 = DB::table('invoiceitem')->select('productQtyUnit','productPacking_carton','productPacking_inner','productPacking_unit','productPacking_size','zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('shift',$this->_shift)->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->groupby('productId','productQtyUnit')->get();
+        $csv1 = DB::table('invoiceitem')->select('productQtyUnit','productPacking_carton','productPackingName_carton','productPacking_inner','productPackingName_inner','productPacking_unit','productPackingName_unit','productPacking_size','zoneId','deliveryDate','invoiceitem.productId as productId','productName_chi','productUnitName',DB::Raw('sum(productQty) as SumQty'))->leftjoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftjoin('product','product.productId','=','invoiceitem.productId')->where('deliveryDate',$this->_date)->where('zoneId',$this->_zone)->where('invoiceitem.productLocation',9)->whereNull('invoiceitem.deleted_at')->groupby('productId','productQtyUnit')->get();
 
 
 
@@ -351,7 +351,13 @@ $i=3;
             if($v->productUnitName == '斤'){
                 $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, '');
             }else{
-                if($v->productQtyUnit == 'carton'){
+
+                if($v->productPacking_inner>1)
+                    $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPackingName_carton.'/'.$v->productPacking_inner.$v->productPackingName_inner .' x '. $v->productPacking_unit.$v->productPackingName_unit .' ('.$v->productPacking_size.')');
+                else
+                    $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPackingName_carton.'/'.$v->productPacking_unit.$v->productPackingName_unit .' ('.$v->productPacking_size.')');
+
+                /*if($v->productQtyUnit == 'carton'){
                     $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_inner .' x '. $v->productPacking_unit .' ('.$v->productPacking_size.')');
                 }
 
@@ -361,7 +367,7 @@ $i=3;
 
                 if($v->productQtyUnit == 'unit'){
                     $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v->productPacking_size);
-                }
+                }*/
             }
 
             $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v->SumQty);
@@ -378,7 +384,7 @@ $i=3;
         $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
         $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
         $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(35);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
