@@ -337,15 +337,15 @@
                     </div>
 
                     <div class="portlet-body" id="orderportletbody">
-                        <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.qty > 0">
+                        <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.qty > 0 && lastitem.deliveryDate === null">
                             產品修改時間:{{lastitem.updated_at}} 數量:{{lastitem.qty}}{{lastitem.unit_text}}
                             售價:{{lastitem.price}}({{lastitem.org_price}}) 折扣:{{lastitem.discount}}%
                             總數:{{lastitem.qty*lastitem.price*(100-lastitem.discount)/100|number:1 }}</p>
 
-                        <!--<p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.qty > 0 && lastitem.deliveryDate !== null">
-                            最後送貨時間:{{lastitem.deliveryDate}} 數量:{{lastitem.qty}}{{lastitem.unit_text}}
+                        <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.qty > 0 && lastitem.deliveryDate !== null">
+                            最後送貨時間:{{lastitem.deliveryDate}} 產品修改時間:{{lastitem.updated_at}} 數量:{{lastitem.qty}}{{lastitem.unit_text}}
                             售價:{{lastitem.price}}({{lastitem.org_price}}) 折扣:{{lastitem.discount}}%
-                            總數:{{lastitem.qty*lastitem.price*(100-lastitem.discount)/100|number:1 }}</p>-->
+                            總數:{{lastitem.qty*lastitem.price*(100-lastitem.discount)/100|number:1 }}</p>
 
                         <br/>
 
