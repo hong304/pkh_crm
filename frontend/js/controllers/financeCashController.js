@@ -157,7 +157,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         var yday = start_date.getDate();
 
         $scope.filterData.invoiceId = invoiceId;
-        $scope.filterData.customerId = invoiceId;
+        $scope.filterData.customerId = customerId;
 
         $http.post(query, {mode: "paymentHistory", customerId: customerId,invoiceId:invoiceId})
             .success(function(res){
