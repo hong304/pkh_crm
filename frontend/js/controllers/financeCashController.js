@@ -35,9 +35,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.invoice = [];
 
-    var fetchDataTimer;
-    var fetchDataDelay = 500;
-
     $scope.payment = [];
     $scope.discount = 0;
     $scope.invoicepaid = [];
@@ -97,6 +94,25 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
 
 
+
+    $(document).ready(function(){
+
+        $('#queryInfo').keydown(function (e) {
+            if (e.keyCode == 13) {
+                $scope.cheque = {
+                    'remain' : 0,
+                    'amount' : 0
+                }
+                $scope.filterData.cashAmount = '0';
+                $scope.filterData.amount = '0';
+                $scope.filterData.paid = '0';
+                $scope.filterData.no = '';
+                $scope.updateDataSet();
+            }
+
+        });
+
+    });
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
@@ -251,33 +267,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
           window.open(endpoint + "/getPaymentDetails.json?" + queryString);
 
 
-    }
-
-    $scope.updateInvoiceNumber = function()
-    {
-        $scope.cheque = {
-            'remain' : 0,
-            'amount' : 0
-        }
-        $scope.filterData.bankCode = '003';
-        $scope.filterData.cashAmount = '0';
-        $scope.filterData.amount = '0';
-        $scope.filterData.paid = '0';
-        $scope.filterData.no = '';
-        $scope.filterData.status = '20';
-
-
-        $timeout.cancel(fetchDataTimer);
-        fetchDataTimer = $timeout(function () {
-            $scope.updateDataSet();
-        }, 1000);
-
-    }
-
-    $scope.updateCustomer = function(){
-        fetchDataTimer = $timeout(function () {
-            $scope.updateDataSet();
-        }, fetchDataDelay);
     }
 
     $scope.autoPost = function(){
