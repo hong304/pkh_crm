@@ -190,5 +190,5 @@ i++;
     });
     $scope.updatePaidTotal();
 }
-    
+
 });
