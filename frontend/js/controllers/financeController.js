@@ -125,6 +125,7 @@ var fetchDataTimer = '';
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
+        $scope.action = $location.search().action;
 
         if($location.search().action == 'success') {
             $scope.success = true;
@@ -158,8 +159,8 @@ var fetchDataTimer = '';
     });
 
     $rootScope.$on('$locationChangeSuccess', function(){
+        $scope.action = $location.search().action;
         $scope.getChequeList();
-
     });
 
     $scope.$watch(function() {
