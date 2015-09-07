@@ -39,7 +39,7 @@ return [
     '20' => [
         'statusCode'            => '20',
         'descriptionEnglish'    => 'Delivered',
-        'descriptionChinese'    => '已收貨',
+        'descriptionChinese'    => '未付款',
         'explaination'          => 'Invoice was received by destinated customer',
         'triggered_by'          => '',
     ],
