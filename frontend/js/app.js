@@ -182,10 +182,8 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
     		// --------------------- handle pending approval order
     		$scope.notification = data;
 
-
-
-            if(data.logintime != parseInt(data.db_logintime)){
-               alert('你已被登出')
+            if(parseInt(data.logintime) != parseInt(data.db_logintime)){
+               alert('你的帳戶已從新的瀏覽器或裝置登入。請立即檢查此登入')
                window.location.href = $scope.endpoint + '/logout?mode=manual';
             }
 
