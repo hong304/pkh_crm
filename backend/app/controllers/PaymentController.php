@@ -116,7 +116,7 @@ class PaymentController extends BaseController {
                 else
                     $payment->remain = $paidinfo['amount'] - $paidinfo['paid'];
 
-                $payment->customerId = $paidinfo['customerId'];
+                $payment->customerId = $paidinfo['clientId'];
 
                 $payment->save();
 
@@ -141,7 +141,7 @@ class PaymentController extends BaseController {
                 $payment1->end_date =  $paidinfo['receiveDate'];
                 $payment1->receive_date = $paidinfo['receiveDate'];
                 $payment1->amount = $paidinfo['cashAmount'];
-                $payment1->customerId = $paidinfo['customerId'];
+                $payment1->customerId = $paidinfo['clientId'];
                 $payment1->save();
 
                 $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
