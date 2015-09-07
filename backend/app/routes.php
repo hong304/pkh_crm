@@ -329,7 +329,7 @@ Route::get('cron/completeOrder',function(){
 
     $accurage_date = date('Y-m-d', strtotime('-'.$count.' days', strtotime($days_ago)));
 
-    Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',1)->where('invoiceStatus',2)->update(['invoiceStatus'=>'30']);
+    Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',1)->where('invoiceStatus',2)->where('discount',0)->update(['invoiceStatus'=>'30','paid'=>DB::raw('amount')]);
     Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',2)->where('invoiceStatus',2)->update(['invoiceStatus'=>'20']);
 
 });
