@@ -136,8 +136,8 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
 		$scope.endpoint = endpoint;
 		
         $scope.getNotification();
-       $interval($scope.getNotification, 15000);
-        $interval($scope.broadCastNotification, 500);
+       $interval($scope.getNotification, 30000);
+       // $interval($scope.broadCastNotification, 500);
         
 	});
 	
@@ -182,7 +182,7 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
     		// --------------------- handle pending approval order
     		$scope.notification = data;
 
-            if(parseInt(data.logintime) != parseInt(data.db_logintime)){
+                     if(parseInt(data.logintime) != parseInt(data.db_logintime)){
                alert('你的帳戶已從新的瀏覽器或裝置登入。請立即檢查此登入')
                window.location.href = $scope.endpoint + '/logout?mode=manual';
             }
