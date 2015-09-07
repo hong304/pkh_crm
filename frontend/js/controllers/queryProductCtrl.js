@@ -11,9 +11,21 @@ function goEdit(invoiceId)
 
 app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 
+    $(document).ready(function(){
+
+        $('#queryInfo').keydown(function (e) {
+              if (e.keyCode == 13) {
+                    $scope.updateDataSet();
+                }
+
+        });
+
+    });
+
+
     var querytarget = endpoint + '/queryProductwithItem.json';
     var fetchDataTimer;
-    var fetchDataDelay = 500;   // milliseconds
+   // var fetchDataDelay = 500;   // milliseconds
 
     $scope.firstload = true;
    $scope.filterData= {
@@ -45,12 +57,12 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
 
 
 
-   $scope.$watch('filterData', function() {
+   /*$scope.$watch('filterData', function() {
        $timeout.cancel(fetchDataTimer);
        fetchDataTimer = $timeout(function () {
            $scope.updateDataSet();
        }, fetchDataDelay);
-     }, true);
+     }, true);*/
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
