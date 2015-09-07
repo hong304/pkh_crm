@@ -18,37 +18,6 @@ function viewCheque(cheque_id)
     });
 }
 
-function delCheque(id)
-{
-    var scope = angular.element(document.getElementById("queryInfo")).scope();
-    scope.$apply(function () {
-
-        bootbox.dialog({
-            message: "刪除支票後將不能復原，確定要刪除支票嗎？",
-            title: "刪除支票",
-            buttons: {
-                success: {
-                    label: "取消",
-                    className: "green",
-                    callback: function() {
-
-                    }
-                },
-                danger: {
-                    label: "確定刪除",
-                    className: "red",
-                    callback: function() {
-                        scope.delCheque(id);
-                    }
-                }
-            }
-        });
-
-    });
-}
-
-
-
 app.controller('financeCashGetClearanceController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state,$stateParams) {
 
 
@@ -56,13 +25,7 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
     var intarget = endpoint + '/addCashCheque.json';
     var getClearance = endpoint + '/getCashClearance.json';
 
-var fetchDataTimer = '';
     $scope.invoice = [];
-    var today = new Date();
-    var day = today.getDate();
-    var month = today.getMonth() + 1;
-    var year = today.getFullYear();
-
     $scope.bankName = '000';
     $scope.payment = [];
     $scope.discount = [];
@@ -102,22 +65,6 @@ var fetchDataTimer = '';
     var month = currentDate.getMonth() + 1;
     var year = currentDate.getFullYear();
 
-    $("#deliverydate").datepicker({
-        rtl: Metronic.isRTL(),
-        orientation: "left",
-        autoclose: true
-    });
-    $("#deliverydate").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
-
-    $("#deliverydate2").datepicker({
-        rtl: Metronic.isRTL(),
-        orientation: "left",
-        autoclose: true
-    });
-    $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
-
-    $scope.filterData.deliverydate = yyear+'-'+ymonth+'-'+yday;
-    $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
 
     $scope.$on('$viewContentLoaded', function() {
 
@@ -130,7 +77,7 @@ var fetchDataTimer = '';
             autoclose: true
         });
 
-        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
+        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + yday );
 
 
 
@@ -228,10 +175,10 @@ var fetchDataTimer = '';
 $scope.updatePaidTotal = function(){
     $scope.totalAmount = 0;
     $scope.invoicepaid.forEach(function(item){
-
             $scope.totalAmount += Number(item.settle);
-
     });
+}
+
 $scope.updateDiscount = function(){
 
     var i = 0;
@@ -243,7 +190,5 @@ i++;
     });
     $scope.updatePaidTotal();
 }
-
-}
-
+    
 });
