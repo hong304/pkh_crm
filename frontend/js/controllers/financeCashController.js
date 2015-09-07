@@ -55,7 +55,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         'zone'			:	'',
          'created_by'	:	'0',
         'invoiceNumber' :	'',
-        'bankCode' : '003',
+        'bankCode' : '000',
         'cashAmount' : '0',
         'amount' : '0',
         'paid' : '0',
@@ -101,7 +101,22 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
+
+        if($location.search().action == 'success') {
+            Metronic.alert({
+                container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                place: 'prepend', // append or prepent in container
+                type: 'success',  // alert's type
+                message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+                close: true, // make alert closable
+                reset: true, // close all previouse alerts first
+                focus: true, // auto scroll to the alert after shown
+                closeInSeconds: 0, // auto close after defined seconds
+                icon: 'warning' // put icon before the message
+            });
+        }
         $scope.updateDataSet();
+
 
     });
 
@@ -125,6 +140,13 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
         Metronic.unblockUI();
     });
+
+
+        $scope.addCheque = function()
+        {
+            $location.url("/financeCashGetClearance");
+
+        }
 
     $scope.editCountry = function(id){
         $http.post(endpoint + "/delPayment.json", { id: id})
@@ -196,7 +218,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     }
 
-    $scope.checkChequeExist = function (){
+ /*   $scope.checkChequeExist = function (){
 
         $http({
             method: 'POST',
@@ -211,7 +233,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             }
         });
 
-    }
+    }*/
 
     $scope.sendRealFile = function()
     {
@@ -271,7 +293,49 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             $scope.filterData.paid = owe;
         }
 
-        if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != owe) || ($scope.filterData.paid>0 && $scope.filterData.paid != owe) ){
+        if($scope.filterData.amount>$scope.filterData.paid){
+            bootbox.dialog({
+                message: "支票銀碼大於需付金額:",
+                title: "提交付款",
+                buttons: {
+
+                    main: {
+                        label: "仍需處理",
+                        className: "btn-primary",
+                        callback: function() {
+                           $http({
+                                method: 'POST',
+                                url: query,
+                                data: {paidinfo:$scope.filterData,mode:'posting',discount:$scope.paymentDetails[0]['owe'],paymentStatus:'30'}
+                            }).success(function () {
+                                $('#invoicePayment').modal('hide');
+                                Metronic.alert({
+                                    container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                                    place: 'prepend', // append or prepent in container
+                                    type: 'success',  // alert's type
+                                    message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+                                    close: true, // make alert closable
+                                    reset: true, // close all previouse alerts first
+                                    focus: true, // auto scroll to the alert after shown
+                                    closeInSeconds: 0, // auto close after defined seconds
+                                    icon: 'warning' // put icon before the message
+                                });
+                                $scope.updateDataSet();
+                            });
+
+                        }
+                    },
+
+                    danger: {
+                        label: "返回",
+                        className: "red",
+                        callback: function() {
+
+                        }
+                    }
+                }
+            });
+        }else if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != owe) || ($scope.filterData.paid>0 && $scope.filterData.paid != owe) ){
 
         bootbox.dialog({
             message: "支付數目與尚欠款項有差異，請按下列選擇",
@@ -286,7 +350,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                         $http({
                             method: 'POST',
                             url: query,
-                            data: {paidinfo:$scope.filterData,mode:'posting',discount:$scope.paymentDetails[0]['owe'],paymentStatus:'30'}
+                            data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'30'}
                         }).success(function () {
                             $('#invoicePayment').modal('hide');
                             Metronic.alert({

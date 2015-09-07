@@ -152,10 +152,11 @@ Route::group(array('before' => 'auth'), function()
     Route::any('getClearance.json','PaymentController@getClearance');
     Route::any('querryCashCustomer.json','PaymentController@querryCashCustomer');
 
-
-    //Cash Sales
+    //Payment Cash Sales
     Route::any('getPaymentDetails.json','financeCashController@getPaymentDetails');
     Route::post('delPayment.json','financeCashController@delPayment');
+    Route::any('getCashClearance.json','financeCashController@getClearance');
+    Route::post('/addCashCheque.json','financeCashController@addCheque');
 
 
     //Data analysis

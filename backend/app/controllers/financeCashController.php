@@ -104,4 +104,152 @@ class financeCashController extends BaseController {
         $objWriter->save('php://output');
     }
 
+    public function getClearance(){
+        $mode = Input::get('mode');
+        $filter = Input::get('filterData');
+
+
+        $start_date = strtotime($filter['startDate']);
+        $end_date = strtotime($filter['endDate']);
+
+        $customer = [];
+        $customer2 = [];
+
+        if($filter['customerId'] != ''){
+            $customer2 = explode(",", $filter['customerId']);
+        }
+
+        if(count($customer2)>0){
+            for($i = 0; $i < count($customer2); $i++){
+                $rules['customerId.' . $i] = 'exists:customer,customerId';
+                $messages = ['exists' => 'Customer ID:'.$customer2[$i].' does not exists.'];
+            }
+
+            $arr = ['customerId'=>$customer2];
+
+            $validator = Validator::make($arr, $rules,$messages);
+            $errorMessage['error'] = '';
+            if ($validator->fails())
+            {
+                $info = $validator->messages()->all();
+                foreach($info as $a)
+                {
+                    $errorMessage['error'] .= "$a\n";
+                }
+                return $errorMessage;
+
+            }
+        }
+
+        $customerId = array_merge($customer, $customer2);
+
+
+
+        if($mode  == 'processCustomer'){
+
+            $sum = 0;
+
+       $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
+
+
+            foreach ($invoice_info as $v){
+                if($v['paid']>0){
+                    if($v['invoiceStatus']==98)
+                        $v['amount'] = ($v['amount']*-1) - $v['paid'];
+                    else
+                        $v['amount'] -= $v['paid'];
+                }
+                $v['realAmount'] = $v['realAmount'] - $v['paid'];
+                $v['customer_name'] = $v['customer_name'];
+                $sum += ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
+            }
+            $invoice['data'] = $invoice_info;
+            $invoice['sum'] = $sum;
+
+            return Response::json($invoice);
+
+
+        }
+
+
+
+    }
+
+    public function addCheque(){
+        $paid = Input::get('paid');
+
+
+        $ij = Input::get('filterData');
+
+        $rules = [
+            'no' => 'required',
+            'amount' => 'required',
+            'customerId' => 'required',
+        ];
+
+
+        $validator = Validator::make($ij, $rules);
+        $errorMessage = '';
+        if ($validator->fails())
+        {
+            $info = $validator->messages()->all();
+            foreach($info as $a)
+            {
+                $errorMessage .= "$a\n";
+            }
+            return $errorMessage;
+
+        }
+
+
+
+        $set_amount =0;
+        foreach ($paid as $k=>$v){
+            $i = Invoice::where('invoiceId',$v['id'])->first();
+            $i->paid += $v['settle'];
+            $set_amount += $v['settle'];
+
+
+
+            if($i->amount == $i->paid || $v['discount'] == 1)
+                $i->invoiceStatus = 30;
+            $i->discount = $v['discount'];
+            if(isset($ij['discount']))
+                $i->discount = 1;
+            $i->save();
+        }
+
+
+
+
+        $info = new Payment();
+
+
+        $info->customerId = $ij['customerId'];
+        $info->ref_number = $ij['no'];
+        $info->bankCode = $ij['bankCode'];
+        $info->receive_date = $ij['receiveDate'];
+        $info->start_date = $ij['startDate'];
+        $info->end_date = $ij['endDate'];
+        $info->amount = $ij['amount'];
+
+
+        if($info->remain == 0)
+            $info->used = 1;
+        if(isset($ij['discount'])){
+            $info->used = 1;
+            $info->remain = 0;
+            $info->discount = $set_amount-$ij['amount'];
+        }else{
+            $info->remain = $ij['amount']-$set_amount;
+        }
+
+        $info->save();
+
+        foreach ($paid as $k=>$v){
+            $iq = Invoice::where('invoiceId',$v['id'])->first();
+            $iq->payment()->attach($info->id,['amount'=>$iq->amount,'paid'=>$v['settle']]);
+            $iq->save();
+        }
+    }
 }
