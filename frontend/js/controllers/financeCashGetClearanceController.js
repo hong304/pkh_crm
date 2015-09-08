@@ -9,15 +9,6 @@ function processCheque(id)
     });
 }
 
-function viewCheque(cheque_id)
-{
-    var scope = angular.element(document.getElementById("queryInfo")).scope();
-    scope.$apply(function () {
-        scope.viewCheque(cheque_id);
-
-    });
-}
-
 app.controller('financeCashGetClearanceController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state,$stateParams) {
 
 

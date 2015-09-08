@@ -336,17 +336,11 @@ class PaymentController extends BaseController {
 
         if($mode == 'single')
         {
-
-
             $payment = Payment::where('id',Input::get('cheque_id'))->with('invoice')->first();
-
-
             foreach($payment->invoice as $vv){
                 $vv->customerName = $vv->customer_name;
 
             }
-
-
 
             $vv = $payment;
 

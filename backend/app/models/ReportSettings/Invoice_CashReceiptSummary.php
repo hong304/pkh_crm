@@ -118,7 +118,7 @@ class Invoice_CashReceiptSummary {
             $q->where('start_date', '=', date('Y-m-d',$date));
         })->get();
 
-
+        pd($invoicesQuery);
 
         $acc = 0;
         $acc1 = 0;
@@ -126,7 +126,7 @@ class Invoice_CashReceiptSummary {
         {
 
             foreach($invoiceQ->payment as $v1){
-                if($v1->ref_number == 'cash' and $v1->start_date == date('Y-m-d',$date) and $invoiceQ->deliveryDate < $date){
+                if($v1->ref_number == 'cash' and $v1->receive_date == date('Y-m-d',$date) and $invoiceQ->deliveryDate < $date){
                     $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid;
                     $this->_invoices[] = $invoiceQ->invoiceId;
                     $this->_zoneName = $invoiceQ->zone->zoneName;
@@ -145,7 +145,7 @@ class Invoice_CashReceiptSummary {
                         'accumulator' =>number_format($acc,2,'.',','),
                         'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid,2,'.',','),
                     ];
-                }else if ($v1->start_date == date('Y-m-d',$date) and $v1->ref_number != 'cash'){
+                }else if ($v1->receive_date == date('Y-m-d',$date) and $v1->ref_number != 'cash'){
                     $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid;
                     $this->_invoices[] = $invoiceQ->invoiceId;
                     $this->_zoneName = $invoiceQ->zone->zoneName;

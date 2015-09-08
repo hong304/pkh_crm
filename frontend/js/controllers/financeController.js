@@ -189,6 +189,7 @@ var fetchDataTimer = '';
         $http.post(query, {mode: "single", cheque_id: cheque_id})
             .success(function(res, status, headers, config){
                 $scope.chequeDetails = res.payment;
+                $scope.receiveDate = res.payment.receive_date;
                 $scope.chequeCustomers = res.customer;
 
                 Metronic.unblockUI();
