@@ -247,7 +247,7 @@ class PaymentController extends BaseController {
         if($mode == 'paymentHistory'){
             $ph = Invoice::select('deliveryDate','invoiceId','amount','paid',DB::Raw('amount-paid as owe'))
                  ->where(function ($query) {
-                    $query->where('customerId',Input::get('customerId'))->where('invoiceStatus','20')->where('discount',false);
+                    $query->where('customerId',Input::get('customerId'))->where('invoiceStatus','20')->where('paymentTerms','1')->where('discount',false);
                 })->orWhere('invoiceId',Input::get('invoiceId'))
                 ->get();
 

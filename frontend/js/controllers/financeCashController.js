@@ -194,6 +194,11 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         var yyear = start_date.getFullYear();
         var yday = start_date.getDate();
 
+        $scope.filterData.cashAmount = '0';
+        $scope.filterData.amount = '0';
+        $scope.filterData.paid = '0';
+        $scope.filterData.no = '';
+
         $scope.filterData.invoiceId = invoiceId;
         $scope.filterData.clientId = customerId;
 
