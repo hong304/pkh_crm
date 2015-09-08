@@ -117,8 +117,7 @@ class Invoice_CashReceiptSummary {
         {
             $q->where('start_date', '=', date('Y-m-d',$date));
         })->get();
-
-        pd($invoicesQuery);
+        
 
         $acc = 0;
         $acc1 = 0;
