@@ -115,9 +115,9 @@ class Invoice_CashReceiptSummary {
             $invoicesQuery->where('shift',$this->_shift);
         $invoicesQuery = $invoicesQuery->with('client','payment')->WhereHas('payment', function($q) use($date)
         {
-            $q->where('start_date', '=', date('Y-m-d',$date));
+            $q->where('receive_date', '=', date('Y-m-d',$date));
         })->get();
-        
+
 
         $acc = 0;
         $acc1 = 0;
