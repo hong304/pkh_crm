@@ -178,8 +178,18 @@ class HomeController extends BaseController {
     }
 
     public function updateBroadcast(){
-        $user = User::find(Auth::user()->id);
-        $user->loggedin = 1;
-        $user->save();
+
+        if(Input::get('mode')=='oweInvoice'){
+            $user = User::find(Auth::user()->id);
+            $user->loggedin = 1;
+            $user->save();
+        }else if (Input::get('mode')=='generalMsg'){
+            foreach(Input::get('bid') as $v){
+                $broadcastMessageRead = new broadcastMessageRead();
+                $broadcastMessageRead->user_id = Auth::user()->id;
+               $broadcastMessageRead->broadcast_message_id = $v['id'];
+                $broadcastMessageRead->save();
+            }
+        }
     }
 }

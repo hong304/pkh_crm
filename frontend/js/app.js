@@ -84,14 +84,14 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
 
           $scope.systemInfo = data;
 
-      /*  var text = '';
+       var text = '';
         $.each(data.broadcastMessage, function(index, value) {
             text += value.content + "<br>";
         });
 
         if(text != ''){
             bootbox.dialog({
-                title: "欠單詳情",
+                title: "重要事項",
                 message: text,
                 closeButton:false,
                 onEscape:false,
@@ -101,7 +101,7 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
                         className: "red",
                         callback: function() {
 
-                            $http.get(endpoint + '/updateBroadcast.json').success(function(res, status, headers, config) {
+                            $http.post(endpoint + '/updateBroadcast.json',{mode:'generalMsg',bid:data.broadcastMessage}).success(function(res, status, headers, config) {
 
                             }).error(function(res, status, headers, config) {
 
@@ -110,7 +110,7 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
                     }
                 }
             });
-        }*/
+        }
 
       if(!data.user.loggedin)
         {
@@ -134,7 +134,7 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
                                 className: "red",
                                 callback: function() {
 
-                                    $http.get(endpoint + '/updateBroadcast.json').success(function(res, status, headers, config) {
+                                    $http.post(endpoint + '/updateBroadcast.json',{mode:'oweInvoices'}).success(function(res, status, headers, config) {
 
                                     }).error(function(res, status, headers, config) {
 

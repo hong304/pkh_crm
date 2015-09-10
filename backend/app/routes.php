@@ -32,7 +32,7 @@ Route::group(array('before' => 'auth'), function()
     // Page Level Information
     Route::get('/dashboard.json', 'HomeController@jsonDashboard');
     Route::get('/getOweInvoices.json', 'HomeController@getOweInvoices');
-    Route::get('/updateBroadcast.json', 'HomeController@updateBroadcast');
+    Route::post('/updateBroadcast.json', 'HomeController@updateBroadcast');
 
 
    
