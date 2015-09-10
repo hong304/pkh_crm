@@ -392,7 +392,6 @@ class InvoiceImage
             $i['invoiceTotalAmount'] *= -1;
             $i['amount'] *= -1;
         }
-        
         //      $total_amount = "合計  HKD " . $english_format_number = number_format(round($i['totalAmount']*$i['invoiceDiscount'],1), 2, '.', ',');;
         // $total_amount = "合計  HKD " . $i['invoiceTotalAmount'];
 
