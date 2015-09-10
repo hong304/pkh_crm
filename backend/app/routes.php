@@ -30,7 +30,11 @@ Route::group(array('before' => 'auth'), function()
     Route::get('/system.json', 'SystemController@jsonSystem');
     
     // Page Level Information
-    Route::get('/dashboard.json', 'HomeController@jsonDashboard'); 
+    Route::get('/dashboard.json', 'HomeController@jsonDashboard');
+    Route::get('/getOweInvoices.json', 'HomeController@getOweInvoices');
+    Route::get('/updateBroadcast.json', 'HomeController@updateBroadcast');
+
+
    
     //Commission
     Route::any('/queryCommission.json', 'CommissionController@queryCommission');

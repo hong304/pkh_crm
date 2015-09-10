@@ -76,16 +76,79 @@ app.factory('httpPreConfig', ['$http', '$rootScope', function($http, $rootScope)
 
 /* Setup App Main Controller */
 app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', 'SharedService', '$timeout', function($scope, $rootScope, $http, $interval, SharedService, $timeout) {
-	
+
+
+
 	// get system configuration from cloud
 	$http.get($scope.endpoint + '/system.json').success(function(data) {
 
           $scope.systemInfo = data;
 
-       /* if(!data.user)
-        {
-        	window.location.href = $scope.endpoint + '/credential/auth';
+      /*  var text = '';
+        $.each(data.broadcastMessage, function(index, value) {
+            text += value.content + "<br>";
+        });
+
+        if(text != ''){
+            bootbox.dialog({
+                title: "欠單詳情",
+                message: text,
+                closeButton:false,
+                onEscape:false,
+                buttons: {
+                    danger: {
+                        label: "確定",
+                        className: "red",
+                        callback: function() {
+
+                            $http.get(endpoint + '/updateBroadcast.json').success(function(res, status, headers, config) {
+
+                            }).error(function(res, status, headers, config) {
+
+                            });
+                        }
+                    }
+                }
+            });
         }*/
+
+      if(!data.user.loggedin)
+        {
+            var msg = '';
+            $http.get($scope.endpoint + '/getOweInvoices.json')
+                .success(function(res){
+                    $.each(res, function(index, value) {
+                        var owe = value.total.owe;
+                        msg += '車號:'+index+' 欠單總數:'+value.total.invoices+' 欠單總額:$'+owe.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'<br/>';
+                    });
+
+
+                    bootbox.dialog({
+                        title: "欠單詳情",
+                        message: msg,
+                        closeButton:false,
+                        onEscape:false,
+                        buttons: {
+                            danger: {
+                                label: "確定",
+                                className: "red",
+                                callback: function() {
+
+                                    $http.get(endpoint + '/updateBroadcast.json').success(function(res, status, headers, config) {
+
+                                    }).error(function(res, status, headers, config) {
+
+                                    });
+                                }
+                            }
+                        }
+                    });
+
+                });
+
+        }
+
+
         $rootScope.systeminfo = data;
         $timeout(function(){
         	SharedService.setValue('SystemInfo', $scope.systemInfo, 'UpdateSystemInfo');
@@ -98,6 +161,9 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initComponents(); // init core components
+
+
+
         //Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive 
     });
 }]);

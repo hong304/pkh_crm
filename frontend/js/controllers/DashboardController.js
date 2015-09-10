@@ -14,6 +14,11 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
         // initialize core components
         Metronic.initAjax();
 
+        $http.get($scope.endpoint + '/getOweInvoices.json')
+            .success(function(res){
+                $scope.debt = res;
+            });
+
     });
     
     

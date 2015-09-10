@@ -74,6 +74,9 @@ class SystemController extends BaseController {
             $v = $m.'-'.$d;
         }
 
+     /*   $broadcastMessages = broadcastMessage::whereHas("broadcastMessageRead", function($q) {
+            $q->where('user_id',Auth::user()->id);
+        }, '<', 1)->get();*/
         
         $systeminfo = [
           'status' => 'on',
@@ -87,6 +90,7 @@ class SystemController extends BaseController {
           'productgroup' => $productgroup,
             'customerGroup' => $c,
             'holiday' => $h_array,
+          //  'broadcastMessage' => $broadcastMessages,
           //'invoiceStatus' => Config::get('invoiceStatus'),
          ];
 
