@@ -287,9 +287,9 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             $scope.filterData.paid = owe;
         }
 
-        if($scope.filterData.amount>$scope.filterData.paid){
+        if($scope.filterData.amount>owe||$scope.filterData.cashAmount>owe){
             bootbox.dialog({
-                message: "支票銀碼大於需付金額:",
+                message: "輸入銀碼大於需付金額:",
                 title: "提交付款",
                 buttons: {
 
