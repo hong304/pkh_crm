@@ -58,16 +58,22 @@ class Invoice_CashReceiptSummary {
             });*/
 
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
         $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
             $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
         })->leftJoin('payments', function ($join) {
             $join->on('invoice_payment.payment_id', '=', 'payments.id');
-        })->where('receive_date', '=', date('Y-m-d',$date))->where('ref_number', '!=', 'cash')->get();
+        })->where('deliveryDate', '=', $date)->where('ref_number', '!=', 'cash')->get();
 
-        pd($invoicesQuery);
+        $uncheque = [];
+        foreach($invoicesQuery as $v){
+            if(!isset($uncheque[$v->invoiceId]))
+                $uncheque[$v->invoiceId] = 0;
+            $uncheque[$v->invoiceId] += $v->paid;
+        }
+
 
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
                 if($this->_shift != '-1')
@@ -94,17 +100,18 @@ class Invoice_CashReceiptSummary {
 
                            $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain;
 
+                           //not yet receive
                            $this->_backaccount[] = [
                                'customerId' => $client->customerId,
                                'name' => $client->customerName_chi,
                                'invoiceNumber' => $invoiceId,
-                               'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain ,
+                               'invoiceTotalAmount' => $invoiceQ->remain ,
                                'accumulator' =>number_format($acc1,2,'.',','),
-                               'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain,2,'.',','),
+                               'amount' => number_format($invoiceQ->remain,2,'.',','),
                            ];
 
                        }else if ($invoiceQ->invoiceStatus == 30){
-                           $paid = $invoiceQ->paid;
+                           $paid = $invoiceQ->amount - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
                        }else
                            $paid = $invoiceQ->remain;
 
