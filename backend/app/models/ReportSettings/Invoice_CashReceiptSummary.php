@@ -59,6 +59,17 @@ class Invoice_CashReceiptSummary {
 
 
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
+        if($this->_shift != '-1')
+            $invoicesQuery->where('shift',$this->_shift);
+        $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
+            $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
+        })->leftJoin('payments', function ($join) {
+            $join->on('invoice_payment.payment_id', '=', 'payments.id');
+        })->where('receive_date', '=', date('Y-m-d',$date))->where('ref_number', '!=', 'cash')->get();
+
+        pd($invoicesQuery);
+
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
                 if($this->_shift != '-1')
                     $invoicesQuery->where('shift',$this->_shift);
 
