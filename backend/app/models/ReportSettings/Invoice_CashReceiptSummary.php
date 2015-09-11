@@ -110,14 +110,22 @@ class Invoice_CashReceiptSummary {
                       }
 
         //補收
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20'])->where('paid','>',0)->where('paymentTerms',1)->where('zoneId', $zone);
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20'])->where('paymentTerms',1)->where('zoneId', $zone);
 
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
-        $invoicesQuery = $invoicesQuery->with('client','payment')->WhereHas('payment', function($q) use($date)
-        {
-            $q->where('receive_date', '=', date('Y-m-d',$date));
-        })->get();
+
+        $invoicesQuery = $invoicesQuery->with('client','payment')->leftJoin('invoice_payment', function ($join) {
+            $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
+        })->leftJoin('payments', function ($join) {
+            $join->on('invoice_payment.payment_id', '=', 'payments.id');
+        })->where('receive_date', '=', date('Y-m-d',$date))->get();
+
+            //->WhereHas('payment', function($q) use($date)
+       // {
+       //     $q->where('receive_date', '=', date('Y-m-d',$date));
+       // })->get();
+
 
 
         $acc = 0;
