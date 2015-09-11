@@ -92,9 +92,10 @@ class Invoice_CashReceiptSummary {
                                'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain,2,'.',','),
                            ];
 
-                       }else{
+                       }else if ($invoiceQ->invoiceStatus == 30){
+                           $paid = $invoiceQ->paid;
+                       }else
                            $paid = $invoiceQ->remain;
-                       }
 
                            $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid;
                            $this->_account[] = [

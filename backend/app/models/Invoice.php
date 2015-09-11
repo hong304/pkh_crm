@@ -244,7 +244,7 @@ class Invoice extends Eloquent  {
             else
                 $model->realAmount = $model->amount;
 
-            $model->remain = $model->amount-$model->paid;
+            $model->remain = $model->amount-($model->discount_taken+$model->paid);
 	        // calculate invoice total
 
 

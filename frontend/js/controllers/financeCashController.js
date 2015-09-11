@@ -300,14 +300,14 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                            $http({
                                 method: 'POST',
                                 url: query,
-                                data: {paidinfo:$scope.filterData,mode:'posting',discount:$scope.paymentDetails[0]['owe'],paymentStatus:'30'}
+                                data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'30'}
                             }).success(function () {
                                 $('#invoicePayment').modal('hide');
                                 Metronic.alert({
                                     container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
                                     place: 'prepend', // append or prepent in container
                                     type: 'success',  // alert's type
-                                    message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+                                    message: '<span style="font-size:16px;">成功全數支付</span>',  // alert's message
                                     close: true, // make alert closable
                                     reset: true, // close all previouse alerts first
                                     focus: true, // auto scroll to the alert after shown
@@ -341,10 +341,16 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     className: "btn-primary",
                     callback: function() {
 
+                        var discount_taken = 0;
+                        if($scope.filterData.cashAmount>0)
+                            discount_taken = $scope.paymentDetails[0]['owe'] - $scope.filterData.cashAmount;
+                        else if ($scope.filterData.paid>0)
+                            discount_taken = $scope.paymentDetails[0]['owe'] - $scope.filterData.paid;
+
                         $http({
                             method: 'POST',
                             url: query,
-                            data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'30'}
+                            data: {paidinfo:$scope.filterData,mode:'posting',discount:discount_taken,paymentStatus:'30'}
                         }).success(function () {
                             $('#invoicePayment').modal('hide');
                             Metronic.alert({
@@ -412,7 +418,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
             place: 'prepend', // append or prepent in container
             type: 'success',  // alert's type
-            message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+            message: '<span style="font-size:16px;">成功全數支付</span>',  // alert's message
             close: true, // make alert closable
             reset: true, // close all previouse alerts first
             focus: true, // auto scroll to the alert after shown

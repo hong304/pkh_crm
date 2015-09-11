@@ -12,8 +12,10 @@ class financeCashController extends BaseController {
         $i = Invoice::where('invoiceId',$payment->invoice[0]->invoiceId)->first();
         $i->paid = $i->paid -$payment->invoice[0]->pivot->paid;
         $i->invoiceStatus = '20';
-        if($payment->invoice[0]->pivot->discount_taken>0)
+        if($payment->invoice[0]->pivot->discount_taken>0){
+            $i->discount -= $payment->invoice[0]->pivot->discount_taken;
             $i->discount = 0;
+        }
         $i->save();
         $payment->invoice()->detach($payment->invoice[0]->invoiceId);
         $payment->delete();
