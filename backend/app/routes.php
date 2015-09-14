@@ -312,9 +312,9 @@ Route::get('cron/completeOrder',function(){
         $v = date("Y"). '-'. $m.'-'.$d;
     }
     if(date('w', strtotime(date('Y-m-d'))) == 1 ||date('w', strtotime(date('Y-m-d'))) == 2 ||date('w', strtotime(date('Y-m-d'))) == 3)
-        $days_ago = date('Y-m-d', strtotime('-4 days', strtotime(date('Y-m-d'))));
+        $days_ago = date('Y-m-d', strtotime('-6 days', strtotime(date('Y-m-d'))));
     else
-        $days_ago = date('Y-m-d', strtotime('-3 days', strtotime(date('Y-m-d'))));
+        $days_ago = date('Y-m-d', strtotime('-5 days', strtotime(date('Y-m-d'))));
 
     function check_in_range($start_date, $end_date, $date_from_user)
     {
