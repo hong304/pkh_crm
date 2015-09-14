@@ -418,7 +418,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
             place: 'prepend', // append or prepent in container
             type: 'success',  // alert's type
-            message: '<span style="font-size:16px;">Status = 20</span>',  // alert's message
+            message: '<span style="font-size:16px;">訂單已轉為未付款</span>',  // alert's message
             close: true, // make alert closable
             reset: true, // close all previouse alerts first
             focus: true, // auto scroll to the alert after shown

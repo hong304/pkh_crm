@@ -161,7 +161,9 @@ class PaymentController extends BaseController {
                 }
             }else if($paidinfo['amount'] ==0 && $paidinfo['cashAmount']==0){
                 $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
-                 $i->invoiceStatus = Input::get('paymentStatus');
+                $i->invoiceStatus = Input::get('paymentStatus');
+                if($i->amount == $i->paid)
+                    $i->paid=0;
                   $i->save();
             }
 
