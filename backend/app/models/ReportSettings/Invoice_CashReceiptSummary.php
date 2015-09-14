@@ -251,11 +251,6 @@ class Invoice_CashReceiptSummary {
         $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',$this->_date)->get();
         $NoOfInvoices = [];
         foreach ($invoices as $invoiceQ){
-            if($invoiceQ->invoiceStatus == 20) {
-                $paid = $invoiceQ->paid;
-            }else{
-                $paid = $invoiceQ->remain;
-            }
             if(!isset($NoOfInvoices[$invoiceQ->zoneId]))
                 $NoOfInvoices[$invoiceQ->zoneId] = 0;
 
@@ -270,9 +265,9 @@ class Invoice_CashReceiptSummary {
                 'truck' => $invoiceQ->zoneId,
                 'noOfInvoices' => $NoOfInvoices[$invoiceQ->zoneId],
                 'balanceBf' => isset($balance_bf[$invoiceQ->zoneId])?$balance_bf[$invoiceQ->zoneId]:0,
-                'totalAmount' => $info[$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount),
+                'totalAmount' => $info[$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
                 'previous'=>isset($previous[$invoiceQ->zoneId])?$previous[$invoiceQ->zoneId]:0,
-                'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid,
+                'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,
             ];
         }
         ksort($info);
@@ -362,11 +357,6 @@ class Invoice_CashReceiptSummary {
             $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',$d)->get();
             $NoOfInvoices = [];
             foreach ($invoices as $invoiceQ){
-                if($invoiceQ->invoiceStatus == 20) {
-                    $paid = $invoiceQ->paid;
-                }else{
-                    $paid = $invoiceQ->remain;
-                }
                 if(!isset($NoOfInvoices[$d]))
                     $NoOfInvoices[$d] = 0;
 
@@ -380,9 +370,9 @@ class Invoice_CashReceiptSummary {
                 $info[$d] = [
                     'noOfInvoices' => $NoOfInvoices[$d],
                     'balanceBf' => isset($balance_bf[$d])?$balance_bf[$d]:0,
-                    'totalAmount' => $info[$d]['totalAmount'] += (($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->amount:$invoiceQ->amount),
+                    'totalAmount' => $info[$d]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
                     'previous'=>isset($previous[$d])?$previous[$d]:0,
-                    'paid' => $info[$d]['paid'] += ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$paid:$paid,
+                    'paid' => $info[$d]['paid'] += ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,
                 ];
             }
             ksort($info);
