@@ -226,10 +226,13 @@ class Invoice_CashReceiptSummary {
             $balance_bf[$v->zoneId] += $v->remain;
         }
 
-        $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->where('paid','>',0)->with('payment')->WhereHas('payment', function($q)
-        {
-            $q->where('start_date', date('Y-m-d',$this->_date));
-        })->get();
+        $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->with('payment')
+
+            ->leftJoin('invoice_payment', function ($join) {
+                $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
+            })->leftJoin('payments', function ($join) {
+                $join->on('invoice_payment.payment_id', '=', 'payments.id');
+            })->where('start_date', date('Y-m-d',$this->_date))->get();
 
 
 
@@ -273,6 +276,7 @@ class Invoice_CashReceiptSummary {
             ];
         }
         ksort($info);
+
 
         require_once './Classes/PHPExcel/IOFactory.php';
         require_once './Classes/PHPExcel.php';
@@ -338,10 +342,12 @@ class Invoice_CashReceiptSummary {
 
 
 
-            $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->where('paid','>',0)->with('payment')->WhereHas('payment', function($q) use($d)
-            {
-                $q->where('start_date', date('Y-m-d',$d));
-            })->get();
+            $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->with('payment')
+                ->leftJoin('invoice_payment', function ($join) {
+                    $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
+                })->leftJoin('payments', function ($join) {
+                    $join->on('invoice_payment.payment_id', '=', 'payments.id');
+                })->where('start_date', date('Y-m-d',$d))->get();
 
 
             foreach($invoices as $invoiceQ){
