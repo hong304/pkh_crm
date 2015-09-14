@@ -495,7 +495,7 @@ class OrderController extends BaseController
 
     public function getNoOfOweInvoices(){
         $customerId = Input::get('customerId');
-        return Response::json(Invoice::where('customerId',$customerId)->where('invoiceStatus',20)->count());
+        return Response::json(Invoice::where('customerId',$customerId)->where('invoiceStatus',20)->where('paymentTerms',1)->count());
     }
 
 }
