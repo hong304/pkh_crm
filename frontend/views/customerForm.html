@@ -175,7 +175,14 @@
                                 <input type="text"  ng-model="customerInfo.account_fax" class="form-control" placeholder="Enter text">
                             </div>
                         </div>
-
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">解鎖</label>
+                            <div class="col-md-10">
+                                <div class="pull-left control-label">
+                                    <input type="checkbox" ng-model="customerInfo.unlock" ng-true-value="yes" ng-false-value="no" ng-checked="customerInfo.unlock==1" ng-change="selectCom(customerInfo.unlock);">
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 				</form>

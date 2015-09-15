@@ -167,7 +167,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     		$scope.info = $.extend(true, {}, $scope.info_def);
     		$scope.info = res;
             $scope.hasCommission = res.hasCommission;
-                $scope.allowNegativePrice = res.allowNegativePrice;
+            $scope.allowNegativePrice = res.allowNegativePrice;
     		//console.log($scope.info);
 
     		var floorcat = [];

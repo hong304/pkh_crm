@@ -495,7 +495,13 @@ class OrderController extends BaseController
 
     public function getNoOfOweInvoices(){
         $customerId = Input::get('customerId');
-        return Response::json(Invoice::where('customerId',$customerId)->where('invoiceStatus',20)->where('paymentTerms',1)->count());
+        $count = Invoice::where('customerId',$customerId)->where('invoiceStatus',20)->where('paymentTerms',1)->count();
+
+        $unlock = Customer::select('unlock')->where('customerId',$customerId)->first();
+        if($unlock->unlock)
+            return Response::json(3);
+        else
+            return Response::json($count);
     }
 
 }
