@@ -70,7 +70,7 @@
 <table class="table table-bordered table-hover" style="font-size:15px;">
     <thead>
     <tr role="row" class="heading">
-        <th width="100%" colspan="6">補收(支票)</th>
+        <th width="100%" colspan="6">支票</th>
     </tr>
     </thead>
 

@@ -234,6 +234,7 @@ class financeCashController extends BaseController {
         $info->start_date = $ij['startDate'];
         $info->end_date = $ij['endDate'];
         $info->amount = $ij['amount'];
+        $info->remark = $ij['remark'];
         $info->paymentType = 'COD';
 
 

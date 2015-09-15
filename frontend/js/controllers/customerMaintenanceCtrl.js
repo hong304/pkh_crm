@@ -155,8 +155,6 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
     	.success(function(res, status, headers, config){
     		$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
     		$scope.customerInfo = res;
-              console.log(res);
-
                 $("#format_date").html(res.format_updated_at);
                 if(res.group)
                     $scope.customerInfo.groupname = $scope.customerInfo.group.name;
