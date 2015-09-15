@@ -82,6 +82,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
             'shift' : '',
             'productnewId' :'',
             'customer_group_id' : '',
+        'unlock' : '0'
  
 
 	};

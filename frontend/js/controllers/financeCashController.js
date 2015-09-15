@@ -149,7 +149,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.$on('handleCustomerUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
 
-        $scope.filterData.clientId = SharedService.clientId;
+        $scope.filterData.customerId = SharedService.clientId;
         $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
         $scope.filterData.zone = '';
         $scope.updateDataSet();

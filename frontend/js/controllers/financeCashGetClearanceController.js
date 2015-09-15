@@ -76,13 +76,6 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
     });
 
 
-    $scope.$on('handleCustomerUpdate', function(){
-        $scope.filterData.clientId = SharedService.clientId;
-        $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
-
-    });
-
-
     $scope.$watch(function() {
         return $rootScope.systeminfo;
     }, function() {
