@@ -173,6 +173,8 @@ class PaymentController extends BaseController {
         {
             $filter = Input::get('filterData');
 
+
+
             $invoice = Invoice::select('invoiceId','discount_taken','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms');
 
             // zone
@@ -197,17 +199,17 @@ class PaymentController extends BaseController {
                 }
 
             // status
-            if($filter['invoiceNumber'] == '' && $filter['customerId']=='' && $filter['customerName']=='')
+            if($filter['invoiceNumber'] == '' && $filter['customerId']=='')
             {
                 $invoice->whereBetween('invoice.deliverydate', [strtotime($filter['deliverydate']),strtotime($filter['deliverydate2'])]);
                 $invoice->where('invoiceStatus', $filter['status']);
 
             }else if ($filter['invoiceNumber'] != ''){
                 $invoice->where('invoiceId', 'LIKE', '%'.$filter['invoiceNumber'].'%');
-            }else if($filter['customerId']!='' || $filter['customerName']!=''){
+            }else if($filter['customerId']!=''){
                 $invoice->WhereHas('client', function($q) use($filter)
                 {
-                    $q->where('customerId', 'LIKE', '%'.$filter['customerId'].'%')->where('customerName_chi', 'LIKE', '%'.$filter['customerName'].'%');
+                    $q->where('customerId', $filter['customerId']);
                 });
                 //$invoice->whereIn('invoiceStatus', [2,20]);
                 $invoice->where('invoiceStatus', $filter['status']);

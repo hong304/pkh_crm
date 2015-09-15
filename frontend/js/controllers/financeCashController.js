@@ -47,7 +47,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.filterData = {
         'displayName'	:	'',
-        'clientId'		:	'',
+        'customerId'		:	'',
         'status'		:	'20',
         'zone'			:	'',
          'created_by'	:	'0',
@@ -57,9 +57,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         'amount' : '0',
         'paid' : '0',
         'no' : '',
-        'remain' : 0,
-        'customerId':'',
-        'customerName':''
+        'remain' : 0
     };
 
 
@@ -91,6 +89,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         autoclose: true
     });
     $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
     $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
 
 
@@ -146,15 +145,17 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
        // $scope.updateDataSet();
     }, true);
 
+    $scope.$watch('filterData.customerId', function() {
+        $scope.updateDataSet();
+    }, true);
+
     $scope.$on('handleCustomerUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
-
         $scope.filterData.customerId = SharedService.clientId;
         $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
         $scope.filterData.zone = '';
-        $scope.updateDataSet();
 
-        Metronic.unblockUI();
+
     });
 
 
@@ -606,14 +607,22 @@ var i =0;
     {
         $scope.filterData = {
             'displayName'	:	'',
-            'clientId'		:	'',
-            'status'		:	'0',
+            'customerId'		:	'',
+            'status'		:	'20',
             'zone'			:	'',
-            'deliverydate'	:	'last day',
             'created_by'	:	'0',
-            'invoiceNumber' :	''
+            'invoiceNumber' :	'',
+            'bankCode' : '000',
+            'cashAmount' : '0',
+            'amount' : '0',
+            'paid' : '0',
+            'no' : '',
+            'remain' : 0
         };
-        $scope.updateDataSet();
+
+        $scope.filterData.deliverydate = d.getFullYear()+'-'+lastMonth+'-'+d.getDate();
+        $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
+
     }
 
 
