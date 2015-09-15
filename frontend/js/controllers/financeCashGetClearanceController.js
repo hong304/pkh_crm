@@ -38,7 +38,8 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
         'deliverydate': '',
         'deliverydate2' : '',
         'ChequeNumber' : '',
-        'groupName' : ''
+        'groupName' : '',
+        'remark' : ''
 
     };
 
