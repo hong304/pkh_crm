@@ -79,6 +79,16 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="col-md-2 control-label">收款車區:
+                            </label>
+                            <div class="col-md-3">
+                                <select class="form-control"
+                                        ng-model="filterData.zoneId"
+                                        data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId">
+                                </select> </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-md-2 control-label">支付日期:
                             </label>
                             <div class="col-md-3">

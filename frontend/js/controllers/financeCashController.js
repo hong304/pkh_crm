@@ -9,11 +9,11 @@ function editCountry(id)
     });
 }
 
-function editInvoicePayment(invoiceId,customerId)
+function editInvoicePayment(invoiceId,customerId,zoneId)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
-        scope.editInvoicePayment(invoiceId,customerId);
+        scope.editInvoicePayment(invoiceId,customerId,zoneId);
     });
 }
 
@@ -186,7 +186,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             });
     }
 
-    $scope.editInvoicePayment = function(invoiceId,customerId)
+    $scope.editInvoicePayment = function(invoiceId,customerId,zoneId)
     {
 
         var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
@@ -200,6 +200,12 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         $scope.filterData.paid = '0';
         $scope.filterData.no = '';
 
+        var zoneDB = $scope.systeminfo.availableZone;
+        var pos = zoneDB.map(function(e) {
+            return e.zoneId;
+        }).indexOf(parseInt(zoneId));
+
+        $scope.filterData.zoneId = zoneDB[pos];
         $scope.filterData.invoiceId = invoiceId;
         $scope.filterData.clientId = customerId;
 
@@ -557,7 +563,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     { "data": "amount", "width":"5%" },
                     { "data": "remain", "width":"7%" },
                     { "data": "invoiceStatusText", "width":"6%" },
-                    { "data": "paymentTermsText", "width":"6%" },
                      { "data": "link", "width":"5%" },
                     { "data": "details", "width":"5%" }
 

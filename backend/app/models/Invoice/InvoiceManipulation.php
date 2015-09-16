@@ -205,6 +205,7 @@ class InvoiceManipulation {
 	        $this->im->invoiceId = $this->invoiceId;
 	        $this->im->invoiceType = 'Salesman';
 	        $this->im->zoneId = $this->temp_invoice_information['zoneId'];
+            $this->im->receiveMoneyZone = $this->temp_invoice_information['zoneId'];
 	        $this->im->customerId = $this->temp_invoice_information['clientId'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
 	        $this->im->routePlanningPriority = $this->temp_invoice_information['route'];

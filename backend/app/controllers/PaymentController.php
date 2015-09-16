@@ -124,6 +124,7 @@ class PaymentController extends BaseController {
                 $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
                 $i->paid += $paidinfo['paid'];
                 $i->invoiceStatus = Input::get('paymentStatus');
+                $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
                 if($discount_taken>0){
                     $i->discount = 1;
                     $i->discount_taken += $discount_taken;
@@ -149,6 +150,7 @@ class PaymentController extends BaseController {
                 $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
                 $i->paid += $paidinfo['cashAmount'];
                 $i->invoiceStatus = Input::get('paymentStatus');
+                $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
                 if($discount_taken>0) {
                     $i->discount = 1;
                     $i->discount_taken += $discount_taken;
@@ -163,6 +165,7 @@ class PaymentController extends BaseController {
             }else if($paidinfo['amount'] ==0 && $paidinfo['cashAmount']==0){
                 $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
                 $i->invoiceStatus = Input::get('paymentStatus');
+                $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
                 if($i->amount == $i->paid)
                     $i->paid=0;
                   $i->save();
@@ -176,7 +179,7 @@ class PaymentController extends BaseController {
 
 
 
-            $invoice = Invoice::select('invoiceId','discount_taken','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms');
+            $invoice = Invoice::select('invoiceId','discount_taken','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms','receiveMoneyZone');
 
             // zone
                $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -223,7 +226,7 @@ class PaymentController extends BaseController {
             return Datatables::of($invoices)
                 ->addColumn('link', function ($payment) {
                     if(Auth::user()->can('edit_cashCustomer') && ($payment->invoiceStatus == '20'||$payment->invoiceStatus == '30'||$payment->invoiceStatus == '2')){
-                        return '<span onclick="editInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
+                        return '<span onclick="editInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\',\''.$payment->receiveMoneyZone.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
                     }else
                         return '';
                 })->addColumn('details', function ($payment) {
