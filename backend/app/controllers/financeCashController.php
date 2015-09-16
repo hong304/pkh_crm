@@ -152,6 +152,8 @@ class financeCashController extends BaseController {
             $sum = 0;
 
        $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
+           // $discount = Customer::select('discount')->whereIn('customerId',$customerId)->first();
+
 
 
             foreach ($invoice_info as $v){
@@ -167,6 +169,7 @@ class financeCashController extends BaseController {
             }
             $invoice['data'] = $invoice_info;
             $invoice['sum'] = $sum;
+         //   $invoice['discount'] = $discount->discount;
 
             return Response::json($invoice);
 

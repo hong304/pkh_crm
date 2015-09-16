@@ -226,10 +226,11 @@ var fetchDataTimer = '';
 
                 $scope.payment = res;
                 $scope.invoiceinfo = res.data;
+
                 var i = 0;
                 $scope.invoiceinfo.forEach(function(item) {
                     $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
-                    $scope.invoicepaid[i]['settle'] = item.realAmount;
+                    $scope.invoicepaid[i]['settle'] = Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
                     $scope.invoicepaid[i]['id'] = item.invoiceId;
                     i++;
                 });
@@ -282,23 +283,23 @@ var fetchDataTimer = '';
 $scope.updatePaidTotal = function(){
     $scope.totalAmount = 0;
     $scope.invoicepaid.forEach(function(item){
-
-            $scope.totalAmount += Number(item.settle);
-
+            $scope.totalAmount += (Number(item.settle));
     });
-$scope.updateDiscount = function(){
-
-    var i = 0;
-    $scope.invoiceinfo.forEach(function(item){
-
-        $scope.invoicepaid[i]['settle']= Number(item.realAmount*$scope.filterData.discount);
-        $scope.invoicepaid[i]['discount'] = 1;
-i++;
-    });
-    $scope.updatePaidTotal();
+    $scope.totalAmount = $scope.totalAmount.toFixed(2);
 }
 
-}
+    $scope.updateDiscount = function(){
+
+        var i = 0;
+        $scope.invoiceinfo.forEach(function(item){
+
+            $scope.invoicepaid[i]['settle']= Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
+            //  $scope.invoicepaid[i]['discount'] = 1;
+            i++;
+        });
+        $scope.updatePaidTotal();
+    }
+
     $scope.addCheque = function()
     {
         $location.url("/finance-newCheque?action=newCheque");

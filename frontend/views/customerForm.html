@@ -54,27 +54,13 @@
 							</div>
 						</div>
 						
-						<div class="form-group">
-							<label class="col-md-2 control-label">名稱 (英)</label>
-							<div class="col-md-10">
-								<input type="text" ng-model="customerInfo.customerName_eng" class="form-control" placeholder="Enter text">
-							</div>
-						</div>
-						
-						<div class="form-group">
+	    				<div class="form-group">
 							<label class="col-md-2 control-label">地址 (中) *</label>
 							<div class="col-md-10">
 								<input type="text"  ng-model="customerInfo.address_chi" class="form-control" placeholder="Enter text">
 							</div>
 						</div>
-						
-						<div class="form-group">
-							<label class="col-md-2 control-label">地址 (英)</label>
-							<div class="col-md-10">
-								<input type="text" ng-model="customerInfo.address_eng" class="form-control" placeholder="Enter text">
-							</div>
-						</div>
-						
+
 						<div class="form-group">
 							<label class="col-md-2 control-label">區域 *</label>
 							<div class="col-md-10">
@@ -149,6 +135,13 @@
 								</select>
 							</div>
 						</div>
+
+                        <div class="form-group" data-ng-if="customerInfo.paymentTermId == 2">
+                            <label class="col-md-2 control-label">折扣</label>
+                            <div class="col-md-10">
+                                <input type="text"  ng-model="customerInfo.discount" class="form-control" placeholder="Enter number Only" select-on-click>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-md-2 control-label">客戶備註 </label>

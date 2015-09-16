@@ -2,6 +2,7 @@
 
 class PaymentController extends BaseController {
 
+
     public function addCheque(){
         $paid = Input::get('paid');
 
@@ -312,7 +313,7 @@ class PaymentController extends BaseController {
             //  $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->with('client')->get();
             $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
 
-
+            $discount = Customer::select('discount')->whereIn('customerId',$customerId)->first();
             foreach ($invoice_info as $v){
                 if($v['paid']>0){
                     if($v['invoiceStatus']==98)
@@ -326,6 +327,7 @@ class PaymentController extends BaseController {
             }
             $invoice['data'] = $invoice_info;
             $invoice['sum'] = $sum;
+            $invoice['discount'] = $discount->discount;
 
             return Response::json($invoice);
 

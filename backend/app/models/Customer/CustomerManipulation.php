@@ -54,7 +54,7 @@ class CustomerManipulation {
 	public function save($info)
 	{
 
-	    $fields = ['address_chi', 'address_eng', 'contactPerson_1', 'contactPerson_2', 'currencyId', 'customerId', 'customerName_chi', 'customerName_eng', 'customerTypeId', 'discount', 'email', 'fax_1', 'fax_2', 'phone_1', 'phone_2', 'paymentTermId', 'routePlanningPriority', 'remark','customer_group_id','account_contact','account_tel','account_fax','unlock'];
+	    $fields = ['address_chi', 'address_eng', 'contactPerson_1', 'contactPerson_2', 'currencyId', 'customerId', 'customerName_chi', 'customerName_eng', 'customerTypeId', 'discount', 'email', 'fax_1', 'fax_2', 'phone_1', 'phone_2', 'paymentTermId', 'routePlanningPriority', 'remark','customer_group_id','account_contact','account_tel','account_fax','unlock','discount'];
 	    
 	    foreach($fields as $f)
 	    {

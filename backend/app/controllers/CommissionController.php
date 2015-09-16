@@ -129,6 +129,7 @@ class CommissionController extends BaseController
                         $this->_sumcredit -= $invoiceQ1->amount;
                     } else {
                         $this->_sumcod -= $invoiceQ1->amount;
+                        $this->_countcodreturn += 1;
                     }
                 }else{
                     if ($invoiceQ1->paymentTerms == 2) {
@@ -185,13 +186,13 @@ class CommissionController extends BaseController
 
         $csv .= '"現金總數:",';
         $csv .= '"' . $summary['countcod'] . '",';
-        $csv .= '"' . number_format($summary['sumcod'],2,'.',',') . '",';
+        $csv .= '"$' . number_format($summary['sumcod'],2,'.',',') . '",';
         $csv .= '"",';
         $csv .= "\r\n";
 
         $csv .= '"月結總數:",';
         $csv .= '"' . $summary['countcredit'] . '",';
-        $csv .= '"' . number_format($summary['sumcredit'],2,'.',',')  . '",';
+        $csv .= '"$' . number_format($summary['sumcredit'],2,'.',',')  . '",';
         $csv .= '"",';
         $csv .= "\r\n";
 

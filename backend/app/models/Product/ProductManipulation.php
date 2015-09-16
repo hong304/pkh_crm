@@ -101,7 +101,9 @@ class ProductManipulation {
 	
 	public function save($info)
 	{
-        
+
+        $pieces = explode("-", $info['group']['groupid']);
+
 	    $fields = ['productPacking_carton', 'productCost_unit', 'productPacking_inner', 'productPacking_unit','productPacking_size','productPackingName_carton','productPackingName_inner','productPackingName_unit','productPackingInterval_carton','productPackingInterval_inner','productPackingInterval_unit','productStdPrice_carton','productStdPrice_inner','productStdPrice_unit','productMinPrice_carton','productMinPrice_inner','productMinPrice_unit','productName_chi','productName_eng','hasCommission','allowNegativePrice','allowSeparate'];
 	    
 	    foreach($fields as $f)
@@ -129,6 +131,9 @@ class ProductManipulation {
         if($this->action == 'create'){
             $this->im->department = $this->_departmentid;
             $this->im->group = $this->_groupid;
+        }else{
+            $this->im->department =$pieces[0];
+            $this->im->group =$pieces[1];
         }
 
 	    $this->im->save();

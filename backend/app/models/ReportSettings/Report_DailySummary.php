@@ -101,7 +101,7 @@ class Report_DailySummary
 
                         if ($invoiceQ['client']->paymentTermId == 2 && $invoiceQ->paymentTerms == 2) {
                             $this->_sumcredit -= $invoiceQ->amount;
-                            $this->_countcredit += 1;
+                            //$this->_countcredit += 1;
                         } else {
                             $this->_sumcod -= $invoiceQ->amount;
                             $this->_countcodreturn += 1;
@@ -230,6 +230,7 @@ class Report_DailySummary
         $this->data['sumcod'] = $this->_sumcod;
         $this->data['countcredit'] = $this->_countcredit;
         $this->data['countcod'] = $this->_countcod;
+
         $this->data['countcodreturn'] = $this->_countcodreturn;
         $this->data['countcodreplace'] = $this->_countcodreplace;
         $this->data['countcodreplenishment'] = $this->_countcodreplenishment;
