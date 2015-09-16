@@ -14,7 +14,7 @@ class CommissionController extends BaseController
     private $_countcodreturn = 0;
     private $_countcodreplace = 0;
     private $_countcodreplenishment = 0;
-    
+
     public function __construct(){
 
         if(!Auth::user()->can('view_commission')){
@@ -122,24 +122,23 @@ class CommissionController extends BaseController
                 $vv['productQtys'] = floor($vv['normalizedQty']/$vv['normalizedUnit']);
             }
 
-            $invoiceQ = [];
             $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->get();
-            foreach ($invoice as $invoiceQ) {
-                if ($invoiceQ->invoiceStatus == '98') {
-                    if ($invoiceQ->paymentTerms == 2) {
-                        $this->_sumcredit -= $invoiceQ->amount;
+            foreach ($invoice as $invoiceQ1) {
+                if ($invoiceQ1->invoiceStatus == '98') {
+                    if ($invoiceQ1->paymentTerms == 2) {
+                        $this->_sumcredit -= $invoiceQ1->amount;
                     } else {
-                        $this->_sumcod -= $invoiceQ->amount;
+                        $this->_sumcod -= $invoiceQ1->amount;
                     }
                 }else{
-                    if ($invoiceQ->paymentTerms == 2) {
-                        $this->_sumcredit += $invoiceQ->amount;
+                    if ($invoiceQ1->paymentTerms == 2) {
+                        $this->_sumcredit += $invoiceQ1->amount;
                         $this->_countcredit += 1;
                     } else {
-                        $this->_sumcod += $invoiceQ->amount;
-                        if ($invoiceQ->invoiceStatus == '96')
+                        $this->_sumcod += $invoiceQ1->amount;
+                        if ($invoiceQ1->invoiceStatus == '96')
                             $this->_countcodreplace += 1;
-                        else if($invoiceQ->invoiceStatus == '97')
+                        else if($invoiceQ1->invoiceStatus == '97')
                             $this->_countcodreplenishment += 1;
                         else
                             $this->_countcod += 1;
