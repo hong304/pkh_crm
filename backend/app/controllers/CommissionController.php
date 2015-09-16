@@ -6,6 +6,15 @@ class CommissionController extends BaseController
     public $date1 = '';
     public $date2 = '';
 
+
+    private $_sumcredit = 0;
+    private $_sumcod = 0;
+    private $_countcredit = 0;
+    private $_countcod = 0;
+    private $_countcodreturn = 0;
+    private $_countcodreplace = 0;
+    private $_countcodreplenishment = 0;
+    
     public function __construct(){
 
         if(!Auth::user()->can('view_commission')){
