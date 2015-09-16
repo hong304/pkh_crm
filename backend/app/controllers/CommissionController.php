@@ -122,7 +122,7 @@ class CommissionController extends BaseController
                 $vv['productQtys'] = floor($vv['normalizedQty']/$vv['normalizedUnit']);
             }
 
-            $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->get();
+            $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->where('zoneId', $this->zone)->get();
             foreach ($invoice as $invoiceQ1) {
                 if ($invoiceQ1->invoiceStatus == '98') {
                     if ($invoiceQ1->paymentTerms == 2) {
@@ -185,13 +185,13 @@ class CommissionController extends BaseController
 
         $csv .= '"現金總數:",';
         $csv .= '"' . $summary['countcod'] . '",';
-        $csv .= '"' . $summary['sumcod'] . '",';
+        $csv .= '"' . number_format($summary['sumcod'],2,'.',',') . '",';
         $csv .= '"",';
         $csv .= "\r\n";
 
         $csv .= '"月結總數:",';
         $csv .= '"' . $summary['countcredit'] . '",';
-        $csv .= '"' . $summary['sumcredit'] . '",';
+        $csv .= '"' . number_format($summary['sumcredit'],2,'.',',')  . '",';
         $csv .= '"",';
         $csv .= "\r\n";
 
