@@ -113,7 +113,41 @@ class CommissionController extends BaseController
                 $vv['productQtys'] = floor($vv['normalizedQty']/$vv['normalizedUnit']);
             }
 
-            return $this->exportCsv($invoiceQ);
+            $invoiceQ = [];
+            $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->get();
+            foreach ($invoice as $invoiceQ) {
+                if ($invoiceQ->invoiceStatus == '98') {
+                    if ($invoiceQ->paymentTerms == 2) {
+                        $this->_sumcredit -= $invoiceQ->amount;
+                    } else {
+                        $this->_sumcod -= $invoiceQ->amount;
+                    }
+                }else{
+                    if ($invoiceQ->paymentTerms == 2) {
+                        $this->_sumcredit += $invoiceQ->amount;
+                        $this->_countcredit += 1;
+                    } else {
+                        $this->_sumcod += $invoiceQ->amount;
+                        if ($invoiceQ->invoiceStatus == '96')
+                            $this->_countcodreplace += 1;
+                        else if($invoiceQ->invoiceStatus == '97')
+                            $this->_countcodreplenishment += 1;
+                        else
+                            $this->_countcod += 1;
+                    }
+                }
+            }
+
+            $this->data['sumcredit'] = $this->_sumcredit;
+            $this->data['sumcod'] = $this->_sumcod;
+            $this->data['countcredit'] = $this->_countcredit;
+            $this->data['countcod'] = $this->_countcod;
+
+            $this->data['countcodreturn'] = $this->_countcodreturn;
+            $this->data['countcodreplace'] = $this->_countcodreplace;
+            $this->data['countcodreplenishment'] = $this->_countcodreplenishment;
+
+            return $this->exportCsv($invoiceQ,$this->data);
         } else {
            // return Datatables::of($invoiceQ)->make(true);
         }
@@ -124,7 +158,7 @@ class CommissionController extends BaseController
 
     }
 
-    public function exportCsv($invoices)
+    public function exportCsv($invoices,$summary)
     {
    //     pd($invoices);
 
@@ -140,6 +174,37 @@ class CommissionController extends BaseController
                 $csv .= "\r\n";
             }
         }
+
+        $csv .= '"現金總數:",';
+        $csv .= '"' . $summary['countcod'] . '",';
+        $csv .= '"' . $summary['sumcod'] . '",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
+        $csv .= '"月結總數:",';
+        $csv .= '"' . $summary['countcredit'] . '",';
+        $csv .= '"' . $summary['sumcredit'] . '",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
+        $csv .= '"退貨單:",';
+        $csv .= '"' . $summary['countcodreturn'] . '",';
+        $csv .= '"",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
+        $csv .= '"換貨單:",';
+        $csv .= '"' . $summary['countcodreplace'] . '",';
+        $csv .= '"",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
+        $csv .= '"補貨單:",';
+        $csv .= '"' . $summary['countcodreplenishment'] . '",';
+        $csv .= '"",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
         echo "\xEF\xBB\xBF";
         $headers = array(
             'Content-Type' => 'text/csv',
