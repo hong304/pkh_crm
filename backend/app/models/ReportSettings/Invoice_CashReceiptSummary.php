@@ -57,7 +57,7 @@ class Invoice_CashReceiptSummary {
                     $this->_returnaccount[$invoiceQ['client']->customerId] = $invoiceQ->amount;
             });*/
 
-//當天單,不是當天收錢
+//當天單,不是當天收錢 + 當天單,收支票
         $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
@@ -65,7 +65,12 @@ class Invoice_CashReceiptSummary {
             $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
         })->leftJoin('payments', function ($join) {
             $join->on('invoice_payment.payment_id', '=', 'payments.id');
-        })->where('deliveryDate', '=', $date)->where('receive_date', '!=', date('y-m-d',$date))->get();
+        })->where('deliveryDate', '=', $date)
+
+            ->where(function ($query) use($date) {
+                $query->where('receive_date', '!=', date('y-m-d',$date))
+                    ->orwhere('ref_number','!=', 'cash');
+            })->get();
 
         $uncheque = [];
         foreach($invoicesQuery as $v){
@@ -73,7 +78,7 @@ class Invoice_CashReceiptSummary {
                 $uncheque[$v->invoiceId] = 0;
             $uncheque[$v->invoiceId] += $v->paid;
         }
-//當天單,不是當天收錢
+//當天單,不是當天收錢 + 當天單,收支票
 
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
                 if($this->_shift != '-1')
