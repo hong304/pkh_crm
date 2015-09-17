@@ -30,7 +30,11 @@ Route::group(array('before' => 'auth'), function()
     Route::get('/system.json', 'SystemController@jsonSystem');
     
     // Page Level Information
-    Route::get('/dashboard.json', 'HomeController@jsonDashboard'); 
+    Route::get('/dashboard.json', 'HomeController@jsonDashboard');
+    Route::get('/getOweInvoices.json', 'HomeController@getOweInvoices');
+    Route::post('/updateBroadcast.json', 'HomeController@updateBroadcast');
+
+
    
     //Commission
     Route::any('/queryCommission.json', 'CommissionController@queryCommission');
@@ -60,6 +64,8 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/getClientLastInvoice.json','OrderController@jsonGetClientLastInvoice');
     Route::post('/getClientSameDayOrder.json','OrderController@jsonGetSameDayOrder');
     Route::post('/getAllLastItemPrice.json','OrderController@jsonGetLastItem');
+    Route::post('/getNoOfOweInvoices.json','OrderController@getNoOfOweInvoices');
+
 
 
     Route::post('/voidInvoice.json', 'OrderController@jsonVoidInvoice');
@@ -152,10 +158,11 @@ Route::group(array('before' => 'auth'), function()
     Route::any('getClearance.json','PaymentController@getClearance');
     Route::any('querryCashCustomer.json','PaymentController@querryCashCustomer');
 
-
-    //Cash Sales
+    //Payment Cash Sales
     Route::any('getPaymentDetails.json','financeCashController@getPaymentDetails');
     Route::post('delPayment.json','financeCashController@delPayment');
+    Route::any('getCashClearance.json','financeCashController@getClearance');
+    Route::post('/addCashCheque.json','financeCashController@addCheque');
 
 
     //Data analysis
@@ -305,9 +312,9 @@ Route::get('cron/completeOrder',function(){
         $v = date("Y"). '-'. $m.'-'.$d;
     }
     if(date('w', strtotime(date('Y-m-d'))) == 1 ||date('w', strtotime(date('Y-m-d'))) == 2 ||date('w', strtotime(date('Y-m-d'))) == 3)
-        $days_ago = date('Y-m-d', strtotime('-4 days', strtotime(date('Y-m-d'))));
+        $days_ago = date('Y-m-d', strtotime('-6 days', strtotime(date('Y-m-d'))));
     else
-        $days_ago = date('Y-m-d', strtotime('-3 days', strtotime(date('Y-m-d'))));
+        $days_ago = date('Y-m-d', strtotime('-5 days', strtotime(date('Y-m-d'))));
 
     function check_in_range($start_date, $end_date, $date_from_user)
     {
@@ -328,7 +335,7 @@ Route::get('cron/completeOrder',function(){
 
     $accurage_date = date('Y-m-d', strtotime('-'.$count.' days', strtotime($days_ago)));
 
-    Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',1)->where('invoiceStatus',2)->update(['invoiceStatus'=>'30']);
+    Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',1)->where('invoiceStatus',2)->where('discount',0)->update(['invoiceStatus'=>'30','paid'=>DB::raw('amount')]);
     Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',2)->where('invoiceStatus',2)->update(['invoiceStatus'=>'20']);
 
 });

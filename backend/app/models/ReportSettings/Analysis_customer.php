@@ -133,7 +133,7 @@ class Analysis_customer {
 
 
         if (isset($i->client->created_at))
-            $created_date = date('d-m-Y', $i->client->created_at);
+            $created_date = date('d-m-Y', strtotime($i->client->created_at));
         else
             $created_date = '';
 

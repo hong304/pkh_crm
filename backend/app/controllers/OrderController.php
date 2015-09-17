@@ -223,9 +223,6 @@ class OrderController extends BaseController
             ->with('zone')
             ->get();
 
-        //   $summary['countInDataMart'] = 0;
-
-
         foreach ($invoices as $invoice) {
             $summary[$invoice->invoiceStatus . 'today']['breakdown'][$invoice->zoneId] = [
                 'zoneId' => $invoice->zoneId,
@@ -277,7 +274,6 @@ class OrderController extends BaseController
             })
             ->where(function ($query) {
                 $query->where('Invoice.invoiceStatus', '2')
-                    //->orwhere('Invoice.invoiceStatus','4')
                     ->orwhere('Invoice.invoiceStatus', '97')
                     ->orwhere('Invoice.invoiceStatus', '96')
                     ->orwhere('Invoice.invoiceStatus', '98');
@@ -285,9 +281,12 @@ class OrderController extends BaseController
 
         //  $summary['open'] = Invoice::where('invoiceStatus', 2)->wherein('zoneId', explode(',', Auth::user()->temp_zone))->count();
 
+
+
         $summary['printjobs'] = $jobscount;
         $summary['logintime'] = Session::get('logintime');
         $summary['db_logintime'] = Auth::user()->logintime;
+
 
 
         return Response::json($summary);
@@ -492,6 +491,17 @@ class OrderController extends BaseController
         } elseif ($detail['action'] == 'change-deliverydate') {
             $unloader->changeDate($detail['newdate']);
         }
+    }
+
+    public function getNoOfOweInvoices(){
+        $customerId = Input::get('customerId');
+        $count = Invoice::where('customerId',$customerId)->where('invoiceStatus',20)->where('paymentTerms',1)->count();
+
+        $unlock = Customer::select('unlock')->where('customerId',$customerId)->first();
+        if($unlock->unlock)
+            return Response::json(3);
+        else
+            return Response::json($count);
     }
 
 }

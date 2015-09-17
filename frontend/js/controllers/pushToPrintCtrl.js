@@ -181,7 +181,8 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                             url: printSelect,
                             data: {print:$scope.checkid,mode:'selected',zone:$scope.zone,shift:$scope.shift}
                         }).success(function (res) {
-                                   $scope.updatePrintQueue();
+                                    $scope.checkid = [];
+                                    $scope.updatePrintQueue();
                         });
 
                     }

@@ -32,15 +32,7 @@
         <div class="row">
             <div class="col-md-12">
 
-                <div ng-if="sameDayInvoice.deliveryDate_date == order.deliveryDate"
-                     class="Metronic-alerts alert alert-danger fade in">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button><span
-                        style="font-size:16px;"> 送貨日期:{{order.deliveryDate}}, 發票編號:{{sameDayInvoice.invoiceId}} <a
-                        href="/#/editOrder?invoiceId={{sameDayInvoice.invoiceId}}">按此</a>修改
-                </span></div>
                 <div class="portlet light bordered">
-
-
                     <div class="portlet-title">
                         <div class="caption font-green-sharp">
                             <i class="icon-speech font-green-sharp"></i> <span
@@ -312,6 +304,15 @@
                 </div>
             </div>
         </div>
+
+
+        <div ng-if="sameDayInvoice.deliveryDate_date == order.deliveryDate"
+             class="Metronic-alerts alert alert-danger fade in">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button><span
+                style="font-size:16px;"> 送貨日期:{{order.deliveryDate}}, 發票編號:{{sameDayInvoice.invoiceId}} <a
+                href="/#/editOrder?invoiceId={{sameDayInvoice.invoiceId}}">按此</a>修改
+                </span></div>
+
         <div class="row">
             <div class="col-md-12">
                 <div class="portlet light bordered">
@@ -335,6 +336,7 @@
                         </div>
 
                     </div>
+
 
                     <div class="portlet-body" id="orderportletbody">
                         <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.qty > 0 && lastitem.deliveryDate === null">

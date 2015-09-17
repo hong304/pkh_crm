@@ -82,6 +82,7 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
             'shift' : '',
             'productnewId' :'',
             'customer_group_id' : '',
+        'unlock' : '0'
  
 
 	};
@@ -138,7 +139,14 @@ app.controller('customerMaintenanceCtrl', function($scope, $rootScope, $http, Sh
 	//	$scope.filterData.zone = '';
 		$scope.updateDataSet();
 	});*/
-    
+
+    $scope.selectCom = function(i){
+        if(i == 'yes')
+            $scope.customerInfo.unlock= 1;
+        else
+            $scope.customerInfo.unlock= 0;
+    }
+
     $scope.editCustomer = function(customerId)
     {
     	$scope.submitbtn = true;

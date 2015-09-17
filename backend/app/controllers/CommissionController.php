@@ -6,6 +6,15 @@ class CommissionController extends BaseController
     public $date1 = '';
     public $date2 = '';
 
+
+    private $_sumcredit = 0;
+    private $_sumcod = 0;
+    private $_countcredit = 0;
+    private $_countcod = 0;
+    private $_countcodreturn = 0;
+    private $_countcodreplace = 0;
+    private $_countcodreplenishment = 0;
+
     public function __construct(){
 
         if(!Auth::user()->can('view_commission')){
@@ -113,7 +122,41 @@ class CommissionController extends BaseController
                 $vv['productQtys'] = floor($vv['normalizedQty']/$vv['normalizedUnit']);
             }
 
-            return $this->exportCsv($invoiceQ);
+            $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->where('zoneId', $this->zone)->get();
+            foreach ($invoice as $invoiceQ1) {
+                if ($invoiceQ1->invoiceStatus == '98') {
+                    if ($invoiceQ1->paymentTerms == 2) {
+                        $this->_sumcredit -= $invoiceQ1->amount;
+                    } else {
+                        $this->_sumcod -= $invoiceQ1->amount;
+                        $this->_countcodreturn += 1;
+                    }
+                }else{
+                    if ($invoiceQ1->paymentTerms == 2) {
+                        $this->_sumcredit += $invoiceQ1->amount;
+                        $this->_countcredit += 1;
+                    } else {
+                        $this->_sumcod += $invoiceQ1->amount;
+                        if ($invoiceQ1->invoiceStatus == '96')
+                            $this->_countcodreplace += 1;
+                        else if($invoiceQ1->invoiceStatus == '97')
+                            $this->_countcodreplenishment += 1;
+                        else
+                            $this->_countcod += 1;
+                    }
+                }
+            }
+
+            $this->data['sumcredit'] = $this->_sumcredit;
+            $this->data['sumcod'] = $this->_sumcod;
+            $this->data['countcredit'] = $this->_countcredit;
+            $this->data['countcod'] = $this->_countcod;
+
+            $this->data['countcodreturn'] = $this->_countcodreturn;
+            $this->data['countcodreplace'] = $this->_countcodreplace;
+            $this->data['countcodreplenishment'] = $this->_countcodreplenishment;
+
+            return $this->exportCsv($invoiceQ,$this->data);
         } else {
            // return Datatables::of($invoiceQ)->make(true);
         }
@@ -124,7 +167,7 @@ class CommissionController extends BaseController
 
     }
 
-    public function exportCsv($invoices)
+    public function exportCsv($invoices,$summary)
     {
    //     pd($invoices);
 
@@ -140,6 +183,37 @@ class CommissionController extends BaseController
                 $csv .= "\r\n";
             }
         }
+
+        $csv .= '"現金總數:",';
+        $csv .= '"' . $summary['countcod'] . '",';
+        $csv .= '"$' . number_format($summary['sumcod'],2,'.',',') . '",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
+        $csv .= '"月結總數:",';
+        $csv .= '"' . $summary['countcredit'] . '",';
+        $csv .= '"$' . number_format($summary['sumcredit'],2,'.',',')  . '",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
+        $csv .= '"退貨單:",';
+        $csv .= '"' . $summary['countcodreturn'] . '",';
+        $csv .= '"",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
+        $csv .= '"換貨單:",';
+        $csv .= '"' . $summary['countcodreplace'] . '",';
+        $csv .= '"",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
+        $csv .= '"補貨單:",';
+        $csv .= '"' . $summary['countcodreplenishment'] . '",';
+        $csv .= '"",';
+        $csv .= '"",';
+        $csv .= "\r\n";
+
         echo "\xEF\xBB\xBF";
         $headers = array(
             'Content-Type' => 'text/csv',

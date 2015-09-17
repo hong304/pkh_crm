@@ -205,6 +205,7 @@ class InvoiceManipulation {
 	        $this->im->invoiceId = $this->invoiceId;
 	        $this->im->invoiceType = 'Salesman';
 	        $this->im->zoneId = $this->temp_invoice_information['zoneId'];
+            $this->im->receiveMoneyZone = $this->temp_invoice_information['zoneId'];
 	        $this->im->customerId = $this->temp_invoice_information['clientId'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
 	        $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
@@ -222,6 +223,9 @@ class InvoiceManipulation {
 	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount']; 
 	        $this->im->created_at = time();
 	        $this->im->updated_at = time();
+
+            Customer::where('customerId',$this->temp_invoice_information['clientId'])->update(['unlock'=>0]);
+
 	    }
 	    elseif($this->action == 'update')
 	    {

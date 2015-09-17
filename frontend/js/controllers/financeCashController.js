@@ -9,11 +9,11 @@ function editCountry(id)
     });
 }
 
-function editInvoicePayment(invoiceId,customerId)
+function editInvoicePayment(invoiceId,customerId,zoneId)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
-        scope.editInvoicePayment(invoiceId,customerId);
+        scope.editInvoicePayment(invoiceId,customerId,zoneId);
     });
 }
 
@@ -35,9 +35,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.invoice = [];
 
-    var fetchDataTimer;
-    var fetchDataDelay = 500;
-
     $scope.payment = [];
     $scope.discount = 0;
     $scope.invoicepaid = [];
@@ -50,19 +47,17 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.filterData = {
         'displayName'	:	'',
-        'clientId'		:	'',
+        'customerId'		:	'',
         'status'		:	'20',
         'zone'			:	'',
          'created_by'	:	'0',
         'invoiceNumber' :	'',
-        'bankCode' : '003',
+        'bankCode' : '000',
         'cashAmount' : '0',
         'amount' : '0',
         'paid' : '0',
         'no' : '',
-        'remain' : 0,
-        'customerId':'',
-        'customerName':''
+        'remain' : 0
     };
 
 
@@ -94,14 +89,49 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         autoclose: true
     });
     $("#deliverydate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
     $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
 
 
 
+    $(document).ready(function(){
+
+        $('#queryInfo').keydown(function (e) {
+            if (e.keyCode == 13) {
+                $scope.cheque = {
+                    'remain' : 0,
+                    'amount' : 0
+                }
+                $scope.filterData.cashAmount = '0';
+                $scope.filterData.amount = '0';
+                $scope.filterData.paid = '0';
+                $scope.filterData.no = '';
+                $scope.updateDataSet();
+            }
+
+        });
+
+    });
+
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
+
+        if($location.search().action == 'success') {
+            Metronic.alert({
+                container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                place: 'prepend', // append or prepent in container
+                type: 'success',  // alert's type
+                message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+                close: true, // make alert closable
+                reset: true, // close all previouse alerts first
+                focus: true, // auto scroll to the alert after shown
+                closeInSeconds: 0, // auto close after defined seconds
+                icon: 'warning' // put icon before the message
+            });
+        }
         $scope.updateDataSet();
+
 
     });
 
@@ -115,16 +145,25 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
        // $scope.updateDataSet();
     }, true);
 
+    $scope.$watch('filterData.customerId', function() {
+        $scope.updateDataSet();
+    }, true);
+
     $scope.$on('handleCustomerUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
-
-        $scope.filterData.clientId = SharedService.clientId;
+        $scope.filterData.customerId = SharedService.clientId;
         $scope.filterData.displayName = SharedService.clientId + " (" + SharedService.clientName + ")";
         $scope.filterData.zone = '';
-        $scope.updateDataSet();
 
-        Metronic.unblockUI();
+
     });
+
+
+        $scope.addCheque = function()
+        {
+            $location.url("/financeCashGetClearance");
+
+        }
 
     $scope.editCountry = function(id){
         $http.post(endpoint + "/delPayment.json", { id: id})
@@ -147,7 +186,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             });
     }
 
-    $scope.editInvoicePayment = function(invoiceId,customerId)
+    $scope.editInvoicePayment = function(invoiceId,customerId,zoneId)
     {
 
         var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
@@ -156,7 +195,19 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         var yyear = start_date.getFullYear();
         var yday = start_date.getDate();
 
+        $scope.filterData.cashAmount = '0';
+        $scope.filterData.amount = '0';
+        $scope.filterData.paid = '0';
+        $scope.filterData.no = '';
+
+        var zoneDB = $scope.systeminfo.availableZone;
+        var pos = zoneDB.map(function(e) {
+            return e.zoneId;
+        }).indexOf(parseInt(zoneId));
+
+        $scope.filterData.zoneId = zoneDB[pos];
         $scope.filterData.invoiceId = invoiceId;
+        $scope.filterData.clientId = customerId;
 
         $http.post(query, {mode: "paymentHistory", customerId: customerId,invoiceId:invoiceId})
             .success(function(res){
@@ -195,7 +246,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     }
 
-    $scope.checkChequeExist = function (){
+ /*   $scope.checkChequeExist = function (){
 
         $http({
             method: 'POST',
@@ -210,7 +261,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             }
         });
 
-    }
+    }*/
 
     $scope.sendRealFile = function()
     {
@@ -230,33 +281,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     }
 
-    $scope.updateInvoiceNumber = function()
-    {
-        $scope.cheque = {
-            'remain' : 0,
-            'amount' : 0
-        }
-        $scope.filterData.bankCode = '003';
-        $scope.filterData.cashAmount = '0';
-        $scope.filterData.amount = '0';
-        $scope.filterData.paid = '0';
-        $scope.filterData.no = '';
-        $scope.filterData.status = '20';
-
-
-        $timeout.cancel(fetchDataTimer);
-        fetchDataTimer = $timeout(function () {
-            $scope.updateDataSet();
-        }, 1000);
-
-    }
-
-    $scope.updateCustomer = function(){
-        fetchDataTimer = $timeout(function () {
-            $scope.updateDataSet();
-        }, fetchDataDelay);
-    }
-
     $scope.autoPost = function(){
 
         var owe = 0;
@@ -270,7 +294,49 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             $scope.filterData.paid = owe;
         }
 
-        if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != owe) || ($scope.filterData.paid>0 && $scope.filterData.paid != owe) ){
+        if($scope.filterData.amount>owe||$scope.filterData.cashAmount>owe){
+            bootbox.dialog({
+                message: "輸入銀碼大於需付金額:",
+                title: "提交付款",
+                buttons: {
+
+                    main: {
+                        label: "仍需處理",
+                        className: "btn-primary",
+                        callback: function() {
+                           $http({
+                                method: 'POST',
+                                url: query,
+                                data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'30'}
+                            }).success(function () {
+                                $('#invoicePayment').modal('hide');
+                                Metronic.alert({
+                                    container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                                    place: 'prepend', // append or prepent in container
+                                    type: 'success',  // alert's type
+                                    message: '<span style="font-size:16px;">成功全數支付</span>',  // alert's message
+                                    close: true, // make alert closable
+                                    reset: true, // close all previouse alerts first
+                                    focus: true, // auto scroll to the alert after shown
+                                    closeInSeconds: 0, // auto close after defined seconds
+                                    icon: 'warning' // put icon before the message
+                                });
+                                $scope.updateDataSet();
+                            });
+
+                        }
+                    },
+
+                    danger: {
+                        label: "返回",
+                        className: "red",
+                        callback: function() {
+
+                        }
+                    }
+                }
+            });
+        }else if(($scope.filterData.cashAmount>0 && $scope.filterData.cashAmount != owe) || ($scope.filterData.paid>0 && $scope.filterData.paid != owe) ){
 
         bootbox.dialog({
             message: "支付數目與尚欠款項有差異，請按下列選擇",
@@ -282,10 +348,16 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     className: "btn-primary",
                     callback: function() {
 
+                        var discount_taken = 0;
+                        if($scope.filterData.cashAmount>0)
+                            discount_taken = $scope.paymentDetails[0]['owe'] - $scope.filterData.cashAmount;
+                        else if ($scope.filterData.paid>0)
+                            discount_taken = $scope.paymentDetails[0]['owe'] - $scope.filterData.paid;
+
                         $http({
                             method: 'POST',
                             url: query,
-                            data: {paidinfo:$scope.filterData,mode:'posting',discount:$scope.paymentDetails[0]['owe'],paymentStatus:'30'}
+                            data: {paidinfo:$scope.filterData,mode:'posting',discount:discount_taken,paymentStatus:'30'}
                         }).success(function () {
                             $('#invoicePayment').modal('hide');
                             Metronic.alert({
@@ -353,7 +425,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
             place: 'prepend', // append or prepent in container
             type: 'success',  // alert's type
-            message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+            message: '<span style="font-size:16px;">訂單已轉為未付款</span>',  // alert's message
             close: true, // make alert closable
             reset: true, // close all previouse alerts first
             focus: true, // auto scroll to the alert after shown
@@ -491,7 +563,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     { "data": "amount", "width":"5%" },
                     { "data": "remain", "width":"7%" },
                     { "data": "invoiceStatusText", "width":"6%" },
-                    { "data": "paymentTermsText", "width":"6%" },
                      { "data": "link", "width":"5%" },
                     { "data": "details", "width":"5%" }
 
@@ -541,14 +612,22 @@ var i =0;
     {
         $scope.filterData = {
             'displayName'	:	'',
-            'clientId'		:	'',
-            'status'		:	'0',
+            'customerId'		:	'',
+            'status'		:	'20',
             'zone'			:	'',
-            'deliverydate'	:	'last day',
             'created_by'	:	'0',
-            'invoiceNumber' :	''
+            'invoiceNumber' :	'',
+            'bankCode' : '000',
+            'cashAmount' : '0',
+            'amount' : '0',
+            'paid' : '0',
+            'no' : '',
+            'remain' : 0
         };
-        $scope.updateDataSet();
+
+        $scope.filterData.deliverydate = d.getFullYear()+'-'+lastMonth+'-'+d.getDate();
+        $scope.filterData.deliverydate2 = year+'-'+month+'-'+day;
+
     }
 
 

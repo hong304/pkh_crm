@@ -153,4 +153,43 @@ class HomeController extends BaseController {
 
     }
 
+    public function getOweInvoices(){
+
+        $permittedZone = explode(',', Auth::user()->temp_zone);
+
+        $invoices = Invoice::where('invoiceStatus','20')->where('paymentTerms','1')->wherein('zoneId',$permittedZone)->get();
+
+        foreach ($invoices as $v){
+            $data[$v->zoneId]['byCustomer'][$v->customerId] = [
+                'zoneId' => $v->zoneId,
+                'customerId' => $v->customerId,
+                'customerName' => $v->customerName,
+                'invoices'=> ((isset($data[$v->zoneId]['byCustomer'][$v->customerId]['invoices']))?$data[$v->zoneId]['byCustomer'][$v->customerId]['invoices']:0) + 1,
+                'owe' => ((isset($data[$v->zoneId]['byCustomer'][$v->customerId]['owe']))?$data[$v->zoneId]['byCustomer'][$v->customerId]['owe']:0) + $v->remain
+            ];
+            $data[$v->zoneId]['total'] = [
+                'invoices'=> ((isset($data[$v->zoneId]['total']['invoices']))?$data[$v->zoneId]['total']['invoices']:0) + 1,
+                'owe' => ((isset($data[$v->zoneId]['total']['owe']))?$data[$v->zoneId]['total']['owe']:0) + $v->remain
+            ];
+        }
+        ksort($data);
+        return Response::json($data);
+
+    }
+
+    public function updateBroadcast(){
+
+        if(Input::get('mode')=='oweInvoice'){
+            $user = User::find(Auth::user()->id);
+            $user->loggedin = 1;
+            $user->save();
+        }else if (Input::get('mode')=='generalMsg'){
+            foreach(Input::get('bid') as $v){
+                $broadcastMessageRead = new broadcastMessageRead();
+                $broadcastMessageRead->user_id = Auth::user()->id;
+               $broadcastMessageRead->broadcast_message_id = $v['id'];
+                $broadcastMessageRead->save();
+            }
+        }
+    }
 }

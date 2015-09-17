@@ -2,6 +2,7 @@
 
 class PaymentController extends BaseController {
 
+
     public function addCheque(){
         $paid = Input::get('paid');
 
@@ -116,19 +117,21 @@ class PaymentController extends BaseController {
                 else
                     $payment->remain = $paidinfo['amount'] - $paidinfo['paid'];
 
-                $payment->customerId = $paidinfo['customerId'];
+                $payment->customerId = $paidinfo['clientId'];
 
                 $payment->save();
 
                 $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
                 $i->paid += $paidinfo['paid'];
                 $i->invoiceStatus = Input::get('paymentStatus');
-                if($discount_taken>0)
+                $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
+                if($discount_taken>0){
                     $i->discount = 1;
+                    $i->discount_taken += $discount_taken;
+                }
                 $i->save();
 
                 if($discount_taken>0){
-                    $discount_taken = $discount_taken-$paidinfo['paid'];
                     $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['paid'],'discount_taken'=>$discount_taken]);
                 }else
                     $i->payment()->attach($payment->id,['amount'=>$i->amount,'paid'=>$paidinfo['paid']]);
@@ -141,25 +144,30 @@ class PaymentController extends BaseController {
                 $payment1->end_date =  $paidinfo['receiveDate'];
                 $payment1->receive_date = $paidinfo['receiveDate'];
                 $payment1->amount = $paidinfo['cashAmount'];
-                $payment1->customerId = $paidinfo['customerId'];
+                $payment1->customerId = $paidinfo['clientId'];
                 $payment1->save();
 
                 $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
                 $i->paid += $paidinfo['cashAmount'];
                 $i->invoiceStatus = Input::get('paymentStatus');
-                if($discount_taken>0)
+                $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
+                if($discount_taken>0) {
                     $i->discount = 1;
+                    $i->discount_taken += $discount_taken;
+                }
                 $i->save();
 
                 if($discount_taken>0) {
-                    $discount_taken = $discount_taken - $paidinfo['cashAmount'];
-                    $i->payment()->attach($payment1->id, ['amount' => $i->amount, 'paid' => $paidinfo['cashAmount'],'discount_taken'=>$discount_taken]);
+                   $i->payment()->attach($payment1->id, ['amount' => $i->amount, 'paid' => $paidinfo['cashAmount'],'discount_taken'=>$discount_taken]);
                 }else{
                     $i->payment()->attach($payment1->id, ['amount' => $i->amount, 'paid' => $paidinfo['cashAmount']]);
                 }
             }else if($paidinfo['amount'] ==0 && $paidinfo['cashAmount']==0){
                 $i = Invoice::where('invoiceId',$paidinfo['invoiceId'])->first();
-                 $i->invoiceStatus = Input::get('paymentStatus');
+                $i->invoiceStatus = Input::get('paymentStatus');
+                $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
+                if($i->amount == $i->paid)
+                    $i->paid=0;
                   $i->save();
             }
 
@@ -169,7 +177,9 @@ class PaymentController extends BaseController {
         {
             $filter = Input::get('filterData');
 
-            $invoice = Invoice::select('invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms');
+
+
+            $invoice = Invoice::select('invoiceId','discount_taken','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms','receiveMoneyZone');
 
             // zone
                $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -193,32 +203,32 @@ class PaymentController extends BaseController {
                 }
 
             // status
-            if($filter['invoiceNumber'] == '' && $filter['customerId']=='' && $filter['customerName']=='')
+            if($filter['invoiceNumber'] == '' && $filter['customerId']=='')
             {
                 $invoice->whereBetween('invoice.deliverydate', [strtotime($filter['deliverydate']),strtotime($filter['deliverydate2'])]);
                 $invoice->where('invoiceStatus', $filter['status']);
 
             }else if ($filter['invoiceNumber'] != ''){
                 $invoice->where('invoiceId', 'LIKE', '%'.$filter['invoiceNumber'].'%');
-            }else if($filter['customerId']!='' || $filter['customerName']!=''){
+            }else if($filter['customerId']!=''){
                 $invoice->WhereHas('client', function($q) use($filter)
                 {
-                    $q->where('customerId', 'LIKE', '%'.$filter['customerId'].'%')->where('customerName_chi', 'LIKE', '%'.$filter['customerName'].'%');
+                    $q->where('customerId', $filter['customerId']);
                 });
-                $invoice->whereIn('invoiceStatus', [2,20]);
+                //$invoice->whereIn('invoiceStatus', [2,20]);
+                $invoice->where('invoiceStatus', $filter['status']);
             }
                 $invoice->where('paymentTerms','=',1);
-            // created by
+
 
             $invoices = $invoice->orderby('deliveryDate', 'asc');
 
 
-
             return Datatables::of($invoices)
                 ->addColumn('link', function ($payment) {
-                    if(Auth::user()->can('edit_cashCustomer'))
-                        return '<span onclick="editInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
-                    else
+                    if(Auth::user()->can('edit_cashCustomer') && ($payment->invoiceStatus == '20'||$payment->invoiceStatus == '30'||$payment->invoiceStatus == '2')){
+                        return '<span onclick="editInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\',\''.$payment->receiveMoneyZone.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
+                    }else
                         return '';
                 })->addColumn('details', function ($payment) {
                     return '<span onclick="viewInvoicePayment(\''.$payment->invoiceId.'\',\''.$payment->customerId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 詳情</span>';
@@ -237,9 +247,10 @@ class PaymentController extends BaseController {
 
         if($mode == 'single'){
 
-            $p=DB::table('invoice_payment')->select('invoice_payment.amount as totalamount','bankCode','ref_number','receive_date','paid','id')->leftJoin('payments', function($join) {
+            $p=DB::table('invoice_payment')->select('invoice_payment.amount as totalamount','bankCode','ref_number','receive_date','paid','payments.id','name')->leftJoin('payments', function($join) {
                 $join->on('payment_id', '=', 'payments.id');
-            })->where('invoice_id','=',Input::get('invoiceId'))->get();
+            })->leftJoin('users', 'users.id', '=', 'payments.updated_by')
+                ->where('invoice_id','=',Input::get('invoiceId'))->get();
 
             return Response::json($p);
         }
@@ -247,7 +258,7 @@ class PaymentController extends BaseController {
         if($mode == 'paymentHistory'){
             $ph = Invoice::select('deliveryDate','invoiceId','amount','paid',DB::Raw('amount-paid as owe'))
                  ->where(function ($query) {
-                    $query->where('customerId',Input::get('customerId'))->where('invoiceStatus','20')->where('discount',false);
+                    $query->where('customerId',Input::get('customerId'))->where('invoiceStatus','20')->where('paymentTerms','1')->where('discount',false);
                 })->orWhere('invoiceId',Input::get('invoiceId'))
                 ->get();
 
@@ -307,7 +318,7 @@ class PaymentController extends BaseController {
             //  $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->with('client')->get();
             $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
 
-
+            $discount = Customer::select('discount')->whereIn('customerId',$customerId)->first();
             foreach ($invoice_info as $v){
                 if($v['paid']>0){
                     if($v['invoiceStatus']==98)
@@ -321,6 +332,7 @@ class PaymentController extends BaseController {
             }
             $invoice['data'] = $invoice_info;
             $invoice['sum'] = $sum;
+            $invoice['discount'] = $discount->discount;
 
             return Response::json($invoice);
 
@@ -336,17 +348,11 @@ class PaymentController extends BaseController {
 
         if($mode == 'single')
         {
-
-
             $payment = Payment::where('id',Input::get('cheque_id'))->with('invoice')->first();
-
-
             foreach($payment->invoice as $vv){
                 $vv->customerName = $vv->customer_name;
 
             }
-
-
 
             $vv = $payment;
 

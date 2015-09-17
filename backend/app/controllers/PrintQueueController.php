@@ -256,8 +256,10 @@ class PrintQueueController extends BaseController
 
             $jobs = PrintQueue::wherein('job_id', $jobId)->get();
 
+            $groupIds = [];
+
             foreach ($jobs as $vv) {
-                if ($vv->invoiceStatus == 2 || $vv->invoiceStatus == 1)
+                if ($vv->invoiceStatus == 2 || $vv->invoiceStatus == 1 || $vv->invoiceStatus == 20 || $vv->invoiceStatus == 30)
                     $groupIds[2][$vv->target_path][] = $vv->invoiceId;
                 else
                     $groupIds[1][$vv->target_path][] = $vv->invoiceId;

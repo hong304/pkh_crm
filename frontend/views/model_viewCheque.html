@@ -29,7 +29,7 @@
                                     <label>{{chequeDetails.ref_number}}</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <label>入票日</label>
+                                    <label>入票時間</label>
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{chequeDetails.created_at}}</label>
@@ -64,6 +64,17 @@
                                     <label>{{chequeDetails.remain}}</label>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>備註</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <label>{{chequeDetails.remark}}</label>
+                                </div>
+
+                            </div>
+
                         </div>
                     </div>
 
@@ -130,7 +141,7 @@
                                                 </td>
 
                                                 <td>
-                                                    {{i.pivot.created_at}}
+                                                    {{receiveDate}}
                                                 </td>
                                                                 </tr>
                                             <tr>

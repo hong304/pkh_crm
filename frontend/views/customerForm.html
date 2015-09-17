@@ -54,27 +54,13 @@
 							</div>
 						</div>
 						
-						<div class="form-group">
-							<label class="col-md-2 control-label">名稱 (英)</label>
-							<div class="col-md-10">
-								<input type="text" ng-model="customerInfo.customerName_eng" class="form-control" placeholder="Enter text">
-							</div>
-						</div>
-						
-						<div class="form-group">
+	    				<div class="form-group">
 							<label class="col-md-2 control-label">地址 (中) *</label>
 							<div class="col-md-10">
 								<input type="text"  ng-model="customerInfo.address_chi" class="form-control" placeholder="Enter text">
 							</div>
 						</div>
-						
-						<div class="form-group">
-							<label class="col-md-2 control-label">地址 (英)</label>
-							<div class="col-md-10">
-								<input type="text" ng-model="customerInfo.address_eng" class="form-control" placeholder="Enter text">
-							</div>
-						</div>
-						
+
 						<div class="form-group">
 							<label class="col-md-2 control-label">區域 *</label>
 							<div class="col-md-10">
@@ -150,6 +136,13 @@
 							</div>
 						</div>
 
+                        <div class="form-group" data-ng-if="customerInfo.paymentTermId == 2">
+                            <label class="col-md-2 control-label">折扣</label>
+                            <div class="col-md-10">
+                                <input type="text"  ng-model="customerInfo.discount" class="form-control" placeholder="Enter number Only" select-on-click>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="col-md-2 control-label">客戶備註 </label>
                             <div class="col-md-10">
@@ -175,7 +168,14 @@
                                 <input type="text"  ng-model="customerInfo.account_fax" class="form-control" placeholder="Enter text">
                             </div>
                         </div>
-
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">解鎖</label>
+                            <div class="col-md-10">
+                                <div class="pull-left control-label">
+                                    <input type="checkbox" ng-model="customerInfo.unlock" ng-true-value="yes" ng-false-value="no" ng-checked="customerInfo.unlock==1" ng-change="selectCom(customerInfo.unlock);">
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 				</form>

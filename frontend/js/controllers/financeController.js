@@ -125,6 +125,7 @@ var fetchDataTimer = '';
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
+        $scope.action = $location.search().action;
 
         if($location.search().action == 'success') {
             $scope.success = true;
@@ -158,8 +159,8 @@ var fetchDataTimer = '';
     });
 
     $rootScope.$on('$locationChangeSuccess', function(){
+        $scope.action = $location.search().action;
         $scope.getChequeList();
-
     });
 
     $scope.$watch(function() {
@@ -188,6 +189,7 @@ var fetchDataTimer = '';
         $http.post(query, {mode: "single", cheque_id: cheque_id})
             .success(function(res, status, headers, config){
                 $scope.chequeDetails = res.payment;
+                $scope.receiveDate = res.payment.receive_date;
                 $scope.chequeCustomers = res.customer;
 
                 Metronic.unblockUI();
@@ -224,10 +226,11 @@ var fetchDataTimer = '';
 
                 $scope.payment = res;
                 $scope.invoiceinfo = res.data;
+
                 var i = 0;
                 $scope.invoiceinfo.forEach(function(item) {
                     $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
-                    $scope.invoicepaid[i]['settle'] = item.realAmount;
+                    $scope.invoicepaid[i]['settle'] = Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
                     $scope.invoicepaid[i]['id'] = item.invoiceId;
                     i++;
                 });
@@ -280,23 +283,23 @@ var fetchDataTimer = '';
 $scope.updatePaidTotal = function(){
     $scope.totalAmount = 0;
     $scope.invoicepaid.forEach(function(item){
-
-            $scope.totalAmount += Number(item.settle);
-
+            $scope.totalAmount += (Number(item.settle));
     });
-$scope.updateDiscount = function(){
-
-    var i = 0;
-    $scope.invoiceinfo.forEach(function(item){
-
-        $scope.invoicepaid[i]['settle']= Number(item.realAmount*$scope.filterData.discount);
-        $scope.invoicepaid[i]['discount'] = 1;
-i++;
-    });
-    $scope.updatePaidTotal();
+    $scope.totalAmount = $scope.totalAmount.toFixed(2);
 }
 
-}
+    $scope.updateDiscount = function(){
+
+        var i = 0;
+        $scope.invoiceinfo.forEach(function(item){
+
+            $scope.invoicepaid[i]['settle']= Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
+            //  $scope.invoicepaid[i]['discount'] = 1;
+            i++;
+        });
+        $scope.updatePaidTotal();
+    }
+
     $scope.addCheque = function()
     {
         $location.url("/finance-newCheque?action=newCheque");

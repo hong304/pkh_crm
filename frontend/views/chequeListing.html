@@ -127,7 +127,7 @@
                             <i class="fa fa-cogs font-green-sharp"></i>
                             <span class="caption-subject font-green-sharp bold uppercase">支票列表</span>
                         </div>
-                        <div class="actions" ng-if="systemInfo.permission.add_cheque == true">
+                        <div class="actions" ng-if="systemInfo.permission.add_cheque == true && action=='credit'">
                             <a href="javascript:;" ng-click="addCheque();" class="btn btn-default btn-circle">
                                 <i class="fa fa-plus"></i>
                                 <span class="hidden-480"> 新增支票 </span> </a>

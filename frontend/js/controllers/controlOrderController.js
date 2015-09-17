@@ -252,21 +252,33 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
         // get all products
         // $scope.loadProduct($scope.order.clientId);
+if(!$scope.systeminfo.permission.sa_up)
+        $http.post(endpoint + '/getNoOfOweInvoices.json', {customerId: $scope.order.clientId})
+            .success(function(res){
+                if(res > 5){
+                    Metronic.blockUI({
+                        target: '#orderportletbody',
+                        boxed: true,
+                        message: '此客戶的欠單數量已超過5張,不能開單'
+                    });
+                }else{
+                    $scope.getSameDayInvoice();
+                    $scope.getAllLastItemPrice($scope.order.clientId);
+                }
+            });
+else{
+    $scope.getSameDayInvoice();
+    $scope.getAllLastItemPrice($scope.order.clientId);
+}
 
         //block the order portlet
-        /*
-         Metronic.blockUI({
-         target: '#orderportletbody',
-         boxed: true,
-         message: '取得貨品資料中...'
-         });
-         */
+
+
+
 
         // load last time invoice
         //$scope.getClientLastInvoice($scope.order.clientId);
 
-        $scope.getSameDayInvoice();
-        $scope.getAllLastItemPrice($scope.order.clientId);
     });
 
     $scope.getAllLastItemPrice = function(customerId){

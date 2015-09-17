@@ -76,16 +76,79 @@ app.factory('httpPreConfig', ['$http', '$rootScope', function($http, $rootScope)
 
 /* Setup App Main Controller */
 app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', 'SharedService', '$timeout', function($scope, $rootScope, $http, $interval, SharedService, $timeout) {
-	
+
+
+
 	// get system configuration from cloud
 	$http.get($scope.endpoint + '/system.json').success(function(data) {
 
           $scope.systemInfo = data;
 
-       /* if(!data.user)
+       var text = '';
+        $.each(data.broadcastMessage, function(index, value) {
+            text += value.content + "<br>";
+        });
+
+        if(text != ''){
+            bootbox.dialog({
+                title: "重要事項",
+                message: text,
+                closeButton:false,
+                onEscape:false,
+                buttons: {
+                    danger: {
+                        label: "確定",
+                        className: "red",
+                        callback: function() {
+
+                            $http.post(endpoint + '/updateBroadcast.json',{mode:'generalMsg',bid:data.broadcastMessage}).success(function(res, status, headers, config) {
+
+                            }).error(function(res, status, headers, config) {
+
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+      if(!data.user.loggedin)
         {
-        	window.location.href = $scope.endpoint + '/credential/auth';
-        }*/
+            var msg = '';
+            $http.get($scope.endpoint + '/getOweInvoices.json')
+                .success(function(res){
+                    $.each(res, function(index, value) {
+                        var owe = value.total.owe;
+                        msg += '車號:'+index+' 欠單總數:'+value.total.invoices+' 欠單總額:$'+owe.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'<br/>';
+                    });
+
+
+                    bootbox.dialog({
+                        title: "欠單詳情",
+                        message: msg,
+                        closeButton:false,
+                        onEscape:false,
+                        buttons: {
+                            danger: {
+                                label: "確定",
+                                className: "red",
+                                callback: function() {
+
+                                    $http.post(endpoint + '/updateBroadcast.json',{mode:'oweInvoices'}).success(function(res, status, headers, config) {
+
+                                    }).error(function(res, status, headers, config) {
+
+                                    });
+                                }
+                            }
+                        }
+                    });
+
+                });
+
+        }
+
+
         $rootScope.systeminfo = data;
         $timeout(function(){
         	SharedService.setValue('SystemInfo', $scope.systemInfo, 'UpdateSystemInfo');
@@ -98,6 +161,9 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initComponents(); // init core components
+
+
+
         //Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive 
     });
 }]);
@@ -136,8 +202,8 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
 		$scope.endpoint = endpoint;
 		
         $scope.getNotification();
-       $interval($scope.getNotification, 15000);
-        $interval($scope.broadCastNotification, 500);
+       $interval($scope.getNotification, 30000);
+       // $interval($scope.broadCastNotification, 500);
         
 	});
 	
@@ -182,10 +248,8 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
     		// --------------------- handle pending approval order
     		$scope.notification = data;
 
-
-
-            if(data.logintime != parseInt(data.db_logintime)){
-               alert('你已被登出')
+                     if(parseInt(data.logintime) != parseInt(data.db_logintime)){
+               alert('你的帳戶已從新的瀏覽器或裝置登入。請立即檢查此登入')
                window.location.href = $scope.endpoint + '/logout?mode=manual';
             }
 
@@ -956,6 +1020,37 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                             assets + '/global/scripts/datatable.js',
 
                             'js/controllers/financeController.js',
+                            'js/controllers/selectClientCtrl.js',
+                            'js/controllers/selectGroupCtrl.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
+        .state('financeCashGetClearance', {
+            url: "/financeCashGetClearance",
+            templateUrl: "views/financeCashGetClearance.html",
+            data: {pageTitle: '支票入帳(現金客)', pageSubTitle: ''},
+            controller: "financeCashGetClearanceController",
+
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                            assets + '/global/plugins/fuelux/js/spinner.min.js',
+                            assets + '/dependencies/jquery.cookie.min.js',
+                            assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
+                            assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            'js/controllers/financeCashGetClearanceController.js',
                             'js/controllers/selectClientCtrl.js',
                             'js/controllers/selectGroupCtrl.js',
                         ]
