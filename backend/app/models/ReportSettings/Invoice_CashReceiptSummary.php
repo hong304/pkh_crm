@@ -77,6 +77,9 @@ class Invoice_CashReceiptSummary {
                 $uncheque[$v->invoiceId] = 0;
             $uncheque[$v->invoiceId] += $v->paid;
         }
+
+      //  pd($uncheque);
+
     //當天單,不是當天收錢 + 當天單,收支票
 
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
@@ -99,20 +102,33 @@ class Invoice_CashReceiptSummary {
 
                        if($invoiceQ->invoiceStatus == 20){
                            $paid = $invoiceQ->paid;
-                           $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain;
+                           $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain;
 
                            //not yet receive
                            $this->_backaccount[] = [
                                'customerId' => $client->customerId,
                                'name' => $client->customerName_chi,
                                'invoiceNumber' => $invoiceId,
-                               'invoiceTotalAmount' => $invoiceQ->remain ,
                                'accumulator' =>number_format($acc1,2,'.',','),
                                'amount' => number_format($invoiceQ->remain,2,'.',','),
                            ];
 
                        }else if ($invoiceQ->invoiceStatus == 30){
+
                            $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
+
+                           if(isset($uncheque[$invoiceQ->invoiceId])){
+                               $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain+$uncheque[$invoiceQ->invoiceId];
+                               //not yet receive
+                               $this->_backaccount[] = [
+                                   'customerId' => $client->customerId,
+                                   'name' => $client->customerName_chi,
+                                   'invoiceNumber' => $invoiceId,
+                                   'accumulator' =>number_format($acc1,2,'.',','),
+                                   'amount' => number_format($invoiceQ->remain+$uncheque[$invoiceQ->invoiceId],2,'.',','),
+                               ];
+                           }
+
                        }else
                            $paid = $invoiceQ->remain;
 
