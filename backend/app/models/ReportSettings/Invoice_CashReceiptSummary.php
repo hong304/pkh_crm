@@ -58,7 +58,7 @@ class Invoice_CashReceiptSummary {
             });*/
 
 //當天單,不是當天收錢
-        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
         $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
@@ -194,7 +194,7 @@ class Invoice_CashReceiptSummary {
             }
 
         }
-
+//補收
 
 
       /*  foreach($this->_account as &$v){
@@ -213,16 +213,17 @@ class Invoice_CashReceiptSummary {
     }
 
     public function outputExcel(){
+
+        //B/F
         $invoices = Invoice::where('paymentTerms',1)->where('deliveryDate','<',$this->_date)->where('invoiceStatus',20)->orderBy('zoneId')->get();
-
         $balance_bf = [];
-
         foreach($invoices as $v){
 
             if(!isset($balance_bf[$v->zoneId]))
                 $balance_bf[$v->zoneId] = 0;
             $balance_bf[$v->zoneId] += $v->remain;
         }
+        //B/F
 
         //補收
         $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->with('payment')
@@ -240,6 +241,7 @@ class Invoice_CashReceiptSummary {
                 }
             }
         }
+        //補收
 
 
         $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',$this->_date)->get();
@@ -267,6 +269,7 @@ class Invoice_CashReceiptSummary {
                 'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,
             ];
         }
+
         ksort($info);
 
 
