@@ -57,7 +57,7 @@ class Invoice_CashReceiptSummary {
                     $this->_returnaccount[$invoiceQ['client']->customerId] = $invoiceQ->amount;
             });*/
 
-    //當天單,不是當天收錢 + 當天單,收支票
+    //當天單,不是當天收錢
         $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
@@ -67,8 +67,7 @@ class Invoice_CashReceiptSummary {
             $join->on('invoice_payment.payment_id', '=', 'payments.id');
         })->where('deliveryDate', '=', $date)
           ->where(function ($query) use($date) {
-                $query->where('receive_date', '!=', date('y-m-d',$date))
-                    ->orwhere('ref_number','!=', 'cash');
+                $query->where('receive_date', '!=', date('y-m-d',$date));
             })->get();
 
         $uncheque = [];
@@ -77,10 +76,30 @@ class Invoice_CashReceiptSummary {
                 $uncheque[$v->invoiceId] = 0;
             $uncheque[$v->invoiceId] += $v->paid;
         }
+    //當天單,不是當天收錢
 
-      //  pd($uncheque);
+        //當天單,收支票
+        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone);
+        if($this->_shift != '-1')
+            $invoicesQuery->where('shift',$this->_shift);
+        $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
+            $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
+        })->leftJoin('payments', function ($join) {
+            $join->on('invoice_payment.payment_id', '=', 'payments.id');
+        })->where('deliveryDate', '=', $date)
+            ->where(function ($query) use($date) {
+                $query->where('receive_date', date('y-m-d',$date))
+                    ->where('ref_number','!=', 'cash');
+            })->get();
 
-    //當天單,不是當天收錢 + 當天單,收支票
+        $SameDayCollectCheque = [];
+        foreach($invoicesQuery as $v){
+            if(!isset($SameDayCollectCheque[$v->invoiceId]))
+                $SameDayCollectCheque[$v->invoiceId] = 0;
+            $SameDayCollectCheque[$v->invoiceId] += $v->paid;
+        }
+        //pd($SameDayCollectCheque);
+        //當天單,收支票
 
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
                 if($this->_shift != '-1')
@@ -100,26 +119,27 @@ class Invoice_CashReceiptSummary {
                        $invoices[$invoiceId] = $invoiceQ;
                        $client = $invoiceQ['client'];
 
-                       if($invoiceQ->invoiceStatus == 20){
-                           $paid = $invoiceQ->paid;
-                           $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain;
+                       if($invoiceQ->invoiceStatus == 20 || $invoiceQ->invoiceStatus == 30){
+                           $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
 
                            //not yet receive
-                           $this->_backaccount[] = [
-                               'customerId' => $client->customerId,
-                               'name' => $client->customerName_chi,
-                               'invoiceNumber' => $invoiceId,
-                               'accumulator' =>number_format($acc1,2,'.',','),
-                               'amount' => number_format($invoiceQ->remain,2,'.',','),
-                           ];
+                               $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ;
+                               $this->_backaccount[] = [
+                                   'customerId' => $client->customerId,
+                                   'name' => $client->customerName_chi,
+                                   'invoiceNumber' => $invoiceId,
+                                   'accumulator' =>number_format($acc1,2,'.',','),
+                                   'amount' => number_format($invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ,2,'.',','),
+                               ];
 
-                       }else if ($invoiceQ->invoiceStatus == 30){
 
-                           $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
+                      /* }else if ($invoiceQ->invoiceStatus == 30){
+
+                           $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
 
                            if(isset($uncheque[$invoiceQ->invoiceId])){
-                               $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain+$uncheque[$invoiceQ->invoiceId];
                                //not yet receive
+                               $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain+$uncheque[$invoiceQ->invoiceId];
                                $this->_backaccount[] = [
                                    'customerId' => $client->customerId,
                                    'name' => $client->customerName_chi,
@@ -128,9 +148,10 @@ class Invoice_CashReceiptSummary {
                                    'amount' => number_format($invoiceQ->remain+$uncheque[$invoiceQ->invoiceId],2,'.',','),
                                ];
                            }
-
-                       }else
+*/
+                       }else{
                            $paid = $invoiceQ->remain;
+                       }
 
                            $acc +=  ($invoiceQ->invoiceStatus == '98')? -$paid:$paid;
                            $this->_account[] = [
