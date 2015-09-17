@@ -219,9 +219,10 @@ class PaymentController extends BaseController {
                 $invoice->where('invoiceStatus', $filter['status']);
             }
                 $invoice->where('paymentTerms','=',1);
-            // created by
+
 
             $invoices = $invoice->orderby('deliveryDate', 'asc');
+
 
             return Datatables::of($invoices)
                 ->addColumn('link', function ($payment) {
@@ -246,9 +247,10 @@ class PaymentController extends BaseController {
 
         if($mode == 'single'){
 
-            $p=DB::table('invoice_payment')->select('invoice_payment.amount as totalamount','bankCode','ref_number','receive_date','paid','id')->leftJoin('payments', function($join) {
+            $p=DB::table('invoice_payment')->select('invoice_payment.amount as totalamount','bankCode','ref_number','receive_date','paid','payments.id','name')->leftJoin('payments', function($join) {
                 $join->on('payment_id', '=', 'payments.id');
-            })->where('invoice_id','=',Input::get('invoiceId'))->get();
+            })->leftJoin('users', 'users.id', '=', 'payments.updated_by')
+                ->where('invoice_id','=',Input::get('invoiceId'))->get();
 
             return Response::json($p);
         }

@@ -57,7 +57,7 @@ class Invoice_CashReceiptSummary {
                     $this->_returnaccount[$invoiceQ['client']->customerId] = $invoiceQ->amount;
             });*/
 
-//當天單,不是當天收錢 + 當天單,收支票
+    //當天單,不是當天收錢 + 當天單,收支票
         $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
@@ -66,8 +66,7 @@ class Invoice_CashReceiptSummary {
         })->leftJoin('payments', function ($join) {
             $join->on('invoice_payment.payment_id', '=', 'payments.id');
         })->where('deliveryDate', '=', $date)
-
-            ->where(function ($query) use($date) {
+          ->where(function ($query) use($date) {
                 $query->where('receive_date', '!=', date('y-m-d',$date))
                     ->orwhere('ref_number','!=', 'cash');
             })->get();
@@ -78,7 +77,7 @@ class Invoice_CashReceiptSummary {
                 $uncheque[$v->invoiceId] = 0;
             $uncheque[$v->invoiceId] += $v->paid;
         }
-//當天單,不是當天收錢 + 當天單,收支票
+    //當天單,不是當天收錢 + 當天單,收支票
 
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
                 if($this->_shift != '-1')
@@ -100,7 +99,6 @@ class Invoice_CashReceiptSummary {
 
                        if($invoiceQ->invoiceStatus == 20){
                            $paid = $invoiceQ->paid;
-
                            $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->remain:$invoiceQ->remain;
 
                            //not yet receive
@@ -114,7 +112,7 @@ class Invoice_CashReceiptSummary {
                            ];
 
                        }else if ($invoiceQ->invoiceStatus == 30){
-                           $paid = $invoiceQ->amount - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
+                           $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
                        }else
                            $paid = $invoiceQ->remain;
 
@@ -248,6 +246,27 @@ class Invoice_CashReceiptSummary {
         }
         //補收
 
+        //當天單,不是當天收錢 + 當天單,收支票
+        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1);
+        if($this->_shift != '-1')
+            $invoicesQuery->where('shift',$this->_shift);
+        $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
+            $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
+        })->leftJoin('payments', function ($join) {
+            $join->on('invoice_payment.payment_id', '=', 'payments.id');
+        })->where('deliveryDate', '=', $this->_date)
+            ->where(function ($query) {
+                $query->where('receive_date', '!=', date('y-m-d',$this->_date));
+            })->get();
+
+        $uncheque = [];
+        foreach($invoicesQuery as $v){
+            if(!isset($uncheque[$v->invoiceId]))
+                $uncheque[$v->invoiceId] = 0;
+            $uncheque[$v->invoiceId] += $v->paid;
+        }
+        //當天單,不是當天收錢 + 當天單,收支票
+
 
         $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',$this->_date)->get();
 
@@ -265,13 +284,19 @@ class Invoice_CashReceiptSummary {
             if(!isset( $info[$invoiceQ->zoneId]['paid']))
                 $info[$invoiceQ->zoneId]['paid'] = 0;
 
+            if ($invoiceQ->invoiceStatus == 30 || $invoiceQ->invoiceStatus == 20){
+                $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
+            }else
+                $paid = $invoiceQ->remain;
+
+
             $info[$invoiceQ->zoneId] = [
                 'truck' => $invoiceQ->zoneId,
                 'noOfInvoices' => $NoOfInvoices[$invoiceQ->zoneId],
                 'balanceBf' => isset($balance_bf[$invoiceQ->zoneId])?$balance_bf[$invoiceQ->zoneId]:0,
                 'totalAmount' => $info[$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
                 'previous'=>isset($previous[$invoiceQ->zoneId])?$previous[$invoiceQ->zoneId]:0,
-                'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,
+                'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98')? -$paid:$paid,
             ];
         }
 
