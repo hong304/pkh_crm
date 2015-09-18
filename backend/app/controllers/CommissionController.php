@@ -250,7 +250,7 @@ class CommissionController extends BaseController
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="'.date('Ymd',$this->_date1).'.xls"');
+        header('Content-Disposition: attachment;filename="Commission-'.$this->zone.'-'.date('Ymd',$this->_date1).'to'.date('Ymd',$this->_date2).'.xls"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
 
