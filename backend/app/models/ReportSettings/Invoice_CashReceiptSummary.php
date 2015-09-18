@@ -122,7 +122,7 @@ class Invoice_CashReceiptSummary {
                        if($invoiceQ->invoiceStatus == 20 || $invoiceQ->invoiceStatus == 30){
                            $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
 
-                           //not yet receive
+
                                $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ;
                                $this->_backaccount[] = [
                                    'customerId' => $client->customerId,
@@ -132,8 +132,7 @@ class Invoice_CashReceiptSummary {
                                    'amount' => number_format($invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ,2,'.',','),
                                ];
 
-
-                      /* }else if ($invoiceQ->invoiceStatus == 30){
+                            /* }else if ($invoiceQ->invoiceStatus == 30){
 
                            $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
 
@@ -165,6 +164,11 @@ class Invoice_CashReceiptSummary {
 
                       }
 
+        foreach( $this->_backaccount as $k =>$v){
+            if ($v['amount'] ==0){
+                unset($this->_backaccount[$k]);
+            }
+        }
         //補收
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20'])->where('paymentTerms',1)->where('zoneId', $zone);
 
