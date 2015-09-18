@@ -44,7 +44,7 @@ class DataWarehouseController extends BaseController {
         set_time_limit(0);
 
         $times  = array();
-        for($month = 7; $month <= 8; $month++) {
+        for($month = 5; $month <= 8; $month++) {
             $first_minute = mktime(0, 0, 0, $month, 1,2015);
             $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),2015);
             $times[$month] = array($first_minute, $last_minute);
