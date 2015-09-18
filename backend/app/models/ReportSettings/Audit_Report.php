@@ -189,9 +189,74 @@ class Audit_Report {
                 'name' => '列印  PDF 版本',
                 'warning'   =>  false,
             ],
+            [
+                'type' => 'csv',
+                'name' => '匯出  Excel 版本',
+                'warning'   =>  false,
+            ],
         ];
         
         return $downloadSetting;
+    }
+
+
+    public function outputCsv(){
+
+
+
+
+        require_once './Classes/PHPExcel/IOFactory.php';
+        require_once './Classes/PHPExcel.php';
+
+        $i=4;
+        $objPHPExcel = new PHPExcel ();
+
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:E1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '發票核對列表');
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->applyFromArray(
+            array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
+        );
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A2', 'Delivery Date');
+        $objPHPExcel->getActiveSheet()->setCellValue('B2', date('Y-m-d',$this->_date1));
+        $objPHPExcel->getActiveSheet()->setCellValue('C2', 'To');
+        $objPHPExcel->getActiveSheet()->setCellValue('D2', date('Y-m-d',$this->_date2));
+
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '訂單編號');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, '送貨日期');
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '客戶');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '應收金額');
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, '累計');
+
+
+        $i += 1;
+        foreach ($this->data as $k => $v) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['invoiceNumber']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['deliveryDate']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['name']);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, sprintf("HK$ %s", $v['amount']));
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, sprintf("HK$ %s", $v['accumulator']));
+            $i++;
+
+            $longest[] = strlen($v['name']);
+
+        }
+
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(max($longest));
+        foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+            // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
+            if($col != 'C')
+                $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.date('Ymd',$this->_date1).'.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
     }
     
     public function outputPreview()
