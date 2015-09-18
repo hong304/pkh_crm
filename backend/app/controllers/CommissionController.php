@@ -171,56 +171,89 @@ class CommissionController extends BaseController
     {
    //     pd($invoices);
 
-        $csv = '車號,'.$this->zone. "\r\n";
-        $csv .= '日期,'.date('Y-m-d',$this->date1).',至,'.date('Y-m-d',$this->date2). "\r\n";
-        $csv .= 'Product ID,Name,Total Qty,Unit' . "\r\n";
-        foreach ($invoices as $item) {
-            if($item['productQtys'] != false){
-                $csv .= '"' . $item['productId'] . '",';
-                $csv .= '"' . $item['productName_chi'] . '",';
-                $csv .= '"' . $item['productPackingName_carton'] . '",';
-                $csv .= '"' . $item['productQtys'] . '",';
-                $csv .= "\r\n";
-            }
-        }
 
-        $csv .= '"現金總數:",';
-        $csv .= '"' . $summary['countcod'] . '",';
-        $csv .= '"$' . number_format($summary['sumcod'],2,'.',',') . '",';
-        $csv .= '"",';
-        $csv .= "\r\n";
+        require_once './Classes/PHPExcel/IOFactory.php';
+        require_once './Classes/PHPExcel.php';
 
-        $csv .= '"月結總數:",';
-        $csv .= '"' . $summary['countcredit'] . '",';
-        $csv .= '"$' . number_format($summary['sumcredit'],2,'.',',')  . '",';
-        $csv .= '"",';
-        $csv .= "\r\n";
 
-        $csv .= '"退貨單:",';
-        $csv .= '"' . $summary['countcodreturn'] . '",';
-        $csv .= '"",';
-        $csv .= '"",';
-        $csv .= "\r\n";
-
-        $csv .= '"換貨單:",';
-        $csv .= '"' . $summary['countcodreplace'] . '",';
-        $csv .= '"",';
-        $csv .= '"",';
-        $csv .= "\r\n";
-
-        $csv .= '"補貨單:",';
-        $csv .= '"' . $summary['countcodreplenishment'] . '",';
-        $csv .= '"",';
-        $csv .= '"",';
-        $csv .= "\r\n";
-
-        echo "\xEF\xBB\xBF";
-        $headers = array(
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="Commission.csv"',
+        $objPHPExcel = new PHPExcel ();
+        $i=1;
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:D1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '佣金表');
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->applyFromArray(
+            array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
         );
 
-        return Response::make(rtrim($csv, "\n"), 200, $headers);
+        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '車號:');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $this->zone);
+
+        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '日期:');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, date('Y-m-d',$this->_date1));
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'To');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, date('Y-m-d',$this->_date2));
+
+        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '產品編號');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, '產品名稱');
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '總銷量');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '單位');
+
+
+
+        $i += 1;
+        foreach ($invoices as $k => $v) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['productId']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['productName_chi']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['productQtys']);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v['productPackingName_carton']);
+            $i++;
+
+            $longest[] = strlen($v['productName_chi']);
+
+        }
+
+        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '現金總數:');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcod'] );
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '$' . number_format($summary['sumcod'],2,'.',','));
+
+        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '月結總數:');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcredit'] );
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '$' . number_format($summary['sumcredit'],2,'.',','));
+
+        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '退貨單:');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcodreturn'] );
+
+
+        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '換貨單:');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcodreplace'] );
+
+
+        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '補貨單:');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcodreplenishment'] );
+
+
+
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(max($longest));
+        foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+            // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
+            if($col != 'C')
+                $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.date('Ymd',$this->_date1).'.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+
 
     }
 
