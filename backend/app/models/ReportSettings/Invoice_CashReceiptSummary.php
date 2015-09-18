@@ -122,7 +122,7 @@ class Invoice_CashReceiptSummary {
                        if($invoiceQ->invoiceStatus == 20 || $invoiceQ->invoiceStatus == 30){
                            $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
 
-
+                                // not yet receive
                                $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ;
                                $this->_backaccount[] = [
                                    'customerId' => $client->customerId,

@@ -63,10 +63,9 @@ class Invoice_9FPickingList {
 
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], '9F'=>[]];
-        Invoice::select('*')->where('version',$this->_version)->where('shift',$this->_shift)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        $invoicesQuery = Invoice::select('*')->where('version',$this->_version)->where('shift',$this->_shift)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
-        }])->with('products', 'client')
-            ->chunk(50, function($invoicesQuery){
+        }])->with('products', 'client')->get();
 
 
                 // first of all process all products
@@ -106,9 +105,9 @@ class Invoice_9FPickingList {
 
                             if( isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) && $productDetail->allowSeparate) {
                                 if (!function_exists('fact')) {
-                                    function fact($good, $customerId, $productId, $invoiceId, $unit, $n){
+                                    function fact($goods, $customerId, $productId, $invoiceId, $unit, $n){
                                         if (isset($goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $n][$unit])) {
-                                            return fact($good, $customerId, $productId, $invoiceId, $unit, $n + 1);
+                                            return fact($goods, $customerId, $productId, $invoiceId, $unit, $n + 1);
                                         } else {
                                             return $n;
                                         }
@@ -189,7 +188,6 @@ class Invoice_9FPickingList {
 
                 }
 
-            });
 
         usort($this->goods['9F'], function($elementA, $elementB) {
             return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
