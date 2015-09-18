@@ -190,9 +190,9 @@ class CommissionController extends BaseController
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '日期:');
-        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, date('Y-m-d',$this->_date1));
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, date('Y-m-d',$this->date1));
         $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'To');
-        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, date('Y-m-d',$this->_date2));
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, date('Y-m-d',$this->date2));
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '產品編號');
@@ -250,7 +250,7 @@ class CommissionController extends BaseController
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="Commission-'.$this->zone.'-'.date('Ymd',$this->_date1).'to'.date('Ymd',$this->_date2).'.xls"');
+        header('Content-Disposition: attachment;filename="Commission-'.$this->zone.'-'.date('Ymd',$this->date1).'to'.date('Ymd',$this->date2).'.xls"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
 
