@@ -44,11 +44,14 @@ class PaymentController extends BaseController {
 
 
 
-            if($i->amount == $i->paid || $v['discount'] == 1)
+            if($i->amount == $i->paid || $v['discount'] == 1){
                 $i->invoiceStatus = 30;
+                $i->discount_taken = $i->remain - $v['settle'];
+            }
             $i->discount = $v['discount'];
-            if(isset($ij['discount']))
-                $i->discount = 1;
+
+           // if(isset($ij['discount']))
+           //     $i->discount = 1;
             $i->save();
         }
 

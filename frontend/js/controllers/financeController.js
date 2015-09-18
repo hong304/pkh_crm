@@ -207,7 +207,7 @@ var fetchDataTimer = '';
     {
         $http.post(getClearance, {mode:'processCustomer',filterData:$scope.filterData})
             .success(function(res, status, headers, config){
-
+                $scope.totalAmount = 0;
                 if(res.error){
                     Metronic.alert({
                         container: '#cheque_form', // alerts parent container(by default placed after the page breadcrumbs)
@@ -226,6 +226,7 @@ var fetchDataTimer = '';
 
                 $scope.payment = res;
                 $scope.invoiceinfo = res.data;
+                $scope.invoicepaid = [];
 
                 var i = 0;
                 $scope.invoiceinfo.forEach(function(item) {
@@ -288,17 +289,17 @@ $scope.updatePaidTotal = function(){
     $scope.totalAmount = $scope.totalAmount.toFixed(2);
 }
 
-    $scope.updateDiscount = function(){
+$scope.updateDiscount = function(){
 
-        var i = 0;
-        $scope.invoiceinfo.forEach(function(item){
+    var i = 0;
+    $scope.invoiceinfo.forEach(function(item){
 
-            $scope.invoicepaid[i]['settle']= Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
-            //  $scope.invoicepaid[i]['discount'] = 1;
-            i++;
-        });
-        $scope.updatePaidTotal();
-    }
+        $scope.invoicepaid[i]['settle']= Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
+        //  $scope.invoicepaid[i]['discount'] = 1;
+        i++;
+    });
+    $scope.updatePaidTotal();
+}
 
     $scope.addCheque = function()
     {

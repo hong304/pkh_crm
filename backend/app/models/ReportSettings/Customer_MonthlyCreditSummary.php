@@ -112,7 +112,7 @@ if(!$empty){
                             'customerRef' => $invoice->customerRef,
                             'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->amount ,
                             'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
-                            'accumulator' => $this->_acc[$customerId] += (($invoice->invoiceStatus == '98' || $invoice->invoiceStatus == '97')? -$invoice->amount:$invoice->amount-$invoice->paid)
+                            'accumulator' => $this->_acc[$customerId] += (($invoice->invoiceStatus == '98')? -$invoice->amount:$invoice->amount-$invoice->paid-$invoice->discount_taken)
                         ];
                 }
             }
@@ -346,7 +346,7 @@ if(!$empty){
                     if(!isset($this->_monthly[$i]['byCustomer'][$customerId]))
                         $this->_monthly[$i]['byCustomer'][$customerId] = 0;
 
-                    $this->_monthly[$i]['byCustomer'][$customerId] += ($invoice->realAmount - $invoice->paid);
+                    $this->_monthly[$i]['byCustomer'][$customerId] += ($invoice->realAmount - $invoice->paid-$invoice->discount_taken);
 
                 }
 
@@ -582,7 +582,7 @@ if(!$empty){
                     {
                         $customerId = $invoice->customerId;
                         $this->_monthly[$i][$customerId][]= [
-                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-$invoice->paid
+                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-$invoice->paid-$invoice->discount_taken
                         ];
                     }
                 }
@@ -604,27 +604,21 @@ if(!$empty){
             $pdf->setXY(30, $y+5);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['customerAddress']), 0, 0, "L");
 
-            $pdf->SetFont('chi', '', 14);
             $pdf->setXY(30, $y+20);
             $pdf->Cell(0, 0, "Tel:", 0, 0, "L");
             
-            $pdf->SetFont('chi', '', 14);
             $pdf->setXY(40, $y+20);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_tel']), 0, 0, "L");
             
-            $pdf->SetFont('chi', '', 14);
             $pdf->setXY(80, $y+20);
             $pdf->Cell(0, 0, "Fax:", 0, 0, "L");
             
-            $pdf->SetFont('chi', '', 14);
             $pdf->setXY(90, $y+20);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_fax']), 0, 0, "L");
 
-            $pdf->SetFont('chi', '', 14);
             $pdf->setXY(30, $y+14);
             $pdf->Cell(0, 0, "Attn:", 0, 0, "L");
             
-            $pdf->SetFont('chi', '', 14);
             $pdf->setXY(50, $y+14);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_contact']), 0, 0, "L");
 
