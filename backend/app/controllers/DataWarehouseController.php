@@ -55,7 +55,7 @@ class DataWarehouseController extends BaseController {
 
 
         // update datawarehouse_custoemr table.
-     /*foreach($times as $k=>$v){
+     foreach($times as $k=>$v){
 
             $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
             $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
@@ -90,14 +90,14 @@ class DataWarehouseController extends BaseController {
                 echo "no data";
             }
 
-        }*/
+        }
 
 //end of update datawarehouse_customer table
 
 
  // update datawarehouse_product table;
 
-
+/*
  foreach($times as $k=>$v){
 
                $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
@@ -127,7 +127,7 @@ class DataWarehouseController extends BaseController {
 
         }
 
-
+*/
 
 
 //update invoice amount to invoices table;
