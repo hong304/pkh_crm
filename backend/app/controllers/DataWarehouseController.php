@@ -44,31 +44,48 @@ class DataWarehouseController extends BaseController {
         set_time_limit(0);
 
         $times  = array();
-        for($month = 1; $month <= 4; $month++) {
+        for($month = 7; $month <= 8; $month++) {
             $first_minute = mktime(0, 0, 0, $month, 1,2015);
             $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),2015);
             $times[$month] = array($first_minute, $last_minute);
         }
 
-      //  pd ($times);
+
+
+
 
         // update datawarehouse_custoemr table.
-      /*  foreach($times as $k=>$v){
+     /*foreach($times as $k=>$v){
 
-            $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customer_id FROM data_invoices WHERE deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customer_id'));
+            $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
+            $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
+
+            foreach($info_return as $v){
+                $arr[$v->customerId]['total'] = $v->total;
+                $arr[$v->customerId]['amount'] = $v->amount;
+            }
+
+
+
 
             if(count($info)>0){
                 foreach($info as $v1){
                     $save = new datawarehouse_customer();
-                    $save->customer_id = $v1->customer_id;
-                    $save->amount = $v1->amount;
-                    $save->qty = $v1->total;
+                    $save->customer_id = $v1->customerId;
+
+                    if(isset($arr[$v1->customerId])){
+                        $save->amount = $v1->amount-$arr[$v1->customerId]['amount'];
+                        $save->qty = $v1->total-$arr[$v1->customerId]['total'];
+                    }else{
+                        $save->amount = $v1->amount;
+                        $save->qty = $v1->total;
+                    }
+
                     $save->month = $k;
                     $save->year = '2015';
                     $save->save();
                 }
-
-                  echo $month."<br>";
+               echo $k."月<br>";
             }else{
                 echo "no data";
             }
@@ -80,29 +97,37 @@ class DataWarehouseController extends BaseController {
 
  // update datawarehouse_product table;
 
-/*
+
  foreach($times as $k=>$v){
 
-               $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,product_id FROM data_invoiceitems WHERE data_invoice_id IN (SELECT id FROM data_invoices WHERE deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY product_id'));
+               $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
+        $info_return =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
 
+     foreach($info_return as $v){
+         $arr[$v->productId]['total'] = $v->total;
+         $arr[$v->productId]['amount'] = $v->amount;
+     }
             if(count($info)>0){
                 foreach($info as $v1){
                     $save = new datawarehouse_product();
-                    $save->data_product_id = $v1->product_id;
-                    $save->amount = $v1->amount;
-                    $save->qty = $v1->total;
+                    $save->data_product_id = $v1->productId;
+                    if(isset($arr[$v1->productId])){
+                        $save->amount = $v1->amount-$arr[$v1->productId]['amount'];
+                        $save->qty = $v1->total-$arr[$v1->productId]['total'];
+                    }else{
+                        $save->amount = $v1->amount;
+                        $save->qty = $v1->total;
+                    }
                     $save->month = $k;
                     $save->year = '2015';
                     $save->save();
                 }
-
-                //  echo $v2->customerId."<br>";
+                  echo $k."月<br>";
             }
 
         }
 
 
-*/
 
 
 //update invoice amount to invoices table;
