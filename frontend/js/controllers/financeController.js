@@ -56,6 +56,7 @@ app.controller('financeController', function($scope, $rootScope, $http, SharedSe
     var intarget = endpoint + '/addCheque.json';
     var query = endpoint + '/querryClientClearance.json';
     var getClearance = endpoint + '/getClearance.json';
+    var genPDF = endpoint + '/generalFinanceReport.json';
 
 var fetchDataTimer = '';
     $scope.invoice = [];
@@ -86,11 +87,12 @@ var fetchDataTimer = '';
         'bankCode' : '003',
         'deliverydate': '',
         'deliverydate2' : '',
+        'receiveDate' : '',
+        'receiveDate2' : '',
         'ChequeNumber' : '',
         'groupName' : '',
 
     };
-
 
     var today = new Date();
     var plus = today.getDay() == 6 ? 3 : 2;
@@ -104,6 +106,17 @@ var fetchDataTimer = '';
     var day = currentDate.getDate();
     var month = currentDate.getMonth() + 1;
     var year = currentDate.getFullYear();
+
+    $("#receiveDate").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#receiveDate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
 
     $("#deliverydate").datepicker({
         rtl: Metronic.isRTL(),
@@ -338,12 +351,21 @@ $scope.updateDiscount = function(){
     }
 
 
-    $scope.updateDelvieryDate = function()
+    $scope.updateDeliveryDate = function()
     {
+        $scope.filterData.receiveDate = "";
+        $scope.filterData.receiveDate2 = "";
         $scope.getChequeList();
     }
 
-$scope.updateGroupName = function(){
+    $scope.updateReceiveDate = function()
+    {
+        $scope.filterData.deliverydate = "";
+        $scope.filterData.deliverydate2 = "";
+        $scope.getChequeList();
+    }
+
+    $scope.updateGroupName = function(){
     fetchDataTimer = $timeout(function () {
         $scope.getChequeList();
     }, 500);
@@ -365,6 +387,8 @@ $scope.updateGroupName = function(){
     {
         $scope.filterData.displayName = "";
         $scope.filterData.clientId = "";
+        $scope.filterData.receiveDate = "";
+        $scope.filterData.receiveDate2 = "";
         $scope.getChequeList();
     }
 
@@ -419,10 +443,9 @@ $scope.updateGroupName = function(){
                     { "data": "customID","width":"10%" },
                     { "data": "customName","width":"30%" },
                     { "data": "customGroup","width":"10%" },
-
                     { "data": "ref_number","width":"10%" },
                     { "data": "amount","width":"8%" },
-                    { "data": "remain","width":"8%" },
+                    { "data": "receive_date","width":"8%" },
                     { "data": "start_date","width":"8%" },
                     { "data": "end_date","width":"8%" },
                     { "data": "link","width":"8%" },
@@ -509,5 +532,17 @@ $scope.updateGroupName = function(){
 
     }*/
 
+    $scope.sendRealFile = function()
+    {
+
+
+                var queryObject = {
+                    filterData	:	$scope.filterData
+                };
+                var queryString = $.param( queryObject );
+
+                window.open(endpoint + "/generalFinanceReport.json?" + queryString);
+
+    }
 
 });

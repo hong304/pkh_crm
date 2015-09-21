@@ -113,9 +113,10 @@
                                                 <th width="10%">訂單號碼</th>
                                                 <th width="5%">客戶號碼</th>
                                                 <th width="20%">客戶名稱</th>
+                                                <th width="10%">送貨日期</th>
                                                 <th width="5%">總數</th>
                                                 <th width="5%">已付</th>
-                                                <th width="13%">支付日期</th>
+                                                <th width="10%">支付日期</th>
 
                                             </tr>
                                             </thead>
@@ -132,6 +133,9 @@
                                                 </td>
                                                 <td>
                                                         {{i.customerName}}
+                                                </td>
+                                                <td>
+                                                    {{i.deliveryDate_date}}
                                                 </td>
                                                 <td>
                                                     ${{i.amount}}

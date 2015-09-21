@@ -206,7 +206,6 @@ class Invoice_VanSellList {
         
         
         $pdf = new PDF();
-        $i = 0;
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
         // handle 1F goods
         $firstF = array_chunk($this->data['1F'], 25, true);

@@ -1,5 +1,23 @@
 <form class="form-horizontal" role="form" id="queryInfo">
     <div class="col-md-2">
+
+
+        <!--export excel-->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-red-sunglo bold uppercase">匯出PDF</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <button class="btn  blue-steel btn-block" data-ng-click="sendRealFile();">匯出</button>
+                </div>
+            </div>
+
+        </div>
+
         <!-- Client -->
         <div class="portlet light">
             <div class="portlet-title">
@@ -60,8 +78,8 @@
             </div>
         </div>
 
-        <!-- Delivery Date -->
 
+        <!-- 支付日期 -->
         <div class="portlet light">
             <div class="portlet-title">
                 <div class="caption">
@@ -71,18 +89,51 @@
 
             </div>
 
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group  date " id="receiveDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.receiveDate" data-ng-change="updateReceiveDate();">
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                    </div>
+                    至
+                    <div class="input-group  date " id="receiveDate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.receiveDate2" data-ng-change="updateReceiveDate();">
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delivery Date -->
+
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">送貨日期</span>
+                </div>
+
+            </div>
+
+
+
+
             <!-- date-picker -->
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
                     <div class="input-group  date " id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate" data-ng-change="updateDelvieryDate();">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate" data-ng-change="updateDeliveryDate();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
                     </div>
                     至
                     <div class="input-group  date " id="deliverydate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate2" data-ng-change="updateDelvieryDate2();">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate2" data-ng-change="updateDeliveryDate();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
@@ -90,27 +141,7 @@
 
                 </div>
             </div>
-        </div>
 
-
-        <!-- Status -->
-        <div class="portlet light">
-            <div class="portlet-title">
-                <div class="caption">
-                    <i class="fa fa-cogs font-green-sharp"></i>
-                    <span class="caption-subject font-green-sharp bold uppercase">狀態</span>
-                </div>
-
-            </div>
-            <div class="portlet-body">
-                <div class="md-col-12" style="margin-bottom:15px;">
-                    <div class="radio-list">
-                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="2" checked> 全部</label>
-                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="0" > 未處理</label>
-                        <label><input ng-model="filterData.status" data-ng-change="updateStatus();" type="radio" name="status" id="status" value="1"> 已處理 </label>
-                    </div>
-                </div>
-            </div>
         </div>
 
     </div>
@@ -142,7 +173,7 @@
                                 <th>集團名稱</th>
                                 <th>支票號碼</th>
                                 <th>總數 </th>
-                                <th>餘數 </th>
+                                <th>支付日期 </th>
                                 <th>開始日期 </th>
                                 <th>結束日期 </th>
                                 <th>詳情 </th>
