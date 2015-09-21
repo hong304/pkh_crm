@@ -1,0 +1,201 @@
+<div class="modal fade bs-modal-lg" id="scheduleDetails" data-ng-controller="ships" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">訂單資料</h4>
+            </div>
+            <div class="modal-body">
+                <!-- h4>{{invoiceinfo.client.customerName_chi}} @ {{invoiceinfo.deliveryDate  * 1000 | date: 'yyyy.MM.dd'}}</h4> -->
+
+                <div class="col-md-12">
+
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption font-green-sharp">
+                                <i class="icon-speech font-green-sharp"></i>
+                                <span class="caption-subject bold uppercase">訂單資料</span>
+                                <span class="caption-helper"><span>
+                                        </div>
+                                        </div>
+                                        <div class="portlet-body">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <label>採購單編號</label>
+                                                    
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachShip.poCode}}</label>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>離港日期</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachShip.departure_date| date: 'yyyy.MM.dd'}}</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <label>預期到港日期</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachShip.etaDate | date: 'yyyy.MM.dd'}}</label>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>實際到港日期</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachShip.actualDate | date: 'yyyy.MM.dd'}}</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                 <div class="col-md-2">
+                                                    <label>貨櫃數量</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachShip.container_numbers}}</label>
+                                                </div>
+                                                  <div class="col-md-2">
+                                                    <label>提單編號</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachShip.bl_number}}</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                  <div class="col-md-2">
+                                                    <label>免倉期(天)</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachShip.fsp}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+
+
+                                        </div>
+
+                                        <div class="col-md-12 ">
+                                            <!-- BEGIN Portlet PORTLET-->
+                                            <div class="portlet light bordered">
+                                                <div class="portlet-title tabbable-line">
+                                                    <div class="caption">
+                                                        <i class="icon-pin font-yellow-lemon"></i>
+                                                        <span class="caption-subject bold font-yellow-lemon uppercase">
+                                                            其他資料 </span>
+                                                        <span class="caption-helper"></span>
+                                                    </div>
+                                                    <ul class="nav nav-tabs">
+                                                      <!--  <li>
+                                                            <a data-target="#portlet_tab3" data-toggle="tab">
+                                                                修改記錄</a>
+                                                        </li>
+                                                        <li>
+                                                            <a data-target="#portlet_tab2" data-toggle="tab">
+                                                                列印記錄 </a>
+                                                        </li>-->
+                                                        <li class="active">
+                                                            <a data-target="#portlet_tab1" data-toggle="tab">
+                                                                貨櫃 </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="portlet-body">
+                                                    <div class="tab-content">
+                                                        <div class="tab-pane active" id="portlet_tab1">
+                                                            <div>
+                                                                <h4>貨櫃</h4>
+                                                                <table class="table table-bordered table-hover">
+                                                                    <thead>
+                                                                        <tr role="row" class="heading">
+                                                                            <th width="5%">#</th>
+                                                                            <th width="10%">編號</th>
+                                                                            <th width="15%">收貨日期</th>
+                                                                            <th width="5%">封條編號</th>
+                                                                            <th width="5%">貨櫃大小</th>
+                                                                            <th width="7%">貨物重量(kg)</th>
+                                                                            <th width="12%">貨物體積(cbm)</th>
+                                                                            <th width="12%">貨物數量</th>
+                                                                      
+                                                                         
+
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr data-ng-repeat="i in eachShip.shippingitem" style="line-height:35px;font-size:15px;">
+                                                                            <td>{{$index+1}}</td>
+                                                                            <td>
+                                                                                {{i.containerId}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.container_receiveDate}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.serial_no}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.container_size}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.container_weight}}
+                            
+                                                                            </td>
+                                                                            <td>
+         
+                                                                              {{i.container_capacity}}                           
+                  
+                                                                            </td>
+                  
+                                                                           <td>
+                                                                                {{i.container_Num}}
+
+                                                                           </td>                                                
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                                <br/>
+                                                                <div style="clear:both;"></div>
+                                                            </div>
+                                                        </div>
+                                                     
+                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="clear:both;"></div>
+                                        </div>
+                                        <div class="modal-footer" >
+                                            <button type="button" class="btn default" data-dismiss="modal">取消</button>
+
+                                   
+
+
+                                            <!-- Edit Invoice -->
+                                            <!-- Condition: Invoice Status = {1, 2, 3} -->
+       
+                                            <!-- <button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus > 3 && systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>-->
+
+                                            <!-- Void Invoice -->
+                                            <!-- Condition: Invoice Status = {1, 2, 3} && Permission = void_invoice-->
+   
+
+                                            <!-- Unload Invoice -->
+                                            <!-- Condition: Invoice Status = {4} -->
+                                            <!--<button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4 && systemInfo.permission.unload_invoice" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>-->
+                                            <button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>
+                                            <!-- Reprint Invoice -->
+                                            <!-- Condition: Invoice Status = |{99} Permission = reprint_invoice -->
+                                            <!--<button type="button" class="btn grey-cascade" data-ng-if="invoiceinfo.invoiceStatus != 99 && systemInfo.permission.reprint_invoice" data-ng-click="rePrintInvoice(invoiceinfo.invoiceId);">重印單據</button>-->
+
+
+
+
+                                        </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                        </div>

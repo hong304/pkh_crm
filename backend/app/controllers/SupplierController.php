@@ -80,6 +80,11 @@ class SupplierController extends BaseController
         return Response::json($supplier);
     }
     
+    public function doubleSupplier()
+    {
+        
+    }
+    
     public function jsonCheckSupplier()
     {
           # Request

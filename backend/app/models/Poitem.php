@@ -19,4 +19,9 @@ class Poitem extends Eloquent {
             $table->created_by = Auth::user()->id;
         });
 }
+
+ public function productDetail()
+    {
+        return $this->hasOne('Product', 'productId', 'productId');
+    }
 }

@@ -47,7 +47,8 @@ class shippingMan
             $this->sh->supplierCode = $this->temp_ship_information['supplierCode'];
             $this->sh->carrier= $this->temp_ship_information['carrier'];
             $this->sh->etaDate= $this->temp_ship_information['etaDate'];
-            $this->sh->actualDate= $this->temp_ship_information['actualDate'];
+            if($this->temp_ship_information['actualDate'] !== '')
+                $this->sh->actualDate= $this->temp_ship_information['actualDate'];
             $this->sh->departure_date= $this->temp_ship_information['departure_date'];
             $this->sh->vessel= $this->temp_ship_information['vessel'];
             $this->sh->voyage= $this->temp_ship_information['voyage'];
@@ -69,7 +70,8 @@ class shippingMan
             $this->sh->supplierCode = $this->temp_ship_information['supplierCode'];
             $this->sh->carrier= $this->temp_ship_information['carrier'];
             $this->sh->etaDate= $this->temp_ship_information['etaDate'];
-            $this->sh->actualDate= $this->temp_ship_information['actualDate'];
+            if($this->temp_ship_information['actualDate'] !== '')
+                $this->sh->actualDate= $this->temp_ship_information['actualDate'];
             $this->sh->departure_date= $this->temp_ship_information['departure_date'];
             $this->sh->vessel= $this->temp_ship_information['vessel'];
             $this->sh->voyage= $this->temp_ship_information['voyage'];
@@ -96,15 +98,13 @@ class shippingMan
     	        'shipCode' => $this->newShipId,
     	    ];
 	}
+        
 	
 
 	
     
-    public function prepare_items()
+    public function prepare_items() // use to clear the item which does not contain containerId
     {
-       //  $dbids = array_pluck($this->items, 'dbid');
-    
-        // $raw = Shipping::wherein('id', $dbids)->get();
 
          foreach($this->items as $k=>$v)
          {
@@ -130,8 +130,7 @@ class shippingMan
             
             foreach($this->items as $i)
     	    {
-               
-                if($i['dbid'] !== '')
+                if($i['dbid'])
     	        {
     	            $item = Shippingitem::where('id', $i['dbid'])->first();
     	            $item->updated_at = time();
@@ -149,7 +148,7 @@ class shippingMan
     	        $item->containerId = $i['containerId'];
     	        $item->container_Num = $i['container_Num'];
                 $item->remark = $i['remark'];
-    	        $item->container_receiveDate = $i['container_receiveDate'];
+    	       // $item->container_receiveDate = $i['container_receiveDate']; // Dont put receiveDate here , since db will default the 00-00-0000 here
                 $item->container_size = $i['container_size'];
                 $item->serial_no = $i['serial_no'];
                 $item->container_weight = $i['container_weight'];
@@ -188,14 +187,14 @@ class shippingMan
     
     
     //make an array
-    public function setItems($dbid,$containerId,$serial_no,$container_size,$container_receiveDate,$container_Num,$container_weight,$container_capacity,$remark,$deleted)
+    public function setItems($dbid,$containerId,$serial_no,$container_size,$container_Num,$container_weight,$container_capacity,$remark,$deleted)
     {
          $this->items[] = [
                 'dbid' => $dbid,
 	            'containerId' => $containerId,
                 'serial_no' => $serial_no,
                 'container_size' => $container_size,
-                'container_receiveDate' => $container_receiveDate,
+              //  'container_receiveDate' => $container_receiveDate,
                 'container_Num' => $container_Num,
                 'container_weight' => $container_weight,
                 'container_capacity' => $container_capacity,
@@ -203,10 +202,53 @@ class shippingMan
                 'deleted' => $deleted,
          ];
   
-	    return $this;
+	    return $this->items;
     }
     
-     public function setShip($e)
+    public function setOtherItems($dbid,$container_receiveDate,$feight_currency,$feight_amount,$feight_cost_hkd,$local_cost_hkd,$misc_cost_hkd)
+    {
+        $this->itemsother[] = [
+                'id' => $dbid,
+	        'container_receiveDate' => $container_receiveDate,
+                'feight_currency' => $feight_currency,
+                'feight_amount' => $feight_amount,
+                'feight_cost_hkd' => $feight_cost_hkd,
+                'local_cost_hkd' => $local_cost_hkd,
+                'misc_cost_hkd' => $misc_cost_hkd,
+         ];
+        
+	    return $this->itemsother;
+    }
+    
+    public function saveOtherItems($conainerdbid)
+    {
+        $shippingItem = Shippingitem :: where('id',$conainerdbid)->first(); //check the dbid exists or not
+        if(count($shippingItem->toArray()) > 0)
+        {
+    	    $shippingItem->updated_at = time();
+            $shippingItem->updated_by = Auth::user()->id;
+          //  $item->container_size = $i['container_size'];
+            foreach($this->itemsother as $k=>$v)
+            {
+                foreach($v as $kk=>$vv)
+                {
+                    $shippingItem->$kk = $vv;
+                }
+            }
+            $shippingItem->save();
+            return [
+	        'result' => true,
+	        'containerdbid' => $conainerdbid,
+	    ];
+        }
+           return [
+	        'result' => false,
+	        'containerdbid' => '',
+	    ];
+    }
+    
+    
+     public function setShip($e)  //set shipping header
     {
         $this->temp_ship_information = $e;
 	    return $this;

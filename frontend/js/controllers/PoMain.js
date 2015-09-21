@@ -4,8 +4,15 @@ Metronic.unblockUI();
 
 
 
-app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
+app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams,$templateCache) {
     /* Register shortcut key */
+
+ $rootScope.$on('$viewContentLoaded', function() {
+        
+    Metronic.initAjax();
+      $templateCache.removeAll();
+      
+ });
     $(document).ready(function(){
         $('#order_form').keydown(function (e) {
             if (e.keyCode == 121) {
@@ -48,63 +55,30 @@ app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedSer
  //Sunday is not allowed
     var today = new Date();
     var plus = today.getDay() == 6 ? 2 : 1;
-    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
+    var start_date = new Date(new Date().getTime());
+    //- 24 * 60 * 60 * 1000
 
     var ymonth = start_date.getMonth() + 1;
     var yyear = start_date.getFullYear();
-    var yday = start_date.getDate()+4;
+    var yday = start_date.getDate();
 
-    var day = currentDate.getDate() - 2;
-    var month = currentDate.getMonth() + 1;
-    var year = currentDate.getFullYear();
-    
-    var day3 = currentDate.getDate() - 2;
-    var month3 = currentDate.getMonth() + 1;
-    var year3 = currentDate.getFullYear();
-    
-    var day4 = currentDate.getDate() + 4;
-    var month4 = currentDate.getMonth() + 1;
-    var year4 = currentDate.getFullYear();
-
-
-    $("#deliverydate").datepicker({
+    $("#deliverydate,#deliverydate1,#deliverydate2").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
-    $("#deliverydate").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
-
-    $("#deliverydate2").datepicker({
-        rtl: Metronic.isRTL(),
-        orientation: "left",
-        autoclose: true
-    });
-  //   $('#deliverydate2').datepicker('option','minDate', new Date('15/08/2015'));
-    $("#deliverydate2").datepicker("setDate", year + '-' + month + '-' + day );
-   
     
-     $("#deliverydate1").datepicker({
-        rtl: Metronic.isRTL(),
-        orientation: "left",
+    $("#deliverydate3").datepicker({
+         rtl: Metronic.isRTL(),
+        orientation: "right ",
         autoclose: true
     });
-    $("#deliverydate1").datepicker( "setDate", year3 + '-' + month3 + '-' + day3 );
-
-     $("#deliverydate3").datepicker({
-        rtl: Metronic.isRTL(),
-        orientation: "right",
-        autoclose: true
-    });
-    $("#deliverydate3").datepicker( "setDate", year4 + '-' + month4 + '-' + day4 );
+    
+    
+    $("#deliverydate2").datepicker("setDate", yyear + '-' + ymonth + '-' + yday);
+    
+    $scope.order.poDate = yyear + '-' + ymonth + '-' + yday;
      
-     
-    $scope.order.etaDate = yyear+'-'+ymonth+'-'+yday;
-    $scope.order.poDate = year+'-'+month+'-'+day;
-    $scope.order.actualDate = year3+'-'+month3+'-'+day3;
-    $scope.order.receiveDate = year4+'-'+month4+'-'+day4;
-
-
     $scope.$watch(function() {
         return $rootScope.systeminfo;
     }, function() {
@@ -296,9 +270,13 @@ $scope.an = false;
     });
 
 
-    $scope.$on('$viewContentLoaded', function() {
+    $rootScope.$on('$viewContentLoaded', function() {
+        
+    Metronic.initAjax();
+      $templateCache.removeAll();
+      console.log("htt");
         // initialize core components
-        Metronic.initAjax();
+        
 
         if($stateParams.action == 'success') {
             if($stateParams.instatus=='2'){
@@ -445,6 +423,11 @@ $scope.an = false;
                     $scope.displayName = $scope.poData.supplierCode + " (" + $scope.order.supplierName + ")";
                     $scope.order.supplierCode = $scope.poData.supplierCode;
                     $scope.order.poRemark = $scope.poData.poRemark;
+                    
+                    $("#deliverydate").datepicker("setDate",  $scope.order.etaDate);
+                    $("#deliverydate1").datepicker( "setDate", $scope.order.actualDate);
+                    $("#deliverydate2").datepicker( "setDate", $scope.order.poDate);
+                    $("#deliverydate3").datepicker( "setDate", $scope.order.receiveDate);
                 
                     
                     $http(
@@ -1069,20 +1052,9 @@ $scope.submitOrder(v);
     $scope.deleteRow = function(i)
     {
         
-         for(var key = i; key<=$scope.itemlist.length; key++)
-         {
-
-         $scope.product[key] = $.extend(true, {}, $scope.product[key+1]);
-         $scope.productCode[key] = $scope.productCode[key+1];
-
-         }
-
-         $scope.product[$scope.itemlist.length] = $.extend(true, {}, $scope.productStructure);
-         $scope.productCode[$scope.itemlist.length] = '';
-        
+         
         $scope.product[i].deleted = 1;
      
-        $scope.checkPrice(i);
 
 
     }

@@ -30,6 +30,13 @@ class Shipping extends Eloquent  {
 	
 	public function Supplier()
 	{
-		 return $this->hasMany('Supplier', 'supplierCode', 'supplierCode');
+            return $this->hasMany('Supplier', 'supplierCode', 'supplierCode');
 	}
+        
+        public function purchaseOrder()
+        {
+            return $this->hasMany('Purchaseorder', 'poCode', 'poCode');
+        }
+        
+  
 }

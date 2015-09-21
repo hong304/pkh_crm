@@ -30,12 +30,7 @@
     textarea.value = lines.slice(0, limit).join("\n");
     };
 </script>
-<style>
-    #actualDate,#receiveDate,#supplierConfirmation
-    {
-        display:none;
-    }
-</style>
+
 <div id="order_form">
     <form class="form-horizontal" role="form" id="orderinfo">
         <div class="row">
@@ -49,20 +44,30 @@
                     <div class="portlet-title">
                         <div class="caption font-green-sharp">
                             <i class="icon-speech font-green-sharp"></i> <span
-                                class="caption-subject bold uppercase">船務管理資料</span> <span
+                                class="caption-subject bold uppercase">收貨資料</span> <span
                                 class="caption-helper"></span>
                         </div>
                     </div>
                     <div class="portlet-body form">
                         <div class="form-body">
                             <div class="row">
+                                 <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="col-md-5 control-label" style="text-align:left;">
+                                            收貨編號
+                                        </label>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" ng-model="orders.receivingId" placeholder="自動填上" disabled required>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="col-md-5 control-label" style="text-align:left;">
-                                            船務編號
+                                            採購單編號
                                         </label>
                                         <div class="col-md-7">
-                                            <input type="text" class="form-control" ng-model="shipping.shippingId" placeholder="自動填上" disabled required>
+                                            <input type="text" class="form-control" ng-model="orders.poCode" placeholder="" disabled required>
                                         </div>
                                     </div>
                                 </div>
@@ -73,212 +78,195 @@
                                             供應商名稱
                                         </label>
                                          <div class="col-md-7">
-                                            <input type="text" ng-model="shipping.supplierName" class="form-control" placeholder="" disabled="true">
+                                            <input type="text" ng-model="orders.supplierName" class="form-control" placeholder="" disabled="true">
                                         </div>
                                     </div>
                                 </div>
-
+                               
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="col-md-5 control-label" style="text-align:left;">
-                                        採購單編號
+                                        國家
                                         </label>
                                         <div class="col-md-7">
-                                           <input type="text" ng-model="shipping.poCode" class="form-control" placeholder="" disabled="true">
+                                            <select class="form-control" id="countries" ng-model="countryDatas"
+                                            data-ng-options="c.countryName for c in countryDataList track by c.countryId" 
+                                            disabled="true">
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
-                                
-                               <div class="col-md-3">
+                                </div>
+                                <div class="row" >
+                                  <div class="col-md-3" id="shipCode">
                                     <div class="form-group">
                                         <label class="col-md-5 control-label" style="text-align:left;">
-                                            航次
+                                            船務編號
                                         </label>
-                                        <div class="col-md-6">                                
-                                               <input type="text" class="form-control ng-pristine ng-valid"  ng-model="shipping.voyage" >                                     
+                                         <div class="col-md-7">
+                                            <input type="text" ng-model="orders.shippingId" class="form-control" placeholder="" disabled="true">
                                         </div>
                                     </div>
                                 </div>
-           </div>
-                            <div class="row">
-                                     <div class="col-md-3">
+                                
+                                 <div class="col-md-3" id="containerCode">
                                     <div class="form-group">
                                         <label class="col-md-5 control-label" style="text-align:left;">
-                                            離港日期
+                                            貨櫃編號
                                         </label>
-                                        
-                                                        <div class="col-md-7">
-                                           <div class="input-group  date " id="deliverydate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="shipping.departure_date" data-ng-change="updateDelvieryDate();">
-						<span class="input-group-btn">
-							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
-						</span>
-                                         </div>
+                                         <div class="col-md-7">
+                                            <input type="text" ng-model="orders.containerId" class="form-control" placeholder="" disabled="true">
                                         </div>
-
                                     </div>
                                 </div>
-           
                                 
-                                
-                                <div class="col-md-3" >
+                                      <div class="col-md-3" >
                                     <div class="form-group">
                                         <label class="col-md-5 control-label" style="text-align:left;">
-                                            預期到港日期
+                                            收貨日期
                                         </label>
                                         <div class="col-md-7">
                                            <div class="input-group date " id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                                                <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="shipping.etaDate" data-ng-change="updateDelvieryDate();">
+                                                <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="orders.receiveDate" >
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
-                        </div>
+                                           </div>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                 <div class="col-md-3" >
-                                    <div class="form-group">
-                                        <label class="col-md-5 control-label" style="text-align:left;">
-                                            實際到港日期
-                                        </label>
-                                        <div class="col-md-7">
-                                           <div class="input-group date " id="deliverydate1" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                                                <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="shipping.actualDate" data-ng-change="updateDelvieryDate();">
-						<span class="input-group-btn">
-							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
-						</span>
-                        </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                   <div class="col-md-3" >
-                                    <div class="form-group">
-                                        <label class="col-md-5 control-label" style="text-align:left;">
-                                            免倉期(天)
-                                        </label>
-                                          <div class="col-md-6">                                
-                                               <input type="text" class="form-control ng-pristine ng-valid"  ng-model="shipping.fsp" >                                     
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                   </div>
-                               
-                                
-                         <div class="row">          
-                                
-                               <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="col-md-5 control-label" style="text-align:left;">
-                                           承運商
-                                        </label>
-                                        <div class="col-md-6">
-                                           <input type="text" ng-model="shipping.carrier" class="form-control ng-pristine ng-valid" placeholder="">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                 
-                                
-                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="col-md-5 control-label" style="text-align:left;">
-                                            提單編號
-                                        </label>
-                                       <div class="col-md-6">
-                                            <input type="text" ng-model="shipping.bl_number" class="form-control ng-pristine ng-valid" placeholder="">
-                                        </div>
-                                    </div>
-                                </div>
-                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="col-md-5 control-label" style="text-align:left;">
-                                            運費結算
-                                        </label>
-                                        <div class="col-md-6">
-                                            <select class="form-control ng-pristine ng-valid" id="bl_number" ng-model="shipping.feight_payment"><option value="0" selected="selected" label="預付">預付</option><option value="1" selected="selected" label="到付">到付</option></select>
-                                         </div>
-                                        </div>
-                                </div>
-                                
-                                
-                                
-                               
-                            </div>
-
-                           <div class="row">
-                                
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="col-md-5 control-label" style="text-align:left;">
-                                           裝貨港
-                                        </label>
-                                        <div class="col-md-6">
-                                            <div class="input-group">
-                                                <input type="text" id="clientdiscount1" ng-model="shipping.pol" onClick="this.select();" value="0" class="form-control" >                    
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="col-md-5 control-label" style="text-align:left;">
-                                            卸貨港
-                                        </label>
-                                        <div class="col-md-6">
-                                            <div class="input-group">
-                                                <input type="text" id="clientallowance1" ng-model="shipping.pod" onClick="this.select();" value="0" class="form-control" >
-                                    
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                               
-                               <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label class="col-md-3 control-label" style="text-align:left;">
-                                           船名
-                                        </label>
-                                        <div class="col-md-6">
-                                           <input type="text" ng-model="shipping.vessel" class="form-control ng-pristine ng-valid" placeholder="">
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="row">
-                                   <div class="col-md-3">
+                                     <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             狀態
                                         </label>
                                         <div class="col-md-6">
-                                            <div class="input-group">
-                                                <select class="form-control ng-pristine ng-valid" id="bl_number" ng-model="shipping.status" disabled="disabled"><option value="1"  label="正常">正常</option><option value="30" label="已完成">已完成</option><option value="99"  label="已暫停">已暫停</option></select>
-                                            </div>
+                                            <select class="form-control" ng-model="orders.poStatus" ng-change="statusChange();" id="statusField">
+                                                <option value="1" selected>1. 正常</option>
+                                                <option value="20" selected>2. 已收貨</option>
+                                                <option value="30" selected>3. 已付款</option>
+                                                <option value="99" selected>4. 已刪除</option>
+                                                <!--<option data-ng-if="systemInfo.permission.customer_maintenance == true" value="98">2. 退貨單</option>
+                                                <option data-ng-if="systemInfo.permission.customer_maintenance == true" value="96">3. 補貨單</option>-->
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
+                           
+                                
+                               
                             </div>
 
                             <div class="row">
-                                <div class="col-md-12">
+                                
+                                 
+                                </div>
+                                
+                               
+                                
+                            </div>
+                            
+                            <div class = "row">
+                                 <div class="col-md-3" id="feight_cost">
                                     <div class="form-group">
-                                        <label class="col-md-1 control-label" style="text-align:left;">
-                                             船務備註
+                                        <label class="col-md-5 control-label" style="text-align:left;">
+                                            海外運費
                                         </label>
-                                        <div class="col-md-11">
-                                            <textarea class="form-control" placeholder="" id="remark" cols="50"  ng-model="shipping.poRemark"></textarea>
+                                        <div class="col-md-7">
+                                            <input type="text" ng-model="orders.feight_cost" class="form-control" placeholder="" ng-change="updateCost();updateTotal();">
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                
+                                
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="col-md-5 control-label" style="text-align:left;">
+                                            供應商貨幣
+                                        </label>
+                                        <div class="col-md-6">              
+                                                <select class="form-control" id="currencies" ng-model="currencyDatas"
+                                                    ng-options="(c.currencyId + ' - ' + c.currencyName) for c in allCurrencyList track by c.currencyId" disabled="true">
+                                                </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3" id="exchangeRate">
+                                    <div class="form-group">
+                                        <label class="col-md-5 control-label" style="text-align:left;">
+                                            匯率
+                                        </label>
+                                        <div class="col-md-7">
+                                            <input type="text" ng-model="orders.exchangeRate" class="form-control" placeholder="" ng-change="updateCost();updateTotal();">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-md-3" id="local_cost">
+                                    <div class="form-group">
+                                        <label class="col-md-5 control-label" style="text-align:left;">
+                                            轉換成本地運費
+                                        </label>
+                                        <div class="col-md-7">
+                                            <input type="text" ng-model="orders.feight_local_cost" class="form-control" placeholder="" disabled="true" ng-change="updateTotal();">
+                                        </div>                 
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3" id="misc_cost">
+                                    <div class="form-group">
+                                        <label class="col-md-5 control-label" style="text-align:left;">
+                                            本地雜費
+                                        </label>
+                                        <div class="col-md-7">
+                                            <input type="text" ng-model="orders.hk_local_cost" class="form-control" placeholder="" ng-change="updateTotal()">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                  <div class="col-md-3" id="misc_cost">
+                                    <div class="form-group">
+                                        <label class="col-md-5 control-label" style="text-align:left;">
+                                            雜費
+                                        </label>
+                                        <div class="col-md-7">
+                                            <input type="text" ng-model="orders.local_cost" class="form-control" placeholder="" ng-change="updateTotal()">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            
+                                
+                                 <div class="col-md-3" id="total_cost">
+                                    <div class="form-group">
+                                        <label class="col-md-5 control-label" style="text-align:left;">
+                                            總額
+                                        </label>
+                                        <div class="col-md-7">
+                                            <input type="text" ng-model="orders.total_cost" class="form-control" placeholder="" disabled="true">
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            
+                           <div class="row">
+                               
+                                
+                               
+                                  <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-md-1 control-label" style="text-align:left;">
+                                             收貨備註
+                                        </label>
+                                        <div class="col-md-11">
+                                            <textarea class="form-control" placeholder="" id="remark" cols="50"  ng-model="orders.conRemark"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                           </div>
 
-
-                        </div>
                     </div>
                 </div>
             </div>
@@ -291,7 +279,7 @@
 
                         <div class="caption font-green-sharp">
                             <i class="icon-speech font-green-sharp"></i> <span
-                                class="caption-subject bold uppercase">船運貨櫃</span> <label data-ng-if="displayName != ''" style="color: #ff0000">供應商 :[{{displayName}}]</label>
+                                class="caption-subject bold uppercase">收到貨物</span> <label data-ng-if="displayName != ''" style="color: #ff0000">[{{displayName}}]</label>
                                 <span class="caption-helper"></span>
                         </div>
 
@@ -304,102 +292,105 @@
                     </div>
 
                     <div class="portlet-body" id="orderportletbody">
-                        <p class="bg-primary" style="font-size: 20px;margin: 5px" ng-if="lastitem.productQty > 0" >貨品修改時間:{{lastitem.created_at}} 數量:{{lastitem.productQty}}{{lastitem.productUnitName}} 售價:{{lastitem.productPrice}}({{lastitem.productStandardPrice}}) 折扣:{{lastitem.productDiscount}}% 總數:{{lastitem.productQty*lastitem.productPrice*(100-lastitem.productDiscount)/100|number:1 }}</p>
-                        <br />
-
+                     
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr role="row" class="heading">
-                                    <th width="5%">序號</th>
-                                    <th width="6%">貨櫃編號</th>
-                                    <th width="14%">封條編號</th>
-                                    <th width="15%">收貨日期</th>
-                                    <th width="10%">貨櫃大小</th>
-                                    <th width="10%">貨物數量</th>
-                                    <th width="10%">貨物重量</th>
-                                    <th width="10%">貨物體積</th>
-                                    <th width="5%">運費貨幣</th>
-                                    <th width="8%">運費金額</th>
-                                   <!-- <th width="6%">轉換本港運費</th>
-                                    <th width="6%">所有雜費</th>
-                                    <th width="6%">稅</th>-->
-                                    <th width="7%"></th>
+                                    <th width="3%">貨品</th>
+                                    <th width="7%">編號</th>
+                                    <th width="7%">貨品名稱</th>
+                                    <th width="7%">數量</th>
+                                    <th width="7%">單位</th>
+                                    <th width="7%">收到數量</th>
+                                    <th width="7%">好貨</th>
+                                    <th width="7%">壞貨</th>
+                                    <th width="7%">保留貨</th>
+                                    <th width="10%">過期日</th>
+                                    <th width="7%">擺放位置</th>
+                                    <th width="5%"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr data-ng-repeat="i in itemlist" data-ng-if="product[i]['deleted'] == 0">
                                     <td style="line-height:35px;font-size:15px;">{{i}}</td>
                                     <td>
-                                        <div class="input-group">
-                                            <input id="containerId_{{i}}" onClick="this.select();"  name="containerId_{{i}}" class="form-control productCodeField"  ng-model="product[i]['containerId']" type="text" placeholder="" ng-change="searchProduct(i)"/>
-                                            <!--<span class="input-group-btn">
-                                                <a href="#" data-ng-click="selectProduct(i);" id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 選擇</a>
-                                            </span>-->
+                                        <div class="input-group">                         
+                                            <input id="productId{{i}}" onClick="this.select();"  name="productId_{{i}}" class="form-control productIdField"  ng-model="product[i]['productId']" type="text" placeholder="" ng-change="checkProduct(i,product[i]['productId'])"/>
+                                            <span class="input-group-btn">
+                                            </span>
+                                        </div>
+                                         <span id="warning{{i}}" style="color:red;"></span>
+                                    </td>
+                                    <td style="line-height:35px;font-size:15px;">
+                                        {{product[i]['productName']}}
+                                    </td>
+                                    <td>
+                                        <label>
+                                            <div id="spinner_{{i}}">
+                                                <div class="input-group" style="width:100px;">
+                                                     <input type="tel"  id="qty_{{i}}" class="spinner-input form-control" maxlength="5"
+                                                     ng-model="product[i]['qty']" ng-change="updateQty(i,'qty');"
+                                                     ng-blur="">
+
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label>
+                                            {{$scope.items[i].productUnitName}}
+                                             <select class="form-control"
+                                                    id="unit_{{i}}"
+                                                    ng-model="product[i]['unit']"
+                                                    data-ng-options="x.unit for x in Model[i] track by x.unit">
+                                            </select>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            <div class="input-icon right" id="unitpricediv_{{i}}">
+                                                <input type="tel" onClick="this.select();"  id="unitprice_{{i}}" ng-model="product[i]['receive_qty']" data-ng-change="" class="form-control" name="product[i]['unitprice']" value="{{product[i]['unitprice']}}" maxlength="6" >
+                                            </div>
                                         </div>
                                     </td>
                                      <td>
-                                        <div class="input-group">
-                                            <input id="serial_no_{{i}}" onClick="this.select();"  name="serial_no_{{i}}" class="form-control productCodeField"  ng-model="product[i]['serial_no']" type="text" placeholder="" ng-change="capital(i)"/>
-                                            
-                                        </div>
-                                    </td>
-                                    <td style="line-height:35px;font-size:15px;">
-                                        <div class="input-group  date " id="deliverydate{{i+3}}" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="product[i]['receiveDate']" data-ng-change="updateDelvieryDate();" disabled="disabled">
-						<span class="input-group-btn">
-							<button class="btn default" type="button" disabled="disabled"><i class="fa fa-calendar"></i></button>
-						</span>
-                                         </div>
-   
-                                    </td>
-                                      <td>
-                                        <div class="input-group">
-                                            <input id="container_size_{{i}}" onClick="this.select();"  name="container_size_{{i}}" class="form-control productCodeField"  ng-model="product[i]['container_size']" type="text" placeholder="" />
-                                            
-                                        </div>
-                                    </td>
-     
-                                    <td>
                                         <div class="">
                                             <div class="input-icon right" id="unitpricediv_{{i}}">
-                                                <input type="tel" onClick="this.select();"  id="container_Num_{{i}}" ng-model="product[i]['container_Num']" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['container_Num']" value="{{product[i]['container_Num']}}" maxlength="6"  >
-                                            </div>
-                                        </div>
-                                    </td>
-                                      <td>
-                                        <div class="">
-                                            <div class="input-icon right" id="unitpricediv_{{i}}">
-                                                <input type="tel" onClick="this.select();"  id="container_weight_{{i}}" ng-model="product[i]['container_weight']" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['container_weight']" value="{{product[i]['container_weight']}}" maxlength="6"  >
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="">
-                                            <div class="input-icon right" id="unitpricediv_{{i}}">
-                                                <input type="tel" onClick="this.select();"  id="container_capacity{{i}}" ng-model="product[i]['container_capacity']" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['container_capacity']" value="{{product[i]['container_capacity']}}" maxlength="6"  >
+                                                <input type="tel" onClick="this.select();"  id="unitprice_{{i}}" ng-model="product[i]['good_qty']" data-ng-change="" class="form-control" name="product[i]['unitprice']" value="{{product[i]['unitprice']}}" maxlength="6" >
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class=" ">
-                                            <label>
-                                             <select class="form-control ng-pristine ng-valid" id="feight_currency_1" ng-model="product[i]['feight_currency']" data-ng-options="x.label for x in product[i]['feight_currency'] track by x.value" disabled = "disabled"><option value="?" selected="selected" label="" ></option></select>
-                                        </label>
+                                            <div class="input-group">
+                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['damage_qty']" ng-change="updateQty(i,'discount_1')" value="{{product[i]['discount_1']}}" data-ng-change="" class="form-control" name="product[i]['discount']" maxlength="6">
+                                         
+                                            </div>
                                         </div>
                                     </td>
                                      <td>
                                         <div class=" ">
                                             <div class="input-group">
-                                                <input onClick="this.select();" type="tel" id="feight_amount{{i}}" ng-model="product[i]['feight_amount']" value="{{product[i]['feight_amount']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['feight_amount']" maxlength="6" disabled = "disabled">
-                                              
+                                                <input onClick="this.select();" type="tel" id="on_hold_qty{{i}}" ng-model="product[i]['on_hold_qty']" ng-change="updateQty(i,'on_hold_qty')" value="{{product[i]['on_hold_qty']}}" data-ng-change="" class="form-control" name="product[i]['on_hold_qty']" maxlength="6">
                                             </div>
                                         </div>
                                     </td>
-                            
-                               
                                     <td style="line-height:35px;font-size:15px;">
-                                        <button type="button" class="btn btn-primary" id="remarkbtn_{{i}}"  data-ng-click="openRemarkPanel(i);">備註</button>
+                                        <div class="input-group date " id="deliverydate{{i}}" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="product[i]['expiryDate']" >
+                                            <span class="input-group-btn">
+                                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['bin_location']" value="{{product[i]['bin_location']}}" ng-change="updateQty(i,'bin_location')" data-ng-change="" class="form-control" name="product[i]['itemallowance']" maxlength="6">
+                                        </div>
+                                    </td>
+                                    <td style="line-height:35px;font-size:15px;">               
                                         <button type="button" class="btn btn-danger" id="deletebtn_{{i}}"  data-ng-click="deleteRow(i);">刪除</button>
+                                       
                                     </td>
                                 </tr>
                             </tbody>
@@ -416,9 +407,6 @@
         </div>
     </form>
 </div>
-
-<!-- Select Product Grid or List Modal -->
-<div ng-include="'/views/model_selectPo.html'"></div>
 
 <!-- Recent Product Modal -->
 <div class="modal fade bs-modal-lg" id="recentProductModal" tabindex="-1" role="basic" aria-hidden="true">
@@ -471,7 +459,7 @@
 			</div>
 			<div class="modal-footer">
 					<button type="button" class="btn default" data-dismiss="modal">取消</button>
-				</div>
+			</div>
 			<!-- /.modal-content -->
 		</div>
 		<!-- /.modal-dialog -->
@@ -513,7 +501,7 @@
 						<i class="fa fa-check blue" style="font-size:130px;margin: 30px 0 0 30px;"></i><br/>
 					</div>
 					<div class="col-md-8" style="text-align:left;">
-						<span style="font-size:30px;">採購單編號: {{shipping.invoiceNumber}}</span><br/>
+						<span style="font-size:30px;">採購單編號: {{orders.invoiceNumber}}</span><br/>
 						<span style="font-size:30px;">採購單狀態: {{statustext}}</span>
 					</div>
 				</div> 
@@ -529,4 +517,5 @@
 	<!-- /.modal-dialog -->
 </div>
 
-<div ng-include="'/views/model_selectShip.html'"></div>
+<div ng-include="'/views/model_receive.html'"></div>
+
