@@ -1,0 +1,146 @@
+<style>
+    .portlet-bodyss
+    {
+        height: 800px;
+        overflow: auto;
+        
+    }
+    
+    .portlet.light .portlet-bodyss
+    {
+        padding-top:78px;
+    }
+    
+      .portlet-bodys
+    {
+        height: 370px;
+        overflow: auto;
+        
+    }
+    
+    .portlet.light .portlet-bodys
+    {
+        padding-top: 40px;
+    }
+    td
+    {
+        width: 63px;
+    }
+    
+    tr
+    {
+            background-color: white;
+    }
+    
+    #hh
+    {
+        display:none;
+    }
+</style>
+
+<form class="form-horizontal" role="form" id="queryInfo">
+
+    <div class="col-md-12">
+        <div class="col-md-12">
+            <span onclick="chooseForm('shipmentSch')" class="btn btn-xs default"><i class="fa fa-search"></i> 船務管理列表</span>
+           <!-- <span onclick="chooseForm('poSch')" class="btn btn-xs default"><i class="fa fa-search"></i> 本地採購列表</span>-->
+        </div>
+        <div class="portlet light col-md-4" style="margin-top: 18px;">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs font-green-sharp"></i>
+                        <span class="caption-subject font-green-sharp bold uppercase">選擇日期</span>
+		    </div>
+		</div>
+                <div class="portlet dateR" id="gg">
+                    <div class="md-col-12" style="margin-bottom:15px;">
+                        由:
+                        <div class="input-group  date " id="deliverydate5" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.deliverydate5" data-ng-change="viewShip();">
+                            <span class="input-group-btn">
+				<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+         
+                    </div>
+                </div>
+            
+             <div class="portlet dateR" id="hh">
+                    <div class="md-col-12" style="margin-bottom:15px;">
+                        由:
+                        <div class="input-group  date " id="deliverydate6" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.deliverydate6" data-ng-change="viewPo();">
+                            <span class="input-group-btn">
+				<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+         
+                    </div>
+                </div>
+		</div>
+        
+        <div class="portlet light col-md-6" style="margin-top: 18px;float:right;">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs font-green-sharp"></i>
+                        <span class="caption-subject font-green-sharp bold uppercase"></span>
+		    </div>
+		</div>
+                <div class="portlet dateR" id="gg">
+                    <div class="md-col-12" style="margin-bottom:15px;" ng-bind-html="shippingNote">      
+                        
+                    </div>
+                </div>
+            
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12 shipform" id="shipmentSch">
+                <div class="portlet light">
+                    
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs font-green-sharp"></i>
+                            <span class="caption-subject font-green-sharp bold uppercase">船務管理列表</span>
+                        </div>
+                    </div>
+                    
+                    <div class="portlet-bodyss" ng-bind-html="report" style="text-align: center;">
+                        <!--<table border="1">
+                            <tr>
+                                <th>&nbsp;</th>
+                                 <th  ng-repeat = "row in rows">{{row.date}}</th>
+                            </tr>
+                            <tr ng-repeat = "row in rows">
+                                <th>{{row.shippingId}}</th>
+                                <td ng-repeat = "row in rows" ng-if>{{row.no}}</td>
+                            </tr>
+                        </table>-->
+                        
+                    </div>
+                </div>
+                <!-- END EXAMPLE TABLE PORTLET-->
+            </div>
+            
+            <div class="col-md-12 shipform" id="poSch" style="display:none;">
+                <div class="portlet light">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs font-green-sharp"></i>
+                            <span class="caption-subject font-green-sharp bold uppercase">本地採購列表</span>
+                        </div>
+                    </div>
+                    <div class="portlet-bodys" ng-bind-html="report1" style="text-align: center;">
+                    </div>
+                </div>
+                <!-- END EXAMPLE TABLE PORTLET-->
+            </div>
+        </div>
+
+
+
+</div>
+</form>
+<div ng-include="'/views/schedule.html'"></div>
+
+<div ng-include="'/views/poSchedule.html'"></div>

@@ -5,7 +5,6 @@ Metronic.unblockUI();
 
 
 app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
-    /* Register shortcut key */
 
     $scope.shipping = {
         shippingId:'',
@@ -32,24 +31,12 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
  //Sunday is not allowed
     var today = new Date();
     var plus = today.getDay() == 6 ? 2 : 1;
-    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
+    var start_date = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
 
     var ymonth = start_date.getMonth() + 1;
     var yyear = start_date.getFullYear();
-    var yday = start_date.getDate()+4;
+    var yday = start_date.getDate();
 
-    var day = currentDate.getDate() - 2;
-    var month = currentDate.getMonth() + 1;
-    var year = currentDate.getFullYear();
-    
-    var day3 = currentDate.getDate() - 2;
-    var month3 = currentDate.getMonth() + 1;
-    var year3 = currentDate.getFullYear();
-    
-    var day4 = currentDate.getDate() + 4;
-    var month4 = currentDate.getMonth() + 1;
-    var year4 = currentDate.getFullYear();
 
   //eta date
     $("#deliverydate").datepicker({
@@ -65,7 +52,6 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         orientation: "left",
         autoclose: true
     });
-    $("#deliverydate1").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday );
 
     //departure date
     $("#deliverydate2").datepicker({
@@ -74,19 +60,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         autoclose: true
     });
 
-    $("#deliverydate2").datepicker("setDate", year + '-' + month + '-' + day );
-   
-   //receive date
-     $("#deliverydate3").datepicker({
-        rtl: Metronic.isRTL(),
-        orientation: "right",
-        autoclose: true
-    });
-    $("#deliverydate3").datepicker( "setDate", year4 + '-' + month4 + '-' + day4 );
-
-    $scope.shipping.etaDate =  $scope.shipping.actualDate = yyear+'-'+ymonth+'-'+yday;
-    $scope.shipping.departure_date = year+'-'+month+'-'+day;
-    $scope.shipping.receiveDate = year4+'-'+month4+'-'+day4;
+    $scope.shipping.etaDate  = yyear+'-'+ymonth+'-'+yday;
     
    
     $scope.sameDayInvoice = '';
@@ -108,14 +82,14 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         containerId:'',
         serial_no:'',
         container_size:'',
-        container_receiveDate		:      '',
         container_Num		        :	0,
         container_weight		:	0,
         container_capacity		:	0,
         feight_currency                 :      '',
         feight_amount                   :      0,
         deleted 	                :     0,
-        remark:''
+        remark:'',
+        receiveDate:'',
     };
    
 
@@ -126,7 +100,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         start		:	Date.now(),
         selected_client	:	'',
         product		:	[],
-        submit		:	''
+        submit		:	'',
     }
 
     // product: select, change_qty, change_unit
@@ -174,6 +148,7 @@ $scope.an = false;
 
     $scope.itemlist.forEach(function(key){
         $scope.product[key] = $.extend(true, {}, $scope.productStructure);
+        $scope.timer.product[key] = $.extend(true, {}, $scope.timerProductStructure);
     });
 
 
@@ -185,9 +160,9 @@ $scope.an = false;
         if(!$location.search().shippingId)
         {
             $timeout(function(){
-                $('#selectPoModel').modal('show');
+                $('#selectShipModel').modal('show');
               
-                $('#selectPoModel').on('shown.bs.modal', function () {
+                $('#selectShipModel').on('shown.bs.modal', function () {
                     $('#keyword').focus();
                 })
 
@@ -251,7 +226,6 @@ $scope.an = false;
                         
                         Metronic.unblockUI();
                         $scope.loadProduct($scope.shipping.shippingId, $scope.shippingItems);
-                    $("#deletebtn_4").css('display', '');
                 });
 
 
@@ -277,17 +251,14 @@ $scope.an = false;
 
     $scope.loadProduct = function(shippingId, defaultProduct)
     {
-
-
                    if(defaultProduct.length > 0)
 	           {
 			var j = 1; // j should be put here		    
                     defaultProduct.forEach(function(item) {
    
                       //  $scope.productCode[j] = item.productId;
-
-
-
+                        
+                        
                         $scope.product[j]['dbid'] = item.id;
                         $scope.product[j]['containerId'] = item.containerId;
                         $scope.product[j]['serial_no'] = item.serial_no;
@@ -306,31 +277,24 @@ $scope.an = false;
                             $scope.itemlist.push($scope.newkey);
                             $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
                         }
-                        $timeout(function(){
-                            $("#deletebtn_" + j).css('display', '');
-                            $("#remarkbtn_" + j).css('display', '');
-                        }, 500);
-
-                        console.log($scope.product);
-
                         var value = 3 + j;
                         $("#deliverydate"+ value).datepicker({
                             rtl: Metronic.isRTL(),
                             orientation: "right",
                             autoclose: true
                         })
-
-
+            
+                        $("#deletebtn_" + j).css('display', 'block');
+                        $("#remarkbtn_" + j).css('display', 'block');
 
                         j++;
 
                     });
 
                     }else{
-			            alert('沒有貨櫃');
+			alert('沒有貨櫃');
                     }
                 Metronic.unblockUI('#orderportletbody');
-
     }
 
     $scope.selectProduct = function(i) {
@@ -474,7 +438,7 @@ $scope.an = false;
             generalError = true;
             $scope.allowSubmission = true;
         }
-
+        console.log($scope.shipping);
         if(!generalError)
         {
             $http.post(
@@ -563,6 +527,17 @@ $scope.an = false;
     $scope.deleteRow = function(i)
     {
 
+       /*for(var key = i; key<=$scope.itemlist.length; key++)
+         {
+
+         $scope.product[key] = $.extend(true, {}, $scope.product[key+1]);
+         $scope.productCode[key] = $scope.productCode[key+1];
+
+         }
+
+         $scope.product[$scope.itemlist.length] = $.extend(true, {}, $scope.productStructure);
+         $scope.productCode[$scope.itemlist.length] = '';*/
+        
         $scope.product[i].deleted = 1;
        
      

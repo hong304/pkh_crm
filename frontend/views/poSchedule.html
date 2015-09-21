@@ -1,0 +1,169 @@
+<div class="modal fade bs-modal-lg" id="poDetails" data-ng-controller="ships" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">訂單資料</h4>
+            </div>
+            <div class="modal-body">
+                <!-- h4>{{invoiceinfo.client.customerName_chi}} @ {{invoiceinfo.deliveryDate  * 1000 | date: 'yyyy.MM.dd'}}</h4> -->
+
+                <div class="col-md-12">
+
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption font-green-sharp">
+                                <i class="icon-speech font-green-sharp"></i>
+                                <span class="caption-subject bold uppercase">訂單資料</span>
+                                <span class="caption-helper"><span>
+                                        </div>
+                                        </div>
+                                        <div class="portlet-body">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <label>採購單編號</label>
+                                                    
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachPo.poCode}}</label>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>採購日期</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachPo.poDate| date: 'yyyy.MM.dd'}}</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <label>預算到貨日期</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachPo.etaDate | date: 'yyyy.MM.dd'}}</label>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label>實際到貨日期</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachPo.actualDate | date: 'yyyy.MM.dd'}}</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                 <div class="col-md-2">
+                                                    <label>供應商名稱</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>{{eachPo.supplier.supplierName}}</label>
+                                                </div>
+                                                 
+                                            </div>
+                                      
+                                        </div>
+                                        </div>
+
+
+                                        </div>
+
+                                        <div class="col-md-12 ">
+                                            <!-- BEGIN Portlet PORTLET-->
+                                            <div class="portlet light bordered">
+                                                <div class="portlet-title tabbable-line">
+                                                    <div class="caption">
+                                                        <i class="icon-pin font-yellow-lemon"></i>
+                                                        <span class="caption-subject bold font-yellow-lemon uppercase">
+                                                            其他資料 </span>
+                                                        <span class="caption-helper"></span>
+                                                    </div>
+                                                    <ul class="nav nav-tabs">
+                                                      <!--  <li>
+                                                            <a data-target="#portlet_tab3" data-toggle="tab">
+                                                                修改記錄</a>
+                                                        </li>
+                                                        <li>
+                                                            <a data-target="#portlet_tab2" data-toggle="tab">
+                                                                列印記錄 </a>
+                                                        </li>-->
+                                                        <li class="active">
+                                                            <a data-target="#portlet_tab1" data-toggle="tab">
+                                                                採購貨物 </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="portlet-body">
+                                                    <div class="tab-content">
+                                                        <div class="tab-pane active" id="portlet_tab1">
+                                                            <div>
+                                                                <h4>貨物</h4>
+                                                                <table class="table table-bordered table-hover">
+                                                                    <thead>
+                                                                        <tr role="row" class="heading">
+                                                                            <th width="10%">#</th>
+                                                                            <th width="20%">編號</th>
+                                                                            <th width="20%">貨品名稱</th>
+                                                                            <th width="20%">數量</th>
+                                                                            <th width="30%">單位</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr data-ng-repeat="i in eachPo.po_item" style="line-height:35px;font-size:15px;">
+                                                                            <td>{{$index+1}}</td>
+                                                                            <td>
+                                                                                {{i.productId}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.product_detail.productName_chi}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.productQty}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.productUnitName}}
+                                                                            </td>             
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                                <br/>
+                                                                <div style="clear:both;"></div>
+                                                            </div>
+                                                        </div>
+                                                     
+                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="clear:both;"></div>
+                                        </div>
+                                        <div class="modal-footer" >
+                                            <button type="button" class="btn default" data-dismiss="modal">取消</button>
+
+                                   
+
+
+                                            <!-- Edit Invoice -->
+                                            <!-- Condition: Invoice Status = {1, 2, 3} -->
+       
+                                            <!-- <button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus > 3 && systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>-->
+
+                                            <!-- Void Invoice -->
+                                            <!-- Condition: Invoice Status = {1, 2, 3} && Permission = void_invoice-->
+   
+
+                                            <!-- Unload Invoice -->
+                                            <!-- Condition: Invoice Status = {4} -->
+                                            <!--<button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4 && systemInfo.permission.unload_invoice" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>-->
+                                            <button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>
+                                            <!-- Reprint Invoice -->
+                                            <!-- Condition: Invoice Status = |{99} Permission = reprint_invoice -->
+                                            <!--<button type="button" class="btn grey-cascade" data-ng-if="invoiceinfo.invoiceStatus != 99 && systemInfo.permission.reprint_invoice" data-ng-click="rePrintInvoice(invoiceinfo.invoiceId);">重印單據</button>-->
+
+
+
+
+                                        </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                        </div>

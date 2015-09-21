@@ -186,6 +186,19 @@ Route::group(array('before' => 'auth'), function()
      Route::post('/jsonQueryShip.json','shippingController@jsonQueryShip');
      Route::post('/jsonGetSingleShip.json','shippingController@jsonGetSingleShip');
      Route::post('/deleteShip.json','shippingController@deleteShip');
+      Route::post('/loadShip.json','shippingController@loadShip');     
+     Route::any('/outputPreview.json','shippingController@outputPreview');  
+     Route::any('/outputPo.json','shippingController@outputPo');  
+     Route::post('/loadPo.json','shippingController@loadPo');   
+     Route::any('/printPo.json','newPoController@printPo');
+     Route::any('/outputShipNote.json','shippingController@outputShipNote');
+     
+     //Receiving
+     Route::post('/searchSupplier.json','receiveController@searchSupplier');
+     Route::post('/searchPoBySupplier.json','receiveController@searchPo');
+     Route::post('/searchShipping.json','receiveController@searchShipping');
+     Route::post('/newReceive.json','receiveController@newReceive');
+     Route::post('/getPurchaseAll.json','receiveController@getPurchaseAll');
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');

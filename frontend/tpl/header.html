@@ -387,7 +387,26 @@
                                                                                              <a href="/#/searchship" class="iconify">
                                                                                              <i class="icon-home"></i>
                                                                                             搜尋船務 </a>
-                                                                                         </li>                                                                        
+                                                                                         </li>      
+                                                                                          <li>
+                                                                                             <a href="/#/ships" class="iconify">
+                                                                                             <i class="icon-home"></i>
+                                                                                            船務管理列表 </a>
+                                                                                         </li>   
+										</ul>
+									</div>
+                                                                       
+                                                                          <div class="col-md-3"  data-ng-if="systemInfo.permission.allow_edit == true">  
+										<ul class="mega-menu-submenu">
+											<li>
+												<h3>收貨相關</h3>
+											</li>
+											   <li>
+                                                                                        <a href="/#/receiveCtrl" class="iconify" ng-click="$state.go('receiveCtrl', {}, {reload: true});">
+                                                                                        <i class="icon-home"></i>
+                                                                                         收貨管理 </a>
+                                                                                    </li>
+                                                                                                                                                             
 										</ul>
 									</div>
 

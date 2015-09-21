@@ -2187,6 +2187,7 @@ return array(
     'role' => $baseDir . '/app/models/role.php',
     'supplierManipulation' => $baseDir . '/app/models/supplierManipulation.php',
 	'shippingMan' => $baseDir . '/app/models/shippment/shippingMan.php',
+	'ReceiveMan' => $baseDir . '/app/models/Receive/ReceiveMan.php',
     'vansell' => $baseDir . '/app/models/vansell.php',
     'yajra\\Datatables\\Datatables' => $vendorDir . '/yajra/laravel-datatables-oracle/src/yajra/Datatables/Datatables.php',
     'yajra\\Datatables\\DatatablesServiceProvider' => $vendorDir . '/yajra/laravel-datatables-oracle/src/yajra/Datatables/DatatablesServiceProvider.php',

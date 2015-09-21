@@ -1325,6 +1325,67 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
         }
     }) 
     
+      .state('ships', {
+        url: "/ships",
+        templateUrl: "views/shippingSchedule.html",            
+        data: {pageTitle: '船務管理列表', pageSubTitle: ''},
+
+       controller: "ships",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'app',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                    files: [
+                   	 assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+
+
+        assets + '/css/dataTable/bootstrap.min.css',
+                        assets + '/css/dataTable/dataTables.bootstrap.css',
+                        assets + '/js/dataTable/jquery.dataTables.min.js',
+                        assets + '/js/dataTable/dataTables.bootstrap.js',
+                        
+                        'js/controllers/ships.js',
+
+                    ] 
+                });
+            }]
+        }
+    }) 
+    
+     .state('receiveCtrl', {
+        url: "/receiveCtrl",
+        templateUrl: "views/receive.html",            
+        data: {pageTitle: '收貨管理列表', pageSubTitle: ''},
+
+       controller: "receiveCtrl",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'app',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                    files: [
+                   	 assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+
+
+        assets + '/css/dataTable/bootstrap.min.css',
+                        assets + '/css/dataTable/dataTables.bootstrap.css',
+                        assets + '/js/dataTable/jquery.dataTables.min.js',
+                        assets + '/js/dataTable/dataTables.bootstrap.js',
+                        
+                        'js/controllers/receiveCtrl.js',
+                        'js/controllers/selectShip.js',
+
+                    ] 
+                });
+            }]
+        }
+    }) 
+    
     
 
 

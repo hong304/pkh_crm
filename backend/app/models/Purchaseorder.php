@@ -30,6 +30,21 @@ class Purchaseorder extends Eloquent {
 	{
 	    return $this->hasOne('Supplier', 'supplierCode', 'supplierCode');
 	}
+        
+        public function currency()
+        {
+            return $this->hasOne('Currency', 'currencyId', 'currencyId'); //Return one object only
+        }
+        
+        public function shipping()
+        {
+            return $this->hasMany('Shipping', 'poCode', 'poCode'); //Return multiple shipping objects
+        }
+        
+        public function product()
+        {
+            return $this->hasMany('Product', 'productId', 'productId'); //Return multiple shipping objects
+        }
 
     public static function getFullPo($base) {
         // get invoices and items
