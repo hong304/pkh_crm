@@ -497,6 +497,7 @@ class PaymentController extends BaseController
         $pdf->SetFont('chi', 'U', 16);
         $pdf->Cell(0, 10, '結帳列表(應收)', 0, 1, "C");
         $pdf->SetFont('chi', 'U', 12);
+        $pdf->Ln(5);
         $pdf->Cell(0, 5, "支付日期: " . $this->receiveDate . ' 至 ' . $this->receiveDate2, 0, 2, "L");
 
     }
@@ -506,7 +507,7 @@ class PaymentController extends BaseController
 
         $filter = Input::get('filterData');
 
-        $payments = Payment::select('payments.id as id', 'ref_number', 'receive_date', 'start_date', 'end_date', 'customerId', 'groupId', 'amount', 'remain')->where('paymentType', 'credit');
+        $payments = Payment::select('payments.id as id','bankCode', 'ref_number', 'receive_date', 'start_date', 'end_date', 'customerId', 'groupId', 'amount', 'remain')->where('paymentType', 'credit');
 
         if ($filter['ChequeNumber'] == '' && $filter['receiveDate'] == '' && $filter['receiveDate2'] == '' && $filter['clientId'] == '' && $filter['groupName'] == '') {
             $payments->where('start_date', '>=', $filter['deliverydate'])->where('end_date', '<=', $filter['deliverydate2']);
@@ -576,7 +577,7 @@ class PaymentController extends BaseController
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
         $pdf->AddPage();
 
-
+$column_cheque = 160;
 
         $this->generateHeader($pdf);
 
@@ -591,13 +592,16 @@ class PaymentController extends BaseController
         $pdf->setXY(120, 50);
         $pdf->Cell(0, 0, "支付日期", 0, 0, "L");
 
-        $pdf->setXY(150, 50);
+        $pdf->setXY(148, 50);
+        $pdf->Cell(0, 0, "銀行", 0, 0, "L");
+
+        $pdf->setXY($column_cheque, 50);
         $pdf->Cell(0, 0, "支票號碼", 0, 0, "L");
 
-        $pdf->setXY(185, 50);
+        $pdf->setXY(195, 50);
         $pdf->Cell(0, 0, "金額", 0, 0, "L");
 
-        $pdf->Line(10, 53, 195, 53);
+        $pdf->Line(10, 53, 205, 53);
 
 
 
@@ -619,10 +623,13 @@ class PaymentController extends BaseController
             $pdf->setXY(120, $y);
             $pdf->Cell(0, 0, $i['receive_date'], 0, 0, 'L');
 
-            $pdf->setXY(150, $y);
+            $pdf->setXY(148, $y);
+            $pdf->Cell(0, 0, str_pad($i['bankCode'],3,0,STR_PAD_LEFT), 0, 0, "L");
+
+            $pdf->setXY($column_cheque, $y);
             $pdf->Cell(0, 0, $i['ref_number'], 0, 0, 'L');
 
-            $pdf->setXY(185, $y);
+            $pdf->setXY(195, $y);
             $pdf->Cell(10, 0, sprintf("$%s", number_format($i['amount'],2,'.',',')), 0, 0, 'R');
 
             if (isset($i['customName']))
@@ -642,13 +649,13 @@ class PaymentController extends BaseController
 
         }
 
-        $pdf->Line(10, $y, 195, $y);
+        $pdf->Line(10, $y, 205, $y);
         $y+=6;
 
         $pdf->setXY(120, $y);
         $pdf->Cell(0, 0,'總結數金額:', 0, 0, 'L');
 
-        $pdf->setXY(185, $y);
+        $pdf->setXY(195, $y);
         $pdf->Cell(10, 0, sprintf("$%s", number_format($amount,2,'.',',')), 0, 0, 'R');
 
 

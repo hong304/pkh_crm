@@ -529,7 +529,7 @@ if(!$empty){
         $pdf->setXY(45, 30);
         $pdf->Cell(0, 0,"TEL:24552266    FAX:24552449",0,1,"L");
 
-        $pdf->SetFont('chi','U',16);
+        $pdf->SetFont('chi','U',14);
         $pdf->setXY(0, 40);
         $pdf->Cell(0, 0,$this->_reportTitle,0,0,"C");
 
@@ -594,7 +594,7 @@ if(!$empty){
 
             $y = 50;
 
-            $pdf->SetFont('chi', '', 12);
+            $pdf->SetFont('chi', '', 10);
             $pdf->setXY(15, $y);
             $pdf->Cell(0, 0, "M/S", 0, 0, "L");
 
@@ -645,24 +645,24 @@ if(!$empty){
 
             $y = 60;
             
-             $pdf->SetFont('chi', '', 20);
-            $pdf->setXY(130, $y+10);
+             $pdf->SetFont('chi', '', 16);
+            $pdf->setXY(130, $y+8);
             $pdf->Cell(0, 0, date('Y年m月', $this->_date1), 0, 0, "L");
 
-            $pdf->SetFont('chi', '', 12);
-            $pdf->setXY(10, $y+20);
+            $pdf->SetFont('chi', '', 10);
+            $pdf->setXY(10, $y+16);
             $pdf->Cell(0, 0, "發票日期", 0, 0, "L");
 
-            $pdf->setXY(40, $y+20);
+            $pdf->setXY(40, $y+16);
             $pdf->Cell(0, 0, "發票編號", 0, 0, "L");
 
-            $pdf->setXY(105, $y+20);
+            $pdf->setXY(105, $y+16);
             $pdf->Cell(0, 0, "借方", 0, 0, "L");
 
-            $pdf->setXY(140, $y+20);
+            $pdf->setXY(140, $y+16);
             $pdf->Cell(0, 0, "貸方", 0, 0, "L");
 
-            $pdf->setXY(165, $y+20);
+            $pdf->setXY(170, $y+16);
             $pdf->Cell(0, 0, "未清付金額", 0, 0, "L");
 
 
@@ -671,9 +671,9 @@ if(!$empty){
 
 
 
-            $pdf->Line(10, $y+25, 190, $y+25);
+            $pdf->Line(10, $y+20, 190, $y+20);
 
-            $y += 30;
+            $y += 25;
             $amount = 0;
             $paid = 0;
 

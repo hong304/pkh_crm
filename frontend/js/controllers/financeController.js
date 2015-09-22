@@ -272,11 +272,19 @@ var fetchDataTimer = '';
 
 
     $scope.autoPost = function(){
+
+        var cheque_no = $scope.filterData.no;
+        if(cheque_no.length != 6){
+            alert('支票號碼只接受6位數字');
+            return false;
+        }
+
         if(!$scope.filterData.discount)
             if($scope.totalAmount != $scope.filterData.amount) {
                 alert('需付金額不等於支票銀碼');
                 return false;
             }
+
         var data = $scope.invoicepaid;
         $http({
             method: 'POST',
