@@ -44,9 +44,11 @@ class DataWarehouseController extends BaseController {
         set_time_limit(0);
 
         $times  = array();
-        for($month = 5; $month <= 8; $month++) {
-            $first_minute = mktime(0, 0, 0, $month, 1,2015);
-            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),2015);
+        $current_year = date("Y");
+        $current_month = date("n");
+        for($month = $current_month; $month <= $current_month; $month++) {
+            $first_minute = mktime(0, 0, 0, $month, 1,$current_year);
+            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),$current_year);
             $times[$month] = array($first_minute, $last_minute);
         }
 
@@ -64,11 +66,8 @@ class DataWarehouseController extends BaseController {
                 $arr[$v->customerId]['total'] = $v->total;
                 $arr[$v->customerId]['amount'] = $v->amount;
             }
-
-
-
-
             if(count($info)>0){
+               datawarehouse_customer::where('month',$current_month)->where('year',$current_year)->delete();
                 foreach($info as $v1){
                     $save = new datawarehouse_customer();
                     $save->customer_id = $v1->customerId;
@@ -82,7 +81,7 @@ class DataWarehouseController extends BaseController {
                     }
 
                     $save->month = $k;
-                    $save->year = '2015';
+                    $save->year = $current_year;
                     $save->save();
                 }
                echo $k."月<br>";
@@ -97,7 +96,7 @@ class DataWarehouseController extends BaseController {
 
  // update datawarehouse_product table;
 
-/*
+
  foreach($times as $k=>$v){
 
                $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
@@ -108,6 +107,7 @@ class DataWarehouseController extends BaseController {
          $arr[$v->productId]['amount'] = $v->amount;
      }
             if(count($info)>0){
+                datawarehouse_product::where('month',$current_month)->where('year',$current_year)->delete();
                 foreach($info as $v1){
                     $save = new datawarehouse_product();
                     $save->data_product_id = $v1->productId;
@@ -119,7 +119,7 @@ class DataWarehouseController extends BaseController {
                         $save->qty = $v1->total;
                     }
                     $save->month = $k;
-                    $save->year = '2015';
+                    $save->year = $current_year;
                     $save->save();
                 }
                   echo $k."月<br>";
@@ -127,7 +127,6 @@ class DataWarehouseController extends BaseController {
 
         }
 
-*/
 
 
 //update invoice amount to invoices table;
