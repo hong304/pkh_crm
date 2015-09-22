@@ -551,10 +551,6 @@ class PaymentController extends BaseController
                // $vv['customId'][] = $g->customerId;
             }
 
-            /* if(!isset($arr2[$vv->id]))
-                   $arr2[$vv->id] = '';*/
-
-
             $cc1 = customerGroup::find($vv['groupId']);
             if (count($cc1) < 1)
                 $vv['customGroup'] = '';
