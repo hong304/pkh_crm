@@ -31,7 +31,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     $scope.filterData = {
         'displayName'	:	'',
         'clientId'		:	'0',
-        'status'		:	'0',
+        'status'		:	'101',
         'zone'			:	'',
         'created_by'	:	'0',
         'invoiceNumber' :	''

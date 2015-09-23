@@ -367,18 +367,21 @@ class OrderController extends BaseController
             }
 
             // status
-            if ($filter['status'] == '100') {
-                $invoice->where(function ($query) {
-                    $query->where('previous_status', 1)->where('invoiceStatus', 2);
-                });
-            } else if ($filter['status'] != '0') {
-                $invoice->where('invoiceStatus', $filter['status']);
-            }
 
-            if ($filter['status'] == '99') {
-                $invoice->withTrashed();
-            }
-
+           if ($filter['status'] == '101') {
+               $invoice->withTrashed();
+           }else{
+                if ($filter['status'] == '100') {
+                    $invoice->where(function ($query) {
+                        $query->where('previous_status', 1)->where('invoiceStatus', 2);
+                    });
+                }else if ($filter['status'] != '0') {
+                    $invoice->where('invoiceStatus', $filter['status']);
+                }
+                if ($filter['status']=='99'){
+                    $invoice->withTrashed();
+                }
+           }
             // client id
             if ($filter['clientId'] != '0') {
                 $invoice->where('customerId', $filter['clientId']);
