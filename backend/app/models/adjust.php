@@ -3,7 +3,7 @@
 
 class adjust extends Eloquent  {
 
-    public function newReveiving()
+    public function newReceiving()
     {
         return $this->hasOne('Receiving', 'adjustId', 'adjustId');
     }

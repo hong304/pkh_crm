@@ -204,5 +204,6 @@ class SystemController extends BaseController {
             $return = $qty;
         }
 
+        return $return;
     }
 }

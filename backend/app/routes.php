@@ -318,6 +318,8 @@ Route::get('/cron/resetOrderTrace', function(){
     if(count($invoices_tomorrow)>0)
     DB::table('Customer')->wherein('customerId',$invoices_tomorrow)->update(['tomorrow'=>1]);
 
+
+    // customer and product analysis date update
     $times  = array();
     $current_year = date("Y");
     $current_month = date("n");
@@ -326,6 +328,41 @@ Route::get('/cron/resetOrderTrace', function(){
         $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),$current_year);
         $times[$month] = array($first_minute, $last_minute);
     }
+
+    // update datawarehouse_product table;
+    foreach($times as $k=>$v){
+
+       $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
+        $info_return =  DB::select(DB::raw('SELECT productQty,productPrice,productQtyUnit,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
+
+
+
+        foreach($info_return as $v){
+            $arr[$v->productId]['total'] = $v->total;
+            $arr[$v->productId]['amount'] = $v->amount;
+        }
+
+        if(count($info)>0){
+            datawarehouse_product::where('month',$current_month)->where('year',$current_year)->delete();
+            foreach($info as $v1){
+                $save = new datawarehouse_product();
+                $save->data_product_id = $v1->productId;
+                if(isset($arr[$v1->productId])){
+                    $save->amount = $v1->amount-$arr[$v1->productId]['amount'];
+                    $save->qty = $v1->total-$arr[$v1->productId]['total'];
+                }else{
+                    $save->amount = $v1->amount;
+                    $save->qty = $v1->total;
+                }
+                $save->month = $k;
+                $save->year = $current_year;
+                $save->save();
+            }
+            echo $k."月<br>";
+        }
+
+    }
+    // update datawarehouse_product table;
 
 // update datawarehouse_custoemr table.
     foreach($times as $k=>$v){
@@ -364,36 +401,7 @@ Route::get('/cron/resetOrderTrace', function(){
 //end of update datawarehouse_customer table
 
 
-// update datawarehouse_product table;
-    foreach($times as $k=>$v){
 
-        $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
-        $info_return =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
-
-        foreach($info_return as $v){
-            $arr[$v->productId]['total'] = $v->total;
-            $arr[$v->productId]['amount'] = $v->amount;
-        }
-        if(count($info)>0){
-            datawarehouse_product::where('month',$current_month)->where('year',$current_year)->delete();
-            foreach($info as $v1){
-                $save = new datawarehouse_product();
-                $save->data_product_id = $v1->productId;
-                if(isset($arr[$v1->productId])){
-                    $save->amount = $v1->amount-$arr[$v1->productId]['amount'];
-                    $save->qty = $v1->total-$arr[$v1->productId]['total'];
-                }else{
-                    $save->amount = $v1->amount;
-                    $save->qty = $v1->total;
-                }
-                $save->month = $k;
-                $save->year = $current_year;
-                $save->save();
-            }
-            echo $k."月<br>";
-        }
-
-    }
 
 });
 
