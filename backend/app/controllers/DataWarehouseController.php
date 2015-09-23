@@ -156,8 +156,6 @@ class DataWarehouseController extends BaseController {
          }
 
          $invoiceQ[$v->productId]['normalizedQty'] +=  $real_normalized_unit;
-
-
          $invoiceQ[$v->productId]['normalizedUnitName'] = $v->productPackingName_unit;
          $invoiceQ[$v->productId]['unitPerCarton'] = $carton*$inner*$unit;
          $invoiceQ[$v->productId]['cartonName'] = $v->productPackingName_carton;

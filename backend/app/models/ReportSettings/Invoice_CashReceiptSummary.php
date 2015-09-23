@@ -48,17 +48,9 @@ class Invoice_CashReceiptSummary {
     {
         $date = $this->_date;
         $zone = $this->_zone;
-        
-        // get invoice from that date and that zone
-
-     /*   Invoice::select('*')->whereIn('invoiceStatus',['1','2','98'])->where('return',true)->where('zoneId', $zone)->where('deliveryDate', $date)->with('invoiceItem', 'client')
-            ->chunk(5000, function($invoicesQuery) {
-                foreach($invoicesQuery as $invoiceQ)
-                    $this->_returnaccount[$invoiceQ['client']->customerId] = $invoiceQ->amount;
-            });*/
 
     //當天單,不是當天收錢
-        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone);
+        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
         $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
@@ -79,7 +71,7 @@ class Invoice_CashReceiptSummary {
     //當天單,不是當天收錢
 
         //當天單,收支票
-        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone);
+        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
         $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
@@ -98,10 +90,9 @@ class Invoice_CashReceiptSummary {
                 $SameDayCollectCheque[$v->invoiceId] = 0;
             $SameDayCollectCheque[$v->invoiceId] += $v->paid;
         }
-        //pd($SameDayCollectCheque);
         //當天單,收支票
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone)->where('deliveryDate', $date);
                 if($this->_shift != '-1')
                     $invoicesQuery->where('shift',$this->_shift);
 
@@ -169,13 +160,14 @@ class Invoice_CashReceiptSummary {
                 unset($this->_backaccount[$k]);
             }
         }
+
         //補收
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20'])->where('paymentTerms',1)->where('zoneId', $zone);
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
 
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
 
-        $invoicesQuery = $invoicesQuery->with('client','payment')->leftJoin('invoice_payment', function ($join) {
+        $invoicesQuery = $invoicesQuery->with('client')->leftJoin('invoice_payment', function ($join) {
             $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
         })->leftJoin('payments', function ($join) {
             $join->on('invoice_payment.payment_id', '=', 'payments.id');
@@ -188,14 +180,15 @@ class Invoice_CashReceiptSummary {
 
 
 
+
         $acc = 0;
         $acc1 = 0;
         foreach($invoicesQuery as $invoiceQ)
         {
 
-            foreach($invoiceQ->payment as $v1){
-                if($v1->ref_number == 'cash' and $v1->receive_date == date('Y-m-d',$date) and $invoiceQ->deliveryDate < $date){
-                    $acc +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid;
+
+                if($invoiceQ->ref_number == 'cash' and $invoiceQ->receive_date == date('Y-m-d',$date) and $invoiceQ->deliveryDate < $date){
+                    $acc +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
                     $this->_invoices[] = $invoiceQ->invoiceId;
                     $this->_zoneName = $invoiceQ->zone->zoneName;
 
@@ -209,12 +202,12 @@ class Invoice_CashReceiptSummary {
                         'name' => $client->customerName_chi,
                         'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                         'invoiceNumber' => $invoiceId,
-                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid ,
+                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid ,
                         'accumulator' =>number_format($acc,2,'.',','),
-                        'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid,2,'.',','),
+                        'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,2,'.',','),
                     ];
-                }else if ($v1->receive_date == date('Y-m-d',$date) and $v1->ref_number != 'cash'){
-                    $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid;
+                }else if ($invoiceQ->receive_date == date('Y-m-d',$date) and $invoiceQ->ref_number != 'cash'){
+                    $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->paid:$invoiceQ->paid;
                     $this->_invoices[] = $invoiceQ->invoiceId;
                     $this->_zoneName = $invoiceQ->zone->zoneName;
 
@@ -228,28 +221,17 @@ class Invoice_CashReceiptSummary {
                         'name' => $client->customerName_chi,
                         'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                         'invoiceNumber' => $invoiceId,
-                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid ,
+                        'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid ,
                         'accumulator' =>number_format($acc1,2,'.',','),
-                        'amount' => number_format(($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$v1->pivot->paid:$v1->pivot->paid,2,'.',','),
-                        'bankCode' => $v1->bankCode,
-                        'chequeNo' => $v1->ref_number,
+                        'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,2,'.',','),
+                        'bankCode' => $invoiceQ->bankCode,
+                        'chequeNo' => $invoiceQ->ref_number,
                     ];
                 }
-            }
+
 
         }
 //補收
-
-
-      /*  foreach($this->_account as &$v){
-            if(isset($this->_returnaccount[$v['customerId']]))
-                 $v['invoiceTotalAmount'] -= $this->_returnaccount[$v['customerId']];
-                 $acc += $v['invoiceTotalAmount'];
-                 $v['accumulator'] =number_format($acc,2,'.',',');
-                 $v['amount'] = number_format($v['invoiceTotalAmount'],2,'.',',');
-
-        }*/
-
 
        $this->data = $this->_account;
 
