@@ -204,12 +204,11 @@ class PaymentController extends BaseController
             } else if ($filter['invoiceNumber'] != '') {
                 $invoice->where('invoiceId', 'LIKE', '%' . $filter['invoiceNumber'] . '%');
             } else if ($filter['customerId'] != '') {
-                $invoice->leftjoin('customer', function($join) use($filter)
+                $invoice->leftjoin('customer', function($join)
                 {
-                    $join->on('invoice.customerId','=','customer.customerId')
-                        ->where('customerId', $filter['customerId'])
-                        ->where('invoiceStatus', $filter['status']);
+                    $join->on('invoice.customerId','=','customer.customerId');
                 });
+                $invoice->where('invoice.customerId', $filter['customerId'])->where('invoiceStatus', $filter['status']);
             }
             $invoice->where('paymentTerms', '=', 1);
 
