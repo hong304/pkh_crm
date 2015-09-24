@@ -1,0 +1,32 @@
+<div class="modal fade bs-modal-lg" id="repackAll"  data-ng-controller="repack" tabindex="-1" role="dailog" aria-hidden="false">
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="frontReceive">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"aria-hidden="true"></button>
+                <h4 class="modal-title">產品包裝</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-body">
+                        <div class="">
+                            <div class="form-group ">
+                                <div class="col-md-10">
+                                         <div class="row">
+                                                <div class="col-md-10">
+                                                    <label>產品名稱:<br/>{{repack.productName}}({{repack.productId}})</label>
+                                                </div>
+                                          </div>
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn default" data-dismiss="modal">取消</button>
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </div>
+</div>
