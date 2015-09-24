@@ -15,8 +15,8 @@ class InvoiceManipulation {
                 
         if($this->action == 'create')
         {
+            Customer::where('customerId',$this->temp_invoice_information['clientId'])->update(['unlock'=>0]);
             $this->im = new Invoice();
-            
         }
         elseif($this->action == 'update')
         {
@@ -223,9 +223,6 @@ class InvoiceManipulation {
 	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount']; 
 	        $this->im->created_at = time();
 	        $this->im->updated_at = time();
-
-            Customer::where('customerId',$this->temp_invoice_information['clientId'])->update(['unlock'=>0]);
-
 	    }
 	    elseif($this->action == 'update')
 	    {
