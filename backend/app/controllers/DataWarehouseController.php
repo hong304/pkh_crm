@@ -100,7 +100,7 @@ class DataWarehouseController extends BaseController {
 
 
  foreach($times as $k=>$v){
-
+     $invoiceQ = [];
       // $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
 
    /*  $invoices = Invoice::whereNoIn('invoiceStatus',[98,97,96])->wherebetween('deliveryDate',[$v[0],$v[1]])->lists('invoiceId');
