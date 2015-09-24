@@ -46,9 +46,9 @@ class DataWarehouseController extends BaseController {
         ini_set('max_execution_time', '0');
 
         $times  = array();
-        $current_year = '2014';
+        $current_year = date('Y');
         $current_month = date("n");
-        for($month = 1; $month <= 12; $month++) {
+        for($month = 5; $month <= 9; $month++) {
             $first_minute = mktime(0, 0, 0, $month, 1,$current_year);
             $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),$current_year);
             $times[$month] = array($first_minute, $last_minute);
@@ -61,8 +61,8 @@ class DataWarehouseController extends BaseController {
         // update datawarehouse_custoemr table.
    foreach($times as $k=>$v){
 
-            $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice_from_old WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
-            $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice_from_old WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
+            $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
+            $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
 
             foreach($info_return as $v){
                 $arr[$v->customerId]['total'] = $v->total;
@@ -113,12 +113,12 @@ class DataWarehouseController extends BaseController {
     // $invoices = Invoice::whereNotIn('invoiceStatus',[97,96])->wherebetween('deliveryDate',[$v[0],$v[1]])->lists('invoiceId');
 
 
-     $invoiceitems = invoiceitemFromOld::select('invoiceitem_from_old.productId','invoiceitem_from_old.invoiceId','invoiceStatus','productPrice','productQty','productPacking_carton','productPacking_inner','productPacking_unit','productPackingName_unit','productPackingName_carton','productQtyUnit')
+     $invoiceitems = invoiceitem::select('invoiceitem.productId','invoiceitem.invoiceId','invoiceStatus','productPrice','productQty','productPacking_carton','productPacking_inner','productPacking_unit','productPackingName_unit','productPackingName_carton','productQtyUnit')
          ->leftJoin('Product', function ($join) {
-         $join->on('invoiceitem_from_old.productId', '=', 'Product.productId');
+         $join->on('invoiceitem.productId', '=', 'Product.productId');
         })
-         ->leftJoin('Invoice_from_old', function ($join) {
-             $join->on('invoiceitem_from_old.invoiceId', '=', 'Invoice_from_old.invoiceId');
+         ->leftJoin('Invoice', function ($join) {
+             $join->on('invoiceitem.invoiceId', '=', 'Invoice.invoiceId');
          })->whereNotIn('invoiceStatus',[97,96,99])->wherebetween('deliveryDate',[$v[0],$v[1]])
          ->orderBy('deliveryDate')
          ->get();
