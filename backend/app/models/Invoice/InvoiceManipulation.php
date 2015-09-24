@@ -15,7 +15,6 @@ class InvoiceManipulation {
                 
         if($this->action == 'create')
         {
-            $this->generateInvoiceId();
             $this->im = new Invoice();
             
         }
@@ -202,6 +201,7 @@ class InvoiceManipulation {
 	{
 	    if($this->action == 'create')
 	    {
+            $this->generateInvoiceId();
 	        $this->im->invoiceId = $this->invoiceId;
 	        $this->im->invoiceType = 'Salesman';
 	        $this->im->zoneId = $this->temp_invoice_information['zoneId'];
@@ -298,7 +298,6 @@ class InvoiceManipulation {
 	    // if this requests has item, save all
 	    if(count($this->items) > 0 && $this->status == true)
 	    {
-	        //dd($this->im->deliveryDate, strtotime("today 00:00"), strtotime("today 23:59"));
     	    // ok, save invoice first
     	    $this->im->save();
     	    
