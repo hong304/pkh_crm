@@ -138,5 +138,20 @@ class receiveController extends BaseController {
 
     }
     
+     public function getAllProducts()
+    {
+        $productId = Input :: get('productId');
+        $allProduct = Product::select('*')->where('productId',$productId)->get();
+        $store = "";
+        if(count($allProduct) > 0)
+        {
+            $store = $allProduct;
+        }else
+        {
+            $store = "false";
+        }
+        return Response::json($store); 
+    }
+    
    
 }
