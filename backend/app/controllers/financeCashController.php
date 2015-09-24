@@ -9,15 +9,18 @@ class financeCashController extends BaseController {
     public function delPayment(){
         $payment_id = Input::get('id');
         $payment = Payment::where('id',$payment_id)->with('invoice')->get()->first();
-        $i = Invoice::where('invoiceId',$payment->invoice[0]->invoiceId)->first();
-        $i->paid = $i->paid -$payment->invoice[0]->pivot->paid;
-        $i->invoiceStatus = '20';
-        if($payment->invoice[0]->pivot->discount_taken>0){
-            $i->discount -= $payment->invoice[0]->pivot->discount_taken;
-            $i->discount = 0;
+
+        foreach($payment->invoice as $k => $v){
+            $i = Invoice::where('invoiceId',$v->invoiceId)->first();
+            $i->paid = $i->paid -$v->pivot->paid;
+            $i->invoiceStatus = '20';
+            if($v->pivot->discount_taken>0){
+                $i->discount -= $v->pivot->discount_taken;
+                $i->discount = 0;
+            }
+            $i->save();
+            $payment->invoice()->detach($v->invoiceId);
         }
-        $i->save();
-        $payment->invoice()->detach($payment->invoice[0]->invoiceId);
         $payment->delete();
         return Response::json(1);
     }
@@ -210,18 +213,20 @@ class financeCashController extends BaseController {
 
         $set_amount =0;
         foreach ($paid as $k=>$v){
-            $i = Invoice::where('invoiceId',$v['id'])->first();
-            $i->paid += $v['settle'];
-            $set_amount += $v['settle'];
+            if($v['settle']>0){
+                $i = Invoice::where('invoiceId',$v['id'])->first();
+                $i->paid += $v['settle'];
+                $set_amount += $v['settle'];
 
 
 
-            if($i->amount == $i->paid || $v['discount'] == 1)
-                $i->invoiceStatus = 30;
-            $i->discount = $v['discount'];
-            if(isset($ij['discount']))
-                $i->discount = 1;
-            $i->save();
+                if($i->amount == $i->paid || $v['discount'] == 1)
+                    $i->invoiceStatus = 30;
+                $i->discount = $v['discount'];
+                if(isset($ij['discount']))
+                    $i->discount = 1;
+                $i->save();
+            }
         }
 
 
@@ -254,9 +259,11 @@ class financeCashController extends BaseController {
         $info->save();
 
         foreach ($paid as $k=>$v){
-            $iq = Invoice::where('invoiceId',$v['id'])->first();
-            $iq->payment()->attach($info->id,['amount'=>$iq->amount,'paid'=>$v['settle']]);
-            $iq->save();
+            if($v['settle']>0) {
+                $iq = Invoice::where('invoiceId', $v['id'])->first();
+                $iq->payment()->attach($info->id, ['amount' => $iq->amount, 'paid' => $v['settle']]);
+                $iq->save();
+            }
         }
     }
 }
