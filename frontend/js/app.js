@@ -1385,6 +1385,37 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }]
         }
     }) 
+	
+	     .state('receiveList', {
+        url: "/receiveList",
+        templateUrl: "views/receiveList.html",            
+        data: {pageTitle: '收貨列表', pageSubTitle: ''},
+
+       controller: "receiveList",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'app',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                    files: [
+                   	 assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+
+
+        assets + '/css/dataTable/bootstrap.min.css',
+                        assets + '/css/dataTable/dataTables.bootstrap.css',
+                        assets + '/js/dataTable/jquery.dataTables.min.js',
+                        assets + '/js/dataTable/dataTables.bootstrap.js',
+                        
+                        'js/controllers/receiveList.js',
+                        'js/controllers/repack.js',
+                    ] 
+                });
+            }]
+        }
+    }) 
+    
     
     
 

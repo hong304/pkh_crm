@@ -202,6 +202,8 @@ Route::group(array('before' => 'auth'), function()
      Route::post('/searchShipping.json','receiveController@searchShipping');
      Route::post('/newReceive.json','receiveController@newReceive');
      Route::post('/getPurchaseAll.json','receiveController@getPurchaseAll');
+	 Route::get('/purchaseOrderForm.json','newPoController@purchaseOrderForm');
+     Route::post('/getAllProducts.json','receiveController@getAllProducts');  //get all items from product table
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');

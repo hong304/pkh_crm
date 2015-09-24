@@ -319,7 +319,7 @@
                                             <span class="input-group-btn">
                                             </span>
                                         </div>
-                                         <span id="warning{{i}}" style="color:red;"></span>
+                                         <span id="warning{{i}}" style="color:red;" class="warning"></span>
                                     </td>
                                     <td style="line-height:35px;font-size:15px;">
                                         {{product[i]['productName']}}
@@ -342,7 +342,7 @@
                                              <select class="form-control"
                                                     id="unit_{{i}}"
                                                     ng-model="product[i]['unit']"
-                                                    data-ng-options="x.unit for x in Model[i] track by x.unit">
+                                                    data-ng-options="x.label for x in product[i].availableunit track by x.value">
                                             </select>
                                         </label>
                                     </td>
