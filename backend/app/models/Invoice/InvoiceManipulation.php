@@ -281,7 +281,17 @@ class InvoiceManipulation {
 	    
 	    return '0';
 	}
-	
+
+    public function saveInvoice(){
+        try {
+            $this->im->save();
+        } catch (Illuminate\Database\QueryException $e) {
+            $this->generateInvoiceId();
+            $this->im->invoiceId = $this->invoiceId;
+            $this->saveInvoice();
+        }
+    }
+
 	public function save()
 	{
 	    // first validate and prepare items
@@ -294,15 +304,8 @@ class InvoiceManipulation {
 	    if(count($this->items) > 0 && $this->status == true)
 	    {
     	    // ok, save invoice first
-            try {
-                $this->im->save();
-            } catch (Illuminate\Database\QueryException $e) {
-                $this->generateInvoiceId();
-                $this->im->invoiceId = $this->invoiceId;
-                $this->im->save();
-            }
+            $this->saveInvoice();
 
-    	    
     	    // save the client
     	    $client = Customer::where('customerId', $this->im->customerId)->first();
             $client->timestamps = false;
