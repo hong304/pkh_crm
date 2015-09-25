@@ -203,7 +203,10 @@ Route::group(array('before' => 'auth'), function()
      Route::post('/newReceive.json','receiveController@newReceive');
      Route::post('/getPurchaseAll.json','receiveController@getPurchaseAll');
 	 Route::get('/purchaseOrderForm.json','newPoController@purchaseOrderForm');
-     Route::post('/getAllProducts.json','receiveController@getAllProducts');  //get all items from product table
+
+    //rePackController
+    Route::post('/getAllProducts.json','rePackController@getAllProducts');  //get all items from product table
+    Route::post('/queryReceiving.json','rePackController@queryReceiving');  //get all items from product table
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');

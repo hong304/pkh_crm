@@ -33,7 +33,7 @@
 			
 			<div class="portlet-body">				
 				<div class="md-col-12" style="margin-bottom:15px;">
-                                    <input type="text" id="productId" ng-model="filterData.productId"  ng-change="checkProduct(filterData.productId)" class="form-control ng-pristine ng-valid" placeholder="輸入產品編號">
+                                    <input type="text" ng-model="filterData.productId"  ng-change="checkProduct(filterData.productId)" class="form-control ng-pristine ng-valid" placeholder="輸入產品編號">
 				</div>
                                 <div class="md-col-12" style="margin-bottom:15px;">
                                     <input type="text" id="productName" ng-model="filterData.productName"  class="form-control ng-pristine ng-valid" placeholder="產品名稱"  disabled="true">
@@ -73,14 +73,14 @@
                 <!-- date-picker -->
                 <div class="portlet-body">
                     <div class="md-col-12" style="margin-bottom:15px;">
-                        <div class="input-group  date " id="startPodate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <div class="input-group  date " id="startReceiveDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
                             <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.startReceiveDate" data-ng-change="findDate();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
                         </div>
                         至
-                        <div class="input-group  date " id="endPodate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <div class="input-group  date " id="endReceiveDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
                             <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.endReceiveDate" data-ng-change="findDate();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
@@ -116,9 +116,9 @@
                                 <th  id="shippingId" ng-click="click($event);">船務編號</th>
                                 <th  id="containerId" ng-click="click($event);">貨櫃編號 </th>
                                 <th  id="receiveDate" ng-click="click($event);">收貨日期 </th>
-                                <th  id="updated_at" ng-click="click($event);">修改人</th>
-                                <th  id="updated_by" ng-click="click($event);">最後修改時間 </th>
-                                <th >&nbsp;</th>
+                                <th  id="productId" ng-click="click($event);">產品 </th>
+                                <th  id="goodQty" ng-click="click($event);">好貨 </th>
+                                <th  id="expiryDate" ng-click="click($event);">到期日 </th>
 
                             </tr>
 

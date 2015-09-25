@@ -7,4 +7,9 @@ class Receiving extends Eloquent {
         return $this->hasMany('adjust', 'receivingId', 'receivingId');
     }
 
+    public function purchaseorder()
+    {
+        return $this->belongsTo('Purchaseorder', 'poCode','poCode');
+    }
+
 }

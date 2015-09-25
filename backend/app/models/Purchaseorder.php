@@ -26,10 +26,7 @@ class Purchaseorder extends Eloquent {
 	    return $this->hasMany('Poitem', 'poCode', 'poCode');
 	}
         
-        public function supplier()
-	{
-	    return $this->hasOne('Supplier', 'supplierCode', 'supplierCode');
-	}
+
         
         public function currency()
         {
@@ -44,6 +41,15 @@ class Purchaseorder extends Eloquent {
         public function product()
         {
             return $this->hasMany('Product', 'productId', 'productId'); //Return multiple shipping objects
+        }
+
+        public function supplier()
+        {
+            return $this->belongsTo('Supplier', 'supplierCode', 'supplierCode');
+        }
+
+        public function Receiving(){
+            return $this->hasMany('Receiving','poCode','poCode');
         }
 
     public static function getFullPo($base) {

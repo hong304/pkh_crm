@@ -141,8 +141,7 @@ class receiveController extends BaseController {
      public function getAllProducts()
     {
         $productId = Input :: get('productId');
-        $allProduct = Product::select('*')->where('productId',$productId)->get();
-        $store = "";
+        $allProduct = Receiving::where('productId',$productId)->orderby('expiry_date')->first();
         if(count($allProduct) > 0)
         {
             $store = $allProduct;
