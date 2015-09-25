@@ -226,7 +226,6 @@ class InvoiceManipulation {
 	    }
 	    elseif($this->action == 'update')
 	    {
-
             $this->im->zoneId = $this->temp_invoice_information['zoneId'];
             $this->im->receiveMoneyZone = $this->temp_invoice_information['zoneId'];
             $this->im->customerId = $this->temp_invoice_information['clientId'];
@@ -234,7 +233,6 @@ class InvoiceManipulation {
             $this->im->invoiceDiscount = $this->temp_invoice_information['discount'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
             $this->im->shift = $this->temp_invoice_information['shift'];
-
             $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
 	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
 	        $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
@@ -296,7 +294,14 @@ class InvoiceManipulation {
 	    if(count($this->items) > 0 && $this->status == true)
 	    {
     	    // ok, save invoice first
-    	    $this->im->save();
+            try {
+                $this->im->save();
+            } catch (Illuminate\Database\QueryException $e) {
+                $this->generateInvoiceId();
+                $this->im->invoiceId = $this->invoiceId;
+                $this->im->save();
+            }
+
     	    
     	    // save the client
     	    $client = Customer::where('customerId', $this->im->customerId)->first();
