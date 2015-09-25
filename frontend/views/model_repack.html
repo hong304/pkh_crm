@@ -18,6 +18,56 @@
                                                 </div>
                                           </div>
                                 </div>
+                                 <div class="col-md-12">
+                                         <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-bordered table-hover">
+                                                        <thead>
+                                                            <tr role="row" class="heading">
+                                                                <th width="20%">
+                                                                    貨品編號
+                                                                </th>
+                                                                <th width="60%">
+                                                                    貨品名稱
+                                                                </th>
+                                                                <th width="10%">
+                                                                    數量
+                                                                </th>
+                                                                <th width="10%">
+                                                                    單位 <a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default"><i class="fa fa-plus"> </i></a>
+                                                                </th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr data-ng-repeat="(k,i) in selfdefine">
+                                                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']"></td>
+                                                                <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']"></td>
+                                                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']"></td>
+                                                                <td>
+                                                                    <select ng-model="selfdefine[k]['unit']" class="form-control" >
+                                                                        <option value="箱">箱</option>
+                                                                        <option value="包">包</option>
+                                                                        <option value="桶">桶</option>
+                                                                        <option value="札">札</option>
+                                                                        <option value="盒">盒</option>
+                                                                        <option value="排">排</option>
+                                                                        <option value="隻">隻</option>
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            </tbody>
+                                                    </table>
+                                                </div>
+                                          </div>
+                                </div>
+                                
+                                    <div class="col-md-12">
+                                         <div class="row">
+                                                <div class="col-md-12">
+                                                    <button type="button" class="btn default" style="float: right;">提交</button>
+                                                </div>
+                                         </div>
+                                    </div>
                             </div>  
                         </div>
                     </div>
