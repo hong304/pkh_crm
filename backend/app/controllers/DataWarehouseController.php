@@ -119,7 +119,7 @@ class DataWarehouseController extends BaseController {
         })
          ->leftJoin('Invoice', function ($join) {
              $join->on('invoiceitem.invoiceId', '=', 'Invoice.invoiceId');
-         })->whereNotIn('invoiceStatus',[97,96,99])->wherebetween('deliveryDate',[$v[0],$v[1]])
+         })->whereNotIn('invoiceStatus',[97,96,99,3])->wherebetween('deliveryDate',[$v[0],$v[1]])
          ->orderBy('deliveryDate')
          ->get();
 
