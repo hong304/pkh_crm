@@ -48,9 +48,9 @@ class DataWarehouseController extends BaseController {
         $times  = array();
         $current_year = date('Y');
         $current_month = date("n");
-        for($month = 5; $month <= 9; $month++) {
+        for($month = 8; $month <= 8; $month++) {
             $first_minute = mktime(0, 0, 0, $month, 1,$current_year);
-            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),$current_year);
+            $last_minute = mktime(23, 59, 59, $month, date('t', $first_minute),$current_year);
             $times[$month] = array($first_minute, $last_minute);
         }
 
@@ -119,11 +119,9 @@ class DataWarehouseController extends BaseController {
         })
          ->leftJoin('Invoice', function ($join) {
              $join->on('invoiceitem.invoiceId', '=', 'Invoice.invoiceId');
-         })->whereNotIn('invoiceStatus',[97,96,99,3])->wherebetween('deliveryDate',[$v[0],$v[1]])
-         ->orderBy('deliveryDate')
+         })->whereNotIn('invoiceStatus',[99,96,97,3])->wherebetween('deliveryDate',[$v[0],$v[1]])->where('invoiceitem.productId','222')
+         ->orderBy('deliveryDate','asc')->orderBy('invoiceItemId','asc')
          ->get();
-
-
 
 
      foreach($invoiceitems as $k2 => $v){
@@ -161,6 +159,7 @@ class DataWarehouseController extends BaseController {
      }
 
 
+pd($invoiceQ);
 
      foreach($invoiceQ as &$vv){
          $vv['cartonQtys'] = number_format($vv['normalizedQty']/$vv['unitPerCarton'],1,'.','');

@@ -20,7 +20,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     var month = nextDay.getMonth() + 1;
     var year = nextDay.getFullYear();
     var yday = nextDay.getDate()-1;
-    var fetchDataDelay = 250;   // milliseconds
+    var fetchDataDelay = 500;   // milliseconds
     var fetchDataTimer;
 
 	var querytarget = endpoint + "/getReport.json";
@@ -59,7 +59,15 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 	$scope.$watch(function() {
 	  return $scope.filterData;
 	}, function() {
-	  $scope.loadReport();
+
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+            $scope.loadReport();
+        }, fetchDataDelay);
+
+
+
+
 	}, true);
     
     $scope.loadSetting = function()
