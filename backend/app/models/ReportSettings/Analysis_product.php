@@ -275,11 +275,13 @@ if($action== 'yearend')
         $i=4;
         $i += 1;
         for ($k = 1; $k < 13; $k++) {
-            if( isset($this->data[$k][$current_year]) && $this->data[$k][$current_year]['qty'] > 0){
+            if( isset($this->data[$k][$current_year]) && $this->data[$k][$current_year]['qty'] > 0 && $k <= date('n')){
                 $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
                 $objPHPExcel->getActiveSheet()->setCellValue('F' . $i,"HK$ ".number_format($this->data[$k][$current_year]['amount']));
                 $objPHPExcel->getActiveSheet()->setCellValue('G' . $i,number_format($this->data[$k][$current_year]['qty']));
                 $objPHPExcel->getActiveSheet()->setCellValue('H' . $i, "HK$ ". number_format($this->data[$k][$current_year]['amount']/$this->data[$k][$current_year]['qty'], 2, '.', ','));
+
+            }else if($k > date('n')){
 
             }else{
                 $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
