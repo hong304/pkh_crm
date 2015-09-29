@@ -249,11 +249,19 @@ class Analysis_customer {
     public function registerDownload()
     {
         $downloadSetting = [
+            [
+                'type' => 'csv',
+                'name' => '匯出  Excel 版本',
+                'warning'   =>  false,
+            ],
         ];
 
         return $downloadSetting;
     }
 
+    public function outputCsv(){
+
+    }
     public function outputPreview()
     {
 

@@ -6,6 +6,7 @@ class Analysis_product {
     private $_reportTitle = "";
     private $_product_id='';
     private $_uniqueid = "";
+    private $_action = '';
      
     public function __construct($indata)
     {
@@ -15,9 +16,9 @@ class Analysis_product {
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
 
-        if(isset($indata['query']))
-            $this->_product_id = $indata['query']['product'];
-        
+        $this->_product_id = $indata['filterData']['productId'];
+        $this->_action = isset($indata['filterData']['action']);
+
         $this->_uniqueid = microtime(true);
     }
     
@@ -28,6 +29,8 @@ class Analysis_product {
     
     public function compileResults()
     {
+        $input = Input::get('filterData');
+
         $accu = [];
         $a_data = [];
 $current_year = date('Y');
@@ -159,14 +162,16 @@ for($i=0;$i<=12;$i++){
             if($accu[$i][$last_year]['qty'] == 0) $accu[$i][$last_year]['qty'] =$accu[$i-1][$last_year]['qty'];
 
         }
-//pd($accu);
+       $action =  isset($input['action'])?$input['action']:'';
 
-if(Input::get('query.action') == 'yearend')
+if($action== 'yearend')
     $this->data = $accu;
         else
         $this->data = $a_data;
-//pd($this->data);
-       return $this->data;        
+
+        ksort ($this->data );
+        unset($this->data[0]);
+       return $this->data;
     }
     
     public function registerFilter()
@@ -204,11 +209,105 @@ if(Input::get('query.action') == 'yearend')
     public function registerDownload()
     {
         $downloadSetting = [
-        ];
+            [
+                'type' => 'csv',
+                'name' => '匯出  Excel 版本',
+                'warning'   =>  false,
+            ],
+    ];
+
+
         
         return $downloadSetting;
     }
-    
+
+    public function outputCsv(){
+
+
+
+        $current_year = date('Y');
+        $last_year = date('Y')-1;
+
+        require_once './Classes/PHPExcel/IOFactory.php';
+        require_once './Classes/PHPExcel.php';
+
+        $i=4;
+        $objPHPExcel = new PHPExcel ();
+
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:E1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '產品分析');
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->applyFromArray(
+            array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
+        );
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A2', '產品名稱');
+        $objPHPExcel->getActiveSheet()->setCellValue('B2', $this->data[13][$current_year]['product_name'] ."(".$this->data[13][$current_year]['product_id'].")");
+      //  $objPHPExcel->getActiveSheet()->setCellValue('C2', 'To');
+      //  $objPHPExcel->getActiveSheet()->setCellValue('D2', date('Y-m-d',$this->_date2));
+
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '月份');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $last_year.'銷量');
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, $last_year.'數量');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, $last_year.'單價');
+
+        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, $current_year.'銷量');
+        $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, $current_year.'數量');
+        $objPHPExcel->getActiveSheet()->setCellValue('H'.$i, $current_year.'單價');
+
+        $i += 1;
+        for ($k = 1; $k < 13; $k++) {
+            if( isset($this->data[$k][$last_year]) && $this->data[$k][$last_year]['qty'] > 0){
+                $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
+                $objPHPExcel->getActiveSheet()->setCellValue('B' . $i,"HK$ ".number_format($this->data[$k][$last_year]['amount']));
+                $objPHPExcel->getActiveSheet()->setCellValue('C' . $i,number_format($this->data[$k][$last_year]['qty']));
+                $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, "HK$ ". number_format($this->data[$k][$last_year]['amount']/$this->data[$k][$last_year]['qty'], 2, '.', ','));
+
+            }else{
+                $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
+                $objPHPExcel->getActiveSheet()->setCellValue('B' . $i,"HK$0");
+                $objPHPExcel->getActiveSheet()->setCellValue('C' . $i,0);
+                $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, "HK$0");
+            }
+            $i++;
+        }
+
+        $i=4;
+        $i += 1;
+        for ($k = 1; $k < 13; $k++) {
+            if( isset($this->data[$k][$current_year]) && $this->data[$k][$current_year]['qty'] > 0){
+                $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
+                $objPHPExcel->getActiveSheet()->setCellValue('F' . $i,"HK$ ".number_format($this->data[$k][$current_year]['amount']));
+                $objPHPExcel->getActiveSheet()->setCellValue('G' . $i,number_format($this->data[$k][$current_year]['qty']));
+                $objPHPExcel->getActiveSheet()->setCellValue('H' . $i, "HK$ ". number_format($this->data[$k][$current_year]['amount']/$this->data[$k][$current_year]['qty'], 2, '.', ','));
+
+            }else{
+                $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
+                $objPHPExcel->getActiveSheet()->setCellValue('F' . $i,"HK$0");
+                $objPHPExcel->getActiveSheet()->setCellValue('G' . $i,0);
+                $objPHPExcel->getActiveSheet()->setCellValue('H' . $i, "HK$0");
+            }
+            $i++;
+        }
+    //    $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '總計:');
+      //  $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, sprintf("HK$ %s",end($this->data)['accumulator']));
+
+
+        foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+            // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
+                $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$this->data[13][$current_year]['product_name'].'.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+
+    }
+
     public function outputPreview()
     {
         if(Input::get('query.action') == 'yearend')

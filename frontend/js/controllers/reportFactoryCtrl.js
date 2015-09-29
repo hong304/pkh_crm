@@ -142,7 +142,11 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     $scope.loadReport = function()
     {
 
-        console.log($scope.filterData);
+
+        $scope.filterData.customerId = $location.search().client;
+        $scope.filterData.productId = $location.search().product;
+        $scope.filterData.action = $location.search().action;
+
     	$http.post(querytarget, {reportId: $location.search().id, output: "preview", filterData: $scope.filterData, query:$location.search()})
     	.success(function(res, status, headers, config){
 
