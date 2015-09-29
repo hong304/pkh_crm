@@ -19,6 +19,26 @@ class Customer extends Eloquent  {
     {
         parent::boot();
 
+
+        Customer::updated(function($model)
+        {
+            foreach($model->getDirty() as $attribute => $value){
+                $original= $model->getOriginal($attribute);
+                if(!in_array($attribute, array('created_by', 'created_at'))) {
+                    $x = new TableAudit();
+                    $x->referenceKey = $model->customerId;
+                    $x->table = "Customer";
+                    $x->attribute = $attribute;
+                    $x->data_from = $original;
+                    $x->data_to = $value;
+                    $x->created_by = Auth::user()->id;
+                    $x->created_at_micro = microtime(true);
+                    $x->ip = $_SERVER['REMOTE_ADDR'];
+                    $x->save();
+                }
+            }
+        });
+
         Customer::saving(function ($model) {
 
             unset($model->zoneText);
@@ -27,6 +47,7 @@ class Customer extends Eloquent  {
             unset($model->updated_by_text);
 
         });
+
     }
 
 	public function scopeCustomerInMyZone()

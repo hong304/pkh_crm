@@ -40,6 +40,13 @@ class Product extends Eloquent  {
             }
         });
 
+        static::updating(function($table)  {
+            $table->updated_by = Auth::user()->id;
+        });
+        static::saving(function($table)  {
+            $table->updated_by = Auth::user()->id;
+        });
+
 	    Product::saving(function($e)
 	    {
 	        unset($e->productPacking);
@@ -49,25 +56,6 @@ class Product extends Eloquent  {
 	        unset($e->productMinPrice);
 	    });
 
-        Product::updated(function($model)
-        {
-              foreach ($model->getDirty() as $attribute => $value) {
-                 if(!in_array($attribute, array('created_by', 'created_at', 'updated_at'))) {
-                    $original = $model->getOriginal($attribute);
-                    $x = new TableAudit();
-                    $x->referenceKey = $model->productId;
-                    $x->table = "Product";
-                    $x->attribute = $attribute;
-                    $x->data_from = $original;
-                    $x->data_to = $value;
-                    $x->created_by = Auth::user()->id;
-                    $x->created_at_micro = microtime(true);
-                    $x->save();
-                }
-            }
-
-
-        });
 	}
 
 
