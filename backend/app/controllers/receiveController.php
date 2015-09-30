@@ -5,12 +5,13 @@ class receiveController extends BaseController {
     public function searchSupplier()
     {
         $id = Input::get('id');
+
         $location = 0;
         if(Input ::get('location') != '')
         {
             $location = Input ::get('location');
         }
-        $supplier = Supplier::select('supplierCode','supplierName','countries.countryName','countries.countryId','phone_1','status','currencies.currencyId','currencies.currencyName')->where('supplierCode',$id)->where('location',$location)->where('status',1)
+        $supplier = Supplier::select('supplierCode','supplierName','countries.countryName','countries.countryId','phone_1','status','currencies.currencyId','currencies.currencyName')->where('location',$location)->where('supplierCode' ,$id)->where('status',1)
                      ->leftJoin('countries', function($join) {
                         $join->on('suppliers.countryId', '=', 'countries.countryId');
                       })
