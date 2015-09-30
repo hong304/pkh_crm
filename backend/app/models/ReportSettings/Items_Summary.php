@@ -80,7 +80,7 @@ class Items_Summary {
 
             if($this->productId!='')
             $invoicesQuery->where(function ($query){
-                $query->where('InvoiceItem.productId', $this->productId);
+                $query->where('InvoiceItem.productId', 'LIKE', '%' . $this->productId . '%');
 
             });
 

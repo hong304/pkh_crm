@@ -36,22 +36,25 @@ class Analysis_product {
 
         $accu = [];
         $a_data = [];
-$current_year = date('Y');
+        $current_year = date('Y');
         $last_year = date('Y')-1;
 
         // get invoice from that date and that zone
 
        // $reports = data_product::with('datawarehouse_product')->where('id',$this->_product_id)->first();
-        $reports = datawarehouse_product::with('data_product')->where('data_product_id',$this->_product_id)->where(function($query){
+        $reports = datawarehouse_product::where('data_product_id',$this->_product_id)->where(function($query){
             $query->where('year',date('Y'))
                 ->orWhere('year', date('Y')-1);
         })->get();
 
+        $products = product::where('productId',$this->_product_id)->first()->toArray();
+
+
+
         $amount = 0;
         $qty = 0;
 
-$product_name = $reports[0]->data_product->productName_chi;
-        $product_id = $reports[0]->data_product->id;
+
         for($i=1;$i<=12;$i++){
             $a_data[$i] = '';
         }
@@ -123,12 +126,14 @@ $product_name = $reports[0]->data_product->productName_chi;
                     $maxsingle = $v[$current_year]['amount']/$v[$current_year]['qty'];
             }
 
+
         $a_data[13][$current_year] = [
             'amount' => $amount,
             'qty' => $qty,
             'month' => '',
-            'product_name' => $product_name,
-            'product_id' => $product_id,
+            'product_name' => $products['productName_chi'],
+            'product_id' => $products['productId'],
+            'productInfo' => $products,
             'highest_amount' => $max,
             'highest_qty' => $maxqty,
             'highest_single' => $maxsingle,
@@ -174,6 +179,9 @@ if($action== 'yearend')
 
         ksort ($this->data );
         unset($this->data[0]);
+
+       // pd($this->data);
+
        return $this->data;
     }
     

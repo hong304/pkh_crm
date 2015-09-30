@@ -1160,10 +1160,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 
 
 
-        assets + '/css/dataTable/bootstrap.min.css',
-                        assets + '/css/dataTable/dataTables.bootstrap.css',
-                        assets + '/js/dataTable/jquery.dataTables.min.js',
-                        assets + '/js/dataTable/dataTables.bootstrap.js',
+                        assets + '/css/dataTable/style.css',
+                        assets + '/global/plugins/datatables/all.min.js',
+                        assets + '/global/scripts/datatable.js',
 
                         'js/controllers/supplierMain.js' // Js controller
                       
