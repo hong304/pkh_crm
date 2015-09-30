@@ -398,5 +398,19 @@ class shippingController extends BaseController {
             return View::make('poTable')->with(['data' => $this->data, 'date' => $date])->render();
         }
     }
+    
+    public function jsonSearchSupplier()
+    {
+        $supplier = Input::get('id');
+        $querySupplier = Supplier :: where('supplierCode', 'LIKE', '%' . $supplier . '%')->where('location',2)->with('country')->get();
+        return Response::json($querySupplier);
+    }
+    
+    public function jsonSearchPo()
+    {
+        $supplierCode = Input::get('supplierCode');
+        $queryPo = Purchaseorder :: where('supplierCode',$supplierCode)->where('location',2)->with('supplier')->get();
+        return Response::json($queryPo);
+    }
 
 }

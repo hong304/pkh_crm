@@ -14,16 +14,37 @@ app.controller('selectShipControl', function($rootScope, $scope, $http, $timeout
     {
         supplierCode : '',
         supplierName : '',
-        phone :'',
+        phone_1 :'',
+        status : '',
+        countryName:'',
     }
+    
     
     
     $scope.searchSupplier = function(supplier){
         var target = endpoint + '/jsonSearchSupplier.json';
-        $http.post(target, {id : $scope.supplier.supplierCode})
+        $http.post(target, {id : supplier})
             .success(function(res, status, headers, config){
-                 console.log(res);
+                    $scope.pullAll =  res;
             });
+    }
+    
+    $scope.selectSupplier = function(supplier){
+          var target = endpoint + '/jsonSearchPo.json';
+         $scope.supplier.supplierCode = supplier.supplierCode;
+         $scope.supplier.supplierName = supplier.supplierName;
+         SharedService.setValue('supplierCode', supplier.supplierCode, 'handleShipPassUpdate');
+         SharedService.setValue('supplierName', supplier.supplierName, 'handleShipPassUpdate');
+          $http.post(target, {supplierCode : $scope.supplier.supplierCode})
+            .success(function(res, status, headers, config){
+               $scope.purchaseorder = res;
+            });
+         
+    }
+    
+    $scope.selectPo = function(po){
+        SharedService.setValue('poCode', po.poCode, 'handleShipPassUpdate');
+        $('#selectShipModel').hide();
     }
     
     
