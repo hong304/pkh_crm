@@ -29,6 +29,7 @@ app.controller('repack', function($rootScope, $scope, $http, $timeout, SharedSer
         });
         
         $scope.totalline = 0;
+
     $scope.addRows = function(){
         var j = $scope.totalline;
             $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
@@ -39,6 +40,12 @@ app.controller('repack', function($rootScope, $scope, $http, $timeout, SharedSer
         $scope.totalline += 1;
     }
         
+
+    $scope.submitRepack = function(){
+        console.log( $scope.selfdefine);
+
+    }
+
 
 
 });

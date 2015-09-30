@@ -27,7 +27,9 @@ class rePackController extends BaseController {
 
             return Datatables::of($receivings)->make(true);
         }
+    }
 
+    public function repack(){
 
     }
     

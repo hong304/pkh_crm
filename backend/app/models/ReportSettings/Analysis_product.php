@@ -15,8 +15,6 @@ class Analysis_product {
         
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
-
-        $this->_product_id = $indata['filterData']['productId'];
         $this->_action = isset($indata['filterData']['action']);
 
         $this->_uniqueid = microtime(true);
@@ -30,6 +28,11 @@ class Analysis_product {
     public function compileResults()
     {
         $input = Input::get('filterData');
+
+        if(!isset($input['customerId']))
+            $this->_product_id = '100';
+        else
+            $this->_product_id = $input['productId'];
 
         $accu = [];
         $a_data = [];

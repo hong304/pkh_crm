@@ -15,11 +15,6 @@ class Analysis_customer {
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
 
-
-
-        if(isset($indata['query']))
-            $this->_client_id = $indata['filterData']['customerId'];
-
         $this->_uniqueid = microtime(true);
     }
 
@@ -32,7 +27,13 @@ class Analysis_customer {
     {
 
         $input = Input::get('filterData');
-        $this->_client_id = $input['customerId'];
+
+
+
+        if(!isset($input['customerId']))
+            $this->_client_id = '100002';
+        else
+            $this->_client_id = $input['customerId'];
 
 
         $accu = [];

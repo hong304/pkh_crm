@@ -151,21 +151,21 @@ $scope.findDate = function(){
 
         $scope.checkProduct = function(ele)
         {
-
+            $("#selectR").attr('disabled',false);
               var target = endpoint + '/getAllProducts.json';
               $http.post(target, {productId:ele}).success(function(res) {
                   if(typeof res == "object")
                   {
                      for (ele in res) {
-                        $scope.filterData.productName = res[ele].productName_chi;
+                      //  $scope.filterData.productName = res[ele].productName_chi;
                      }
                      
                      SharedService.setValue('productId', $scope.filterData.productId, 'handleReUpdate');
                      SharedService.setValue('productName', $scope.filterData.productName, 'handleReUpdate');
-                     $("#selectR").attr('disabled',false);
+                   //  $("#selectR").attr('disabled',false);
                   }else 
                   {
-                      $("#selectR").attr('disabled',false);
+
                       $scope.filterData.productName = "";
                   }
                       

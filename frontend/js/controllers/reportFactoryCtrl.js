@@ -141,10 +141,9 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     
     $scope.loadReport = function()
     {
+console.log($scope.filterData);
 
 
-        $scope.filterData.customerId = $location.search().client;
-        $scope.filterData.productId = $location.search().product;
         $scope.filterData.action = $location.search().action;
 
     	$http.post(querytarget, {reportId: $location.search().id, output: "preview", filterData: $scope.filterData, query:$location.search()})
@@ -256,7 +255,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
     $scope.selectProduct = function(id,action){
         if(id !==null)
-            $location.search().product = id;
+            $scope.filterData.productId = id;
 
         $location.search().action = action;
         $scope.action= action;
@@ -267,7 +266,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
     $scope.selectClient = function(id,action){
         if(id !==null)
-            $location.search().client = id;
+            $scope.filterData.customerId = id;
 
         $location.search().action = action;
         $scope.action= action;
