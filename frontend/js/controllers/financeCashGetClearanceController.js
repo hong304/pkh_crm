@@ -69,7 +69,7 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
             autoclose: true
         });
 
-        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + yday );
+        $('.date-picker').datepicker( "setDate" , yyear + '-' + ymonth + '-' + yday );
 
 
 
