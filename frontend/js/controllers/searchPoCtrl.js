@@ -57,6 +57,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         poAmount: '',
         invoice_item: '',
         invoice: '',
+        location:'',
     };
     
     
@@ -226,7 +227,9 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         $http.post($scope.endpoint + "/queryPo.json", {
             poCode: poId, mode: 'single'
         }).success(function (data) {
+           console.log(data);
             $scope.order = data.po[0];
+            $scope.invoiceinfo.location = data.po[0].location;
             $scope.invoiceinfo.poCode = data.po[0].poCode;
             $scope.invoiceinfo.poDate = data.po[0].poDate;
             $scope.invoiceinfo.etaDate = data.po[0].etaDate;
@@ -259,9 +262,9 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
 
     }
     
-    $scope.genA4Invoice = function(poCode)
+    $scope.genA4Invoice = function(poCode,lang)
     {
-       window.open(endpoint + "/printPo.json?poCode=" + poCode); //window open is a new tab 
+       window.open(endpoint + "/printPo.json?poCode=" + poCode + "&lang=" + lang); //window open is a new tab 
     }
 
     $scope.goEdit = function (invoiceId)

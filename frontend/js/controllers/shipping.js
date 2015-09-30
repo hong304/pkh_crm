@@ -168,12 +168,12 @@ $scope.an = false;
 
             }, 1000);
             
-        $scope.$on('handleSupplierUpdate', function(){
+        $scope.$on('handleShipPassUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
-        $scope.an=true;
         $scope.shipping.supplierCode = SharedService.supplierCode;
         $scope.shipping.supplierName = SharedService.supplierName;
-
+        $scope.shipping.poCode = SharedService.poCode;
+        
         $scope.displayName = $scope.shipping.supplierCode + " (" + $scope.shipping.supplierName + ")";
         if($scope.shipping.supplierCode === undefined)
         {
@@ -184,11 +184,6 @@ $scope.an = false;
 
        });
        
-        $scope.$on('handlePoUpdate', function(){
-           $scope.an=true;
-           $scope.shipping.poCode = SharedService.supplierPoCode;
-           
-        });
      
         }
       else if($location.search().shippingId !="undefined")

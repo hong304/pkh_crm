@@ -14,14 +14,14 @@
                         <div class="portlet-title">
                             <div class="caption font-green-sharp">
                                 <i class="icon-speech font-green-sharp"></i>
-                                <span class="caption-subject bold uppercase">訂單資料</span>
+                                <span class="caption-subject bold uppercase">採購單資料</span>
                                 <span class="caption-helper"><span>
                                         </div>
                                         </div>
                                         <div class="portlet-body">
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    <label>訂單編號</label>
+                                                    <label>採購單編號</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label>{{invoiceinfo.poCode}}</label>
@@ -282,10 +282,9 @@
                                             <button type="button" class="btn red" data-ng-if="invoiceinfo.invoiceStatus == 4" data-ng-click="unloadInvoice(invoiceinfo.invoiceId);">卸貨</button>
                                             <!-- Reprint Invoice -->
                                             <!-- Condition: Invoice Status = |{99} Permission = reprint_invoice -->
-                                            <!--<button type="button" class="btn grey-cascade" data-ng-if="invoiceinfo.invoiceStatus != 99 && systemInfo.permission.reprint_invoice" data-ng-click="rePrintInvoice(invoiceinfo.invoiceId);">重印單據</button>
-
-                                            <button type="button" class="btn grey-cascade" data-ng-click="genA4Invoice(invoiceinfo.invoiceId);">A4單據</button>-->
-
+                                            <!--<button type="button" class="btn grey-cascade" data-ng-if="invoiceinfo.invoiceStatus != 99 && systemInfo.permission.reprint_invoice" data-ng-click="rePrintInvoice(invoiceinfo.invoiceId);">重印單據</button>-->
+                                            <button type="button" class="btn grey-cascade" data-ng-click="genA4Invoice(invoiceinfo.poCode,'eng');">英文版單據</button>
+                                            <button type="button" class="btn grey-cascade" data-ng-if = "invoiceinfo.location == 1" data-ng-click="genA4Invoice(invoiceinfo.poCode,'chi');">中文版單據</button>
 
                                         </div>
                                         </div>
