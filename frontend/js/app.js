@@ -1286,7 +1286,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         'js/controllers/shipping.js',
                    //     'js/controllers/selectSupplierControl.js',
                         'js/controllers/selectPoControl.js', 
-                  //      'js/controllers/selectProductCtrl.js',
+                        'js/controllers/selectShipControl.js',
                     ] 
                 });
             }]
