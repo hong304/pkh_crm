@@ -20,32 +20,34 @@
                                 <label class="control-label" data-ng-if="productIdused == true"><span style="color: red">供應商編號已被使用</span></label>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                           
-                         
-                        </div>
                                                 <div class="form-group">
 							<label class="col-md-2 control-label">供應商編號</label>
-							<div class="col-md-10">
-								<input type="text" id="supplierCode" ng-model="customerInfo_def.supplierCode" class="form-control" placeholder="Enter text" disabled = "true">
-                                                                
-							</div>
+                                                        <div class="col-md-13">
+                                                            <div class="col-md-3">
+								<input type="text" id="supplierAbbre" ng-model="customerInfo_def.supplierAbbre" class="form-control" placeholder="供應商公司縮寫" maxlength="2" ng-change="capitalChar(customerInfo_def.supplierAbbre)">  
+                                                            </div>
+                                                            <div class="col-md-7">
+							        <input  type="text" id="supplierSuffix" ng-model="customerInfo_def.supplierSuffix" class="form-control" placeholder="Enter text" disabled = "true">
+                                                             </div>
+                                                        </div>
+						
 						</div>
+                                            
+                                            
                                             
                                             <div class="form-group"  data-ng-if="systemInfo.permission.allow_edit == true">
 							<label class="col-md-2 control-label">國家</label>
 							<div class="col-md-10">
                                                                 <select class="form-control" 
 									ng-model="customerInfo_def.countryId" 
-									class="form-control" id="countrySelect">	
+									class="form-control" id="countrySelect" ng-click="changeCountry()">	
                                                                         <option value="HK">香港</option>
 									<option value="US">美國</option>
                                                                         <option value="AF">非洲</option>
 								</select>
 							</div>
 						</div>
-                                            
+                                        
                                             <div class="form-group"  data-ng-if="systemInfo.permission.allow_edit == true">
 							<label class="col-md-2 control-label">地區</label>
 							<div class="col-md-10">

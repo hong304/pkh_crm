@@ -80,10 +80,6 @@ class SupplierController extends BaseController
         return Response::json($supplier);
     }
     
-    public function doubleSupplier()
-    {
-        
-    }
     
     public function jsonCheckSupplier()
     {
@@ -152,8 +148,9 @@ class SupplierController extends BaseController
                     'phone_2' => 'min:8',
                     'fax_1' => 'size:8',
                     'fax_2' => 'size:8',
-                     'email' => 'email',
-                     'location' => 'required',
+                    'email' => 'email',
+                    'location' => 'required',
+                    'supplierAbbre'=>'required|size:2',
 	        ];
          
       

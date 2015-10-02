@@ -398,6 +398,7 @@
                             
                                
                                     <td style="line-height:35px;font-size:15px;">
+                                        <button type="button" class="btn" style="background-color:yellow" id="costbtn_{{i}}"  data-ng-click="openCost(i);">成本</button>
                                         <button type="button" class="btn btn-primary" id="remarkbtn_{{i}}"  data-ng-click="openRemarkPanel(i);">備註</button>
                                         <button type="button" class="btn btn-danger" id="deletebtn_{{i}}"  data-ng-click="deleteRow(i);">刪除</button>
                                     </td>
@@ -530,3 +531,5 @@
 </div>
 
 <div ng-include="'/views/model_selectShip.html'"></div>
+
+<div ng-include="'/views/model_Cost.html'"></div>
