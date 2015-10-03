@@ -157,6 +157,8 @@ class shippingController extends BaseController {
         $first_date = date("Y/m/d");
 
         $s = shipping::where('actualDate', '!=', '')->with('Supplier', 'Shippingitem')->get();
+        
+     
 
         $eta = shipping::whereNull('actualDate')->with('Supplier', 'Shippingitem')->get();
 
@@ -212,13 +214,14 @@ class shippingController extends BaseController {
                     $wholestore = 0;
                     $tradestore = 0;
                     $store = 0;
+                   
                     foreach ($v->shippingitem as $k => $v) {
                         if (isset($v->container_receiveDate)) {
                             $store++;
-                            if($v->sale_method == "wholeSale")
+                            if($v->sale_method == 1)
                             {
                                 $wholestore++;
-                            }else if($v->sale_method == "trade")
+                            }else if($v->sale_method == 2)
                             {
                                 $tradestore++;
                             }

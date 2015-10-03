@@ -90,6 +90,16 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         deleted 	                :     0,
         remark:'',
         receiveDate:'',
+        cost_01:0,
+        cost_02:0,
+        cost_03:0,
+        cost_04:0,
+        cost_05:0,
+        cost_06:0,
+        cost_07:0,
+        cost_08:0,
+        cost_09:0,
+        cost_10:0,
     };
    
 
@@ -557,7 +567,13 @@ $scope.an = false;
     
     $scope.openCost = function(i)
     {
+        
         $("#costDetails").modal('show');
+        SharedService.setValue('containerId', $scope.product[i]['containerId'], 'costPassUpdate');
+        SharedService.setValue('receiveDate', $scope.product[i]['receiveDate'], 'costPassUpdate');
+        SharedService.setValue('container_size', $scope.product[i]['container_size'], 'costPassUpdate');
+        SharedService.setValue('sale_method', $scope.product[i]['sale_method'], 'costPassUpdate'); 
+        SharedService.setValue('shippingId', $scope.shipping.shippingId, 'costPassUpdate'); 
     }
     
     

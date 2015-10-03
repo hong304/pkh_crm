@@ -311,18 +311,14 @@
                             <thead>
                                 <tr role="row" class="heading">
                                     <th width="5%">序號</th>
-                                    <th width="6%">貨櫃編號</th>
+                                    <th width="13%">貨櫃編號</th>
                                     <th width="14%">封條編號</th>
                                     <th width="15%">收貨日期</th>
+                                    <th width="10%">貿易方式</th>
                                     <th width="10%">貨櫃大小</th>
                                     <th width="10%">貨物數量</th>
                                     <th width="10%">貨物重量</th>
                                     <th width="10%">貨物體積</th>
-                                    <th width="5%">運費貨幣</th>
-                                    <th width="8%">運費金額</th>
-                                   <!-- <th width="6%">轉換本港運費</th>
-                                    <th width="6%">所有雜費</th>
-                                    <th width="6%">稅</th>-->
                                     <th width="7%"></th>
                                 </tr>
                             </thead>
@@ -352,10 +348,17 @@
                                          </div>
    
                                     </td>
-                                      <td>
+                                    <td>
+                                        <div class="input-group">                                       
+                                            <select class="form-control ng-pristine ng-valid" id="sale_method" ng-model="product[i]['sale_method']">
+                                                <option value="1"  label="入倉">入倉</option>
+                                                <option value="2"  label="貿易部">貿易部</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
                                         <div class="input-group">
-                                            <input id="container_size_{{i}}" onClick="this.select();"  name="container_size_{{i}}" class="form-control productCodeField"  ng-model="product[i]['container_size']" type="text" placeholder="" />
-                                            
+                                            <input id="container_size_{{i}}" onClick="this.select();"  name="container_size_{{i}}" class="form-control productCodeField"  ng-model="product[i]['container_size']" type="text" placeholder="" /> 
                                         </div>
                                     </td>
      
@@ -380,23 +383,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <div class=" ">
-                                            <label>
-                                             <select class="form-control ng-pristine ng-valid" id="feight_currency_1" ng-model="product[i]['feight_currency']" data-ng-options="x.label for x in product[i]['feight_currency'] track by x.value" disabled = "disabled"><option value="?" selected="selected" label="" ></option></select>
-                                        </label>
-                                        </div>
-                                    </td>
-                                     <td>
-                                        <div class=" ">
-                                            <div class="input-group">
-                                                <input onClick="this.select();" type="tel" id="feight_amount{{i}}" ng-model="product[i]['feight_amount']" value="{{product[i]['feight_amount']}}" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['feight_amount']" maxlength="6" disabled = "disabled">
-                                              
-                                            </div>
-                                        </div>
-                                    </td>
-                            
-                               
+                     
                                     <td style="line-height:35px;font-size:15px;">
                                         <button type="button" class="btn" style="background-color:yellow" id="costbtn_{{i}}"  data-ng-click="openCost(i);">成本</button>
                                         <button type="button" class="btn btn-primary" id="remarkbtn_{{i}}"  data-ng-click="openRemarkPanel(i);">備註</button>

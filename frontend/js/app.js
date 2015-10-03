@@ -1283,7 +1283,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         assets + '/global/plugins/bootbox/bootbox.min.js',
                         
                         'js/controllers/shipping.js',
-                   //     'js/controllers/selectSupplierControl.js',
+                        'js/controllers/containerCost.js',
                         'js/controllers/selectPoControl.js', 
                         'js/controllers/selectShipControl.js',
                     ] 

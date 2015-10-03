@@ -18,34 +18,75 @@
                                 <span class="caption-helper"><span>
                             </div>
                         </div>
+                         <div class="row">
+                            <div data-ng-if="containerCost.shippingId != ''">
+                               <div class="col-md-2">
+                                    <label>船務編號</label>
+                               </div>
+                               <div class="col-md-4">
+                                    <label>{{containerCost.shippingId}}</label>
+                               </div>
+                            </div>  
+                            <div data-ng-if="containerCost.containerId != ''">
+                               <div class="col-md-2">
+                                    <label>貨櫃編號</label>
+                               </div>
+                               <div class="col-md-4">
+                                    <label>{{containerCost.containerId}}</label>
+                               </div>
+                            </div>
+                         </div>
+                        <div class="row">
+                            <div data-ng-if="containerCost.container_size != ''">
+                               <div class="col-md-2">
+                                    <label>貨櫃尺寸</label>
+                               </div>
+                               <div class="col-md-4">
+                                    <label>{{containerCost.container_size}}</label>
+                               </div>
+                            </div>
+                             <div data-ng-if="containerCost.receiveDate != ''">
+                               <div class="col-md-2">
+                                    <label>收貨日期</label>
+                               </div>
+                               <div class="col-md-4">
+                                    <label>{{containerCost.receiveDate}}</label>
+                               </div>
+                             </div>
+                         </div>
+                        <div class="row" ng-if="containerCost.sale_method != ''">
+                              <div class="col-md-2">
+                                    <label>貿易方式</label>
+                               </div>
+                               <div class="col-md-4">
+                                    <label>{{containerCost.sale_method}}</label>
+                               </div>
+                         </div>
                         <div class="portlet-body">
                             <table>
                                  <thead>
-                                       <th></th>
+                                       <th>編號</th>
                                        <th>
                                          成本名稱
                                        </th>
                                       <th>
-                                         請選擇以下選項
-                                      </th>
-                                      <th>
-                                         成本($)
+                                        成本 (HK$)
                                       </th>
                                 </thead>
-                                <tbody ng-repeat="item in items">
+                                <tbody ng-repeat="cost in costsName">
                                     <tr>
-                                        <td>
-                                            {{$index}}
+                                        <td class="col-md-3">
+                                            {{$index+1}}
                                         </td>
-                                        <td>
-                                            {{item.cost_description}}
+                                        <td class="col-md-4">
+                                            {{cost.name}}
                                         </td>
-                                        <td>
-                                             <input type="checkbox" name="click{{i}}" id= "click{{i}}"/>
+                                        <td class="col-md-5">
+                                            <input id="costNum_{{i}}" onClick="this.select();"  name="costNum_{{i}}" class="form-control productCodeField"  ng-model="product[i]['costNum']" type="text" placeholder="" /> 
                                         </td>
-                                        <td>
-                                            
-                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{}}</td>
                                     </tr>
                                 </tbody>
                             </table>
