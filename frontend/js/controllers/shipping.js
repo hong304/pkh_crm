@@ -6,6 +6,11 @@ Metronic.unblockUI();
 
 app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
 
+    $scope.shippingCost = {
+        cost_01:'',
+        cost_02:''
+    }
+
     $scope.shipping = {
         shippingId:'',
         poCode: '',
@@ -25,6 +30,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         status:1,
         feight_payment:'',
         supplierName:'',
+
     };
     
        $scope.containerCost = {
@@ -101,18 +107,15 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         deleted 	                :     0,
         remark:'',
         receiveDate:'',
-        cost_01:0,
-        cost_02:0,
-        cost_03:0,
-        cost_04:0,
-        cost_05:0,
-        cost_06:0,
-        cost_07:0,
-        cost_08:0,
-        cost_09:0,
-        cost_10:0,
+        cost : ''
+
+
     };
-   
+
+    $scope.shippingCostStructure={
+        cost_01 : '',
+        cost_02 : ''
+    }
 
     $scope.submitButtonText = '提交 (F10)';
     $scope.submitButtonColor = 'blue';
@@ -583,33 +586,33 @@ $scope.an = false;
         SharedService.setValue('sale_method', $scope.product[i]['sale_method'], 'costPassUpdate'); 
         SharedService.setValue('shippingId', $scope.shipping.shippingId, 'costPassUpdate'); 
       //  $scope.editablecost[cost.index] = 0;
-        $scope.editable_cost[1] = $scope.product[i].cost_01;
-        $scope.editable_cost[2] = $scope.product[i].cost_02;
-        $scope.editable_cost[3] = $scope.product[i].cost_03;
-        $scope.editable_cost[4] = $scope.product[i].cost_04;
-        $scope.editable_cost[5] = $scope.product[i].cost_05;
-        $scope.editable_cost[6] = $scope.product[i].cost_06;
-        $scope.editable_cost[7] = $scope.product[i].cost_07;
-        $scope.editable_cost[8] = $scope.product[i].cost_08;
-        $scope.editable_cost[9] = $scope.product[i].cost_09;
-        $scope.editable_cost[10] = $scope.product[i].cost_10;
+
+        console.log($scope.product);
+
+        for (var j = 1; j < 11; j++) {
+            if(typeof $scope.shippingCost[j] == 'undefined')
+            {
+                $scope.shippingCost[j] = $.extend(true, {}, $scope.shippingCostStructure);
+
+            }
+        }
+
+
+        $scope.shippingCost[i].cost_01 = $scope.product[i].cost_01;
+        $scope.shippingCost[i].cost_02 = $scope.product[i].cost_02;
+
         $scope.editable_rowcost = i;
         
     }
     
     $scope.saveCost = function(r)
     {
+        console.log($scope.shippingCost);
+
         $("#costDetails").modal('hide');
-        $scope.product[$scope.editable_rowcost].cost_01 =  $scope.editable_cost[1];
-        $scope.product[$scope.editable_rowcost].cost_02 =  $scope.editable_cost[2];
-        $scope.product[$scope.editable_rowcost].cost_03 =  $scope.editable_cost[3];
-        $scope.product[$scope.editable_rowcost].cost_04 =  $scope.editable_cost[4];
-        $scope.product[$scope.editable_rowcost].cost_05 =  $scope.editable_cost[5];
-        $scope.product[$scope.editable_rowcost].cost_06 =  $scope.editable_cost[6];
-        $scope.product[$scope.editable_rowcost].cost_07 =  $scope.editable_cost[7];
-        $scope.product[$scope.editable_rowcost].cost_08 =  $scope.editable_cost[8];
-        $scope.product[$scope.editable_rowcost].cost_09 =  $scope.editable_cost[9];
-        $scope.product[$scope.editable_rowcost].cost_10 =  $scope.editable_cost[10];
+        $scope.product[$scope.editable_rowcost].cost =  $scope.shippingCost[$scope.editable_rowcost][1].cost;
+        $scope.product[$scope.editable_rowcost].cost =    $scope.shippingCost[$scope.editable_rowcost][2].cost;
+
     }
     
     $scope.costNum = function(v,i) {

@@ -583,7 +583,7 @@
                                         </td>
                                         <td class="col-md-5"> <!--ng-change="costNum(editablecost,cost)" -->
                                             {{editable_cost[cost.index]}}
-                                           <input id="costNum_" onClick="this.select();"  name="costNum_" class="form-control productCodeField"    ng-model="editable_cost"  type="number" placeholder="" />
+                                           <input id="costNum_" onClick="this.select();"  name="costNum_" class="form-control productCodeField"    ng-model="shippingCost[i][cost.index].cost"  type="number" placeholder="" />
                                         </td>
                                     </tr>
                                 </tbody>
