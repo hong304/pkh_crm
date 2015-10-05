@@ -314,7 +314,7 @@ class ProductController extends BaseController {
                 $product->where(function ($query) use ($keyword) {
                     $query->where('productName_chi', 'LIKE', '%' . $keyword . '%')
                         ->orwhere('productId', 'LIKE', '%' . $keyword . '%');
-                });
+                })->wherein('productStatus', ['o','s']);
             }
 
             if($filter['group'] != '')
@@ -328,6 +328,8 @@ class ProductController extends BaseController {
 
             if ($filter['status']) {
                 $product->where('productStatus', $filter['status']);
+            }else{
+                $product->wherein('productStatus', ['o','s']);
             }
 
             if($filter['productLocation'])
