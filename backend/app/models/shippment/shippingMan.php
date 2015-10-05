@@ -153,7 +153,16 @@ class shippingMan
                 $item->serial_no = $i['serial_no'];
                 $item->container_weight = $i['container_weight'];
                 $item->container_capacity = $i['container_capacity'];
-          
+                $item->cost_01 = $i['cost_01'];
+                $item->cost_02 = $i['cost_02'];
+                $item->cost_03 = $i['cost_03'];
+                $item->cost_04 = $i['cost_04'];
+                $item->cost_05 = $i['cost_05'];
+                $item->cost_06 = $i['cost_06'];
+                $item->cost_07 = $i['cost_07'];
+                $item->cost_08 = $i['cost_08'];
+                $item->cost_09 = $i['cost_09'];
+                $item->cost_10 = $i['cost_10'];
                 
             
     	    //    $item->productStandardPrice = $i['productStandardPrice'];
@@ -187,11 +196,11 @@ class shippingMan
     
     
     //make an array
-    public function setItems($dbid,$containerId,$serial_no,$container_size,$container_Num,$container_weight,$container_capacity,$remark,$deleted)
+    public function setItems($dbid,$containerId,$serial_no,$container_size,$container_Num,$container_weight,$container_capacity,$remark,$deleted,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09,$cost_10)
     {
          $this->items[] = [
                 'dbid' => $dbid,
-	            'containerId' => $containerId,
+	        'containerId' => $containerId,
                 'serial_no' => $serial_no,
                 'container_size' => $container_size,
               //  'container_receiveDate' => $container_receiveDate,
@@ -200,6 +209,16 @@ class shippingMan
                 'container_capacity' => $container_capacity,
                 'remark' => $remark,
                 'deleted' => $deleted,
+                'cost_01' => $cost_01,
+                'cost_02' => $cost_02,
+                'cost_03' => $cost_03,
+                'cost_04' => $cost_04,
+                'cost_05' => $cost_05,
+                'cost_06' => $cost_06,
+                'cost_07' => $cost_07,
+                'cost_08' => $cost_08,
+                'cost_09' => $cost_09,
+                'cost_10' => $cost_10,
          ];
   
 	    return $this->items;
