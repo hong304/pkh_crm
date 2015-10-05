@@ -52,10 +52,9 @@ class shippingController extends BaseController {
             //If there is no shippingId, not only the records deleted in ui but also records in db will be deleted.
         }
 
-
         foreach ($shipItem as $k) {
             if ($k['deleted'] == 0) // clear the deleted record
-                $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['receiveDate'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted']);
+                $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['receiveDate'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'],$k['cost_01'],$k['cost_02'],$k['cost_03'],$k['cost_04'],$k['cost_05'],$k['cost_06'],$k['cost_07'],$k['cost_08'],$k['cost_09'],$k['cost_10']);
         }
 
 
@@ -157,13 +156,11 @@ class shippingController extends BaseController {
         $first_date = date("Y/m/d");
 
         $s = shipping::where('actualDate', '!=', '')->with('Supplier', 'Shippingitem')->get();
-        
-     
 
         $eta = shipping::whereNull('actualDate')->with('Supplier', 'Shippingitem')->get();
 
         $sfsp = shipping::Select('fsp', 'actualDate', 'shippingId','supplierCode','poCode')->with('Supplier')->where('actualDate', '!=', '')->where('fsp', '>', 0)->get();
-
+ 
         //sql that can accummulate the number of containers each day
 
 
@@ -190,7 +187,7 @@ class shippingController extends BaseController {
                 $daterange[$value['shippingId']][$h] = date('Y-m-d', $dateAdd);
             }
         }
-        
+      
 
 
         while ($date1 <= $sDate) {
@@ -214,14 +211,13 @@ class shippingController extends BaseController {
                     $wholestore = 0;
                     $tradestore = 0;
                     $store = 0;
-                   
                     foreach ($v->shippingitem as $k => $v) {
                         if (isset($v->container_receiveDate)) {
                             $store++;
-                            if($v->sale_method == 1)
+                            if($v->sale_method == "wholeSale")
                             {
                                 $wholestore++;
-                            }else if($v->sale_method == 2)
+                            }else if($v->sale_method == "trade")
                             {
                                 $tradestore++;
                             }
@@ -255,7 +251,7 @@ class shippingController extends BaseController {
 
             $date1 = $date1 + 24 * 60 * 60;  //Add one more date
         }
-
+  
         if (isset($sarr)) {
             $this->data = $sarr;
             return View::make('shippingTable')->with(['data' => $this->data, 'date' => $date, 'other' => $other, 'daterange' => $daterange])->render();
