@@ -17,8 +17,8 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         vessel:'',
         voyage:'',
         bl_number:'',
-        pol:'0',
-        pod:'0',
+        pol:'',
+        pod:'',
         container_numbers:'0',
         fsp:'0',
         remark:'',
@@ -26,7 +26,18 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         feight_payment:'',
         supplierName:'',
     };
-
+    
+       $scope.containerCost = {
+           containerId :'',
+           receiveDate:'',
+           container_size:'',
+           sale_method:'',
+           shippingId:'',
+       };
+    
+    $scope.totalCost = 0;
+    $scope.showOrNot = 0;
+     $scope.costsName = {'0':{'name':'運費','index':1},'1':{'name':'碼頭處理費','index':2},'2':{'name':'拖運費','index':3},'3':{'name':'卸貨費','index':4},'4':{'name':'外倉費','index':5},'5':{'name':'過期櫃租','index':6},'6':{'name':'過期交吉租','index':7},'7':{'name':'稅金','index':8},'8':{'name':'雜項','index':9},'9':{'name':'其他','index':10}};
     
  //Sunday is not allowed
     var today = new Date();
@@ -165,6 +176,7 @@ $scope.an = false;
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
+        $scope.determineAction();
 
 
         if(!$location.search().shippingId)
@@ -414,7 +426,8 @@ $scope.an = false;
     $scope.submitOrder = function(v)
     {
         var generalError = false;
-       
+        
+        console.log($scope.product);
 
         $scope.timer.submit = Date.now();
 
@@ -443,7 +456,6 @@ $scope.an = false;
             generalError = true;
             $scope.allowSubmission = true;
         }
-        console.log($scope.shipping);
         if(!generalError)
         {
             $http.post(
@@ -549,33 +561,103 @@ $scope.an = false;
     }
 
 
-
-     $scope.openRemarkPanel = function(i)
+    $scope.openRemarkPanel = function(i)
     {
         $("#remarkModal").modal('toggle');
         $scope.editable_remark = $scope.product[i].remark;
         $scope.editable_row = i;
-
     }
 
     $scope.saveRemark = function(r)
     {
         $("#remarkModal").modal('hide');
         $scope.product[$scope.editable_row].remark = $scope.editable_remark;
-
     }
     
     $scope.openCost = function(i)
     {
-        
         $("#costDetails").modal('show');
         SharedService.setValue('containerId', $scope.product[i]['containerId'], 'costPassUpdate');
         SharedService.setValue('receiveDate', $scope.product[i]['receiveDate'], 'costPassUpdate');
         SharedService.setValue('container_size', $scope.product[i]['container_size'], 'costPassUpdate');
         SharedService.setValue('sale_method', $scope.product[i]['sale_method'], 'costPassUpdate'); 
         SharedService.setValue('shippingId', $scope.shipping.shippingId, 'costPassUpdate'); 
+      //  $scope.editablecost[cost.index] = 0;
+        $scope.editable_cost[1] = $scope.product[i].cost_01;
+        $scope.editable_cost[2] = $scope.product[i].cost_02;
+        $scope.editable_cost[3] = $scope.product[i].cost_03;
+        $scope.editable_cost[4] = $scope.product[i].cost_04;
+        $scope.editable_cost[5] = $scope.product[i].cost_05;
+        $scope.editable_cost[6] = $scope.product[i].cost_06;
+        $scope.editable_cost[7] = $scope.product[i].cost_07;
+        $scope.editable_cost[8] = $scope.product[i].cost_08;
+        $scope.editable_cost[9] = $scope.product[i].cost_09;
+        $scope.editable_cost[10] = $scope.product[i].cost_10;
+        $scope.editable_rowcost = i;
+        
     }
     
+    $scope.saveCost = function(r)
+    {
+        $("#costDetails").modal('hide');
+        $scope.product[$scope.editable_rowcost].cost_01 =  $scope.editable_cost[1];
+        $scope.product[$scope.editable_rowcost].cost_02 =  $scope.editable_cost[2];
+        $scope.product[$scope.editable_rowcost].cost_03 =  $scope.editable_cost[3];
+        $scope.product[$scope.editable_rowcost].cost_04 =  $scope.editable_cost[4];
+        $scope.product[$scope.editable_rowcost].cost_05 =  $scope.editable_cost[5];
+        $scope.product[$scope.editable_rowcost].cost_06 =  $scope.editable_cost[6];
+        $scope.product[$scope.editable_rowcost].cost_07 =  $scope.editable_cost[7];
+        $scope.product[$scope.editable_rowcost].cost_08 =  $scope.editable_cost[8];
+        $scope.product[$scope.editable_rowcost].cost_09 =  $scope.editable_cost[9];
+        $scope.product[$scope.editable_rowcost].cost_10 =  $scope.editable_cost[10];
+    }
+    
+    $scope.costNum = function(v,i) {
+        if(i.index == '1')
+        {
+            $scope.product[$scope.editable_rowcost].cost_01 = v;
+        }else if(i.index == '2')
+        {
+            $scope.product[$scope.editable_rowcost].cost_02 = v;
+        }else if(i.index == '3')
+        {
+            $scope.product[$scope.editable_rowcost].cost_03 = v;
+        }else if(i.index == '4')
+        {
+            $scope.product[$scope.editable_rowcost].cost_04 = v;
+        }else if(i.index == '5')
+        {
+            $scope.product[$scope.editable_rowcost].cost_05 = v;
+        }else if(i.index == '6')
+        {
+            $scope.product[$scope.editable_rowcost].cost_06 = v;
+        }else if(i.index == '7')
+        {
+            $scope.product[$scope.editable_rowcost].cost_07 = v;
+        }else if(i.index == '8')
+        {
+            $scope.product[$scope.editable_rowcost].cost_08 = v;
+        }else if(i.index == '9')
+        {
+            $scope.product[$scope.editable_rowcost].cost_09 = v;
+        }else if(i.index == '10')
+        {
+            $scope.product[$scope.editable_rowcost].cost_10 = v;
+        }
+        var total = 0;
+        var product = $scope.product[$scope.editable_rowcost];
+        console.log(product);
+        total = product.cost_01 + product.cost_02 + product.cost_03 + product.cost_04 + product.cost_05 + product.cost_06 + product.cost_07 + product.cost_08 + product.cost_09 + product.cost_10;
+        $scope.totalCost = total; 
+    };
+        
+    $scope.determineAction = function()
+    {
+        if($window.location.href.search('shippingId') > -1)
+        {
+            $scope.showOrNot = 1;
+        } 
+    }
     
     
 
