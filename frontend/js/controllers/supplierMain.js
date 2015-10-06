@@ -183,7 +183,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
         $scope.action = "update";
         $scope.newId = "";
 //        $(".phone").inputmask("99999999");
-       
+        $scope.mySwitch = true;
     	$http.post(q2, {mode: "single", supplierCode: customerId})
     	.success(function(res, status, headers, config){    
          	//$scope.customerInfo = $.extend({}, res, $scope.customerInfo_def);
@@ -268,10 +268,10 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 
     $scope.addSupplier = function()
     {
-      
          $scope.customerInfo_def = $scope.customerInfo_copy;     
          $scope.newId = "";
-        $scope.action = "create";
+         $scope.action = "create";
+         $scope.mySwitch = false;
 		var statuscat = [];
 		statuscat = statuscat.concat([{value: '1', label: "Normal"}]);
 		statuscat = statuscat.concat([{value: '2', label: "Suspended"}]);
