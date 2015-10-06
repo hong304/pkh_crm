@@ -71,15 +71,15 @@ class supplierManipulation {
 	        $this->im->$f = $info[$f];
 	    }
 
-             if(Auth::user()->can('allow_edit'))
-             {
+          //   if(Auth::user()->can('allow_edit'))
+            // {
                  foreach($fieldsManager as $a)
                  {
                      $this->im->$a = $info[$a];
 
                  }
                  $this->im->supplierCode = strtoupper($this->_supplierCode); // force the code to be uppercase
-             }
+            // }
              
             
             $this->im->updated_by = Auth::user()->id;
