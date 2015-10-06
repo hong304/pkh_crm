@@ -7,8 +7,16 @@ Metronic.unblockUI();
 app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
 
     $scope.shippingCost = {
-        cost_01:'',
-        cost_02:''
+       cost_00 : 0,
+       cost_01 : 0,
+        cost_02 : 0,
+        cost_03 : 0,
+        cost_04 : 0,
+        cost_05 : 0,
+        cost_06 : 0,
+        cost_07 : 0,
+        cost_08 : 0,
+        cost_09 : 0,
     }
 
     $scope.shipping = {
@@ -43,7 +51,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
     
     $scope.totalCost = 0;
     $scope.showOrNot = 0;
-     $scope.costsName = {'1':{'name':'運費','index':1},'2':{'name':'碼頭處理費','index':2},'3':{'name':'拖運費','index':3},'4':{'name':'卸貨費','index':4},'5':{'name':'外倉費','index':5},'6':{'name':'過期櫃租','index':6},'7':{'name':'過期交吉租','index':7},'8':{'name':'稅金','index':8},'9':{'name':'雜項','index':9},'10':{'name':'其他','index':10}};
+     $scope.costsName = {'0':{'name':'運費','index':'0'},'1':{'name':'碼頭處理費','index':'1'},'2':{'name':'拖運費','index':'2'},'3':{'name':'卸貨費','index':'3'},'4':{'name':'外倉費','index':'4'},'5':{'name':'過期櫃租','index':'5'},'6':{'name':'過期交吉租','index':'6'},'7':{'name':'稅金','index':'7'},'8':{'name':'雜項','index':'8'},'9':{'name':'其他','index':'9'}};
     
  //Sunday is not allowed
     var today = new Date();
@@ -113,6 +121,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
     };
 
     $scope.shippingCostStructure={
+        cost_00 : 0,
         cost_01 : 0,
         cost_02 : 0,
         cost_03 : 0,
@@ -122,7 +131,6 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         cost_07 : 0,
         cost_08 : 0,
         cost_09 : 0,
-        cost_10 : 0,
     }
 
     $scope.submitButtonText = '提交 (F10)';
@@ -418,7 +426,7 @@ $scope.an = false;
 
         $scope.allowSubmission = false;
 
-
+        console.log($scope.product);
         if(!$scope.shipping.poCode || !$scope.shipping.supplierCode || !$scope.shipping.departure_date || !$scope.shipping.etaDate)
         {
             Metronic.alert({
@@ -569,57 +577,50 @@ $scope.an = false;
         //    }
        // }
         $scope.shippingCost = $.extend(true, {}, $scope.shippingCostStructure);
-
-        console.log($scope.shippingCost);
-        $scope.shippingCost[i].cost_01 = $scope.product[i].cost_01;
-        $scope.shippingCost[i].cost_02 = $scope.product[i].cost_02;
-
+       // $scope.shippingCost = $scope.product[i].cost;
+       // $scope.shippingCost.cost_01 = $scope.product[i].cost.cost_01;
+        if($scope.product[i].cost == null)
+        {
+             $scope.product[i].cost = $scope.shippingCost;
+        }
+        $scope.shippingCost.cost_00 = $scope.product[i].cost.cost_00;
+        $scope.shippingCost.cost_01 = $scope.product[i].cost.cost_01;
+        $scope.shippingCost.cost_02 = $scope.product[i].cost.cost_02;
+        $scope.shippingCost.cost_03 = $scope.product[i].cost.cost_03;
+        $scope.shippingCost.cost_04 = $scope.product[i].cost.cost_04;
+        $scope.shippingCost.cost_05 = $scope.product[i].cost.cost_05;
+        $scope.shippingCost.cost_06 = $scope.product[i].cost.cost_06;
+        $scope.shippingCost.cost_07 = $scope.product[i].cost.cost_07;
+        $scope.shippingCost.cost_08 = $scope.product[i].cost.cost_08;
+        $scope.shippingCost.cost_09 = $scope.product[i].cost.cost_09;
+       // $scope.shippingCost['cost_01'] = $scope.product[i].cost.cost_01;
+      //  $scope.shippingCost['cost_02'] = $scope.product[i].cost.cost_02;
+        
         $scope.editable_rowcost = i;
         
     }
     
     $scope.saveCost = function(r)
     {
-        console.log($scope.shippingCost);
-
+        console.log($scope.product[$scope.editable_rowcost].cost);
         $("#costDetails").modal('hide');
-        $scope.product[$scope.editable_rowcost].cost =  $scope.shippingCost[$scope.editable_rowcost][1].cost;
-        $scope.product[$scope.editable_rowcost].cost =    $scope.shippingCost[$scope.editable_rowcost][2].cost;
+        $scope.product[$scope.editable_rowcost].cost = $scope.shippingCost;
+        $scope.product[$scope.editable_rowcost].cost.cost_00 =  $scope.shippingCost.cost_00;
+        $scope.product[$scope.editable_rowcost].cost.cost_01 =  $scope.shippingCost.cost_01;
+        $scope.product[$scope.editable_rowcost].cost.cost_02 =  $scope.shippingCost.cost_02;
+        $scope.product[$scope.editable_rowcost].cost.cost_03 =  $scope.shippingCost.cost_03;
+        $scope.product[$scope.editable_rowcost].cost.cost_04 =  $scope.shippingCost.cost_04;
+        $scope.product[$scope.editable_rowcost].cost.cost_05 =  $scope.shippingCost.cost_05;
+        $scope.product[$scope.editable_rowcost].cost.cost_06 =  $scope.shippingCost.cost_06;
+        $scope.product[$scope.editable_rowcost].cost.cost_07 =  $scope.shippingCost.cost_07;
+        $scope.product[$scope.editable_rowcost].cost.cost_08 =  $scope.shippingCost.cost_08;
+        $scope.product[$scope.editable_rowcost].cost.cost_09 =  $scope.shippingCost.cost_09;
+      //  $scope.product[$scope.editable_rowcost].cost.cost_01 =  $scope.shippingCost[$scope.editable_rowcost].cost_01;
+        //$scope.product[$scope.editable_rowcost].cost.cost_02 =    $scope.shippingCost[$scope.editable_rowcost].cost_02;
 
     }
     
     $scope.costNum = function(v,i) {
-        /*if(i.index == '1')
-        {
-            $scope.product[$scope.editable_rowcost].cost_01 = v;
-        }else if(i.index == '2')
-        {
-            $scope.product[$scope.editable_rowcost].cost_02 = v;
-        }else if(i.index == '3')
-        {
-            $scope.product[$scope.editable_rowcost].cost_03 = v;
-        }else if(i.index == '4')
-        {
-            $scope.product[$scope.editable_rowcost].cost_04 = v;
-        }else if(i.index == '5')
-        {
-            $scope.product[$scope.editable_rowcost].cost_05 = v;
-        }else if(i.index == '6')
-        {
-            $scope.product[$scope.editable_rowcost].cost_06 = v;
-        }else if(i.index == '7')
-        {
-            $scope.product[$scope.editable_rowcost].cost_07 = v;
-        }else if(i.index == '8')
-        {
-            $scope.product[$scope.editable_rowcost].cost_08 = v;
-        }else if(i.index == '9')
-        {
-            $scope.product[$scope.editable_rowcost].cost_09 = v;
-        }else if(i.index == '10')
-        {
-            $scope.product[$scope.editable_rowcost].cost_10 = v;
-        }*/
         var total = 0;
         var product = $scope.product[$scope.editable_rowcost];
         console.log(product);

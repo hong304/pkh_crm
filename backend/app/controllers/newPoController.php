@@ -634,18 +634,18 @@ class newPoController extends BaseController {
        
        $pdf->SetDrawColor(255);
        $pdf->SetFont('chi','',10);  
-       $pdf->Cell(10, 5,"1.Please send your duplicate invoices",0,1);
+       $pdf->Cell(10, 5,"1.Please send two copies of your invoice.",0,1);
       // $pdf->Cell(10, $j -100,"1.Please send two copies of your invoice.:",0,1,"L");
        
    
       // $pdf->SetXY( 10,  $j - 115);
-       $pdf->Cell(10, 5,"2.Please enter the data according to the price and delivery",0,1);
+       $pdf->Cell(10, 5,"2.Enter this order in accordance with the prices,terms,delivery method,and specifications listed above.",0,1);
        
        //$pdf->SetXY( 10,  $j - 110);
-       $pdf->Cell(10, 5,"3.If you are unable to ship goods, please notify us immediately",0,1);
+       $pdf->Cell(10, 5,"3.Please notify us immediately if you are unable to ship as specified.",0,1);
        
        //$pdf->SetXY( 10,  $j - 105);
-       $pdf->Cell(10, 5,"4.Please mail to:",0,1);
+       $pdf->Cell(10, 5,"4.Send all correspondence to:",0,1);
        
        $pdf->SetX(15);
        $pdf->Cell(15, 5,$poAndItems['supplier']['address'],0,1);

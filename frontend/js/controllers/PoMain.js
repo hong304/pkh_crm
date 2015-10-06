@@ -50,7 +50,6 @@ app.controller('PoMain', function($rootScope, $scope, $http, $timeout, SharedSer
        contactPerson_1:'',
        location:'',
     };
-
     
  //Sunday is not allowed
     var today = new Date();
@@ -274,7 +273,6 @@ $scope.an = false;
         
     Metronic.initAjax();
       $templateCache.removeAll();
-      console.log("htt");
         // initialize core components
         
 

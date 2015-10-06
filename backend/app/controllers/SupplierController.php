@@ -7,6 +7,7 @@ class SupplierController extends BaseController
     public function jsonQuerySupplier()
     {
         $mode = Input::get('mode');
+        
         if ($mode == 'collection') {
             $filter = Input::get('filterData');
             $filterId = "supplierCode";
@@ -53,7 +54,7 @@ class SupplierController extends BaseController
                                ->orwhere('contactPerson_2', 'LIKE', '%' . $filter['contact'] . '%');
                      })
                     ->where('supplierCode', 'LIKE', '%' . $filter['id'] . '%')
-					 ->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
+		    ->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
             });
             
 
@@ -144,10 +145,6 @@ class SupplierController extends BaseController
                     'currencyId' => 'required',
                     'status'=> 'required',
                     'payment' => 'required',
-                    'phone_1' => 'size:8',
-                    'phone_2' => 'min:8',
-                    'fax_1' => 'size:8',
-                    'fax_2' => 'size:8',
                     'email' => 'email',
                     'location' => 'required',
                     'supplierAbbre'=>'required|size:2',
