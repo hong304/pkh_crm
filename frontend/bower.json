@@ -1,0 +1,8 @@
+{
+  "name": "ping Kee",
+  "version": "0.0.1",
+  "description": "",
+  "dependencies": {
+    "angular-bootstrap": "~0.13.4"
+  }
+}
