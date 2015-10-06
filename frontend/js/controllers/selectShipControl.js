@@ -19,11 +19,19 @@ app.controller('selectShipControl', function($rootScope, $scope, $http, $timeout
         countryName:'',
     }
     
+    $scope.filterAll = 
+    {
+        supplierCode : '',
+        supplierName:'',
+        phoneNum :'',     
+    }
+    
     
     
     $scope.searchSupplier = function(supplier){
         var target = endpoint + '/jsonSearchSupplier.json';
-        $http.post(target, {id : supplier})
+        $scope.filterAll.supplierCode = supplier;
+        $http.post(target, {filterAll : $scope.filterAll})
             .success(function(res, status, headers, config){
                     $scope.pullAll =  res;
             });

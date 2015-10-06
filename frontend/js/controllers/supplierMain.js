@@ -272,24 +272,9 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
          $scope.newId = "";
          $scope.action = "create";
          $scope.mySwitch = false;
-		var statuscat = [];
-		statuscat = statuscat.concat([{value: '1', label: "Normal"}]);
-		statuscat = statuscat.concat([{value: '2', label: "Suspended"}]);
-    	$scope.statuscat = statuscat;
-
-        var statuscat1 = [];
-        statuscat1 = statuscat1.concat([{value: '1', label: "早班"}]);
-        statuscat1 = statuscat1.concat([{value: '2', label: "晚班"}]);
-        $scope.statuscat1 = statuscat1;
-
-    	//console.log($scope.statuscat );
 
     	$scope.submitbtn = true;
     	$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
-    	$scope.customerInfo.status = $scope.statuscat[0];
-        $scope.customerInfo.shift =     $scope.statuscat1[0];
-        
-
 
 //        $(".phone").inputmask("99999999");
     	$("#supplierFormModal").modal({backdrop: 'static'});
@@ -325,7 +310,6 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
              $scope.customerInfo_def.supplierCode = "";
         }
         
-        console.log($scope.customerInfo_def.supplierCode);
         if(!$scope.submit)
             alert('客户編號不能用');
        

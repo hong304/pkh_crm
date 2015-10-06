@@ -53,8 +53,22 @@ class shippingController extends BaseController {
         }
 
         foreach ($shipItem as $k) {
-            if ($k['deleted'] == 0) // clear the deleted record
-                $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['receiveDate'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'],$k['cost_01'],$k['cost_02'],$k['cost_03'],$k['cost_04'],$k['cost_05'],$k['cost_06'],$k['cost_07'],$k['cost_08'],$k['cost_09'],$k['cost_10']);
+            if($k['deleted'] == 0)
+            {    
+                 $cost_00 = (isset($k['cost']['cost_00'])) ? $k['cost']['cost_00'] : 0;
+                 $cost_01 = (isset($k['cost']['cost_01'])) ? $k['cost']['cost_01'] : 0;
+                 $cost_02 = (isset($k['cost']['cost_02'])) ? $k['cost']['cost_02'] : 0;
+                 $cost_03 = (isset($k['cost']['cost_03'])) ? $k['cost']['cost_03'] : 0;
+                 $cost_04 = (isset($k['cost']['cost_04'])) ? $k['cost']['cost_04'] : 0;
+                 $cost_05 = (isset($k['cost']['cost_05'])) ? $k['cost']['cost_05'] : 0;
+                 $cost_06 = (isset($k['cost']['cost_06'])) ? $k['cost']['cost_06'] : 0;
+                 $cost_07 = (isset($k['cost']['cost_07'])) ? $k['cost']['cost_07'] : 0;
+                 $cost_08 = (isset($k['cost']['cost_08'])) ? $k['cost']['cost_08'] : 0;
+                 $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
+                 
+                 
+                 $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['receiveDate'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'],$cost_00,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09);
+            }// clear the deleted record      
         }
 
 
@@ -280,7 +294,6 @@ class shippingController extends BaseController {
             
         }      
         
-    //  pd($s);
         foreach($eta as $etaKey=>$etaValue)
         {
             $outputEta[$etaKey] = count($etaValue);
@@ -400,10 +413,11 @@ class shippingController extends BaseController {
     
     public function jsonSearchSupplier()
     {
-        $supplier = Input::get('id');
+        $supplier = Input::get('filterAll');
         $querySupplier = Supplier :: where('supplierCode', 'LIKE', '%' . $supplier . '%')->where('location',2)->with('country')->get();
         return Response::json($querySupplier);
     }
+    
     
     public function jsonSearchPo()
     {
