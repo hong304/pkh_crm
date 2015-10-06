@@ -331,7 +331,7 @@
                                     <td style="line-height:35px;font-size:15px;">{{i}}</td>
                                     <td>
                                         <div class="input-group">
-                                            <input id="containerId_{{i}}" onClick="this.select();"  name="containerId_{{i}}" class="form-control productCodeField"  ng-model="product[i]['containerId']" type="text" placeholder="" ng-change="searchProduct(i)"/>
+                                            <input id="containerId_{{i}}" onClick="this.select();"  name="containerId_{{i}}" class="form-control productCodeField"  ng-model="product[i]['containerId']" type="text" placeholder=""/>
                                             <!--<span class="input-group-btn">
                                                 <a href="#" data-ng-click="selectProduct(i);" id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 選擇</a>
                                             </span>-->
@@ -506,7 +506,7 @@
         text-align:center;
     }
 </style>
-<div class="modal fade bs-modal-lg" id="costDetails" tabindex="-1" data-ng-controller="shipping" role="dialog" aria-hidden="true">
+<div class="modal fade bs-modal-lg" id="costDetails" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -582,91 +582,10 @@
                                             {{cost.name}}
                                         </td>
                                         <td class="col-md-5"> <!--ng-change="costNum(editablecost,cost)" -->
-                                            {{editable_cost[cost.index]}}
-                                           <input id="costNum_" onClick="this.select();"  name="costNum_" class="form-control productCodeField"    ng-model="shippingCost[i][cost.index].cost"  type="number" placeholder="" />
+                                           <input id="costNum_" onClick="this.select();"  name="costNum_" class="form-control productCodeField"    ng-model="shippingCost['cost_0'+cost.index]"  type="number" placeholder="" />
                                         </td>
                                     </tr>
                                 </tbody>
-                                <!--<tbody>
-                                    <tr>
-                                        <td class = "col-md-4">
-                                            {{1}}
-                                        </td>
-                                        <td class = "col-md-4">
-                                            運費
-                                        </td>
-                                        <td class="col-md-5">
-                                             <input id="costNum_01" onClick="this.select();"  name="costNum_01" class="form-control productCodeField"  ng-change="costNum(editable_cost01,1)"  ng-model="editable_cost01"  value="0.00" ng:required ng:validate="number" size="6" placeholder="" /> 
-                                        </td>
-                                    </tr>
-                                     <tr>
-                                        <td class = "col-md-4">
-                                            {{2}}
-                                        </td>
-                                        <td class = "col-md-4">
-                                            碼頭處理費
-                                        </td>
-                                        <td class="col-md-5">
-                                            <input id="costNum_02" onClick="this.select();"  name="costNum_02" class="form-control productCodeField"  ng-change="costNum(editable_cost02,2)"  ng-model="editable_cost02 " value="0.00" ng:required ng:validate="number" size="6" placeholder="" /> 
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class = "col-md-4">
-                                            {{3}}
-                                        </td>
-                                        <td class = "col-md-4">
-                                            拖運費
-                                        </td>
-                                        <td class="col-md-5">
-                                            <input id="costNum_03" onClick="this.select();"  name="costNum_03" class="form-control productCodeField"  ng-change="costNum(editable_cost03,3)"  ng-model="editable_cost03" value="0.00" ng:required ng:validate="number" size="6" placeholder="" /> 
-                                        </td>
-                                    </tr>
-                                     <tr>
-                                        <td class = "col-md-4">
-                                            {{4}}
-                                        </td>
-                                        <td class = "col-md-4">
-                                            卸貨費
-                                        </td>
-                                        <td class="col-md-5">
-                                            <input id="costNum_04" onClick="this.select();"  name="costNum_04" class="form-control productCodeField"  ng-change="costNum(editable_cost04,4)"  ng-model="editable_cost04" value="0.00" ng:required ng:validate="number" size="6" placeholder="" /> 
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class = "col-md-4">
-                                            {{5}}
-                                        </td>
-                                        <td class = "col-md-4">
-                                            外倉費
-                                        </td>
-                                        <td class="col-md-5">
-                                            <input id="costNum_05" onClick="this.select();"  name="costNum_05" class="form-control productCodeField"  ng-change="costNum(editable_cost05,5)"  ng-model="editable_cost05" value="0.00" ng:required ng:validate="number" size="6" placeholder="" /> 
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class = "col-md-4">
-                                            {{6}}
-                                        </td>
-                                        <td class = "col-md-4">
-                                            過期櫃租
-                                        </td>
-                                        <td class="col-md-5">
-                                            <input id="costNum_06" onClick="this.select();"  name="costNum_06" class="form-control productCodeField"  ng-change="costNum(editable_cost06,6)"  ng-model="editable_cost06" value="0.00" ng:required ng:validate="number" size="6" placeholder="" /> 
-                                        </td>
-                                    </tr>
-                                     <tr>
-                                        <td class = "col-md-4">
-                                            {{7}}
-                                        </td>
-                                        <td class = "col-md-4">
-                                            過期交吉租
-                                        </td>
-                                        <td class="col-md-5">
-                                            <input id="costNum_07" onClick="this.select();"  name="costNum_07" class="form-control productCodeField"  ng-change="costNum(editable_cost07,7)"  ng-model="editable_cost07" value="0.00" ng:required ng:validate="number" size="6" placeholder="" /> 
-                                        </td>
-                                    </tr>
-                                    
-                                </tbody>-->
                                 <tbody>
                                        <tr>
                                         <td>總計:</td>
