@@ -24,10 +24,10 @@
 							<label class="col-md-2 control-label">供應商編號</label>
                                                         <div class="col-md-13">
                                                             <div class="col-md-3">
-								<input type="text" id="supplierAbbre" ng-model="customerInfo_def.supplierAbbre" class="form-control" placeholder="供應商公司縮寫" maxlength="2" ng-change="capitalChar(customerInfo_def.supplierAbbre)">  
+								<input type="text" id="supplierAbbre" ng-model="customerInfo_def.supplierAbbre" class="form-control" placeholder="供應商公司縮寫" maxlength="2" ng-change="capitalChar(customerInfo_def.supplierAbbre)" ng-disabled ="mySwitch">  
                                                             </div>
                                                             <div class="col-md-7">
-							        <input  type="text" id="supplierSuffix" ng-model="customerInfo_def.supplierSuffix" class="form-control" placeholder="Enter text" disabled = "true">
+							        <input  type="text" id="supplierSuffix" ng-model="customerInfo_def.supplierSuffix" class="form-control" placeholder="Enter text" disabled = "true" >
                                                              </div>
                                                         </div>
 						
@@ -40,7 +40,7 @@
 							<div class="col-md-10">
                                                                 <select class="form-control" 
 									ng-model="customerInfo_def.countryId" 
-									class="form-control" id="countrySelect" ng-click="changeCountry()">	
+									class="form-control" id="countrySelect" ng-click="changeCountry()" ng-disabled ="mySwitch">	
                                                                         <option value="HK">香港</option>
 									<option value="US">美國</option>
                                                                         <option value="AF">非洲</option>
@@ -53,7 +53,7 @@
 							<div class="col-md-10">
                                                                 <select class="form-control" 
 									ng-model="customerInfo_def.location" 
-									class="form-control" id="countrySelect">	
+									class="form-control" id="countrySelect" ng-disabled ="mySwitch">	
                                                                         <option value="1">本地</option>
 									<option value="2">海外</option>
 								</select>

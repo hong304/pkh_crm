@@ -43,7 +43,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
     
     $scope.totalCost = 0;
     $scope.showOrNot = 0;
-     $scope.costsName = {'0':{'name':'運費','index':1},'1':{'name':'碼頭處理費','index':2},'2':{'name':'拖運費','index':3},'3':{'name':'卸貨費','index':4},'4':{'name':'外倉費','index':5},'5':{'name':'過期櫃租','index':6},'6':{'name':'過期交吉租','index':7},'7':{'name':'稅金','index':8},'8':{'name':'雜項','index':9},'9':{'name':'其他','index':10}};
+     $scope.costsName = {'1':{'name':'運費','index':1},'2':{'name':'碼頭處理費','index':2},'3':{'name':'拖運費','index':3},'4':{'name':'卸貨費','index':4},'5':{'name':'外倉費','index':5},'6':{'name':'過期櫃租','index':6},'7':{'name':'過期交吉租','index':7},'8':{'name':'稅金','index':8},'9':{'name':'雜項','index':9},'10':{'name':'其他','index':10}};
     
  //Sunday is not allowed
     var today = new Date();
@@ -113,8 +113,16 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
     };
 
     $scope.shippingCostStructure={
-        cost_01 : '',
-        cost_02 : ''
+        cost_01 : 0,
+        cost_02 : 0,
+        cost_03 : 0,
+        cost_04 : 0,
+        cost_05 : 0,
+        cost_06 : 0,
+        cost_07 : 0,
+        cost_08 : 0,
+        cost_09 : 0,
+        cost_10 : 0,
     }
 
     $scope.submitButtonText = '提交 (F10)';
@@ -227,7 +235,13 @@ $scope.an = false;
                 .success(function(data, status, headers, config){
 
 					$scope.shipping = data.shipping;
-					$scope.shipping.supplierName = data.shipping.supplier[0].supplierName;
+					 if($scope.shipping.supplier.length > 0)
+                                        {
+                                            $scope.shipping.supplierName = data.shipping.supplier[0].supplierName;
+                                        }else
+                                        {
+                                            $scope.shipping.supplierName = "";
+                                        }           
 					$scope.shippingItems = data.shippingItem;
 
    
@@ -340,44 +354,6 @@ $scope.an = false;
 
 
 
-    $scope.searchProduct = function(i) {
-
-        var input = $("#productCode_" + i);
-
-        if($scope.product[i]['containerId'] !== "")
-      {
-
-            // UX Auto Add Next COlumn
-            if(typeof $scope.product[i+1] == 'undefined')
-            {
-                $scope.newkey = $scope.itemlist.length + 1;
-                $scope.itemlist.push($scope.newkey);
-                $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
-                $scope.timer.product[$scope.newkey] = $.extend(true, {}, $scope.timerProductStructure);
-            }
-
-
-
-            // enable delete button, but delay that with 2 seconds
-            $timeout(function(){
-                $("#deletebtn_" + i).css('display', '');
-                $("#remarkbtn_" + i).css('display', '');
-            }, 1000);
-
-
-        }
-        else
-        {
-            // reset the whole structure
-            $scope.product[i] = $.extend(true, {}, $scope.productStructure);
-
-            $("#deletebtn_" + i).css('display', 'none');
-
-            $("#remarkbtn_" + i).css('display', 'none');
-        }
-
-        $scope.timer.product[(i-1 < 1 ? 1 : i-1)]['completedRow'] = Date.now();
-    };
 
     $scope.$on('updateProductSelected', function(){
 
@@ -579,25 +555,22 @@ $scope.an = false;
     
     $scope.openCost = function(i)
     {
-        $("#costDetails").modal('show');
-        SharedService.setValue('containerId', $scope.product[i]['containerId'], 'costPassUpdate');
-        SharedService.setValue('receiveDate', $scope.product[i]['receiveDate'], 'costPassUpdate');
-        SharedService.setValue('container_size', $scope.product[i]['container_size'], 'costPassUpdate');
-        SharedService.setValue('sale_method', $scope.product[i]['sale_method'], 'costPassUpdate'); 
-        SharedService.setValue('shippingId', $scope.shipping.shippingId, 'costPassUpdate'); 
-      //  $scope.editablecost[cost.index] = 0;
+        $("#costDetails").modal('toggle');
+        $scope.containerCost.shippingId = $scope.shipping.shippingId;
+        $scope.containerCost.containerId = $scope.product[i]['containerId'];
+        $scope.containerCost.receiveDate = $scope.product[i]['receiveDate'];
+        $scope.containerCost.container_size = $scope.product[i]['container_size'];
+        $scope.containerCost.sale_method = $scope.product[i]['sale_method'];
 
-        console.log($scope.product);
+       // for (var j = 1; j < 11; j++) {
+       //     if(typeof $scope.shippingCost[j] == 'undefined')
+        //    {
+              //  $scope.shippingCost[j] = $.extend(true, {}, $scope.shippingCostStructure);
+        //    }
+       // }
+        $scope.shippingCost = $.extend(true, {}, $scope.shippingCostStructure);
 
-        for (var j = 1; j < 11; j++) {
-            if(typeof $scope.shippingCost[j] == 'undefined')
-            {
-                $scope.shippingCost[j] = $.extend(true, {}, $scope.shippingCostStructure);
-
-            }
-        }
-
-
+        console.log($scope.shippingCost);
         $scope.shippingCost[i].cost_01 = $scope.product[i].cost_01;
         $scope.shippingCost[i].cost_02 = $scope.product[i].cost_02;
 
@@ -616,7 +589,7 @@ $scope.an = false;
     }
     
     $scope.costNum = function(v,i) {
-        if(i.index == '1')
+        /*if(i.index == '1')
         {
             $scope.product[$scope.editable_rowcost].cost_01 = v;
         }else if(i.index == '2')
@@ -646,7 +619,7 @@ $scope.an = false;
         }else if(i.index == '10')
         {
             $scope.product[$scope.editable_rowcost].cost_10 = v;
-        }
+        }*/
         var total = 0;
         var product = $scope.product[$scope.editable_rowcost];
         console.log(product);
