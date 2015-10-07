@@ -314,9 +314,41 @@ $scope.an = false;
 			$scope.product[j]['feight_amount'] = item.feight_amount;
                         $scope.product[j]['remark'] = item.remark;
                         $scope.product[j]['sale_method'] = item.sale_method;
-                      //  $scope.product[j].cost['cost_0 = item.cost_00;
-                        //$scope.product[j].cost.cost_00 =  item.cost_00;
-                      //  $scope.product[j].cost.cost_01 =  item.cost_01;
+                  
+                        $scope.product[j]['cost'] = $scope.shippingCost;
+                        
+                        $scope.shippingCost.cost_00 = item.cost_00;
+                        $scope.product[j]['cost']['cost_00'] = $scope.shippingCost.cost_00;
+                        
+                        $scope.shippingCost.cost_01 = item.cost_01;
+                        $scope.product[j]['cost']['cost_01'] = $scope.shippingCost.cost_01;
+                        
+                        $scope.shippingCost.cost_02 = item.cost_02;
+                        $scope.product[j]['cost']['cost_02'] = $scope.shippingCost.cost_02;
+                        
+                        $scope.shippingCost.cost_03 = item.cost_03;
+                        $scope.product[j]['cost']['cost_03'] = $scope.shippingCost.cost_03;
+                        
+                        $scope.shippingCost.cost_04 = item.cost_04;
+                        $scope.product[j]['cost']['cost_04'] = $scope.shippingCost.cost_04;
+                        
+                        $scope.shippingCost.cost_05 = item.cost_05;
+                        $scope.product[j]['cost']['cost_05'] = $scope.shippingCost.cost_05;
+                        
+                        $scope.shippingCost.cost_06 = item.cost_06;
+                        $scope.product[j]['cost']['cost_06'] = $scope.shippingCost.cost_06;
+                        
+                        $scope.shippingCost.cost_07 = item.cost_07;
+                        $scope.product[j]['cost']['cost_07'] = $scope.shippingCost.cost_07;
+                        
+                        $scope.shippingCost.cost_08 = item.cost_08;
+                        $scope.product[j]['cost']['cost_08'] = $scope.shippingCost.cost_08;
+                        
+                        $scope.shippingCost.cost_09 = item.cost_09;
+                        $scope.product[j]['cost']['cost_09'] = $scope.shippingCost.cost_09;
+                        
+                        //Maybe one day refine it by a loop
+                        
                         
                         if(typeof $scope.product[j+1] == 'undefined')
                         {
@@ -593,7 +625,18 @@ $scope.an = false;
         $scope.shippingCost.cost_09 = $scope.product[i].cost.cost_09;
        // $scope.shippingCost['cost_01'] = $scope.product[i].cost.cost_01;
       //  $scope.shippingCost['cost_02'] = $scope.product[i].cost.cost_02;
-        
+      
+      for(var i = 0;i<=9;i++)
+      {
+          var string = "$scope.shippingCost.cost_0"+i;
+          var g = eval(string);
+          $scope.totalCost += g;
+      }
+      if(isNaN($scope.totalCost))
+      {
+          $scope.totalCost = 0.00;
+      }
+      
         $scope.editable_rowcost = i;
         
     }
