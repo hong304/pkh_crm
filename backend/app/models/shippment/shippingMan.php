@@ -120,6 +120,7 @@ class shippingMan
 
     public function save()
     {
+       
         $this->prepare_ship();
         
         $this->prepare_items();
@@ -153,6 +154,7 @@ class shippingMan
                 $item->serial_no = $i['serial_no'];
                 $item->container_weight = $i['container_weight'];
                 $item->container_capacity = $i['container_capacity'];
+                $item->sale_method = $i['sale_method'];
                 $item->cost_00 = $i['cost_00'];
                 $item->cost_01 = $i['cost_01'];
                 $item->cost_02 = $i['cost_02'];
@@ -196,19 +198,19 @@ class shippingMan
     
     
     //make an array
-    public function setItems($dbid,$containerId,$serial_no,$container_size,$container_Num,$container_weight,$container_capacity,$remark,$deleted,$cost_00,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09)
+    public function setItems($dbid,$containerId,$serial_no,$container_size,$container_Num,$container_weight,$container_capacity,$remark,$deleted,$sale_method,$cost_00,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09)
     {
          $this->items[] = [
                 'dbid' => $dbid,
 	        'containerId' => $containerId,
                 'serial_no' => $serial_no,
                 'container_size' => $container_size,
-              //  'container_receiveDate' => $container_receiveDate,
                 'container_Num' => $container_Num,
                 'container_weight' => $container_weight,
                 'container_capacity' => $container_capacity,
                 'remark' => $remark,
                 'deleted' => $deleted,
+                'sale_method'=>$sale_method,
                 'cost_00' => $cost_00,
                 'cost_01' => $cost_01,
                 'cost_02' => $cost_02,

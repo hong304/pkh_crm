@@ -51,7 +51,7 @@ class shippingController extends BaseController {
                 Shippingitem::whereNotIn('id', $itemIds)->where('shippingId', $shipment['shippingId'])->delete();
             //If there is no shippingId, not only the records deleted in ui but also records in db will be deleted.
         }
-
+        //pd($shipItem);
         foreach ($shipItem as $k) {
             if($k['deleted'] == 0)
             {    
@@ -67,7 +67,7 @@ class shippingController extends BaseController {
                  $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
                  
                  
-                 $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['receiveDate'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'],$cost_00,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09);
+                 $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'],$k['sale_method'],$cost_00,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09);
             }// clear the deleted record      
         }
 
@@ -228,10 +228,10 @@ class shippingController extends BaseController {
                     foreach ($v->shippingitem as $k => $v) {
                         if (isset($v->container_receiveDate)) {
                             $store++;
-                            if($v->sale_method == "wholeSale")
+                            if($v->sale_method == "1")
                             {
                                 $wholestore++;
-                            }else if($v->sale_method == "trade")
+                            }else if($v->sale_method == "2")
                             {
                                 $tradestore++;
                             }
@@ -414,7 +414,7 @@ class shippingController extends BaseController {
     public function jsonSearchSupplier()
     {
         $supplier = Input::get('filterAll');
-        $querySupplier = Supplier :: where('supplierCode', 'LIKE', '%' . $supplier . '%')->where('location',2)->with('country')->get();
+        $querySupplier = Supplier :: where('supplierCode', 'LIKE', '%' . $supplier['supplierCode'] . '%')->where('location',2)->with('country')->get();
         return Response::json($querySupplier);
     }
     

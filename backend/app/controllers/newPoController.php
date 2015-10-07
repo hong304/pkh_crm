@@ -17,7 +17,6 @@ class newPoController extends BaseController {
         $poCode = $order['poCode'];
         $this->po = new PurchaseorderManipulation($poCode);
         $this->po->setInvoice($order);
-     //   pd($order);
           $have_item=false;    //fOR UPDATE
           foreach ($product as $p) {
           if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty']>0) 

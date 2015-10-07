@@ -7,7 +7,6 @@ class SupplierController extends BaseController
     public function jsonQuerySupplier()
     {
         $mode = Input::get('mode');
-        
         if ($mode == 'collection') {
             $filter = Input::get('filterData');
             $filterId = "supplierCode";
@@ -30,7 +29,9 @@ class SupplierController extends BaseController
                 $joins->on('currencies.currencyId', '=','suppliers.currencyId');  
             })
             ->Orderby($filterId,$filterOrder);
-   
+            
+            if(isset($filter['findOverseas']))
+                $supplier->where('location',2);
            
             if ($filter['status'] == 99) {
                 $supplier->onlyTrashed();
@@ -57,16 +58,22 @@ class SupplierController extends BaseController
                     
             });
             
-            if(isset($filter['access']))
+            if(isset($filter['access']) && (isset($filter['countryName'])))
             {
                   $supplier->where(function ($query) use ($filter) {
                  $query->where('countryName', 'LIKE', '%' .$filter['countryName'] . '%');
              });
-            }else
+            }else if(isset($filter['findOverseas']) && (isset($filter['countryName']['countryName'])))
             {
-                  $supplier->where(function ($query) use ($filter) {
-                 $query->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
+             $supplier->where(function ($query) use ($filter) {
+                 $query->where('countryName', 'LIKE', '%' .$filter['countryName']['countryName'] . '%');
              });
+            }
+            else if(isset($filter['country']))
+            {
+                 $supplier->where(function ($query) use ($filter) {
+                    $query->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
+                 });
             }
            
              

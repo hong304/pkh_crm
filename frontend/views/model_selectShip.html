@@ -16,10 +16,10 @@
 
                                 <div class="col-md-2">
                                     <select class="form-control"
-                                            ng-model="keyword.country"
+                                            ng-model="keyword.countryName"
                                             data-ng-options="c.countryName for c in countryData track by c.countryId"
                                             data-ng-change="searchSupplier();">
-                                        <option value=''>檢視全部</option>
+                                        <option value='' selected="selected">檢視全部</option>
                                         <option value=''>NA</option>
                                     </select>
                                 </div>
@@ -28,7 +28,7 @@
 								<div class="col-md-4">
 									<div class="input-icon right">
 										<i class="icon-exclamation-sign"></i> 
-										<input autocomplete="off" ng-model="supplier.supplierCode" debounce="500" immediate="true"  id="keywordId"
+										<input autocomplete="off" ng-model="keyword.id" debounce="500" immediate="true"  id="keywordId"
 										type="text" placeholder="海外供應商編號" class="form-control" ng-change="searchSupplier(supplier.supplierCode)"
 										/>
                                                                         </div>
@@ -75,10 +75,10 @@
                                         </tr>
                                         </tbody>
                                         <tbody>
-                                          <tr data-ng-repeat="supplier in pullAll" ng-click="selectSupplier(supplier)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
-                                            <td>{{supplier.supplierCode}}</td>
-                                            <td>{{supplier.supplierName}} ({{supplier.phone_1}}) <span data-ng-if="supplier.status == 1">(正常)</span><span data-ng-if="supplier.status == 2">(暫停)</span></td>
-                                            <td>{{supplier.country[0].countryName}}</td>
+                                          <tr data-ng-repeat="sup in pullAll" ng-click="selectSupplier(sup)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
+                                            <td>{{sup.supplierCode}}</td>
+                                            <td>{{sup.supplierName}} ({{sup.phone_1}}) <span data-ng-if="sup.status == 1">(正常)</span><span data-ng-if="sup.status == 2">(暫停)</span></td>
+                                            <td>{{sup.countryName}}</td>
                                           </tr>
                                         </tbody>
                                     </table>

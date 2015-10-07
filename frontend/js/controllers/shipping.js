@@ -115,7 +115,8 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         deleted 	                :     0,
         remark:'',
         receiveDate:'',
-        cost : ''
+        cost : '',
+        sale_method:'',
 
 
     };
@@ -312,6 +313,10 @@ $scope.an = false;
                         $scope.product[j]['feight_currency'] = item.feight_currency;
 			$scope.product[j]['feight_amount'] = item.feight_amount;
                         $scope.product[j]['remark'] = item.remark;
+                        $scope.product[j]['sale_method'] = item.sale_method;
+                      //  $scope.product[j].cost['cost_0 = item.cost_00;
+                        //$scope.product[j].cost.cost_00 =  item.cost_00;
+                      //  $scope.product[j].cost.cost_01 =  item.cost_01;
                         
                         if(typeof $scope.product[j+1] == 'undefined')
                         {
@@ -414,7 +419,6 @@ $scope.an = false;
     {
         var generalError = false;
         
-        console.log($scope.product);
 
         $scope.timer.submit = Date.now();
 
@@ -426,7 +430,6 @@ $scope.an = false;
 
         $scope.allowSubmission = false;
 
-        console.log($scope.product);
         if(!$scope.shipping.poCode || !$scope.shipping.supplierCode || !$scope.shipping.departure_date || !$scope.shipping.etaDate)
         {
             Metronic.alert({
@@ -452,7 +455,7 @@ $scope.an = false;
                   //  timer	:	$scope.timer,
                 }).
                 success(function(res, status, headers, config) {
-                   
+                   console.log(res);
                     if(res.result == true)
                     {
                         $scope.an=false;
@@ -530,17 +533,6 @@ $scope.an = false;
 
     $scope.deleteRow = function(i)
     {
-
-       /*for(var key = i; key<=$scope.itemlist.length; key++)
-         {
-
-         $scope.product[key] = $.extend(true, {}, $scope.product[key+1]);
-         $scope.productCode[key] = $scope.productCode[key+1];
-
-         }
-
-         $scope.product[$scope.itemlist.length] = $.extend(true, {}, $scope.productStructure);
-         $scope.productCode[$scope.itemlist.length] = '';*/
         
         $scope.product[i].deleted = 1;
        
@@ -568,7 +560,13 @@ $scope.an = false;
         $scope.containerCost.containerId = $scope.product[i]['containerId'];
         $scope.containerCost.receiveDate = $scope.product[i]['receiveDate'];
         $scope.containerCost.container_size = $scope.product[i]['container_size'];
-        $scope.containerCost.sale_method = $scope.product[i]['sale_method'];
+        if($scope.product[i]['sale_method'] == 1)
+        {
+            $scope.containerCost.sale_method = "入倉";
+        }else 
+        {
+            $scope.containerCost.sale_method = "貿易部";
+        }
 
        // for (var j = 1; j < 11; j++) {
        //     if(typeof $scope.shippingCost[j] == 'undefined')
@@ -602,7 +600,6 @@ $scope.an = false;
     
     $scope.saveCost = function(r)
     {
-        console.log($scope.product[$scope.editable_rowcost].cost);
         $("#costDetails").modal('hide');
         $scope.product[$scope.editable_rowcost].cost = $scope.shippingCost;
         $scope.product[$scope.editable_rowcost].cost.cost_00 =  $scope.shippingCost.cost_00;
@@ -620,11 +617,29 @@ $scope.an = false;
 
     }
     
-    $scope.costNum = function(v,i) {
+    $scope.costNum = function() {
         var total = 0;
-        var product = $scope.product[$scope.editable_rowcost];
-        console.log(product);
-        total = product.cost_01 + product.cost_02 + product.cost_03 + product.cost_04 + product.cost_05 + product.cost_06 + product.cost_07 + product.cost_08 + product.cost_09 + product.cost_10;
+        var shippingCost = $scope.shippingCost;
+        if(!isNaN(shippingCost.cost_00))
+            total += shippingCost.cost_00;
+        if(!isNaN(shippingCost.cost_01))
+            total += shippingCost.cost_01;
+        if(!isNaN(shippingCost.cost_02))
+            total += shippingCost.cost_02;
+        if(!isNaN(shippingCost.cost_03))
+            total += shippingCost.cost_03;
+        if(!isNaN(shippingCost.cost_04))
+            total += shippingCost.cost_04;
+        if(!isNaN(shippingCost.cost_05))
+            total += shippingCost.cost_05;
+        if(!isNaN(shippingCost.cost_06))
+            total += shippingCost.cost_06;
+        if(!isNaN(shippingCost.cost_07))
+            total += shippingCost.cost_07;
+        if(!isNaN(shippingCost.cost_08))
+            total += shippingCost.cost_08;
+        if(!isNaN(shippingCost.cost_09))
+            total += shippingCost.cost_09;
         $scope.totalCost = total; 
     };
         

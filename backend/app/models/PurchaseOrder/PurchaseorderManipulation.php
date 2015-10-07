@@ -42,6 +42,7 @@ class PurchaseorderManipulation
          //   $num = preg_replace($pattern,'',$poId);
             $realNum = (int)$poId + 1;
          //   $this->newPoCode =  "P".str_pad($realNum, 5, "0", STR_PAD_LEFT); 
+     
             $this->newPoCode = $realNum;
         }
         return $this->newPoCode;
@@ -175,8 +176,10 @@ class PurchaseorderManipulation
 	        $this->po->poReference = $this->temp_invoice_information['poReference'];
 	        $this->po->poDate = $this->temp_invoice_information['poDate'];
                 $this->po->etaDate = $this->temp_invoice_information['etaDate'];
-                $this->po->actualDate = $this->temp_invoice_information['actualDate'];
-                $this->po->receiveDate = $this->temp_invoice_information['receiveDate'];
+                if(isset($this->temp_invoice_information['actualDate']))
+                    $this->po->actualDate = $this->temp_invoice_information['actualDate'];
+                if(isset($this->temp_invoice_information['receiveDate']))
+                     $this->po->receiveDate = $this->temp_invoice_information['receiveDate'] ;
                 $this->po->supplierCode = $this->temp_invoice_information['supplierCode'];
 	        $this->po->currencyId = $this->temp_invoice_information['currencyId'];
                 $this->po->poAmount = $this->temp_invoice_information['totalAmount'];
