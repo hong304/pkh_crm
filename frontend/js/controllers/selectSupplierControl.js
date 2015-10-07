@@ -160,11 +160,12 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
         'current_sorting' : 'asc',
         'status': '1',
         'countryName' : '',
+        'access':'',
 	};
     
    $scope.searchClient = function(keyword)
     {   
-        
+        $scope.access = "search";
     	$timeout.cancel(fetchDataTimer);
     	fetchDataTimer = $timeout(function () {
 	    	if(keyword != "")
@@ -182,6 +183,7 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
                 {
                     $scope.keyword.countryName = "";
                 }
+                 console.log($scope.keyword);
 	    	$http(
 	    			{
 			    		method	:	"POST",
@@ -205,5 +207,6 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
 	        });
     	}, fetchDataDelay);
     }
+    
 	
 });

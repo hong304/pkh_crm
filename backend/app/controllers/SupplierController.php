@@ -53,9 +53,24 @@ class SupplierController extends BaseController
                         $query->orwhere('contactPerson_1', 'LIKE', '%' . $filter['contact'] . '%')
                                ->orwhere('contactPerson_2', 'LIKE', '%' . $filter['contact'] . '%');
                      })
-                    ->where('supplierCode', 'LIKE', '%' . $filter['id'] . '%')
-		    ->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
+                    ->where('supplierCode', 'LIKE', '%' . $filter['id'] . '%');
+                    
             });
+            
+            if(isset($filter['access']))
+            {
+                  $supplier->where(function ($query) use ($filter) {
+                 $query->where('countryName', 'LIKE', '%' .$filter['countryName'] . '%');
+             });
+            }else
+            {
+                  $supplier->where(function ($query) use ($filter) {
+                 $query->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
+             });
+            }
+           
+             
+              
             
 
       //  ,'email','countries.countryName','currencies.currencyName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by')
@@ -80,6 +95,7 @@ class SupplierController extends BaseController
        // $store['data'] = $supplier;
         return Response::json($supplier);
     }
+    
     
     
     public function jsonCheckSupplier()
