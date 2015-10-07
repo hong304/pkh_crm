@@ -112,10 +112,11 @@ if(!$empty){
                             'customerRef' => $invoice->customerRef,
                             'invoiceAmount' => ($invoice->invoiceStatus == '98')? 0:$invoice->amount ,
                             'paid' =>($invoice->invoiceStatus == '98')? $invoice->amount: $invoice->paid,
-                            'accumulator' => $this->_acc[$customerId] += (($invoice->invoiceStatus == '98')? -$invoice->amount:$invoice->amount-$invoice->paid-$invoice->discount_taken)
+                            'accumulator' => $this->_acc[$customerId] += (($invoice->invoiceStatus == '98')? -$invoice->amount:$invoice->amount-($invoice->paid+$invoice->discount_taken)),
                         ];
                 }
             }
+
 
         $this->data = $this->_unPaid;
 
