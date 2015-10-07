@@ -347,7 +347,7 @@ if(!$empty){
                     if(!isset($this->_monthly[$i]['byCustomer'][$customerId]))
                         $this->_monthly[$i]['byCustomer'][$customerId] = 0;
 
-                    $this->_monthly[$i]['byCustomer'][$customerId] += ($invoice->realAmount - $invoice->paid-$invoice->discount_taken);
+                    $this->_monthly[$i]['byCustomer'][$customerId] += ($invoice->realAmount - ($invoice->paid+$invoice->discount_taken));
 
                 }
 
@@ -583,7 +583,7 @@ if(!$empty){
                     {
                         $customerId = $invoice->customerId;
                         $this->_monthly[$i][$customerId][]= [
-                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-$invoice->paid-$invoice->discount_taken
+                            'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount-($invoice->paid+$invoice->discount_taken)
                         ];
                     }
                 }
