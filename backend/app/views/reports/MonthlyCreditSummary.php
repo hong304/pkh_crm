@@ -21,14 +21,14 @@
                         <?php echo $b['invoice']; ?>
                     </td>
                     <td>
-                        HK$<?php echo number_format($b['invoiceAmount']); ?>
+                        HK$<?php echo number_format($b['invoiceAmount'],2,'.',','); ?>
                     </td>
                     <td>
-                        HK$<?php echo number_format($b['paid']); ?>
+                        HK$<?php echo number_format($b['paid'],2,'.',','); ?>
                     </td>
 
                     <td>
-                        HK$<?php echo number_format($b['accumulator']); ?> 
+                        HK$<?php echo number_format($b['accumulator'],2,'.',',');?>
                     </td>
                 </tr>  
             <?php endforeach; ?> 
