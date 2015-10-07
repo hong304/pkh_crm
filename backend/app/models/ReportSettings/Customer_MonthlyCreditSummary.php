@@ -90,7 +90,7 @@ if(!$empty){
                     $this->_acc[$invoice->customerId] = 0;
 
                 if($invoice->deliveryDate < $this->_date1){
-                    $this->_acc[$invoice->customerId] += $invoice->realAmount-$invoice->paid;
+                    $this->_acc[$invoice->customerId] += $invoice->realAmount-($invoice->paid+$invoice->discount_taken);
                 }elseif($invoice->deliveryDate >= $this->_date1){
 
                     $customerId = $invoice->customerId;
