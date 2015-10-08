@@ -281,8 +281,8 @@ var fetchDataTimer = '';
     $scope.autoPost = function(){
 
         var cheque_no = $scope.filterData.no;
-        if(cheque_no.length != 6){
-            alert('支票號碼只接受6位數字');
+        if(cheque_no.length < 6){
+            alert('支票號碼只接受6位數字或以上');
             return false;
         }
 

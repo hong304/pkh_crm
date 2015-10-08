@@ -40,7 +40,13 @@ class PaymentController extends BaseController
         $set_amount = 0;
 
         foreach ($paid as $k => $v) {
+
+
             $i = Invoice::where('invoiceId', $v['id'])->first();
+
+            if($i->invoiceStatus == 98)
+                $v['settle'] = $v['settle']*-1;
+
             $i->paid += $v['settle'];
             $set_amount += $v['settle'];
 

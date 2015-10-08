@@ -80,9 +80,11 @@ if(!$empty){
         });
         }
 
-    $invoices = $invoices->where('paymentTerms',2)->where('amount','!=','paid')->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
+    $invoices = $invoices->where('paymentTerms',2)->where('amount','!=',DB::raw('paid'))->where('manual_complete',false)->OrderBy('invoice.customerId','asc')->orderBy('deliveryDate')->get();
 
-
+   // $queries = DB::getQueryLog();
+  //  $last_query = end($queries);
+  //  pd($queries);
 
             foreach($invoices as $invoice)
             {
