@@ -32,11 +32,11 @@ if (isset($createweek)) {
     {
         if($weekdayK !== "last_last_week")
         {
-            echo "<td class = 'dateFormat' style='text-align:center'>".formatDate($weekdayV[1])." 至 ".formatDate($weekdayV[0])."<br/>(".$translate[$weekdayK].")</td>";
+            echo "<td class = 'dateFormat' style='text-align:center'>".formatDate($weekdayV[1])." 至 ".formatDate($weekdayV[0])."</td>";
         }
         else
         {
-             echo "<td class = 'dateFormat' style='text-align:center'><".formatDate($weekdayV[0])."<br/>(".$translate[$weekdayK].")</td>";
+             echo "<td class = 'dateFormat' style='text-align:center'><".formatDate($weekdayV[0])."或之前</td>";
         }
     }
     echo "</tr>";
@@ -46,19 +46,38 @@ if (isset($createweek)) {
 <tr>
     <?php
         echo "<td>AAD</td>";
-        foreach($outputAad as $key=>$value)
+        if(isset($outputAad))
         {
-            echo "<td style='text-align:center'>".$value,"</td>";
+            foreach($outputAad as $key=>$value)
+            {
+                echo "<td style='text-align:center'>".$value,"</td>";
+            }
+        }else
+        {
+            for($i = 0;$i<4;$i++)
+            {
+                echo "<td style='text-align:center'>0</td>";
+            }
         }
     ?>
 </tr>
 <tr>
     <?php
         echo "<td>ETA</td>";
-        foreach($eta as $k=>$v)
+        if(isset($eta))
         {
-            echo "<td style='text-align:center'>".$v."</td>";
+            foreach($eta as $k=>$v)
+            {
+                echo "<td style='text-align:center'>".$v."</td>";
+            }
+        }else
+        {
+            for($i = 0;$i<4;$i++)
+            {
+                echo "<td style='text-align:center'>0</td>";
+            }
         }
+       
     ?>
 </tr>
 </table>

@@ -191,7 +191,6 @@ class shippingController extends BaseController {
         }*/
 
         foreach ($sfsp as $key => $value) {
-  
             $fspValue = $value['fsp'];
             $dateAdd = strtotime($value['actualDate']);
             for ($h = 0; $h < $fspValue; $h++) {
@@ -201,7 +200,7 @@ class shippingController extends BaseController {
                 $daterange[$value['shippingId']][$h] = date('Y-m-d', $dateAdd);
             }
         }
-      
+       
 
 
         while ($date1 <= $sDate) {
@@ -228,10 +227,10 @@ class shippingController extends BaseController {
                     foreach ($v->shippingitem as $k => $v) {
                         if (isset($v->container_receiveDate)) {
                             $store++;
-                            if($v->sale_method == "1")
+                            if($v->sale_method == 1)
                             {
                                 $wholestore++;
-                            }else if($v->sale_method == "2")
+                            }else if($v->sale_method == 2)
                             {
                                 $tradestore++;
                             }
@@ -270,12 +269,15 @@ class shippingController extends BaseController {
             $this->data = $sarr;
             return View::make('shippingTable')->with(['data' => $this->data, 'date' => $date, 'other' => $other, 'daterange' => $daterange])->render();
         } else {
-            return View::make('shippingTable')->with(['date' => $date, 'daterange' => $daterange])->render();
+            return View::make('shippingTable')->with(['date' => $date])->render();
         }
     }
     
     public function outputShipNote()
     {
+        $aad = "";
+        $outputAad ="";
+        $outputEta ="";
         $today = strtotime(date("Y/m/d"));
         $weekArray = $this->createWeek($today);
         foreach($weekArray as $k=>$v)
@@ -304,6 +306,10 @@ class shippingController extends BaseController {
             $count = 0;
             if(count($value) > 0)
             {
+                $outputAad[$key] = count($value);
+            
+            /* if(count($value) > 0)
+            {
                 for($p = 0;$p<count($value);$p++) //level of shiipingId
                 {
                     $countCargo = 1;
@@ -326,7 +332,10 @@ class shippingController extends BaseController {
                         
                         $weekCount = 0;
                         $aadCount = $aad[$key];
-                        if(isset($countReceive[$key]))
+                   
+                        $weekCount = count($aadCount);
+                        $outputAad[$key] = $weekCount;
+                       if(isset($countReceive[$key]))
                         {
                         $countReceiveCount = $countReceive[$key];
                         } 
@@ -339,17 +348,16 @@ class shippingController extends BaseController {
                             {
                                 $outputAad[$key] = 0;
                             }
-                        }
+                        }*/
                     }else
                     {
                         $outputAad[$key] = 0;
                     }
-                    
-              
-          
+
         }
-     
-       return View::make('shippingNote')->with(['shipTableNote' => $countReceive ,'shipTable' =>$aad,'outputAad'=>$outputAad,'eta'=>$outputEta,'createweek'=>$weekArray])->render();
+            if(isset($aad))
+                return View::make('shippingNote')->with(['shipTable' =>$aad,'outputAad'=>$outputAad,'eta'=>$outputEta,'createweek'=>$weekArray])->render();
+                
     }
     
     public function createWeek($startDate)
