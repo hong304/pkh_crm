@@ -201,7 +201,8 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 
   
              paymentChange();
-              $("#format_date").html(res.format_date.date);
+             $scope.customDate = res.format_date.date.split(" ")[0];
+             // $("#format_date").html(res.format_date.date);
          
     	});
     	

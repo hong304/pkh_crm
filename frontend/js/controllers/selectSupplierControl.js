@@ -165,7 +165,8 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     
    $scope.searchClient = function(keyword)
     {   
-        $scope.access = "search";
+        $scope.keyword.access = "search";
+        console.log($scope.keyword);
     	$timeout.cancel(fetchDataTimer);
     	fetchDataTimer = $timeout(function () {
 	    	if(keyword != "")

@@ -58,10 +58,11 @@ class SupplierController extends BaseController
                     
             });
             
-            if(isset($filter['access']) && (isset($filter['countryName'])))
+           
+            if(isset($filter['access']) && (isset($filter['countryName']['countryName'])))
             {
                   $supplier->where(function ($query) use ($filter) {
-                 $query->where('countryName', 'LIKE', '%' .$filter['countryName'] . '%');
+                 $query->where('countryName', 'LIKE', '%' .$filter['countryName']['countryName'] . '%');
              });
             }else if(isset($filter['findOverseas']) && (isset($filter['countryName']['countryName'])))
             {

@@ -299,6 +299,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         }
 
     }
+    
 
 
     $scope.updateDataSet = function () {
@@ -313,7 +314,6 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 $scope.firstload = false;
             }
 
-
             $('#datatable_ajax').dataTable({
                 // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
 
@@ -327,6 +327,9 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 },
                 "iDisplayLength": 50,
                 "pagingType": "full_numbers",
+                "fnDrawCallback" : function() {
+                   window.alert = function() {};
+                },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",
@@ -356,7 +359,8 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 ]
 
             });
-
+            
+           
         });
     };
 

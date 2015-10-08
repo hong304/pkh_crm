@@ -5,9 +5,9 @@ Metronic.unblockUI();
 app.controller('selectShipControl', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
 
    $scope.$on('$viewContentLoaded', function() {
-    
-    Metronic.initAjax();
+        Metronic.initAjax();
    });
+   
    laodCountry();
     $scope.supplier = 
     {
