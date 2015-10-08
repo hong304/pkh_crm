@@ -5,7 +5,7 @@
     }
 </style>
 
-<form class="form-horizontal" role="form" id="queryInfo" data-ng-init="checkParm();updateDataSet();">
+<form class="form-horizontal" role="form" id="queryInfo" data-ng-init="checkParm();">
 
     <div class="col-md-2">
 		<!-- Client -->
@@ -16,7 +16,7 @@
 					<span class="caption-subject font-green-sharp bold uppercase">供應商</span>
 				</div>
 				<div class="actions">
-					<a href="javascript:;" ng-click="clearCustomerSearch();" class="btn btn-default btn-circle">
+					<a href="javascript:;" ng-click="clearShipSearch();" class="btn btn-default btn-circle">
 					<i class="fa fa-times"></i>
 					<span class="hidden-480"> 清除 </span> </a>
 				</div>
@@ -25,9 +25,9 @@
 			<div class="portlet-body">
 				<div class="md-col-12" style="margin-bottom:15px;">
 					<div class="input-group">
-						<input id="client" class="form-control" type="text" disabled name="client" placeholder="選擇供應商" data-ng-model="keyword.supplierCode")/>
+						<input id="shipSupplier" class="form-control" type="text" disabled name="shipSupplier" placeholder="選擇供應商" data-ng-model="keywordship.supplierCode"/>
 						<span class="input-group-btn">
-							<a href="#" data-target="#selectclientmodel" data-toggle="modal"  id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
+                                                    <a href="#" data-target="#selectSuppliermodel" data-toggle="modal"  id="selectSupplier" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
 						</span>
 					</div>
 				</div>
@@ -45,7 +45,7 @@
 			
 			<div class="portlet-body">				
 				<div class="md-col-12" style="margin-bottom:15px;">
-					<input type="text" id="poCode" ng-model="keyword.shippingId" ng-change="updateStatus();" class="form-control" placeholder="Enter code here">
+					<input type="text" id="poCode" ng-model="keywordship.shippingId" ng-change="updateStatus();" class="form-control" placeholder="">
 				</div>
 			</div>
 		</div>
@@ -65,10 +65,10 @@
 
 
 					<div  class="radio-list"> 
-						<label><input ng-model="keyword.status" ng-change="updateRadio();" type="radio" name="status" id="status0" ng-value="0"> 全部</label>
-						<label><input ng-model="keyword.status" ng-change="updateRadio();" type="radio" name="status" id="status1" ng-value="1" value="1"> 正常</label>
-                                                <label><input ng-model="keyword.status" ng-change="updateRadio();" type="radio" name="status" id="status30" ng-value="30" value="30"> 已完成 </label>
-						<label><input ng-model="keyword.status" ng-change="updateRadio();" type="radio" name="status" id="status99" ng-value="99" value="99"> 已刪除 </label>
+						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status0" ng-value="0"> 全部</label>
+						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status1" ng-value="1" value="1"> 正常</label>
+                                                <label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status30" ng-value="30" value="30"> 已完成 </label>
+						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status99" ng-value="99" value="99"> 已刪除 </label>
 					</div>
 
 				</div>

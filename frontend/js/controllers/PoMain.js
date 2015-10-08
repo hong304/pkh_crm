@@ -300,14 +300,7 @@ $scope.an = false;
         if(!$location.search().poCode)
         {
             $timeout(function(){
-                $('#selectclientmodel').modal('show');
-
-                $('#selectclientmodel').on('shown.bs.modal', function () {
-                    $('#keyword').focus();
-                })
-
-
-                //$('#selectclientmodel').modal({backdrop: 'static'});
+                $('#selectSuppliermodel').modal('show');
             }, 1000);
             
          $scope.$on('handleSupplierUpdate', function(){
@@ -511,8 +504,8 @@ $scope.an = false;
         
         else 
         {
-            $('#selectclientmodel').modal('show');
-            $('#selectclientmodel').on('shown.bs.modal', function () {
+            $('#selectSuppliermodel').modal('show');
+            $('#selectSuppliermodel').on('shown.bs.modal', function () {
                 $('#keyword').focus();
             })
             $scope.loadProduct($location.search().poCode);
@@ -947,7 +940,6 @@ $scope.submitOrder(v);
                         }else{
                              $scope.poCodeAfter = res.poCode;
              
-                           //  $('#selectclientmodel').modal({backdrop: 'static'});
                               Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
                 place: 'prepend', // append or prepent in container

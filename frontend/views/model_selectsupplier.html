@@ -1,4 +1,4 @@
-<div class="modal fade bs-modal-lg" id="selectclientmodel" data-ng-init="searchClient('');" data-ng-controller="selectSupplierControl" tabindex="-1" role="dailog" aria-hidden="false">
+<div class="modal fade bs-modal-lg" id="selectSuppliermodel" data-ng-init="searchSupplier('');" data-ng-controller="selectSupplierControl" tabindex="-1" role="dailog" aria-hidden="false">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -22,7 +22,7 @@
                                     <select class="form-control"
                                             ng-model="keyword.countryName"
                                             data-ng-options="c.countryName for c in countryData track by c.countryId"
-                                            data-ng-change="searchClient(keyword);">
+                                            data-ng-change="searchSupplier(keyword);">
                                         <option value=''>檢視全部</option>
                                         <option value=''>NA</option>
                                     </select>
@@ -33,7 +33,7 @@
 									<div class="input-icon right">
 										<i class="icon-exclamation-sign"></i> 
 										<input autocomplete="off" ng-model="keyword.id" debounce="500" immediate="true"  id="keywordId"
-										type="text" placeholder="供應商編號" class="form-control" ng-change="searchClient(keyword)"
+										type="text" placeholder="供應商編號" class="form-control" ng-change="searchSupplier(keyword)"
 										/>
                          			</div>
 								</div>
@@ -43,7 +43,7 @@
                                     <div class="input-icon right">
                                         <i class="icon-exclamation-sign"></i>
                                         <input autocomplete="off" ng-model="keyword.name" debounce="500" immediate="true"  id="keyword"
-                                               type="text" placeholder="名稱 " class="form-control" ng-change="searchClient(keyword)"
+                                               type="text" placeholder="名稱 " class="form-control" ng-change="searchSupplier(keyword)"
                                                 />
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@
                                     <div class="input-icon right">
                                         <i class="icon-exclamation-sign"></i>
                                         <input autocomplete="off" ng-model="keyword.phone" debounce="500" immediate="true"  id="keyword"
-                                               type="text" placeholder="電話號碼" class="form-control" ng-change="searchClient(keyword)"
+                                               type="text" placeholder="電話號碼" class="form-control" ng-change="searchSupplier(keyword)"
                                                 />
                                     </div>
                                 </div>

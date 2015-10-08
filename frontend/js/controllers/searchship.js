@@ -14,7 +14,7 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
     $scope.firstload = true;
     $scope.autoreload = false;
     
-    $scope.keyword = {
+    $scope.keywordship = {
         supplierName:'',
         supplier:'',
         shippingId:'',
@@ -22,7 +22,6 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
         etaDate:'',  
         sorting: '',
         current_sorting: 'desc',
-        
     };
     
     $scope.shipInfo = {
@@ -64,11 +63,14 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
                 "ajax": {
                     "url": queryShip, // ajax source
                     "type": 'POST',
-                    "data": {mode: "collection", filterData: $scope.keyword},
+                    "data": {mode: "collection", filterData: $scope.keywordship},
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 50,
                 "pagingType": "full_numbers",
+                "fnDrawCallback" : function() {
+                   window.alert = function() {};
+                },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",
@@ -103,42 +105,42 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
     
     if($location.search().orderTime)
     {
-        $scope.keyword.sorting = "shippings.updated_at";
+        $scope.keywordship.sorting = "shippings.updated_at";
         $scope.updateDataSet();
     }
     
-      $scope.click = function (event)
+    $scope.click = function (event)
     {
 
-        $scope.keyword.sorting = event.target.id;
+        $scope.keywordship.sorting = event.target.id;
 
-        if ($scope.keyword.current_sorting == 'asc') {
-            $scope.keyword.current_sorting = 'desc';
+        if ($scope.keywordship.current_sorting == 'asc') {
+            $scope.keywordship.current_sorting = 'desc';
         } else {
-            $scope.keyword.current_sorting = 'asc';
+            $scope.keywordship.current_sorting = 'asc';
         }
 
         $scope.updateDataSet();
     }
+   
     
-     $scope.updateStatus = function()
+    $scope.updateStatus = function()
     {
         $scope.updateDataSet();
     }
     
     $scope.updateRadio = function()
     {
-        if($scope.keyword.status == 0)
+        if($scope.keywordship.status == 0)
         {
-            $scope.keyword.status = '';
+            $scope.keywordship.status = '';
         }
-        console.log($scope.keyword.status);
          $scope.updateDataSet();
     }
     
     $scope.$on('handleSupplierUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
-        $scope.keyword.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
+        $scope.keywordship.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
           $scope.updateDataSet();
     });
 
@@ -161,33 +163,37 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
 	{
 		if($scope.shipping.status == 1)
 		{
-			 $http.post($scope.endpoint + "/deleteShip.json", {
-                shippingId: shippingId
-            }).success(function (data) {
-					$scope.updateDataSet();
-					$scope.shipping.status = 99;
-					alert("這個記錄被刪除");
-            });
+                    $http.post($scope.endpoint + "/deleteShip.json", {
+                        shippingId: shippingId
+                    }).success(function (data) {
+			$scope.updateDataSet();
+			$scope.shipping.status = 99;
+			alert("這個記錄被刪除");
+                    });
 		}else{
-			
 			alert("此記錄無法刪除");
 		}
-		
 	}
 	
 	$scope.goEdit = function (shippingId)
-    {
-        $(document).ready(function () {
-            if ($scope.shipping.status == 99)
-            {
-                alert("此記錄無法修改");
-
-            } else
-            {
-                 $location.url("/shipping?shippingId=" + shippingId);
-            }
-        });
-    }
+        {
+            $(document).ready(function () {
+                if ($scope.shipping.status == 99)
+                {
+                    alert("此記錄無法修改");
+                } else
+                {
+                     $location.url("/shipping?shippingId=" + shippingId);
+                }
+            });
+        }
+    
+        $scope.clearShipSearch = function()
+        {
+            $scope.keywordship.supplierName = "";
+            $scope.keywordship.supplier = "";
+            $scope.updateDataSet();
+        }
      
 
 });

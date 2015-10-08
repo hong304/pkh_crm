@@ -32,13 +32,12 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         bl_number:'',
         pol:'',
         pod:'',
-        container_numbers:'0',
-        fsp:'0',
+        container_numbers:0,
+        fsp:1,
         remark:'',
         status:1,
         feight_payment:'',
         supplierName:'',
-
     };
     
        $scope.containerCost = {
@@ -395,6 +394,7 @@ $scope.an = false;
     $scope.capital = function(i)
     {
         $scope.product[i]['serial_no'] = $scope.product[i]['serial_no'].toUpperCase();
+        $scope.product[i]['containerId'] = $scope.product[i]['containerId'].toUpperCase();
     }
 
 
@@ -462,7 +462,7 @@ $scope.an = false;
 
         $scope.allowSubmission = false;
 
-        if(!$scope.shipping.poCode || !$scope.shipping.supplierCode || !$scope.shipping.departure_date || !$scope.shipping.etaDate)
+        if(!$scope.shipping.poCode || !$scope.shipping.supplierCode || !$scope.shipping.departure_date || !$scope.shipping.etaDate || !$scope.shipping.fsp)
         {
             Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
@@ -540,6 +540,15 @@ $scope.an = false;
       
       }
 
+    }
+    
+    $scope.checkFsp = function(value)
+    {
+        console.log(value);
+        if(value <= 0 || isNaN(value))
+        {
+            $scope.shipping.fsp = 1;
+        }
     }
 
    

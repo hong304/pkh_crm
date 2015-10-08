@@ -148,6 +148,9 @@ app.controller('countryController', function($scope, $rootScope, $http, SharedSe
                 },
                 "iDisplayLength": 25,
                 "pagingType": "full_numbers",
+                "fnDrawCallback" : function() {
+                   window.alert = function() {};
+                 },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",

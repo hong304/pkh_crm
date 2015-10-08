@@ -153,13 +153,13 @@
                                     </div>
                                 </div>
 
-                                   <div class="col-md-3" >
+                                <div class="col-md-3" >
                                     <div class="form-group">
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             免倉期(天)
                                         </label>
                                           <div class="col-md-6">                                
-                                               <input type="text" class="form-control ng-pristine ng-valid"  ng-model="shipping.fsp" >                                     
+                                               <input type="text" class="form-control ng-pristine ng-valid"  ng-model="shipping.fsp" ng-change="checkFsp(shipping.fsp)">                                     
                                         </div>
                                     </div>
                                 </div>
@@ -327,7 +327,7 @@
                                     <td style="line-height:35px;font-size:15px;">{{i}}</td>
                                     <td>
                                         <div class="input-group">
-                                            <input id="containerId_{{i}}" onClick="this.select();"  name="containerId_{{i}}" class="form-control productCodeField"  ng-model="product[i]['containerId']" type="text" placeholder=""/>
+                                            <input id="containerId_{{i}}" onClick="this.select();"  name="containerId_{{i}}" class="form-control productCodeField"  ng-model="product[i]['containerId']" type="text" placeholder="" ng-change="capital(i)"/>
                                             <!--<span class="input-group-btn">
                                                 <a href="#" data-ng-click="selectProduct(i);" id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 選擇</a>
                                             </span>-->

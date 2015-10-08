@@ -35,7 +35,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
     
  
 
-    $scope.keyword = {
+    $scope.keywordpo = {
         supplier: '',
         poCode: '',
         poStatus: '',
@@ -91,14 +91,14 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
      });
      $("#endPodate").datepicker( "setDate", year + '-' + month + '-' + day );
      
-        $scope.keyword.startPodate = yyear+'-'+ymonth+'-'+yday;
-        $scope.keyword.endPodate = year+'-'+month+'-'+day;
+        $scope.keywordpo.startPodate = yyear+'-'+ymonth+'-'+yday;
+        $scope.keywordpo.endPodate = year+'-'+month+'-'+day;
 
         if($location.search().poDate  !== undefined)
         {
-            $scope.keyword.endPodate = $location.search().poDate;
-            $scope.keyword.startPodate = $location.search().poDate;
-            $scope.keyword.sorting = "purchaseorders.updated_at";  
+            $scope.keywordpo.endPodate = $location.search().poDate;
+            $scope.keywordpo.startPodate = $location.search().poDate;
+            $scope.keywordpo.sorting = "purchaseorders.updated_at";  
         }
      
      $scope.$watch(function() {
@@ -214,9 +214,9 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
      */
     $scope.updateStatus = function()
     {
-        if($scope.keyword.poStatus == 0)
+        if($scope.keywordpo.poStatus == 0)
         {
-             $scope.keyword.poStatus = '';
+             $scope.keywordpo.poStatus = '';
         }
         $scope.updateDataSet();
     }
@@ -322,7 +322,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 "ajax": {
                     "url": queryPo, // ajax source
                     "type": 'POST',
-                    "data": {mode: "collection", filterData: $scope.keyword},
+                    "data": {mode: "collection", filterData: $scope.keywordpo},
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 50,
@@ -369,7 +369,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
     $scope.$on('handleSupplierUpdate', function () {
         // received client selection broadcast. update to the invoice portlet
         $scope.an = true;
-        $scope.keyword.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
+        $scope.keywordpo.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
   
         $scope.updateDataSet();
     });
@@ -377,12 +377,12 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
     $scope.click = function (event)
     {
 
-        $scope.keyword.sorting = event.target.id;
+        $scope.keywordpo.sorting = event.target.id;
 
-        if ($scope.keyword.current_sorting == 'asc') {
-            $scope.keyword.current_sorting = 'desc';
+        if ($scope.keywordpo.current_sorting == 'asc') {
+            $scope.keywordpo.current_sorting = 'desc';
         } else {
-            $scope.keyword.current_sorting = 'asc';
+            $scope.keywordpo.current_sorting = 'asc';
         }
 
         $scope.updateDataSet();
