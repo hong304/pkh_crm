@@ -53,7 +53,7 @@ class PaymentController extends BaseController
 
             if ($i->amount == $i->paid || $v['discount'] == 1) {
 
-                if($i->invoiceStatus == 2 || $i->invoiceStatus == 30)
+                if($i->invoiceStatus == 2 || $i->invoiceStatus == 20)
                     $i->invoiceStatus = 30;
 
                 $i->manual_complete = 1;

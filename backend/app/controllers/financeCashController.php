@@ -215,13 +215,22 @@ class financeCashController extends BaseController {
         foreach ($paid as $k=>$v){
             if($v['settle']>0){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
+                
+                if($i->invoiceStatus == 98)
+                    $v['settle'] = $v['settle']*-1;
+
                 $i->paid += $v['settle'];
                 $set_amount += $v['settle'];
 
 
 
                 if($i->amount == $i->paid || $v['discount'] == 1)
-                    $i->invoiceStatus = 30;
+
+                    if($i->invoiceStatus == 2 || $i->invoiceStatus == 20)
+                        $i->invoiceStatus = 30;
+
+                $i->manual_complete = 1;
+
                 $i->discount = $v['discount'];
                 if(isset($ij['discount']))
                     $i->discount = 1;
