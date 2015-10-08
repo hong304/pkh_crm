@@ -154,7 +154,7 @@ class financeCashController extends BaseController {
 
             $sum = 0;
 
-       $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
+       $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->whereIn('customerId',$customerId)->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid'))->where('manual_complete',false)->where('discount',0)->OrderBy('customerId','asc')->orderBy('deliveryDate')->get();
            // $discount = Customer::select('discount')->whereIn('customerId',$customerId)->first();
 
 
@@ -213,9 +213,9 @@ class financeCashController extends BaseController {
 
         $set_amount =0;
         foreach ($paid as $k=>$v){
-            if($v['settle']>0){
+            if($v['settle']!=0){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
-                
+
                 if($i->invoiceStatus == 98)
                     $v['settle'] = $v['settle']*-1;
 
