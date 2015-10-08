@@ -74,7 +74,7 @@ return [
     '99' => [
         'statusCode'            => '99',
         'descriptionEnglish'    => 'Deleted',
-        'descriptionChinese'    => '<span style="color:red">已刪除</span>',
+        'descriptionChinese'    => '已刪除',
         'explaination'          => 'This invoice has been voided (deleted). No further process is required. ',
         'triggered_by'          => 'Void Function',
     ],

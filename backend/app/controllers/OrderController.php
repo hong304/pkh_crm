@@ -394,6 +394,8 @@ class OrderController extends BaseController
                     return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
                 })->addColumn('id', function ($invoice) {
                     return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">' . $invoice->invoiceId . '</a>';
+                })->setRowClass(function ($invoice) {
+                    return $invoice->invoiceStatus == 99 ? 'del-row' : '';
                 })
                 ->make(true);
 
