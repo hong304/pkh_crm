@@ -203,15 +203,15 @@
             </li>
              -->
 				
-				<li class="menu-dropdown">
+				<li class="menu-dropdown" data-ng-if="systemInfo.permission.add_invoice == true">
 					<a href="/#/newOrder" ng-click="$state.go('newOrder', {}, {reload: true});"><i class="fa fa-plus"></i>增加訂單</a>
 				</li>
 				
-				<li class="menu-dropdown">
+				<li class="menu-dropdown" data-ng-if="systemInfo.permission.view_invoice == true">
 					<a href="/#/queryInvoice"><i class="fa fa-search"></i>搜尋訂單 </a>	
 				</li>
 
-                <li class="menu-dropdown">
+                <li class="menu-dropdown" data-ng-if="systemInfo.permission.view_invoice == true">
                     <a href="/#/queryProduct"><i class="fa fa-search"></i>銷售產品 </a>
                 </li>
 
@@ -234,7 +234,7 @@
 
 
 
-                <li class="menu-dropdown">
+                <li class="menu-dropdown" data-ng-if="systemInfo.permission.view_report == true">
                     <a href="/#/reportSelection" ><i class="fa fa-star-half-o"></i>報表系統</a>
                 </li>
 
