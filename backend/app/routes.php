@@ -166,6 +166,7 @@ Route::group(array('before' => 'auth'), function()
     Route::post('delPayment.json','financeCashController@delPayment');
     Route::any('getCashClearance.json','financeCashController@getClearance');
     Route::post('/addCashCheque.json','financeCashController@addCheque');
+    Route::post('addExpenses.json','expensesController@addExpenses');
 
 
     //Data analysis
