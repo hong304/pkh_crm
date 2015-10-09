@@ -27,7 +27,7 @@ class Invoice_CashReceiptSummary {
         $permittedZone = explode(',', Auth::user()->temp_zone);
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
-        $this->_date1 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
+       // $this->_date1 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
         $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift']['value'] : '-1');
         // check if user has clearance to view this zone        
@@ -269,8 +269,8 @@ class Invoice_CashReceiptSummary {
         }
         //補收
 
-        //當天單,不是當天收錢 + 當天單,收支票
-        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1);
+        //當天單,不是當天收錢
+     /*   $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
         $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
@@ -287,11 +287,11 @@ class Invoice_CashReceiptSummary {
             if(!isset($uncheque[$v->invoiceId]))
                 $uncheque[$v->invoiceId] = 0;
             $uncheque[$v->invoiceId] += $v->paid;
-        }
-        //當天單,不是當天收錢 + 當天單,收支票
+        }*/
+        //當天單,不是當天收錢
 
 
-        $invoices = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('deliveryDate',$this->_date)->get();
+        $invoices = Invoice::whereIn('invoiceStatus',['2','20','30','98'])->where('paymentTerms',1)->where('deliveryDate',$this->_date)->get();
 
         $NoOfInvoices = [];
         foreach ($invoices as $invoiceQ){
@@ -308,7 +308,8 @@ class Invoice_CashReceiptSummary {
                 $info[$invoiceQ->zoneId]['paid'] = 0;
 
             if ($invoiceQ->invoiceStatus == 30 || $invoiceQ->invoiceStatus == 20){
-                $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
+               // $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
+                $paid = $invoiceQ->paid+$invoiceQ->discount_taken;
             }else
                 $paid = $invoiceQ->remain;
 
@@ -319,7 +320,7 @@ class Invoice_CashReceiptSummary {
                 'balanceBf' => isset($balance_bf[$invoiceQ->zoneId])?$balance_bf[$invoiceQ->zoneId]:0,
                 'totalAmount' => $info[$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
                 'previous'=>isset($previous[$invoiceQ->zoneId])?$previous[$invoiceQ->zoneId]:0,
-                'paid' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98')? -$paid:$paid,
+                'receiveTodaySales' => $info[$invoiceQ->zoneId]['paid'] += ($invoiceQ->invoiceStatus == '98')? -$paid:$paid,
             ];
         }
 
@@ -337,20 +338,25 @@ class Invoice_CashReceiptSummary {
 
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, 'Truck');
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, 'No. of invoices');
-        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'Balance B/F');
-        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Today sales');
-        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, 'Receive for today sales');
-        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, 'Receive for previous sales');
-        $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, 'Balance C/F');
+
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'Today sales');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Receive for today sales');
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, 'Receive for previous sales');
+        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, 'Net receipt');
+
+        $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, 'Balance B/F');
+        $objPHPExcel->getActiveSheet()->setCellValue('H'.$i, 'Balance C/F');
 
         $i += 1;
         foreach ($info as $k => $v) {
             $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['truck']);
             $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['noOfInvoices']);
-            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['balanceBf']);
-            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v['totalAmount']);
-            $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v['paid']);
-            $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v['previous']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['totalAmount']);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v['receiveTodaySales']);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v['previous']);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, '=D'.$i.'+E'.$i);
+
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . $i, $v['balanceBf']);
             $objPHPExcel->getActiveSheet()->setCellValue('G' . $i, '=C'.$i.'+D'.$i.'-E'.$i.'-F'.$i);
             $i++;
         }
@@ -557,11 +563,10 @@ class Invoice_CashReceiptSummary {
             ],
             [
                 'id' => 'deliveryDate',
-                'type' => 'date-picker1',
+                'type' => 'date-picker',
                 'label' => '送貨日期',
                 'model' => 'deliveryDate',
-                'id1' => 'deliveryDate2',
-                'model1' => 'deliveryDate2',
+
             ],
         ];
         
@@ -597,11 +602,11 @@ class Invoice_CashReceiptSummary {
                 'name' => '收帳日結表',
                 'warning'   =>  false,
             ],
-            [
+          /*  [
                 'type' => 'excel1',
                 'name' => '收帳總結表',
                 'warning'   =>  false,
-            ],
+            ],*/
 
 
         ];

@@ -219,7 +219,7 @@ class PaymentController extends BaseController
             if ($filter['invoiceNumber'] == '' && $filter['customerId'] == '') {
                 $invoice->whereBetween('invoice.deliverydate', [strtotime($filter['deliverydate']), strtotime($filter['deliverydate2'])]);
                 $invoice->where('invoiceStatus', $filter['status']);
-                if($filter['status']==30);
+                if($filter['status']==30)
                     $invoice->where('manual_complete', 1);
 
             } else if ($filter['invoiceNumber'] != '') {
@@ -230,7 +230,7 @@ class PaymentController extends BaseController
                     $join->on('invoice.customerId','=','customer.customerId');
                 });
                     $invoice->where('invoice.customerId', $filter['customerId'])->where('invoiceStatus', $filter['status']);
-                if($filter['status']==30);
+                if($filter['status']==30)
                     $invoice->where('manual_complete', 1);
             }
             $invoice->where('paymentTerms', '=', 1);
