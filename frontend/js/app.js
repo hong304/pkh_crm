@@ -77,7 +77,10 @@ app.factory('httpPreConfig', ['$http', '$rootScope', function($http, $rootScope)
 /* Setup App Main Controller */
 app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', 'SharedService', '$timeout', function($scope, $rootScope, $http, $interval, SharedService, $timeout) {
 
-
+         $scope.hardRefresh = function(link)
+        {
+             window.location = endpoint + link;
+        }
 
 	// get system configuration from cloud
 	$http.get($scope.endpoint + '/system.json').success(function(data) {

@@ -222,7 +222,7 @@
                         增加購單 </a>
                 </li>
                 <li class="menu-dropdown" data-ng-if="systemInfo.permission.view_po == true">
-                    <a href="/#/searchPo" class="iconify">
+                    <a href="/#/searchPo" class="iconify" ng-click="hardRefresh('/#/searchPo')">
                         <i class="fa fa-search"></i>
                         搜尋購單 </a>
                 </li>
@@ -395,7 +395,7 @@
                                                                                             船務管理 </a>
                                                                                          </li>
                                                                                           <li>
-                                                                                             <a href="/#/searchship" class="iconify">
+                                                                                             <a href="/#/searchship" class="iconify" ng-click="hardRefresh('/#/searchship')">
                                                                                              <i class="icon-home"></i>
                                                                                             搜尋船務 </a>
                                                                                          </li>      
