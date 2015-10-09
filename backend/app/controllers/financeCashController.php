@@ -14,6 +14,7 @@ class financeCashController extends BaseController {
             $i = Invoice::where('invoiceId',$v->invoiceId)->first();
             $i->paid = $i->paid -$v->pivot->paid;
             $i->invoiceStatus = '20';
+            $i->manual_complete = 0;
             if($v->pivot->discount_taken>0){
                 $i->discount -= $v->pivot->discount_taken;
                 $i->discount = 0;
