@@ -387,6 +387,12 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
 
         $scope.updateDataSet();
     }
+    
 
+    $scope.clearPoSearch = function()
+    {
+        $scope.keywordpo.supplier = "";
+        $scope.updateDataSet();
+    }
 
 });

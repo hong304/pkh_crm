@@ -115,7 +115,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         remark:'',
         receiveDate:'',
         cost : '',
-        sale_method:'',
+        sale_method:1,
 
 
     };
@@ -313,8 +313,10 @@ $scope.an = false;
 			$scope.product[j]['feight_amount'] = item.feight_amount;
                         $scope.product[j]['remark'] = item.remark;
                         $scope.product[j]['sale_method'] = item.sale_method;
-                  
-                        $scope.product[j]['cost'] = $scope.shippingCost;
+
+                        $scope.shippingCost = $.extend(true, {}, $scope.shippingCostStructure);
+                        
+                        $scope.product[j].cost = $scope.shippingCost;
                         
                         $scope.shippingCost.cost_00 = item.cost_00;
                         $scope.product[j]['cost']['cost_00'] = $scope.shippingCost.cost_00;
@@ -345,10 +347,9 @@ $scope.an = false;
                         
                         $scope.shippingCost.cost_09 = item.cost_09;
                         $scope.product[j]['cost']['cost_09'] = $scope.shippingCost.cost_09;
-                        
+    
                         //Maybe one day refine it by a loop
-                        
-                        
+          
                         if(typeof $scope.product[j+1] == 'undefined')
                         {
                             $scope.newkey = $scope.itemlist.length + 1;
@@ -450,7 +451,6 @@ $scope.an = false;
     $scope.submitOrder = function(v)
     {
         var generalError = false;
-        
 
         $scope.timer.submit = Date.now();
 
@@ -596,6 +596,7 @@ $scope.an = false;
     
     $scope.openCost = function(i)
     {
+        $scope.totalCost = 0;
         $("#costDetails").modal('toggle');
         $scope.containerCost.shippingId = $scope.shipping.shippingId;
         $scope.containerCost.containerId = $scope.product[i]['containerId'];
@@ -634,10 +635,10 @@ $scope.an = false;
         $scope.shippingCost.cost_09 = $scope.product[i].cost.cost_09;
        // $scope.shippingCost['cost_01'] = $scope.product[i].cost.cost_01;
       //  $scope.shippingCost['cost_02'] = $scope.product[i].cost.cost_02;
-      
-      for(var i = 0;i<=9;i++)
+       $scope.editable_rowcost = i;
+      for(var k = 0;k<=9;k++)
       {
-          var string = "$scope.shippingCost.cost_0"+i;
+          var string = "$scope.shippingCost.cost_0"+k;
           var g = eval(string);
           $scope.totalCost += g;
       }
@@ -646,13 +647,13 @@ $scope.an = false;
           $scope.totalCost = 0.00;
       }
       
-        $scope.editable_rowcost = i;
-        
+       
     }
     
     $scope.saveCost = function(r)
     {
         $("#costDetails").modal('hide');
+  
         $scope.product[$scope.editable_rowcost].cost = $scope.shippingCost;
         $scope.product[$scope.editable_rowcost].cost.cost_00 =  $scope.shippingCost.cost_00;
         $scope.product[$scope.editable_rowcost].cost.cost_01 =  $scope.shippingCost.cost_01;

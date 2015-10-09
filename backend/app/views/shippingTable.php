@@ -87,7 +87,8 @@ if (isset($daterange)) {
 if (isset($data)) {
     foreach ($data as $k => $v) {
         echo "<tr>";
-        echo '<td style="padding:5px;width:295px;cursor:pointer;font-size:15px;word-wrap: break-word;"  onclick="clickShip(\'' . $k . '\')">' . array_values($v)[0]['supplier']  . '<br/>船務編號:' . $k .'</td>';
+        if(isset(array_values($v)[0]['supplier']))
+            echo '<td style="padding:5px;width:295px;cursor:pointer;font-size:15px;word-wrap: break-word;"  onclick="clickShip(\'' . $k . '\')">' . array_values($v)[0]['supplier']  . '<br/>船務編號:' . $k .'</td>';
         $count = 0; // clear count when next record enter this loop
         $flag = true;
 

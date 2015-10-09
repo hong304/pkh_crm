@@ -181,6 +181,7 @@ app.controller('ships', function ($scope, $rootScope, $http, SharedService, $loc
               $http.post(endpoint + '/loadShip.json', {id:id})
              .success(function(data, status, headers, config){
                  $scope.eachShip = data[0];
+                 $scope.eachShip.container_numbers = $scope.eachShip.shippingitem.length;
               });
          $("#scheduleDetails").modal({backdrop: 'static'});
    }

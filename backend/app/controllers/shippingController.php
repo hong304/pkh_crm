@@ -151,7 +151,6 @@ class shippingController extends BaseController {
     public function loadShip() {
         $id = Input::get('id');
         $ship = Shipping::where('shippingId', $id)->with('Shippingitem')->get();
-
         return Response::json($ship);
     }
 
@@ -196,7 +195,8 @@ class shippingController extends BaseController {
             for ($h = 0; $h < $fspValue; $h++) {
                 $dateAdd = $dateAdd + 60 * 60 * 24;
                 $daterange[$value['shippingId']]['actualDate'] = $value['actualDate'];
-                $daterange[$value['shippingId']]['supplier'] = "採購單編號:".$value['poCode'] ."<br/>供應商名稱:". $value['Supplier']->toArray()[0]['supplierName'];
+                $supplierWord = (isset($value['Supplier']->toArray()[0]['supplierName'])) ? $value['Supplier']->toArray()[0]['supplierName'] : "";
+                $daterange[$value['shippingId']]['supplier'] = "採購單編號:".$value['poCode'] ."<br/>供應商名稱:". $supplierWord;
                 $daterange[$value['shippingId']][$h] = date('Y-m-d', $dateAdd);
             }
         }
@@ -215,8 +215,8 @@ class shippingController extends BaseController {
 
                     $storeAllData = $storeAllData + count($v->Shippingitem->toArray());
     
-                    
-                    $sarr[$v->shippingId][date('Y-m-d', $date1)]['supplier'] = "採購單編號:".$v->poCode ."<br/>供應商名稱:". $v->supplier->toArray()[0]['supplierName'];
+                    $supplierWord = (isset($v->supplier->toArray()[0]['supplierName'])) ? $v->supplier->toArray()[0]['supplierName'] : "";
+                    $sarr[$v->shippingId][date('Y-m-d', $date1)]['supplier'] = "採購單編號:".$v->poCode ."<br/>供應商名稱:". $supplierWord;
 
                     $sarr[$v->shippingId][date('Y-m-d', $date1)]['fsp'] = $v->fsp;
 
@@ -253,7 +253,8 @@ class shippingController extends BaseController {
                 if ($v->etaDate == date('Y-m-d', $date1)) {
                     $sarr[$v->shippingId][date('Y-m-d', $date1)]['no'] = count($v->Shippingitem->toArray());
                     $sarr[$v->shippingId][date('Y-m-d', $date1)]['mode'] = 'eta';
-                    $sarr[$v->shippingId][date('Y-m-d', $date1)]['supplier'] = "採購單編號:".$v->poCode ."<br/>供應商名稱:". $v->supplier->toArray()[0]['supplierName'];
+                    $supplierWord = (isset($v->supplier->toArray()[0]['supplierName'])) ? $v->supplier->toArray()[0]['supplierName'] : "";
+                        $sarr[$v->shippingId][date('Y-m-d', $date1)]['supplier'] = "採購單編號:".$v->poCode ."<br/>供應商名稱:". $supplierWord;
                     $storeAllData = $storeAllData + count($v->Shippingitem->toArray());
                     $other[date('Y-m-d', $date1)]['storeAll'] = $wstoreAll . "+". $tstoreAll;
                     $other[date('Y-m-d', $date1)]['storeAllData'] = $storeAllData;
