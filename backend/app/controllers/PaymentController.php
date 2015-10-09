@@ -137,6 +137,10 @@ class PaymentController extends BaseController
                 $i = Invoice::where('invoiceId', $paidinfo['invoiceId'])->first();
                 $i->paid += $paidinfo['paid'];
                 $i->invoiceStatus = Input::get('paymentStatus');
+
+                if(Input::get('paymentStatus') == 30)
+                    $i->manual_complete = 1;
+
                 $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
                 if ($discount_taken > 0) {
                     $i->discount = 1;
@@ -163,6 +167,10 @@ class PaymentController extends BaseController
                 $i = Invoice::where('invoiceId', $paidinfo['invoiceId'])->first();
                 $i->paid += $paidinfo['cashAmount'];
                 $i->invoiceStatus = Input::get('paymentStatus');
+
+                if(Input::get('paymentStatus') == 30)
+                    $i->manual_complete = 1;
+
                 $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
                 if ($discount_taken > 0) {
                     $i->discount = 1;
@@ -190,7 +198,7 @@ class PaymentController extends BaseController
             $filter = Input::get('filterData');
 
 
-            $invoice = Invoice::select('invoiceId', 'discount_taken', 'amount', 'paid', 'invoice.zoneId', 'deliveryDate', 'invoiceStatus', 'invoice.customerId', 'paymentTerms', 'receiveMoneyZone');
+            $invoice = Invoice::select('invoiceId', 'discount_taken', 'amount', 'paid', 'invoice.zoneId', 'deliveryDate', 'invoiceStatus', 'invoice.customerId', 'paymentTerms', 'receiveMoneyZone','manual_complete');
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -211,6 +219,8 @@ class PaymentController extends BaseController
             if ($filter['invoiceNumber'] == '' && $filter['customerId'] == '') {
                 $invoice->whereBetween('invoice.deliverydate', [strtotime($filter['deliverydate']), strtotime($filter['deliverydate2'])]);
                 $invoice->where('invoiceStatus', $filter['status']);
+                if($filter['status']==30);
+                    $invoice->where('manual_complete', 1);
 
             } else if ($filter['invoiceNumber'] != '') {
                 $invoice->where('invoiceId', 'LIKE', '%' . $filter['invoiceNumber'] . '%');
@@ -219,7 +229,9 @@ class PaymentController extends BaseController
                 {
                     $join->on('invoice.customerId','=','customer.customerId');
                 });
-                $invoice->where('invoice.customerId', $filter['customerId'])->where('invoiceStatus', $filter['status']);
+                    $invoice->where('invoice.customerId', $filter['customerId'])->where('invoiceStatus', $filter['status']);
+                if($filter['status']==30);
+                    $invoice->where('manual_complete', 1);
             }
             $invoice->where('paymentTerms', '=', 1);
 
@@ -229,7 +241,7 @@ class PaymentController extends BaseController
 
             return Datatables::of($invoices)
                 ->addColumn('link', function ($payment) {
-                    if (Auth::user()->can('edit_cashCustomer') && ($payment->invoiceStatus == '20' || $payment->invoiceStatus == '30' || $payment->invoiceStatus == '2')) {
+                    if (Auth::user()->can('edit_cashCustomer') && ($payment->invoiceStatus == '20' || $payment->invoiceStatus == '30' || $payment->invoiceStatus == '2') && ($payment->manual_complete == 0) ) {
                         return '<span onclick="editInvoicePayment(\'' . $payment->invoiceId . '\',\'' . $payment->customerId . '\',\'' . $payment->receiveMoneyZone . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
                     } else
                         return '';
