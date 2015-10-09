@@ -134,6 +134,9 @@ class newPoController extends BaseController {
                                 }
                                 return $statusValue;
                             })
+                            ->editColumn('poAmount', function($purchaseOrde) {
+                                return number_format($purchaseOrde->poAmount,2);
+                            })
                            
                             ->make(true);
         } else if ($mode == 'single') {
