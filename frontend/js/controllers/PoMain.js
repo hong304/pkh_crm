@@ -296,7 +296,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                 icon: '' // put icon before the message
             });
         }
-        if (!$location.search().poCode && $window.location.href.indexOf('PoMain'))
+        if (!$location.search().poCode  && $window.location.href.indexOf('PoMain') > -1)
         {
             $timeout(function () {
                 $('#selectSuppliermodel').modal('show');
@@ -510,7 +510,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
          
          }*/
 
-        $scope.loadProduct($location.search().poCode);
+       $scope.loadProduct($location.search().poCode);
 
     });
 
