@@ -419,7 +419,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                             $("#deliverydate2").datepicker("setDate", $scope.order.poDate);
                             $("#deliverydate3").datepicker("setDate", $scope.order.receiveDate);
 
-
+                            $("#deliverydate").datepicker( "option", "minDate", $scope.order.etaDate);
                             $http(
                                     {
                                         method: "POST",
