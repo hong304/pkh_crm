@@ -33,7 +33,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         pol:'',
         pod:'',
         container_numbers:0,
-        fsp:1,
+        fsp:7,
         remark:'',
         status:1,
         feight_payment:'',
@@ -544,8 +544,7 @@ $scope.an = false;
     
     $scope.checkFsp = function(value)
     {
-        console.log(value);
-        if(value <= 0 || isNaN(value))
+        if(value <= 0)
         {
             $scope.shipping.fsp = 1;
         }
