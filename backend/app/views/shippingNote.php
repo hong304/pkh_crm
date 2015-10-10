@@ -27,6 +27,7 @@ function formatDate($date)
     return $stringdate;
 }
 if (isset($createweek)) {
+    echo "<tr style='text-align:center;height:15px;line-height: 45px;'><td colspan=5>只顯示前十五天和後七天的船務記錄</td></tr>";
     echo "<tr><td></td>";
     foreach($createweek as $weekdayK=>$weekdayV)
     {
