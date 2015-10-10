@@ -451,7 +451,7 @@ $scope.an = false;
     $scope.submitOrder = function(v)
     {
         var generalError = false;
-
+        console.log($scope.product);
         $scope.timer.submit = Date.now();
 
         if(!$scope.allowSubmission)
