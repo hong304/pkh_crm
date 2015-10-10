@@ -217,7 +217,7 @@
 
 
                 <li class="menu-dropdown" data-ng-if="systemInfo.permission.add_po == true">
-                    <a href="/#/PoMain" ng-click="$state.go('PoMain', {}, {reload: true});" class="iconify">
+                    <a href="/#/PoMain" ng-click="hardRefresh('/#/PoMain')"  class="iconify">
                         <i class="fa fa-plus"></i>
                         增加購單 </a>
                 </li>
@@ -359,7 +359,7 @@
 											</li>
 										</ul>
 									</div>
-                                                                       <div class="col-md-3 adjustHeight"  data-ng-if="systemInfo.permission.view_supplier == true">  
+                                                                       <div class="col-md-3 adjustHeight" >  
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>供應商相關</h3>
@@ -383,7 +383,7 @@
 										</ul>
 									</div>
                                                                     
-                                                                     <div class="col-md-3 adjustHeight"  data-ng-if="systemInfo.permission.view_shipping == true">  
+                                                                     <div class="col-md-3 adjustHeight" >  
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>船務相關</h3>
