@@ -27,17 +27,16 @@ function formatDate($date)
     return $stringdate;
 }
 if (isset($createweek)) {
-    echo "<tr style='text-align:center;height:15px;line-height: 45px;'><td colspan=5>只顯示前十五天和後七天的船務記錄</td></tr>";
     echo "<tr><td></td>";
     foreach($createweek as $weekdayK=>$weekdayV)
     {
         if($weekdayK !== "last_last_week")
         {
-            echo "<td class = 'dateFormat' style='text-align:center'>".formatDate($weekdayV[1])." 至 ".formatDate($weekdayV[0])."</td>";
+            echo "<td class = 'dateFormat' style='text-align:center;text-decoration: underline;'>".formatDate($weekdayV[1])." 至 ".formatDate($weekdayV[0])."</td>";
         }
         else
         {
-             echo "<td class = 'dateFormat' style='text-align:center'><".formatDate($weekdayV[0])."或之前</td>";
+             echo "<td class = 'dateFormat' style='text-align:center;text-decoration: underline;'><".formatDate($weekdayV[0])."或之前</td>";
         }
     }
     echo "</tr>";
@@ -46,7 +45,7 @@ if (isset($createweek)) {
 </tr>
 <tr>
     <?php
-        echo "<td>AAD</td>";
+        echo "<td style='width: 86px;'>預期到港日期</td>";
         if(isset($outputAad))
         {
             foreach($outputAad as $key=>$value)
@@ -64,7 +63,7 @@ if (isset($createweek)) {
 </tr>
 <tr>
     <?php
-        echo "<td>ETA</td>";
+        echo "<td style='width: 86px;'>實際到港日期</td>";
         if(isset($eta))
         {
             foreach($eta as $k=>$v)
