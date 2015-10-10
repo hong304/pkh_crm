@@ -68,9 +68,9 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
                 },
                 "iDisplayLength": 50,
                 "pagingType": "full_numbers",
-                "fnDrawCallback" : function() {
-                   window.alert = function() {};
-                },
+              //  "fnDrawCallback" : function() {
+                //   window.alert = function() {};
+              //  },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",
@@ -161,14 +161,16 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
 	
 	$scope.voidShip = function(shippingId)
 	{
+            
 		if($scope.shipping.status == 1)
 		{
                     $http.post($scope.endpoint + "/deleteShip.json", {
                         shippingId: shippingId
                     }).success(function (data) {
+                        alert("這個記錄被刪除");
 			$scope.updateDataSet();
 			$scope.shipping.status = 99;
-			alert("這個記錄被刪除");
+			
                     });
 		}else{
 			alert("此記錄無法刪除");

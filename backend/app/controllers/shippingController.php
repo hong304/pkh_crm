@@ -117,7 +117,7 @@ class shippingController extends BaseController {
                                 } else if ($shi->status == 30) {
                                     $statusValue = "已完成";
                                 } else if ($shi->status == 99) {
-                                    $statusValue = "暫停";
+                                    $statusValue = "刪除";
                                 }
                                 return $statusValue;
                             })
