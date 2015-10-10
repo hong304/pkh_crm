@@ -75,8 +75,10 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
 
 
     $("#deliverydate2").datepicker("setDate", yyear + '-' + ymonth + '-' + yday);
-
+    $("#deliverydate").datepicker("setDate", yyear + '-' + ymonth + '-' + yday);
+    
     $scope.order.poDate = yyear + '-' + ymonth + '-' + yday;
+    $scope.order.etaDate = yyear + '-' + ymonth + '-' + yday;
 
     $scope.$watch(function () {
         return $rootScope.systeminfo;
