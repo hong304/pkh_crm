@@ -206,7 +206,7 @@ if(!$empty){
             ],
             [
                 'type' => 'csv',
-                'name' => '匯出帳齡摘要',
+                'name' => '匯出帳齡摘要 (PDF)',
                 'warning'   =>  false,
             ],
         ];
@@ -323,63 +323,105 @@ if(!$empty){
         $pdf->Cell(0, 10,'客戶組 : '.$this->_group,0,1,"L");
     }
 
-    public function outputCsv(){
+    //aging pdf
+    public function outputCsv()
+    {
+
+        $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
+
+
+        $first = true;
+
+        foreach ($time_interval as $v) {
+            if ($first) {
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
+                $first = false;
+            } else {
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-t", strtotime("-" . $v[1] . " month"));
+            }
+
+        }
+
+        //  pd($time);
+        $month[0] = key(array_slice($time, -6, 1, true));
+        $month[1] = key(array_slice($time, -5, 1, true));
+        $month[2] = key(array_slice($time, -4, 1, true));
+        $month[3] = key(array_slice($time, -3, 1, true));
+        $month[4] = key(array_slice($time, -2, 1, true));
+        $month[5] = key(array_slice($time, -1, 1, true));
+
+
+        $this->_reportMonth = date("n", $this->_date2);
+
+
+        /* for($month = 1; $month <= 12; $month++) {
+             $first_minute = mktime(0, 0, 0, $month, 1,date('Y'));
+             $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),date('Y'));
+
+             if($this->_reportMonth==$month)
+                 $last_minute =  $this->_date2;
+             $times[$month] = array($first_minute, $last_minute,date('Y'),$month,date('Y'),$month);
+         } */
+
+
+        /* for($month = 1; $month <= 12; $month++) {
+             $first_minute = mktime(0, 0, 0, $month, 1,date('Y'));
+             $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),date('Y'));
+
+             if($this->_reportMonth==$month)
+                 $last_minute =  $this->_date2;
+             $times[$month] = array($first_minute, $last_minute);
+         } */
 
         $pdf = new PDF();
+        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
 
-       $this->_reportMonth = date("n",$this->_date2);
 
-        $times  = array();
-        for($month = 1; $month <= 12; $month++) {
-            $first_minute = mktime(0, 0, 0, $month, 1,date('Y'));
-            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),date('Y'));
-
-            if($this->_reportMonth==$month)
-                $last_minute =  $this->_date2;
-            $times[$month] = array($first_minute, $last_minute);
-        }
 
         foreach ($this->data as $kk => $client) {
-            for ($i = $this->_reportMonth; $i > 0; $i--) {
-                $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount','!=',DB::raw('paid'))->where('manual_complete',false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
-                foreach ($data[$i] as $invoice) {
+            //for ($i = $this->_reportMonth; $i > 0; $i--) {
+            foreach ($time as $k => $v) {
+                $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+
+                foreach ($data[$k] as $invoice) {
                     $customerId = $invoice->customerId;
 
-                    if(!isset($this->_monthly[$i]['byCustomer'][$customerId]))
-                        $this->_monthly[$i]['byCustomer'][$customerId] = 0;
+                    if (!isset($this->_monthly[$k]['byCustomer'][$customerId]))
+                        $this->_monthly[$k]['byCustomer'][$customerId] = 0;
 
-                    $this->_monthly[$i]['byCustomer'][$customerId] += ($invoice->realAmount - ($invoice->paid+$invoice->discount_taken));
+                    $this->_monthly[$k]['byCustomer'][$customerId] += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
 
                 }
-
             }
-        }
 
-        for ($i = $this->_reportMonth; $i > 0; $i--) {
-            if(!isset($this->_monthly[$i]['total']))
-                $this->_monthly[$i]['total'] = 0;
-            if(isset($this->_monthly[$i]['byCustomer']))
-                foreach($this->_monthly[$i]['byCustomer'] as $v){
-                    $this->_monthly[$i]['total'] += $v;
-                }
-        }
+            foreach ($time as $k => $v) {
+                if (!isset($this->_monthly[$k]['total']))
+                    $this->_monthly[$k]['total'] = 0;
+                if (isset($this->_monthly[$k]['byCustomer']))
+                    foreach ($this->_monthly[$k]['byCustomer'] as $v) {
+                        $this->_monthly[$k]['total'] += $v;
+                    }
+            }
 
+          // pd($this->_monthly) ;
 
-        $bd = array_chunk($this->data,17,true);
+            $bd = array_chunk($this->data, 17, true);
 
-        $i = 1;
-        $j=1;
-        $own_total = 0;
+            $i = 1;
+            $j = 1;
+            $own_total = 0;
 
-        foreach ($bd as $k => $g) {
+            foreach ($bd as $k => $g) {
 
 
                 $pdf->AddPage('L');
                 $this->agingHeader($pdf);
-                $y=30;
+                $y = 30;
 
-                $pdf->SetFont('chi','',8);
+                $pdf->SetFont('chi', '', 8);
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, "客户", 0, 0, "L");
 
@@ -387,132 +429,151 @@ if(!$empty){
                 $pdf->Cell(0, 0, "結餘", 0, 0, "L");
 
                 $pdf->setXY(130, $y);
-                $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth), 0, 0, "L");
+                $pdf->Cell(0, 0, $month[0], 0, 0, "L");
 
                 $pdf->setXY(160, $y);
-                $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-1), 0, 0, "L");
+                $pdf->Cell(0, 0, $month[1], 0, 0, "L");
 
                 $pdf->setXY(190, $y);
-                $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-2), 0, 0, "L");
+                $pdf->Cell(0, 0, $month[2], 0, 0, "L");
 
                 $pdf->setXY(220, $y);
-                $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth-3), 0, 0, "L");
+                $pdf->Cell(0, 0, $month[3], 0, 0, "L");
 
                 $pdf->setXY(250, $y);
-                $pdf->Cell(0, 0, "以前", 0, 0, "L");
+                $pdf->Cell(0, 0, $month[4], 0, 0, "L");
 
-                $pdf->Line(10, $y+2, 285, $y+2);
+                $pdf->Line(10, $y + 2, 285, $y + 2);
 
 
                 $pdf->setXY(280, 10);
-                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, count($bd)) , 0, 0, "R");
+                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, count($bd)), 0, 0, "R");
 
                 $i++;
 
 
-            foreach ($g as $kk => $client) {
+                foreach ($g as $kk => $client) {
 
-                $amount = 0;
-                $paid = 0;
-                $accu = 0;
+                    $amount = 0;
+                    $paid = 0;
+                    $accu = 0;
 
-                foreach ($client['breakdown'] as $k => $v) {
+                    foreach ($client['breakdown'] as $k => $v) {
 
-                    $amount += $v['invoiceAmount'];
-                    $paid += $v['paid'];
-                    $accu = $v['accumulator'];
+                        $amount += $v['invoiceAmount'];
+                        $paid += $v['paid'];
+                        $accu = $v['accumulator'];
+
+                    }
+
+                    $own_total += $accu;
+
+                    $y += 4;
+
+                    $pdf->setXY(10, $y);
+                    $pdf->Cell(0, 0, $client['customer']['customerId'], 0, 0, "L");
+
+                    $pdf->setXY(30, $y);
+                    $pdf->Cell(0, 0, $client['customer']['customerName'], 0, 0, "L");
+
+                    $pdf->setXY(100, $y);
+                    $pdf->Cell(0, 0, '$' . number_format($accu, 2, '.', ','), 0, 0, "L");
+
+                    $pdf->setXY(130, $y);
+
+                    if (isset($this->_monthly[$month[0]]['byCustomer'][$client['customer']['customerId']]))
+                        $numsum = '$' . number_format($this->_monthly[$month[0]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                    else
+                        $numsum = '';
+
+                    $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                    $pdf->setXY(160, $y);
+                    if (isset($this->_monthly[$month[1]]['byCustomer'][$client['customer']['customerId']]))
+                        $numsum = '$' . number_format($this->_monthly[$month[1]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                    else
+                        $numsum = '';
+                    $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                    $pdf->setXY(190, $y);
+                    if (isset($this->_monthly[$month[2]]['byCustomer'][$client['customer']['customerId']]))
+                        $numsum = '$' . number_format($this->_monthly[$month[2]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                    else
+                        $numsum = '';
+                    $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                    $pdf->setXY(220, $y);
+                    if (isset($this->_monthly[$month[3]]['byCustomer'][$client['customer']['customerId']]))
+                              $numsum = '$' . number_format($this->_monthly[$month[3]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                        else
+                            $numsum = '';
+                    $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                    $pdf->setXY(250, $y);
+                    if (isset($this->_monthly[$month[4]]['byCustomer'][$client['customer']['customerId']]))
+                        $numsum = '$' . number_format($this->_monthly[$month[4]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                    else
+                        $numsum = '';
+
+                    $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                    $pdf->Line(10, $y + 7, 285, $y + 7);
+
+                    $y += 5;
+                }
+
+
+                if ($j == count($bd)) {
+
+                    $y += 5;
+                    $pdf->setXY(70, $y);
+                    $pdf->Cell(0, 0, '合共總額:', 0, 0, "L");
+
+                    $pdf->setXY(100, $y);
+                    $pdf->Cell(0, 0, '$' . number_format($own_total, 2, '.', ','), 0, 0, "L");
+
+                    $pdf->setXY(130, $y);
+                    $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -6, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -6, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+
+                    $pdf->setXY(160, $y);
+                    $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -5, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -5, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+
+                    $pdf->setXY(190, $y);
+                    $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -4, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -4, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+
+                    $pdf->setXY(220, $y);
+                    if (isset($this->_monthly[key(array_slice($time, -3, 1, true))]['total']))
+                        if ($this->_monthly[key(array_slice($time, -3, 1, true))]['total'] != 0)
+                            $numsum = '$' . number_format($this->_monthly[key(array_slice($time, -3, 1, true))]['total'], 1, '.', ',');
+                        else
+                            $numsum = '';
+
+                    $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                    $pdf->setXY(250, $y);
+                    if (isset($this->_monthly[key(array_slice($time, -2, 1, true))]['total']))
+                        if ($this->_monthly[key(array_slice($time, -2, 1, true))]['total'] != 0)
+                            $numsum = '$' . number_format($this->_monthly[key(array_slice($time, -2, 1, true))]['total'], 1, '.', ',');
+                        else
+                            $numsum = '';
+
+                    $pdf->Cell(0, 0, $numsum, 0, 0, "L");
 
                 }
 
-                $own_total += $accu;
-
-                $y += 4;
-
-                $pdf->setXY(10, $y);
-                $pdf->Cell(0, 0, $client['customer']['customerId'], 0, 0, "L");
-
-                $pdf->setXY(30, $y);
-                $pdf->Cell(0, 0, $client['customer']['customerName'], 0, 0, "L");
-
-                $pdf->setXY(100, $y);
-                $pdf->Cell(0, 0, '$' . number_format($accu, 2, '.', ','), 0, 0, "L");
-
-                $pdf->setXY(130, $y);
-
-                if(isset($this->_monthly[$this->_reportMonth]['byCustomer'][$client['customer']['customerId']]))
-                    $numsum='$'.number_format($this->_monthly[$this->_reportMonth]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
-                else
-                    $numsum= '';
-
-                $pdf->Cell(0, 0,$numsum , 0, 0, "L");
-
-                $pdf->setXY(160, $y);
-                if(isset($this->_monthly[$this->_reportMonth-1]['byCustomer'][$client['customer']['customerId']]))
-                    $numsum='$'.number_format($this->_monthly[$this->_reportMonth-1]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
-                else
-                    $numsum= '';
-                $pdf->Cell(0, 0, $numsum , 0, 0, "L");
-
-                $pdf->setXY(190, $y);
-                if(isset($this->_monthly[$this->_reportMonth-2]['byCustomer'][$client['customer']['customerId']]))
-                    $numsum= '$'.number_format($this->_monthly[$this->_reportMonth-2]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
-                else
-                    $numsum= '';
-                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
-
-                $pdf->setXY(220, $y);
-                if(isset($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']]))
-                    if($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']]!=0)
-                        $numsum= '$'.number_format($this->_monthly[$this->_reportMonth-3]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
-                else
-                        $numsum= '';
-                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
-
-                $pdf->Line(10, $y+7, 285, $y+7);
-
-               $y +=5;
-            }
-
-
-
-            if($j == count($bd)){
-
-                $y += 5;
-                $pdf->setXY(70, $y);
-                $pdf->Cell(0, 0, '合共總額:', 0, 0, "L");
-
-                $pdf->setXY(100, $y);
-                $pdf->Cell(0, 0, '$' . number_format($own_total, 2, '.', ','), 0, 0, "L");
-
-                $pdf->setXY(130, $y);
-                $pdf->Cell(0, 0,'$' . number_format(isset($this->_monthly[$this->_reportMonth]['total'])?$this->_monthly[$this->_reportMonth]['total']:0, 1, '.', ','), 0, 0, "L");
-
-                $pdf->setXY(160, $y);
-                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-1]['total'])?$this->_monthly[$this->_reportMonth-1]['total']:0, 1, '.', ','), 0, 0, "L");
-
-                $pdf->setXY(190, $y);
-                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth-2]['total'])?$this->_monthly[$this->_reportMonth-2]['total']:0, 1, '.', ','), 0, 0, "L");
-
-                $pdf->setXY(220, $y);
-                if(isset($this->_monthly[$this->_reportMonth-3]['total']))
-                    if($this->_monthly[$this->_reportMonth-3]['total']!=0)
-                        $numsum =  '$' . number_format($this->_monthly[$this->_reportMonth-3]['total'], 1, '.', ',');
-                else
-                    $numsum = '';
-
-                $pdf->Cell(0, 0,$numsum , 0, 0, "L");
-
-            }
-
                 $j++;
+
+            }
+
+            $pdf->Output('', 'I');
 
         }
 
-        $pdf->Output('','I');
-
+       // pd( $this->_monthly);
     }
-    
-    # PDF Section
+    //aging pdf
+
+
     public function generateHeader($pdf)
     {
 
@@ -546,7 +607,8 @@ if(!$empty){
         $pdf->Cell( 40, 40, $pdf->Image($image, 15, 5, 28), 0, 0, 'L', false );
         
     }
-    
+
+    // monthly report pdf
     public function outputPDF()
     {
 
@@ -574,12 +636,9 @@ if(!$empty){
 
 
         foreach($this->data as $client) {
-
-
-
                 for ($i = $this->_reportMonth; $i > 0; $i--) {
 
-                    $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount','!=','paid')->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+                    $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount','!=',DB::raw('paid'))->where('manual_complete',false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
                     foreach($data[$i] as $invoice)
                     {
@@ -609,19 +668,19 @@ if(!$empty){
 
             $pdf->setXY(30, $y+20);
             $pdf->Cell(0, 0, "Tel:", 0, 0, "L");
-            
+
             $pdf->setXY(40, $y+20);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_tel']), 0, 0, "L");
-            
+
             $pdf->setXY(80, $y+20);
             $pdf->Cell(0, 0, "Fax:", 0, 0, "L");
-            
+
             $pdf->setXY(90, $y+20);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_fax']), 0, 0, "L");
 
             $pdf->setXY(30, $y+14);
             $pdf->Cell(0, 0, "Attn:", 0, 0, "L");
-            
+
             $pdf->setXY(50, $y+14);
             $pdf->Cell(0, 0, sprintf("%s", $client['customer']['account_contact']), 0, 0, "L");
 
@@ -647,7 +706,7 @@ if(!$empty){
             $pdf->Cell(0, 0, date('Y-m-d', $this->_date2), 0, 0, "L");
 
             $y = 60;
-            
+
              $pdf->SetFont('chi', '', 16);
             $pdf->setXY(130, $y+8);
             $pdf->Cell(0, 0, date('Y年m月', $this->_date1), 0, 0, "L");
@@ -808,4 +867,5 @@ if(!$empty){
 
 
     }
+    // end of monthly report pdf
 }
