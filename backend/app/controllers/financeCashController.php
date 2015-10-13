@@ -10,10 +10,14 @@ class financeCashController extends BaseController {
         $payment_id = Input::get('id');
         $payment = Payment::where('id',$payment_id)->with('invoice')->get()->first();
 
+
+
         foreach($payment->invoice as $k => $v){
             $i = Invoice::where('invoiceId',$v->invoiceId)->first();
             $i->paid = $i->paid -$v->pivot->paid;
-            $i->invoiceStatus = '20';
+
+            if($i->invoiceStatus == 30)
+                $i->invoiceStatus = '20';
             $i->manual_complete = 0;
             if($v->pivot->discount_taken>0){
                 $i->discount -= $v->pivot->discount_taken;
@@ -269,8 +273,12 @@ class financeCashController extends BaseController {
         $info->save();
 
         foreach ($paid as $k=>$v){
+
+            $iq = Invoice::where('invoiceId', $v['id'])->first();
+            if($iq->invoiceStatus == 98)
+                $v['settle'] = $v['settle']*-1;
+
             if($v['settle']>0) {
-                $iq = Invoice::where('invoiceId', $v['id'])->first();
                 $iq->payment()->attach($info->id, ['amount' => $iq->amount, 'paid' => $v['settle']]);
                 $iq->save();
             }
