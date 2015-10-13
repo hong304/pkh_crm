@@ -383,6 +383,9 @@ if(!$empty){
         foreach ($this->data as $kk => $client) {
 
             //for ($i = $this->_reportMonth; $i > 0; $i--) {
+
+            $data = [];
+
             foreach ($time as $k => $v) {
                 $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
@@ -396,7 +399,7 @@ if(!$empty){
 
                 }
             }
-
+        }
             foreach ($time as $k => $v) {
                 if (!isset($this->_monthly[$k]['total']))
                     $this->_monthly[$k]['total'] = 0;
@@ -406,7 +409,9 @@ if(!$empty){
                     }
             }
 
-          // pd($this->_monthly) ;
+            $debug = new Debug();
+            $debug->content = json_encode($this->_monthly);
+            $debug->save();
 
             $bd = array_chunk($this->data, 17, true);
 
@@ -565,11 +570,8 @@ if(!$empty){
 
             }
 
-            $pdf->Output('', 'I');
-
-        }
-
-       // pd( $this->_monthly);
+        $pdf->Output('', 'I');
+      // pd( $this->_monthly);
     }
     //aging pdf
 
