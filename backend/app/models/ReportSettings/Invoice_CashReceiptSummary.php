@@ -13,6 +13,7 @@ class Invoice_CashReceiptSummary {
     private $_backaccount = [];
     private $_paidInvoice = [];
     private $_paidInvoice_cheque =[];
+    private $_expenses = [];
     private $_uniqueid = "";
     
     public function __construct($indata)
@@ -49,6 +50,9 @@ class Invoice_CashReceiptSummary {
     
     public function compileResults()
     {
+
+
+
 
     if(Input::get('output') == 'excel')
         return '';
@@ -240,6 +244,9 @@ class Invoice_CashReceiptSummary {
         }
 //補收
 
+
+        $this->_expenses = expense::where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
+        $this->_expenses->amount = $this->_expenses->cost1+$this->_expenses->cost2+$this->_expenses->cost3+$this->_expenses->cost4;
         $this->data = $this->_account;
 
         return $this->data;
@@ -713,7 +720,7 @@ $k = $i+1;
     
     public function outputPreview()
     {
-        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->render();
+        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->with('expenses',$this->_expenses)->render();
     }
     
     
