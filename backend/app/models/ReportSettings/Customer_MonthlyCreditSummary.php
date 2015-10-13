@@ -409,10 +409,6 @@ if(!$empty){
                     }
             }
 
-            $debug = new Debug();
-            $debug->content = json_encode($this->_monthly);
-            $debug->save();
-
             $bd = array_chunk($this->data, 17, true);
 
             $i = 1;
