@@ -269,8 +269,10 @@ class shippingController extends BaseController {
         if (isset($sarr)) {
             $this->data = $sarr;
             return View::make('shippingTable')->with(['data' => $this->data, 'date' => $date, 'other' => $other, 'daterange' => $daterange])->render();
-        } else {
-            return View::make('shippingTable')->with(['date' => $date])->render();
+        } else if(isset($daterange)){
+            return View::make('shippingTable')->with(['date' => $date,'daterange' => $daterange])->render();
+        }else{
+            return View::make('shippingTable')->with(['date' => $date,'daterange'])->render();
         }
     }
     
@@ -286,12 +288,12 @@ class shippingController extends BaseController {
             if($k !== "last_last_week")
             {
                  $s[$k] = shipping::where('actualDate', '!=', '')->whereBetween('actualDate',array($v[1],$v[0]))->with('Shippingitem')->where('status','!=',99)->get()->toArray();
-                 $eta[$k] = shipping::whereNull('actualDate')->whereBetween('etaDate',array($v[1],$v[0]))->where('status','!=',99)->get()->toArray();
+                 $eta[$k] = shipping::whereNull('actualDate')->whereBetween('etaDate',array($v[1],$v[0]))->with('Shippingitem')->where('status','!=',99)->get()->toArray();
             }else
             {
                  $s[$k] = shipping::where('actualDate', '!=', '')->where('actualDate','<=',$v[0])->with('Shippingitem')->where('status','!=',99)->get()->toArray();
                  
-                 $eta[$k] = shipping::whereNull('actualDate')->where('etaDate','<=',$v[0])->where('status','!=',99)->get()->toArray();
+                 $eta[$k] = shipping::whereNull('actualDate')->where('etaDate','<=',$v[0])->with('Shippingitem')->where('status','!=',99)->get()->toArray();
                  
             }
             
@@ -299,15 +301,26 @@ class shippingController extends BaseController {
         
         foreach($eta as $etaKey=>$etaValue)
         {
-            $outputEta[$etaKey] = count($etaValue);
+            $containerNum = 0;
+            foreach($etaValue as $k=>$v)
+            {
+                $containerNum += count($v['shippingitem']);
+            }
+            $outputEta[$etaKey] = count($etaValue) . "(".$containerNum .")";
         }
      
         foreach($s as $key=>$value)
         {
+      
             $count = 0;
+            $cargoCount = 0;
+            foreach($value as $ele=>$items)
+            {
+                $cargoCount += count($items['shippingitem']);
+            }
             if(count($value) > 0)
             {
-                $outputAad[$key] = count($value);
+                $outputAad[$key] = count($value)."(".$cargoCount.")";
             
             /* if(count($value) > 0)
             {
@@ -352,7 +365,7 @@ class shippingController extends BaseController {
                         }*/
                     }else
                     {
-                        $outputAad[$key] = 0;
+                        $outputAad[$key] = 0 ."(".$cargoCount.")";
                     }
 
         }

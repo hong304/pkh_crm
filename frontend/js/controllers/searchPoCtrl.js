@@ -6,6 +6,7 @@ function editPo(poId)
     var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
         scope.viewPurchaseOrder(poId);
+        scope.viewUpdateRecord(poId);
     });
 }
 
@@ -262,6 +263,15 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
 
     }
     
+    $scope.viewUpdateRecord = function(poId)
+    {
+        $http.post($scope.endpoint + "/queryPoUpdate.json", {
+            poCode: poId
+        }).success(function (data) {
+            $scope.poaduit = data;
+        });
+    }
+    
     $scope.genA4Invoice = function(poCode,lang)
     {
        window.open(endpoint + "/printPo.json?poCode=" + poCode + "&lang=" + lang); //window open is a new tab 
@@ -279,6 +289,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 $location.url("/PoMain?poCode=" + invoiceId);
             }
         });
+        
     }
 
     $scope.voidPo = function (poCode)

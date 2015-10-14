@@ -209,9 +209,101 @@ if(!$empty){
                 'name' => '匯出帳齡摘要 (PDF)',
                 'warning'   =>  false,
             ],
+            [
+                'type' => 'excel',
+                'name' => '匯出帳齡摘要 (CSV)',
+                'warning'   =>  false,
+            ],
         ];
         
         return $downloadSetting;
+    }
+    
+    
+    public function outputExcel()
+    {
+       $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
+
+
+        $first = true;
+
+        foreach ($time_interval as $v) {
+            if ($first) {
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
+                $first = false;
+            } else {
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-t", strtotime("-" . $v[1] . " month"));
+            }
+
+        }
+
+        $month[0] = key(array_slice($time, -6, 1, true));
+        $month[1] = key(array_slice($time, -5, 1, true));
+        $month[2] = key(array_slice($time, -4, 1, true));
+        $month[3] = key(array_slice($time, -3, 1, true));
+        $month[4] = key(array_slice($time, -2, 1, true));
+        $month[5] = key(array_slice($time, -1, 1, true));
+        
+        
+         foreach ($this->data as $kk => $client) {
+
+            //for ($i = $this->_reportMonth; $i > 0; $i--) {
+
+            $data = [];
+
+            foreach ($time as $k => $v) {
+                $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+
+                foreach ($data[$k] as $invoice) {
+                    $customerId = $invoice->customerId;
+
+                    if (!isset($this->_monthly[$k]['byCustomer'][$customerId]))
+                        $this->_monthly[$k]['byCustomer'][$customerId] = 0;
+
+                    $this->_monthly[$k]['byCustomer'][$customerId] += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
+
+                }
+            }
+        }
+
+         
+
+        
+       require_once './Classes/PHPExcel/IOFactory.php';
+       require_once './Classes/PHPExcel.php';
+
+        $i=3;
+        $objPHPExcel = new PHPExcel();
+        $this->generateExcelHeader($objPHPExcel);
+        $objPHPExcel->getActiveSheet()->setCellValue('A5', "Customer");
+        $objPHPExcel->getActiveSheet()->setCellValue('B5', $month[0]);
+        $objPHPExcel->getActiveSheet()->setCellValue('C5', $month[1]);
+        $objPHPExcel->getActiveSheet()->setCellValue('D5', $month[2]);
+        $objPHPExcel->getActiveSheet()->setCellValue('E5', $month[3]);
+        $objPHPExcel->getActiveSheet()->setCellValue('F5', $month[4]);
+        $objPHPExcel->getActiveSheet()->setCellValue('G5', $month[5]);
+        
+        $storeMatch = array('B'=>0,'C'=>1,'D'=>2,'E'=>3,'F'=>4,'G=>5');
+        foreach($this->_monthly as $k=>$v)
+        {
+            foreach($v as $i=>$j)
+            {
+                if($k == $month[0])
+                {
+                    $objPHPExcel->getActiveSheet()->setCellValue('B5', $month[0]);
+                }
+            }
+        }
+        
+     //   $objPHPExcel->getActiveSheet()->setCellValue('D1', date('Y-m-d',$this->_date1));
+        
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'."abc".'.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
     }
     
     public function outputPreview()
@@ -354,6 +446,7 @@ if(!$empty){
 
 
         $this->_reportMonth = date("n", $this->_date2);
+        
 
 
         /* for($month = 1; $month <= 12; $month++) {
@@ -571,6 +664,16 @@ if(!$empty){
     }
     //aging pdf
 
+    public function generateExcelHeader($excel)
+    {
+        $today = date("Y-m-d");  
+        $excel->getActiveSheet()->setCellValue('A1', 'Ping Kee Hong Trading Company Limited');
+        $excel->getActiveSheet()->mergeCells('A1:C1');
+        $excel->getActiveSheet()->setCellValue('A2', 'Accounts Receivable Aging Report(Credit Sales)');
+        $excel->getActiveSheet()->mergeCells('A2:C2');
+        $excel->getActiveSheet()->setCellValue('A3', 'As at ['.$today."]");
+        $excel->getActiveSheet()->mergeCells('A3:C3');
+    }
 
     public function generateHeader($pdf)
     {
@@ -622,8 +725,6 @@ if(!$empty){
                 $last_minute =  $this->_date2;
             $times[$month] = array($first_minute, $last_minute);
         }
-
-
 
 
         $pdf = new PDF();

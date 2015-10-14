@@ -38,7 +38,7 @@
                                     <select class="form-control"
                                             ng-model="keyword.country"
                                             data-ng-options="c.countryName for c in countryData track by c.countryId"
-                                            data-ng-change="filterSupplier();">
+                                            data-ng-change="filterSupplier();" ng-disabled="disableValue == 1">
                                         <option value=''>檢視全部</option>
                                         <option value=''>NA</option>
                                     </select>
@@ -49,7 +49,7 @@
 									<div class="input-icon right">
 										<i class="icon-exclamation-sign"></i> 
 										<input autocomplete="off" ng-model="keyword.id" debounce="500" immediate="true"  id="keywordId"
-										type="text" placeholder="供應商編號" class="form-control" ng-change="filterSupplier(keyword)"
+										type="text" placeholder="供應商編號" class="form-control" ng-change="filterSupplier()"
 										/>
                          			                        </div>                 
 								</div>
@@ -59,7 +59,7 @@
                                     <div class="input-icon right">
                                         <i class="icon-exclamation-sign"></i>
                                         <input autocomplete="off" ng-model="keyword.name" debounce="500" immediate="true"  id="keyword"
-                                               type="text" placeholder="名稱 " class="form-control" ng-change="searchSupplier(keyword)"
+                                               type="text" placeholder="名稱 " class="form-control" ng-change="filterSupplier()"
                                                 />
                                     </div>
                                 </div>
@@ -68,7 +68,7 @@
                                     <div class="input-icon right">
                                         <i class="icon-exclamation-sign"></i>
                                         <input autocomplete="off" ng-model="keyword.phone" debounce="500" immediate="true"  id="keyword"
-                                               type="text" placeholder="電話號碼" class="form-control" ng-change="searchSupplier(keyword)"
+                                               type="text" placeholder="電話號碼" class="form-control" ng-change="filterSupplier()"
                                                 />
                                     </div>
                                 </div>

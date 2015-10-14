@@ -58,12 +58,23 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
         
          }
     
+    $scope.filterData = 
+    {
+        supplierCode : '',
+        supplierName : '',
+        phone :'',
+        country:'',
+    }
 
-
-    $scope.filterSupplier = function(supplierId)
+    $scope.filterSupplier = function()
     {  
+        $scope.filterData.supplierCode = $scope.keyword.id;
+        $scope.filterData.supplierName = $scope.keyword.name;
+        $scope.filterData.phone = $scope.keyword.phone;
+        $scope.filterData.country = $scope.keyword.country;
+        console.log($scope.filterData);
           var ta = endpoint + '/searchSupplier.json';
-           $http.post(ta, {id: supplierId,location:$scope.orders.location})
+           $http.post(ta, {filterData: $scope.filterData,location:$scope.orders.location})
            .success(function (res, status, headers, config) {
                 for(var i = 0;i<res.length;i++)
                 {
@@ -80,7 +91,7 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                 $scope.shippingContainer = "";
            });  
     }
-    
+    $scope.disableValue = 0;
     $scope.openLocal = function()
     {
         $("#frontReceive").hide();
@@ -88,6 +99,8 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
         $scope.orders.location = '1';
         SharedService.setValue('location','1', 'handleShippingUpdate');
         $("#exchangeRate,#shipCode,#containerCode,#feight_cost,#local_cost,#misc_cost,#total_cost").hide();
+        $scope.disableValue = 1;
+          //  $scope.product[i].unit = $scope.product[i].availableunit[0];
     }
     
     $scope.openOverSea = function()

@@ -60,8 +60,17 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
     var ymonth = start_date.getMonth() + 1;
     var yyear = start_date.getFullYear();
     var yday = start_date.getDate();
+   
+    var now=new Date();
+    $("#deliverydate").datepicker({
+        language: 'en-US',
+        startDate: now,
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
 
-    $("#deliverydate,#deliverydate1,#deliverydate2").datepicker({
+    $("#deliverydate1,#deliverydate2").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
@@ -213,7 +222,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
     $scope.getLastItem = function (productId, clientId, i, q) {
 
         var target = endpoint + '/getLastItem.json';
-        $http.post(target, {productId: productId, customerId: clientId})
+        $http.post(target, {productId: productId})
                 .success(function (res, status, headers, config) {
                     $scope.lastitem = res;
 
@@ -913,7 +922,6 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
 
             SharedService.setValue('poDate', $scope.order.poDate, 'handlePoUpdate');
 
-
             $scope.order.print = v;
             $http.post(
                     endpoint + '/newPoOrder.json', {
@@ -930,9 +938,16 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
 
                             if (res.action == 'update') {
 
-                                // $state.go("searchPo", {}, {reload: true});
-
-                                $location.url("/searchPo?poDate=" + $scope.order.poDate);
+                                $http.post(
+                                    endpoint + '/newPoAdult.json', {
+                                    poId: $scope.poCode,
+                                }).
+                                success(function (res, status, headers, config) {
+                                    if(res.result == true)
+                                    {
+                                        $location.url("/searchPo?poDate=" + $scope.order.poDate);
+                                    }
+                                });   
                             } else {
                                 $scope.poCodeAfter = res.poCode;
 
@@ -972,7 +987,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                         $scope.allowSubmission = true;
 
                     });
-
+                
         }
 
     }

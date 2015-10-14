@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title">訂單資料</h4>
+                <h4 class="modal-title">採購單資料</h4>
             </div>
             <div class="modal-body">
                 <!-- h4>{{invoiceinfo.client.customerName_chi}} @ {{invoiceinfo.deliveryDate  * 1000 | date: 'yyyy.MM.dd'}}</h4> -->
@@ -87,11 +87,11 @@
                                                         <span class="caption-helper"></span>
                                                     </div>
                                                     <ul class="nav nav-tabs">
-                                                      <!--  <li>
-                                                            <a data-target="#portlet_tab3" data-toggle="tab">
+                                                       <li>
+                                                            <a data-target="#portlet_tab2" data-toggle="tab">
                                                                 修改記錄</a>
                                                         </li>
-                                                        <li>
+                                                        <!--<li>
                                                             <a data-target="#portlet_tab2" data-toggle="tab">
                                                                 列印記錄 </a>
                                                         </li>-->
@@ -183,6 +183,38 @@
                                                                         </tr>
                                                                          <tr>
                                                                             <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">應交款項: HK${{(invoiceinfo.totalsAmount * (100 - invoiceinfo.discount_2)/100 *  (100 - invoiceinfo.discount_1)/100) - invoiceinfo.allowance_1 - invoiceinfo.allowance_2 | number:2}} </td>                                                                
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                                <br/>
+                                                                <div style="clear:both;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane" id="portlet_tab2">
+                                                            <div>
+                                                                <h4>修改記錄</h4>
+                                                                <table class="table table-bordered table-hover">
+                                                                    <thead>
+                                                                        <tr role="row" class="heading">
+                                                                            <th width="10%">#</th>
+                                                                            <th width="20%">採購單編號</th>
+                                                                            <th width="20%">修改人</th>
+                                                                            <th width="20%">修改時間</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr data-ng-if="poaduit == ''"><td colspan="4">沒有修改記錄</td></tr>
+                                                                        <tr data-ng-repeat="i in poaduit" style="line-height:35px;font-size:15px;">
+                                                                            <td>{{$index+1}}</td>
+                                                                            <td>
+                                                                                {{i.referenceKey}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.username}}
+                                                                            </td>
+                                                                            <td>
+                                                                                {{i.created_at}}
+                                                                            </td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>

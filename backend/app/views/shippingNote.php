@@ -45,7 +45,7 @@ if (isset($createweek)) {
 </tr>
 <tr>
     <?php
-        echo "<td style='width: 86px;'>預期到港日期</td>";
+        echo "<td style='width: 86px;'>實際到港日期</td>";
         if(isset($outputAad))
         {
             foreach($outputAad as $key=>$value)
@@ -63,7 +63,7 @@ if (isset($createweek)) {
 </tr>
 <tr>
     <?php
-        echo "<td style='width: 86px;'>實際到港日期</td>";
+        echo "<td style='width: 86px;'>預期到港日期</td>";
         if(isset($eta))
         {
             foreach($eta as $k=>$v)

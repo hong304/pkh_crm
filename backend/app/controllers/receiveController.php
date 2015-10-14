@@ -4,21 +4,31 @@ class receiveController extends BaseController {
     
     public function searchSupplier()
     {
-        $id = Input::get('id');
+        $filterData= Input::get('filterData');
         $location = 0;
         if(Input ::get('location') != '')
         {
             $location = Input ::get('location');
         }
-        $supplier = Supplier::select('supplierCode','supplierName','countries.countryName','countries.countryId','phone_1','status','currencies.currencyId','currencies.currencyName')->where('location',$location)->where('supplierCode', 'LIKE', '%' . $id['id'] . '%')->where('status',1)
+        $supplier = Supplier::select('supplierCode','supplierName','countries.countryName','countries.countryId','phone_1','status','currencies.currencyId','currencies.currencyName')->where('location',$location)->where('status',1)->take(10)
                      ->leftJoin('countries', function($join) {
                         $join->on('suppliers.countryId', '=', 'countries.countryId');
                       })
                        ->leftJoin('currencies', function($joins) {
                         $joins->on('suppliers.currencyId', '=', 'currencies.currencyId');
                       })
-                ->get();
-       
+                      ->where(function ($query) use ($filterData) {
+                         if(isset($filterData['supplierCode']))
+                            $query->where('supplierCode', 'LIKE', '%' . $filterData['supplierCode'] . '%');
+                         if(isset($filterData['supplierName']))
+                            $query->where('supplierName', 'LIKE', '%' . $filterData['supplierName'] . '%');
+                         if(isset($filterData['phone_1']))
+                            $query->orwhere('phone_1', 'LIKE', '%' . $filterData['phone'] . '%');
+                         if(isset($filterData['phone_2']))
+                            $query->orwhere('phone_2', 'LIKE', '%' . $filterData['phone'] . '%');
+                          if(isset($filterData['country']['countryId']))
+                            $query->where('suppliers.countryId', 'LIKE', '%' . $filterData['country']['countryId'] . '%');
+                      })->get();
         return Response::json($supplier); 
     }
     
