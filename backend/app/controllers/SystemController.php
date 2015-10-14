@@ -109,8 +109,22 @@ class SystemController extends BaseController {
         $nr = [];
 
         foreach($result as $v){
-            $total[$v->deliveryDate] = (isset($total[$v->deliveryDate])?$total[$v->deliveryDate]:0) + 1;
+            $total['date'][$v->deliveryDate]['volume'] = (isset($total['date'][$v->deliveryDate]['volume'])?$total['date'][$v->deliveryDate]['volume']:0) + 1;
+
+            if($v->deliveryDate == $today)
+                $total['date'][$today]['against_percentage'] = number_format(($total['date'][$today]['volume']-$total['date'][$yesterday]['volume'])/$total['date'][$today]['volume']*100,1,'.',',').'%';
+
         }
+
+
+
+            if($total['date'][$today]['volume'] > $total['date'][$yesterday]['volume']){
+                $total['compare'] = 2;
+            }else if($total['date'][$today]['volume'] < $total['date'][$yesterday]['volume']){
+                $total['compare'] = 0;
+            }else
+                $total['compare'] = 1;
+
 
         foreach($result as $v){
 
@@ -125,24 +139,28 @@ class SystemController extends BaseController {
                 else
                     $nr['byZone'][$v->zoneId]['compare'] = 1;
 
-            $nr['byTime'][$v->deliveryDate]['amount'] = (isset($nr['byTime'][$v->deliveryDate]['amount'])?$nr['byTime'][$v->deliveryDate]['amount']:0) + $v->amount;
-            $nr['byTime'][$v->deliveryDate]['volume'] = (isset($nr['byTime'][$v->deliveryDate]['volume'])?$nr['byTime'][$v->deliveryDate]['volume']:0) + 1;
+           // $nr['byTime'][$v->deliveryDate]['amount'] = (isset($nr['byTime'][$v->deliveryDate]['amount'])?$nr['byTime'][$v->deliveryDate]['amount']:0) + $v->amount;
+           // $nr['byTime'][$v->deliveryDate]['volume'] = (isset($nr['byTime'][$v->deliveryDate]['volume'])?$nr['byTime'][$v->deliveryDate]['volume']:0) + 1;
 
             $nr['byZone'][$v->zoneId]['name'] = $v->zoneText;
 
-            $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['percentage'] = number_format($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']/$total[$v->deliveryDate]*100,1,'.',',').'%';
+
+                $nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['percentage'] = number_format($nr['byZone'][$v->zoneId]['date'][$v->deliveryDate]['volume']/$total['date'][$v->deliveryDate]['volume']*100,1,'.',',').'%';
+
             if($v->deliveryDate == $today)
-            $nr['byZone'][$v->zoneId]['date'][$today]['against_percentage'] = number_format(($nr['byZone'][$v->zoneId]['date'][$today]['volume']-$nr['byZone'][$v->zoneId]['date'][$yesterday]['volume'])/$nr['byZone'][$v->zoneId]['date'][$today]['volume']*100,1,'.',',').'%';
+                $nr['byZone'][$v->zoneId]['date'][$today]['against_percentage'] = number_format(($nr['byZone'][$v->zoneId]['date'][$today]['volume']-$nr['byZone'][$v->zoneId]['date'][$yesterday]['volume'])/$nr['byZone'][$v->zoneId]['date'][$today]['volume']*100,1,'.',',').'%';
 
         }
+
+
 
         $nr1 = array_chunk($nr['byZone'],5,true);
 
         $result = Invoice::select('deliveryDate','zoneId',DB::raw('count(*) as total'))->where('deliveryDate',$today)->wherein('invoiceStatus',['2','1','20','30'])->groupBy('zoneId')->orderBy(DB::raw('count(*)'),'desc')->get();
 
-        $total = 0;
+        $total1 = 0;
         foreach($result as $v){
-            $total += $v->total;
+            $total1 += $v->total;
         }
 
         $i =0;
@@ -156,18 +174,18 @@ class SystemController extends BaseController {
               $top['other'] = [
                   'zoneName'=>'Others',
                   'total' => $top['other']['total']+=$v->total,
-                  'percentage' => number_format($top['other']['total']/$total*100,1,'.',',').'%',
+                  'percentage' => number_format($top['other']['total']/$total1*100,1,'.',',').'%',
               ];
           }else{
               $top[$v->zoneId] = [
                   'zoneName' => $v->zoneText,
                   'total' => $v->total,
-                  'percentage' => number_format($v->total/$total*100,1,'.',',').'%',
+                  'percentage' => number_format($v->total/$total1*100,1,'.',',').'%',
               ];
           }
       }
 
-        return View::make('dashboard')->with('nr',$nr1)->with('total',$nr['byTime'])->with('top',$top);
+        return View::make('dashboard')->with('nr',$nr1)->with('total',$total)->with('top',$top);
 
     }
 
