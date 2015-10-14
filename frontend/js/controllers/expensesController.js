@@ -16,7 +16,7 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
         'zone'			:	''
 
     };
-
+    $scope.expenses = {};
     $scope.expenses_def={
         'id': '',
         'cost1' :'',
@@ -118,6 +118,7 @@ $scope.submitExpensesForm = function(){
     $scope.addExpenses = function()
     {
         $scope.buttonText = '提交';
+        $scope.expenses = $.extend(true, {}, $scope.expenses_def);
         $('.date-picker').datepicker({
             rtl: Metronic.isRTL(),
             orientation: "left",
@@ -125,7 +126,6 @@ $scope.submitExpensesForm = function(){
         });
 
         $('.date-picker').datepicker( "setDate" , yyear + '-' + ymonth + '-' + yday );
-        $scope.expenses = $.extend(true, {}, $scope.expenses_def);
         $("#expensesFormModal").modal({backdrop: 'static'});
 
     }
