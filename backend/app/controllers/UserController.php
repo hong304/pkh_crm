@@ -52,6 +52,8 @@ class UserController extends BaseController {
 
                     if(User::where('id',Auth::user()->id)->with('role')->first()->role[0]->id != 3 && $_SERVER['HTTP_HOST'] != 'b.pingkeehong.com' && $_SERVER['HTTP_HOST'] != 'pkh-b.sylam.net')
                         $user->disabled = 1;
+                    if(User::where('id',Auth::user()->id)->with('role')->first()->role[0]->id == 1)
+                        $user->disabled = 0;
     	            $user->save(); 
     	            
                     return Redirect::to($_SERVER['frontend']);

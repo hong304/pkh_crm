@@ -56,9 +56,14 @@ class Items_Summary {
         }
 
         if(!$empty){
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['2','20','30','98'])
+
+        $invoicesQuery = Invoice::select('invoiceStatus','invoice.invoiceId')->whereIn('invoiceStatus',['2','20','30','98'])
             ->leftJoin('Customer', function($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
+            }) ->leftJoin('Invoiceitem', function($join) {
+                $join->on('Invoiceitem.invoiceId', '=', 'Invoice.invoiceId');
+            })->leftJoin('Product', function($join) {
+                $join->on('Product.productId', '=', 'InvoiceItem.productId');
             })->leftJoin('customer_groups', function($join) {
                 $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
             })->whereBetween('Invoice.deliveryDate', [$this->_date1,$this->_date2]);
@@ -69,23 +74,32 @@ class Items_Summary {
         $invoicesQuery->where(function ($query) use ($filter) {
             $query
                 ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
-                ->where('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
-                ->where('Invoice.customerId', 'LIKE', '%' . $filter['customerId'] . '%');
+                ->orwhere('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
+                ->orwhere('Invoice.customerId',$filter['customerId']);
         });
 
-                  $invoicesQuery = $invoicesQuery->lists('invoiceStatus','invoiceId');
+            if($this->productId!='')
+            $invoicesQuery->where(function ($query){
+                $query->where('InvoiceItem.productId', 'LIKE', '%' . $this->productId . '%');
+
+            });
+
+            if($this->productName!='')
+                $invoicesQuery->where('productName_chi', 'LIKE','%' . $this->productName. '%');
+
+                  $invoicesQuery = $invoicesQuery->get();
+
 
 
          $return_goods =[];
             $normal_goods = [];
                foreach($invoicesQuery as $k=>$v){
-                   if($v == '98'){
-                       $return_goods[] = $k;
+                   if($v->invoiceStatus == '98'){
+                       $return_goods[] = $v->invoiceId;
                    }else{
-                       $normal_goods[] = $k;
+                       $normal_goods[] = $v->invoiceId;
                    }
                }
-
 
                               $invoiceitems = InvoiceItem::select('InvoiceItem.productId',DB::raw('SUM(productQty) AS productQtys'),DB::raw('SUM(productQty*ProductPrice) AS productAmount'),'productUnitName','productQtyUnit','productName_chi')->wherein('invoiceId',$normal_goods)
 
@@ -96,9 +110,12 @@ class Items_Summary {
                                      ->groupBy('productId')->groupBy('productQtyUnit')
                                      ->get()->toArray();
 
+
+
                    if(count($return_goods)>0){
                       $invoiceitems_return = InvoiceItem::select('productId',DB::raw('SUM(productQty) AS productQtys'),DB::raw('SUM(productQty*ProductPrice) AS productAmount'),'productUnitName','productQtyUnit')->wherein('invoiceId',$return_goods)->groupBy('productId')->groupBy('productQtyUnit')->get();
-                             foreach($invoiceitems as &$invoiceQ)
+
+                       foreach($invoiceitems as &$invoiceQ)
                              {
                                  foreach($invoiceitems_return as $g){
                                      if($g->productId == $invoiceQ['productId'] && $g->productQtyUnit == $invoiceQ['productQtyUnit'] ){

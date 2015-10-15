@@ -40,13 +40,17 @@ class DataWarehouseController extends BaseController {
 
     public function getInvoice(){
 
-
-        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        set_time_limit(600);
+        ini_set('mysql.connect_timeout','0');
+        ini_set('max_execution_time', '0');
 
         $times  = array();
-        for($month = 5; $month <= 8; $month++) {
-            $first_minute = mktime(0, 0, 0, $month, 1,2015);
-            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),2015);
+        $current_year = date('Y');
+        $current_month = date("n");
+        for($month = 8; $month <= 8; $month++) {
+            $first_minute = mktime(0, 0, 0, $month, 1,$current_year);
+            $last_minute = mktime(23, 59, 59, $month, date('t', $first_minute),$current_year);
             $times[$month] = array($first_minute, $last_minute);
         }
 
@@ -55,7 +59,7 @@ class DataWarehouseController extends BaseController {
 
 
         // update datawarehouse_custoemr table.
-     foreach($times as $k=>$v){
+   foreach($times as $k=>$v){
 
             $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
             $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
@@ -64,11 +68,8 @@ class DataWarehouseController extends BaseController {
                 $arr[$v->customerId]['total'] = $v->total;
                 $arr[$v->customerId]['amount'] = $v->amount;
             }
-
-
-
-
             if(count($info)>0){
+               datawarehouse_customer::where('month',$k)->where('year',$current_year)->delete();
                 foreach($info as $v1){
                     $save = new datawarehouse_customer();
                     $save->customer_id = $v1->customerId;
@@ -82,7 +83,7 @@ class DataWarehouseController extends BaseController {
                     }
 
                     $save->month = $k;
-                    $save->year = '2015';
+                    $save->year = $current_year;
                     $save->save();
                 }
                echo $k."月<br>";
@@ -97,29 +98,83 @@ class DataWarehouseController extends BaseController {
 
  // update datawarehouse_product table;
 
-/*
+
  foreach($times as $k=>$v){
+     $invoiceQ = [];
+      // $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
 
-               $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
-        $info_return =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
+   /*  $invoices = Invoice::whereNoIn('invoiceStatus',[98,97,96])->wherebetween('deliveryDate',[$v[0],$v[1]])->lists('invoiceId');
+     $info = InvoiceItem::leftJoin('Product', function ($join) {
+         $join->on('InvoiceItem.productId', '=', 'Product.productId');
+     })->whereIn('invoiceId',$invoices)->get();*/
 
-     foreach($info_return as $v){
-         $arr[$v->productId]['total'] = $v->total;
-         $arr[$v->productId]['amount'] = $v->amount;
+
+
+    // $invoices = Invoice::whereNotIn('invoiceStatus',[97,96])->wherebetween('deliveryDate',[$v[0],$v[1]])->lists('invoiceId');
+
+
+     $invoiceitems = invoiceitem::select('invoiceitem.productId','invoiceitem.invoiceId','invoiceStatus','productPrice','productQty','productPacking_carton','productPacking_inner','productPacking_unit','productPackingName_unit','productPackingName_carton','productQtyUnit')
+         ->leftJoin('Product', function ($join) {
+         $join->on('invoiceitem.productId', '=', 'Product.productId');
+        })
+         ->leftJoin('Invoice', function ($join) {
+             $join->on('invoiceitem.invoiceId', '=', 'Invoice.invoiceId');
+         })->whereNotIn('invoiceStatus',[99,96,97,3])->wherebetween('deliveryDate',[$v[0],$v[1]])->where('invoiceitem.productId','222')
+         ->orderBy('deliveryDate','asc')->orderBy('invoiceItemId','asc')
+         ->get();
+
+
+     foreach($invoiceitems as $k2 => $v){
+         $invoiceQ[$v->productId]['productId'] = $v->productId;
+         $invoiceQ[$v->productId]['amount'] = (isset($invoiceQ[$v->productId]['amount'])?$invoiceQ[$v->productId]['amount']:0) + $v->productPrice* (($v->invoiceStatus==98)?-1:1) * $v->productQty;
+
+         if(!isset($invoiceQ[$v->productId]['normalizedQty'])){
+             $invoiceQ[$v->productId]['normalizedQty'] = 0;
+         }
+
+         $carton = ($v->productPacking_carton) ? $v->productPacking_carton:1;
+         $inner = ($v->productPacking_inner) ? $v->productPacking_inner:1;
+         $unit = ($v->productPacking_unit) ? $v->productPacking_unit:1;
+
+         if($v->invoiceStatus == 98){
+             if($v->productQtyUnit == 'carton')
+                 $real_normalized_unit =  $v->productQty*$inner*$unit*-1;
+             else if($v->productQtyUnit == 'inner')
+                 $real_normalized_unit =  $v->productQty*$unit*-1;
+             else
+                 $real_normalized_unit =  $v->productQty * -1;
+         }else{
+             if($v->productQtyUnit == 'carton')
+                 $real_normalized_unit =  $v->productQty*$inner*$unit;
+            else if($v->productQtyUnit == 'inner')
+                 $real_normalized_unit =  $v->productQty*$unit;
+             else
+                 $real_normalized_unit =  $v->productQty;
+         }
+
+         $invoiceQ[$v->productId]['normalizedQty'] +=  $real_normalized_unit;
+         $invoiceQ[$v->productId]['normalizedUnitName'] = $v->productPackingName_unit;
+         $invoiceQ[$v->productId]['unitPerCarton'] = $carton*$inner*$unit;
+         $invoiceQ[$v->productId]['cartonName'] = $v->productPackingName_carton;
      }
-            if(count($info)>0){
-                foreach($info as $v1){
+
+
+pd($invoiceQ);
+
+     foreach($invoiceQ as &$vv){
+         $vv['cartonQtys'] = number_format($vv['normalizedQty']/$vv['unitPerCarton'],1,'.','');
+     }
+
+            if(count($invoiceQ)>0){
+                datawarehouse_product::where('month',$k)->where('year',$current_year)->delete();
+                foreach($invoiceQ as $k1 => $v1){
                     $save = new datawarehouse_product();
-                    $save->data_product_id = $v1->productId;
-                    if(isset($arr[$v1->productId])){
-                        $save->amount = $v1->amount-$arr[$v1->productId]['amount'];
-                        $save->qty = $v1->total-$arr[$v1->productId]['total'];
-                    }else{
-                        $save->amount = $v1->amount;
-                        $save->qty = $v1->total;
-                    }
+                    $save->data_product_id = $v1['productId'];
+                    $save->amount = $v1['amount'];
+                    $save->qty = $v1['cartonQtys'];
+                    $save->unitName = $v1['cartonName'];
                     $save->month = $k;
-                    $save->year = '2015';
+                    $save->year = $current_year;
                     $save->save();
                 }
                   echo $k."月<br>";
@@ -127,7 +182,6 @@ class DataWarehouseController extends BaseController {
 
         }
 
-*/
 
 
 //update invoice amount to invoices table;

@@ -77,7 +77,10 @@ app.factory('httpPreConfig', ['$http', '$rootScope', function($http, $rootScope)
 /* Setup App Main Controller */
 app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', 'SharedService', '$timeout', function($scope, $rootScope, $http, $interval, SharedService, $timeout) {
 
-
+         $scope.hardRefresh = function(link)
+        {
+             window.location = endpoint + link;
+        }
 
 	// get system configuration from cloud
 	$http.get($scope.endpoint + '/system.json').success(function(data) {
@@ -1143,7 +1146,53 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                 }]
             }
         })
-        
+
+        .state('expensesListing', {
+            url: "/expensesListing",
+            templateUrl: "views/expensesListing.html",
+            data: {pageTitle: '現金客列表', pageSubTitle: ''},
+            controller: "expensesController",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            'js/controllers/expensesController.js',
+
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
+        .state('expenses', {
+            url: "/expenses",
+            templateUrl: "views/payment/expenses.html",
+            data: {pageTitle: '現金客列表', pageSubTitle: ''},
+            controller: "expensesController",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            'js/controllers/expensesController.js',
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
          .state('supplierMain', {
         url: "/supplierMain", // header.html need it
         templateUrl: "views/supplierListing.html",            
@@ -1160,10 +1209,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 
 
 
-        assets + '/css/dataTable/bootstrap.min.css',
-                        assets + '/css/dataTable/dataTables.bootstrap.css',
-                        assets + '/js/dataTable/jquery.dataTables.min.js',
-                        assets + '/js/dataTable/dataTables.bootstrap.js',
+                        assets + '/css/dataTable/style.css',
+                        assets + '/global/plugins/datatables/all.min.js',
+                        assets + '/global/scripts/datatable.js',
 
                         'js/controllers/supplierMain.js' // Js controller
                       
@@ -1284,9 +1332,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         assets + '/global/plugins/bootbox/bootbox.min.js',
                         
                         'js/controllers/shipping.js',
-                   //     'js/controllers/selectSupplierControl.js',
+                        'js/controllers/containerCost.js',
                         'js/controllers/selectPoControl.js', 
-                  //      'js/controllers/selectProductCtrl.js',
+                        'js/controllers/selectShipControl.js',
                     ] 
                 });
             }]
@@ -1309,12 +1357,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
 
 
+                        assets + '/css/dataTable/style.css',
+                        assets + '/global/plugins/datatables/all.min.js',
+                        assets + '/global/scripts/datatable.js',
 
-        assets + '/css/dataTable/bootstrap.min.css',
-                        assets + '/css/dataTable/dataTables.bootstrap.css',
-                        assets + '/js/dataTable/jquery.dataTables.min.js',
-                        assets + '/js/dataTable/dataTables.bootstrap.js',
-                        
                         'js/controllers/searchship.js',
                         'js/controllers/selectSupplierControl.js',
                       //  'js/controllers/selectPoControl.js', 
@@ -1367,10 +1413,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                     name: 'app',
                     insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                     files: [
-                   	 assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
-                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
-
-
+                   	 //assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        //assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        assets + '/lib/angular-bootstrap/ui-bootstrap.min.js',
+                        assets + '/lib/angular-bootstrap/ui-bootstrap-csp.css',
 
         assets + '/css/dataTable/bootstrap.min.css',
                         assets + '/css/dataTable/dataTables.bootstrap.css',
@@ -1385,6 +1431,35 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }]
         }
     }) 
+	
+	     .state('receiveList', {
+        url: "/receiveList",
+        templateUrl: "views/receiveList.html",            
+        data: {pageTitle: '收貨列表', pageSubTitle: ''},
+
+       controller: "receiveList",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'app',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                    files: [
+                   	 assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+
+                        assets + '/css/dataTable/style.css',
+                        assets + '/global/plugins/datatables/all.min.js',
+                        assets + '/global/scripts/datatable.js',
+                        
+                        'js/controllers/receiveList.js',
+                        'js/controllers/repack.js',
+                    ] 
+                });
+            }]
+        }
+    }) 
+    
     
     
 

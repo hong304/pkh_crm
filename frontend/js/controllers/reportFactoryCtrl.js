@@ -20,7 +20,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     var month = nextDay.getMonth() + 1;
     var year = nextDay.getFullYear();
     var yday = nextDay.getDate()-1;
-    var fetchDataDelay = 250;   // milliseconds
+    var fetchDataDelay = 500;   // milliseconds
     var fetchDataTimer;
 
 	var querytarget = endpoint + "/getReport.json";
@@ -59,7 +59,15 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 	$scope.$watch(function() {
 	  return $scope.filterData;
 	}, function() {
-	  $scope.loadReport();
+
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+            $scope.loadReport();
+        }, fetchDataDelay);
+
+
+
+
 	}, true);
     
     $scope.loadSetting = function()
@@ -133,8 +141,11 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     
     $scope.loadReport = function()
     {
+console.log($scope.filterData);
 
-        console.log($scope.filterData);
+
+        $scope.filterData.action = $location.search().action;
+
     	$http.post(querytarget, {reportId: $location.search().id, output: "preview", filterData: $scope.filterData, query:$location.search()})
     	.success(function(res, status, headers, config){
 
@@ -244,7 +255,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
     $scope.selectProduct = function(id,action){
         if(id !==null)
-            $location.search().product = id;
+            $scope.filterData.productId = id;
 
         $location.search().action = action;
         $scope.action= action;
@@ -255,7 +266,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
     $scope.selectClient = function(id,action){
         if(id !==null)
-            $location.search().client = id;
+            $scope.filterData.customerId = id;
 
         $location.search().action = action;
         $scope.action= action;

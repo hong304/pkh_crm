@@ -18,8 +18,19 @@ class OrderController extends BaseController
 
     }
 
+    public function checkInvoiceIdExist(){
+
+        $customer = Invoice::select('InvoiceId')->where('InvoiceId', Input::get('invoiceId'))->first();
+
+        $customer = count($customer);
+        return Response::json($customer);
+    }
+
     public function jsonNewOrder()
     {
+
+
+
         $itemIds = [];
 
         $product = Input::get('product');
@@ -28,6 +39,23 @@ class OrderController extends BaseController
 
         $order = Input::get('order');
         $timer = Input::get('timer');
+
+        if(isset($order['invoiceNumber']) and $order['invoiceId'] == ''){
+
+            $invoiceId = invoice::where('invoiceId',$order['invoiceNumber'])->first();
+            if($invoiceId === null){
+
+            }else{
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => $order['invoiceNumber'],
+                    'invoiceItemIds' => 0,
+                    'message' => 'Invoice no. exist, please re-enter!',
+                ];
+            }
+        }
+
 
         // Create the invoice
         $ci = new InvoiceManipulation($order['invoiceId']);
@@ -367,18 +395,21 @@ class OrderController extends BaseController
             }
 
             // status
-            if ($filter['status'] == '100') {
-                $invoice->where(function ($query) {
-                    $query->where('previous_status', 1)->where('invoiceStatus', 2);
-                });
-            } else if ($filter['status'] != '0') {
-                $invoice->where('invoiceStatus', $filter['status']);
-            }
 
-            if ($filter['status'] == '99') {
-                $invoice->withTrashed();
-            }
-
+           if ($filter['status'] == '101') {
+               $invoice->withTrashed();
+           }else{
+                if ($filter['status'] == '100') {
+                    $invoice->where(function ($query) {
+                        $query->where('previous_status', 1)->where('invoiceStatus', 2);
+                    });
+                }else if ($filter['status'] != '0') {
+                    $invoice->where('invoiceStatus', $filter['status']);
+                }
+                if ($filter['status']=='99'){
+                    $invoice->withTrashed();
+                }
+           }
             // client id
             if ($filter['clientId'] != '0') {
                 $invoice->where('customerId', $filter['clientId']);
@@ -391,6 +422,8 @@ class OrderController extends BaseController
                     return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
                 })->addColumn('id', function ($invoice) {
                     return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">' . $invoice->invoiceId . '</a>';
+                })->setRowClass(function ($invoice) {
+                    return $invoice->invoiceStatus == 99 ? 'del-row' : '';
                 })
                 ->make(true);
 

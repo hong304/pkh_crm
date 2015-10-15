@@ -78,6 +78,10 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
             {
                 var nextDay = today;
             }
+
+          if($rootScope.systeminfo.user.username == 'hilton' || $rootScope.systeminfo.user.username == 'shirley' || $rootScope.systeminfo.user.username == 'WinnieW')
+              var nextDay = today;
+
             var flag = true;
             var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
             do{
@@ -990,7 +994,22 @@ else{
 
     }
 
+    $scope.checkIdexist = function(){
+        if($scope.order.invoiceId == ''){
+            var target = endpoint + '/checkInvoiceIdExist.json';
+            $http.post(target, {invoiceId: $scope.order.invoiceNumber})
+                .success(function(res, status, headers, config){
+                    if(res == 1){
+                        $scope.allowSubmission = false;
+                        $scope.Idused = true;
+                    }else{
+                        $scope.allowSubmission = true;
+                        $scope.Idused = false;
+                    }
 
+                });
+        }
+    }
 
     $scope.submitOrder = function(v)
     {

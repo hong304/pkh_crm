@@ -47,9 +47,9 @@ div.centre
 <table class="table table-bordered" style="border: 1px solid black !important;">
     <tbody>
 
-    <?php foreach($nr as $row):?>
+    <?php foreach($nr as $row){?>
     <tr>
-        <?php foreach($row as $k => $v):?>
+        <?php foreach($row as $k => $v){?>
 
                       <td style="background-color:<?php echo ($k%2==1)?'#FAFAFA':'';?>"><div><span style="font-weight:bold"><?php printf('%s (%s)',$k,$v['name'])."<br/>"; ?></span></div>
 <div style="border-top: 1px solid #ddd;" class="centre">
@@ -77,12 +77,14 @@ div.centre
 </div>
                       </td>
 
-        <?php endforeach; ?>
+        <?php } ?>
     </tr>
-    <?php endforeach; ?>
+    <?php }?>
     </tbody>
 </table>
 </div>
+
+
 
 <div class="col-md-3">
     <table class="table table-bordered" style="font-size:20px;">
@@ -94,20 +96,25 @@ div.centre
 
 
             <?php
-            $i = 0;
-            foreach($total as $k => $v){
-            $i++;?>
+            foreach($total['date'] as $k => $v){
+           ?>
             <tr>
              <td >
                     <?php
 
                         if($k == $yesterday){
                             echo '昨天:<span style="color: #ff0000;margin-left:10px;">'.number_format($v['volume'],'0','.',',').'</span><br/>';
-                        }
-                        if($k == $today){
-                            echo '今天:<span style="color: blue;margin-left:10px;">'.number_format($v['volume'],'0','.',',').'</span><br/>';
-                        }
-                        if($k == $tomorrow){
+                        }else if($k == $today){
+
+                             if($total['compare']==2)
+                                      $arrow = ' <span class="preu">('.$v['against_percentage'].')</span></span><span class="arrow_u10" style="margin-left:5px;"></span>';
+                                  else if ($total['compare'] == 0)
+                                      $arrow = ' <span class="pred">('.$v['against_percentage'].')</span></span><span class="arrow_d10" style="margin-left:5px;"></span>';
+                                  else
+                                      $arrow = '';
+
+                            echo '今天:<span style="color: blue;margin-left:10px;">'.number_format($v['volume'],'0','.',',').$arrow.'</span><br/>';
+                        }else if($k == $tomorrow){
                             echo '明天:<span style="color:#610655;margin-left:10px;">' .number_format($v['volume'],'0','.',',').'</span><br/>';
                         }
              ?>
@@ -121,11 +128,12 @@ div.centre
 </div>
 
 
+
     <div class="col-md-3">
         <table class="table table-bordered" style="font-size:20px;">
 
             <thead>
-            <th class="heading" colspan="3">十大銷量</th>
+            <th class="heading" colspan="3">十大銷量 (今天)</th>
             <tr>
                 <td>地區</td>
                 <td>銷量</td>

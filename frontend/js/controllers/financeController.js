@@ -244,8 +244,15 @@ var fetchDataTimer = '';
                 var i = 0;
                 $scope.invoiceinfo.forEach(function(item) {
                     $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
-                    $scope.invoicepaid[i]['settle'] = Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
+                    if(item.invoiceStatus != 98)
+                        $scope.invoicepaid[i]['settle'] = Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
+                    else
+                        $scope.invoicepaid[i]['settle']= Number(item.realAmount).toFixed(2);
                     $scope.invoicepaid[i]['id'] = item.invoiceId;
+
+                    if($scope.payment.discount > 0 && item.invoiceStatus != 98)
+                        $scope.invoicepaid[i]['discount'] = 1;
+
                     i++;
                 });
                 $scope.updatePaidTotal();
@@ -272,11 +279,19 @@ var fetchDataTimer = '';
 
 
     $scope.autoPost = function(){
+
+        var cheque_no = $scope.filterData.no;
+        if(cheque_no.length < 6){
+            alert('支票號碼只接受6位數字或以上');
+            return false;
+        }
+
         if(!$scope.filterData.discount)
             if($scope.totalAmount != $scope.filterData.amount) {
                 alert('需付金額不等於支票銀碼');
                 return false;
             }
+
         var data = $scope.invoicepaid;
         $http({
             method: 'POST',
@@ -306,9 +321,14 @@ $scope.updateDiscount = function(){
 
     var i = 0;
     $scope.invoiceinfo.forEach(function(item){
-
-        $scope.invoicepaid[i]['settle']= Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
-        //  $scope.invoicepaid[i]['discount'] = 1;
+        if(item.invoiceStatus != 98)
+            $scope.invoicepaid[i]['settle']= Number( (100-$scope.payment.discount)/100 * item.realAmount).toFixed(2);
+        else
+            $scope.invoicepaid[i]['settle']= Number(item.realAmount).toFixed(2);
+        if($scope.payment.discount > 0 && item.invoiceStatus != 98)
+            $scope.invoicepaid[i]['discount'] = 1;
+        else
+            $scope.invoicepaid[i]['discount'] = 0;
         i++;
     });
     $scope.updatePaidTotal();

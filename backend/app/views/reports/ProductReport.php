@@ -8,7 +8,12 @@ if ($data[13] == null){
     die;
 }
 ?>
-<h3 class="font-red-sunglo"><?=$data[13][$current_year]['product_name']?> (<?=$data[13][$current_year]['product_id']?>)</h3>
+<div class="pull-left">
+    <span style="font-size: 26px;color:orangered"><?=$data[13][$current_year]['product_name']?> (<?=$data[13][$current_year]['product_id']?>)</span> <span style="font-size: 16px;margin-left: 5px">
+        包裝:<?php
+        echo $data[13][$current_year]['productInfo']['productPacking_carton']." x ".$data[13][$current_year]['productInfo']['productPacking_inner']." x ".$data[13][$current_year]['productInfo']['productPacking_unit']?></span>
+</div>
+<br/>
 
 <table class="table table-bordered table-hover" style="text-align: right">
     <thead>
@@ -21,7 +26,7 @@ if ($data[13] == null){
                 <?=$last_year?> 銷售
             </th>
             <th width="10%">
-                <?=$last_year?> 數量
+                <?=$last_year?> 數量 (<?=$data[13][$current_year]['productInfo']['productPackingName_carton']?>)
             </th>
             <th width="10%">
                 <?=$last_year?> 單價
@@ -31,7 +36,7 @@ if ($data[13] == null){
                 <?=$current_year?> 銷售
             </th>
             <th width="10%">
-                <?=$current_year?> 數量
+                <?=$current_year?> 數量 (<?=$data[13][$current_year]['productInfo']['productPackingName_carton']?>)
             </th>
             <th width="10%">
                 <?=$current_year?> 單價

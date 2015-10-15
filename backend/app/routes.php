@@ -65,6 +65,8 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/getClientSameDayOrder.json','OrderController@jsonGetSameDayOrder');
     Route::post('/getAllLastItemPrice.json','OrderController@jsonGetLastItem');
     Route::post('/getNoOfOweInvoices.json','OrderController@getNoOfOweInvoices');
+    Route::post('/checkInvoiceIdExist.json','OrderController@checkInvoiceIdExist');
+
 
 
 
@@ -167,6 +169,10 @@ Route::group(array('before' => 'auth'), function()
     Route::any('getCashClearance.json','financeCashController@getClearance');
     Route::post('/addCashCheque.json','financeCashController@addCheque');
 
+    Route::post('addExpenses.json','expensesController@addExpenses');
+    Route::post('queryExpenses.json','expensesController@queryExpenses');
+
+
 
     //Data analysis
     Route::any('/searchProductDataProduct.json', 'DataWarehouseController@jsonSearchDataProduct');
@@ -202,6 +208,13 @@ Route::group(array('before' => 'auth'), function()
      Route::post('/searchShipping.json','receiveController@searchShipping');
      Route::post('/newReceive.json','receiveController@newReceive');
      Route::post('/getPurchaseAll.json','receiveController@getPurchaseAll');
+     Route::get('/purchaseOrderForm.json','newPoController@purchaseOrderForm');
+     Route::post('/jsonSearchSupplier.json','shippingController@jsonSearchSupplier');
+     Route::post('/jsonSearchPo.json','shippingController@jsonSearchPo');
+
+    //rePackController
+    Route::post('/getAllProducts.json','rePackController@getAllProducts');  //get all items from product table
+    Route::post('/queryReceiving.json','rePackController@queryReceiving');  //get all items from product table
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');
@@ -292,6 +305,255 @@ $c = new SystemController();
 
 });
 
+Route::get('/aging',function(){
+
+        $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
+
+
+        $first = true;
+
+        foreach ($time_interval as $v) {
+            if ($first) {
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
+                $first = false;
+            } else {
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-t", strtotime("-" . $v[1] . " month"));
+            }
+
+        }
+
+        //  pd($time);
+        $month[0] = key(array_slice($time, -6, 1, true));
+        $month[1] = key(array_slice($time, -5, 1, true));
+        $month[2] = key(array_slice($time, -4, 1, true));
+        $month[3] = key(array_slice($time, -3, 1, true));
+        $month[4] = key(array_slice($time, -2, 1, true));
+        $month[5] = key(array_slice($time, -1, 1, true));
+
+
+        $this->_reportMonth = date("n", $this->_date2);
+
+
+        $pdf = new PDF();
+        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
+
+
+
+
+for ($i = 0; $i <22; $i++){
+            $data = [];
+
+            foreach ($time as $k => $v) {
+                $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 1)->whereNotIn('invoiceStatus','30','99','2')->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.zoneId', $i)->OrderBy('deliveryDate')->get();
+
+                foreach ($data[$k] as $invoice) {
+                    $customerId = $invoice->customerId;
+
+                    if (!isset($this->_monthly[$k]['byCustomer'][$customerId]))
+                        $this->_monthly[$k]['byCustomer'][$customerId] = 0;
+                        $this->_monthly[$k]['byCustomer'][$customerId] += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
+                }
+            }
+}
+
+    pd($this->_monthly);
+
+
+        foreach ($time as $k => $v) {
+            if (!isset($this->_monthly[$k]['total']))
+                $this->_monthly[$k]['total'] = 0;
+            if (isset($this->_monthly[$k]['byCustomer']))
+                foreach ($this->_monthly[$k]['byCustomer'] as $v) {
+                    $this->_monthly[$k]['total'] += $v;
+                }
+        }
+
+        $bd = array_chunk($this->data, 17, true);
+
+        $i = 1;
+        $j = 1;
+        $own_total = 0;
+
+        foreach ($bd as $k => $g) {
+
+
+            $pdf->AddPage('L');
+
+
+            $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
+            $pdf->SetFont('chi','',14);
+            $pdf->setXY(10, 2);
+            $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
+            $pdf->setXY(10, 10);
+            $pdf->SetFont('chi','U',12);
+            $pdf->Cell(0, 10,'帳齡分析搞要(應收)',0,1,"C");
+
+            $y = 10;
+            $pdf->SetFont('chi','',9);
+            $pdf->setXY(10, $y);
+            $pdf->Cell(0, 10,'載至日期 : '. date('Y-m-d',$this->_date2),0,1,"L");
+
+            $pdf->setXY(10, $y+6);
+            $pdf->Cell(0, 10,'客戶組 : '.$this->_group,0,1,"L");
+
+            $y = 30;
+
+            $pdf->SetFont('chi', '', 8);
+            $pdf->setXY(10, $y);
+            $pdf->Cell(0, 0, "客户", 0, 0, "L");
+
+            $pdf->setXY(100, $y);
+            $pdf->Cell(0, 0, "結餘", 0, 0, "L");
+
+            $pdf->setXY(130, $y);
+            $pdf->Cell(0, 0, $month[0], 0, 0, "L");
+
+            $pdf->setXY(160, $y);
+            $pdf->Cell(0, 0, $month[1], 0, 0, "L");
+
+            $pdf->setXY(190, $y);
+            $pdf->Cell(0, 0, $month[2], 0, 0, "L");
+
+            $pdf->setXY(220, $y);
+            $pdf->Cell(0, 0, $month[3], 0, 0, "L");
+
+            $pdf->setXY(250, $y);
+            $pdf->Cell(0, 0, $month[4], 0, 0, "L");
+
+            $pdf->Line(10, $y + 2, 285, $y + 2);
+
+
+            $pdf->setXY(280, 10);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, count($bd)), 0, 0, "R");
+
+            $i++;
+
+
+            foreach ($g as $kk => $client) {
+
+                $amount = 0;
+                $paid = 0;
+                $accu = 0;
+
+                foreach ($client['breakdown'] as $k => $v) {
+
+                    $amount += $v['invoiceAmount'];
+                    $paid += $v['paid'];
+                    $accu = $v['accumulator'];
+
+                }
+
+                $own_total += $accu;
+
+                $y += 4;
+
+                $pdf->setXY(10, $y);
+                $pdf->Cell(0, 0, $client['customer']['customerId'], 0, 0, "L");
+
+                $pdf->setXY(30, $y);
+                $pdf->Cell(0, 0, $client['customer']['customerName'], 0, 0, "L");
+
+                $pdf->setXY(100, $y);
+                $pdf->Cell(0, 0, '$' . number_format($accu, 2, '.', ','), 0, 0, "L");
+
+                $pdf->setXY(130, $y);
+
+                if (isset($this->_monthly[$month[0]]['byCustomer'][$client['customer']['customerId']]))
+                    $numsum = '$' . number_format($this->_monthly[$month[0]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                else
+                    $numsum = '';
+
+                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                $pdf->setXY(160, $y);
+                if (isset($this->_monthly[$month[1]]['byCustomer'][$client['customer']['customerId']]))
+                    $numsum = '$' . number_format($this->_monthly[$month[1]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                else
+                    $numsum = '';
+                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                $pdf->setXY(190, $y);
+                if (isset($this->_monthly[$month[2]]['byCustomer'][$client['customer']['customerId']]))
+                    $numsum = '$' . number_format($this->_monthly[$month[2]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                else
+                    $numsum = '';
+                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                $pdf->setXY(220, $y);
+                if (isset($this->_monthly[$month[3]]['byCustomer'][$client['customer']['customerId']]))
+                    $numsum = '$' . number_format($this->_monthly[$month[3]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                else
+                    $numsum = '';
+                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                $pdf->setXY(250, $y);
+                if (isset($this->_monthly[$month[4]]['byCustomer'][$client['customer']['customerId']]))
+                    $numsum = '$' . number_format($this->_monthly[$month[4]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
+                else
+                    $numsum = '';
+
+                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                $pdf->Line(10, $y + 7, 285, $y + 7);
+
+                $y += 5;
+            }
+
+
+            if ($j == count($bd)) {
+
+                $y += 5;
+                $pdf->setXY(70, $y);
+                $pdf->Cell(0, 0, '合共總額:', 0, 0, "L");
+
+                $pdf->setXY(100, $y);
+                $pdf->Cell(0, 0, '$' . number_format($own_total, 2, '.', ','), 0, 0, "L");
+
+                $pdf->setXY(130, $y);
+                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -6, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -6, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+
+                $pdf->setXY(160, $y);
+                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -5, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -5, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+
+                $pdf->setXY(190, $y);
+                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -4, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -4, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+
+                $pdf->setXY(220, $y);
+                if (isset($this->_monthly[key(array_slice($time, -3, 1, true))]['total']))
+                    if ($this->_monthly[key(array_slice($time, -3, 1, true))]['total'] != 0)
+                        $numsum = '$' . number_format($this->_monthly[key(array_slice($time, -3, 1, true))]['total'], 1, '.', ',');
+                    else
+                        $numsum = '';
+
+                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+                $pdf->setXY(250, $y);
+                if (isset($this->_monthly[key(array_slice($time, -2, 1, true))]['total']))
+                    if ($this->_monthly[key(array_slice($time, -2, 1, true))]['total'] != 0)
+                        $numsum = '$' . number_format($this->_monthly[key(array_slice($time, -2, 1, true))]['total'], 1, '.', ',');
+                    else
+                        $numsum = '';
+
+                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
+
+            }
+
+            $j++;
+
+        }
+
+        $pdf->Output('', 'I');
+        // pd( $this->_monthly);
+
+    //aging pdf
+
+
+
+
+
+});
 
 Route::get('/dashboard', 'SystemController@getDashboard');
 
@@ -303,7 +565,12 @@ Route::get('/setZone', function(){
 
 Route::any('/credential/auth', 'UserController@authenticationProcess');
 
+//12:10 am
 Route::get('/cron/resetOrderTrace', function(){
+
+    set_time_limit(0);
+    ini_set('memory_limit', '-1');
+
     DB::table('Customer')->update(['today'=>'','tomorrow'=>'']);
 
     $invoices = Invoice::where('deliveryDate',strtotime('00:00:00'))->lists('customerId');
@@ -313,6 +580,144 @@ Route::get('/cron/resetOrderTrace', function(){
     $invoices_tomorrow = Invoice::where('deliveryDate',strtotime('tomorrow'))->lists('customerId');
     if(count($invoices_tomorrow)>0)
     DB::table('Customer')->wherein('customerId',$invoices_tomorrow)->update(['tomorrow'=>1]);
+
+
+    // customer and product analysis date update
+    $times  = array();
+    $current_year = date('Y');
+    $current_month = date("n");
+    for($month = $current_month; $month <= $current_month; $month++) {
+        $first_minute = mktime(0, 0, 0, $month, 1,$current_year);
+        $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute),$current_year);
+        $times[$month] = array($first_minute, $last_minute);
+    }
+
+    // update datawarehouse_custoemr table.
+    foreach($times as $k=>$v){
+
+        $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
+        $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
+
+        foreach($info_return as $v){
+            $arr[$v->customerId]['total'] = $v->total;
+            $arr[$v->customerId]['amount'] = $v->amount;
+        }
+        if(count($info)>0){
+            datawarehouse_customer::where('month',$k)->where('year',$current_year)->delete();
+            foreach($info as $v1){
+                $save = new datawarehouse_customer();
+                $save->customer_id = $v1->customerId;
+
+                if(isset($arr[$v1->customerId])){
+                    $save->amount = $v1->amount-$arr[$v1->customerId]['amount'];
+                    $save->qty = $v1->total-$arr[$v1->customerId]['total'];
+                }else{
+                    $save->amount = $v1->amount;
+                    $save->qty = $v1->total;
+                }
+
+                $save->month = $k;
+                $save->year = $current_year;
+                $save->save();
+            }
+            echo $k."月<br>";
+        }else{
+            echo "no data";
+        }
+
+    }
+
+//end of update datawarehouse_customer table
+
+
+// update datawarehouse_product table;
+    foreach($times as $k=>$v){
+        $invoiceQ = [];
+        // $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
+
+        /*  $invoices = Invoice::whereNoIn('invoiceStatus',[98,97,96])->wherebetween('deliveryDate',[$v[0],$v[1]])->lists('invoiceId');
+          $info = InvoiceItem::leftJoin('Product', function ($join) {
+              $join->on('InvoiceItem.productId', '=', 'Product.productId');
+          })->whereIn('invoiceId',$invoices)->get();*/
+
+
+
+        // $invoices = Invoice::whereNotIn('invoiceStatus',[97,96])->wherebetween('deliveryDate',[$v[0],$v[1]])->lists('invoiceId');
+
+
+        $invoiceitems = invoiceitem::select('invoiceitem.productId','invoiceitem.invoiceId','invoiceStatus','productPrice','productQty','productPacking_carton','productPacking_inner','productPacking_unit','productPackingName_unit','productPackingName_carton','productQtyUnit')
+            ->leftJoin('Product', function ($join) {
+                $join->on('invoiceitem.productId', '=', 'Product.productId');
+            })
+            ->leftJoin('Invoice', function ($join) {
+                $join->on('invoiceitem.invoiceId', '=', 'Invoice.invoiceId');
+            })->whereNotIn('invoiceStatus',[97,96,99])->wherebetween('deliveryDate',[$v[0],$v[1]])
+            ->orderBy('deliveryDate')
+            ->get();
+
+
+
+
+        foreach($invoiceitems as $k2 => $v){
+            $invoiceQ[$v->productId]['productId'] = $v->productId;
+            $invoiceQ[$v->productId]['amount'] = (isset($invoiceQ[$v->productId]['amount'])?$invoiceQ[$v->productId]['amount']:0) + $v->productPrice* (($v->invoiceStatus==98)?-1:1) * $v->productQty;
+
+            if(!isset($invoiceQ[$v->productId]['normalizedQty'])){
+                $invoiceQ[$v->productId]['normalizedQty'] = 0;
+            }
+
+            $carton = ($v->productPacking_carton) ? $v->productPacking_carton:1;
+            $inner = ($v->productPacking_inner) ? $v->productPacking_inner:1;
+            $unit = ($v->productPacking_unit) ? $v->productPacking_unit:1;
+
+            if($v->invoiceStatus == 98){
+                if($v->productQtyUnit == 'carton')
+                    $real_normalized_unit =  $v->productQty*$inner*$unit*-1;
+                else if($v->productQtyUnit == 'inner')
+                    $real_normalized_unit =  $v->productQty*$unit*-1;
+                else
+                    $real_normalized_unit =  $v->productQty * -1;
+            }else{
+                if($v->productQtyUnit == 'carton')
+                    $real_normalized_unit =  $v->productQty*$inner*$unit;
+                else if($v->productQtyUnit == 'inner')
+                    $real_normalized_unit =  $v->productQty*$unit;
+                else
+                    $real_normalized_unit =  $v->productQty;
+            }
+
+            $invoiceQ[$v->productId]['normalizedQty'] +=  $real_normalized_unit;
+            $invoiceQ[$v->productId]['normalizedUnitName'] = $v->productPackingName_unit;
+            $invoiceQ[$v->productId]['unitPerCarton'] = $carton*$inner*$unit;
+            $invoiceQ[$v->productId]['cartonName'] = $v->productPackingName_carton;
+        }
+
+
+
+        foreach($invoiceQ as &$vv){
+            $vv['cartonQtys'] = number_format($vv['normalizedQty']/$vv['unitPerCarton'],1,'.','');
+        }
+
+        if(count($invoiceQ)>0){
+            datawarehouse_product::where('month',$k)->where('year',$current_year)->delete();
+            foreach($invoiceQ as $k1 => $v1){
+                $save = new datawarehouse_product();
+                $save->data_product_id = $v1['productId'];
+                $save->amount = $v1['amount'];
+                $save->qty = $v1['cartonQtys'];
+                $save->unitName = $v1['cartonName'];
+                $save->month = $k;
+                $save->year = $current_year;
+                $save->save();
+            }
+            echo $k."月<br>";
+        }
+
+    }
+//end of update datawarehouse_customer table
+
+
+
 
 });
 

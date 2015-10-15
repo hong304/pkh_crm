@@ -49,10 +49,11 @@
                                             發票編號
                                         </label>
 
-                                        <div class="col-md-8">
+                                        <div class="col-md-5">
                                             <input type="text" class="form-control" ng-model="order.invoiceNumber"
-                                                   placeholder="自動填上" disabled required>
+                                                   placeholder="留空為系統分配" ng-disabled="order.invoiceId"  ng-change="checkIdexist()">
                                         </div>
+                                        <label class="control-label" data-ng-if="Idused == true"><span style="color: red">不能使用</span></label>
                                     </div>
                                 </div>
 

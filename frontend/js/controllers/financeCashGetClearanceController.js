@@ -69,7 +69,7 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
             autoclose: true
         });
 
-        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + yday );
+        $('.date-picker').datepicker( "setDate" , yyear + '-' + ymonth + '-' + yday );
 
 
 
@@ -110,19 +110,16 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
                         icon: '' // put icon before the message
                     });
                 }else{
-
-
-
-                $scope.payment = res;
-                $scope.invoiceinfo = res.data;
-                var i = 0;
-                $scope.invoiceinfo.forEach(function(item) {
-                    $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
-                    $scope.invoicepaid[i]['settle'] = item.realAmount;
-                    $scope.invoicepaid[i]['id'] = item.invoiceId;
-                    i++;
-                });
-                $scope.updatePaidTotal();
+                    $scope.payment = res;
+                    $scope.invoiceinfo = res.data;
+                    var i = 0;
+                    $scope.invoiceinfo.forEach(function(item) {
+                        $scope.invoicepaid[i] = $.extend(true, {}, $scope.invoiceStructure);
+                        $scope.invoicepaid[i]['settle'] = item.realAmount;
+                        $scope.invoicepaid[i]['id'] = item.invoiceId;
+                        i++;
+                    });
+                    $scope.updatePaidTotal();
                 }
             });
     }

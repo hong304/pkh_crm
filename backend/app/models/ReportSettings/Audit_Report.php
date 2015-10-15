@@ -243,6 +243,9 @@ class Audit_Report {
 
         }
 
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '總計:');
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, sprintf("HK$ %s",end($this->data)['accumulator']));
+
         $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(max($longest));
         foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
             // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();

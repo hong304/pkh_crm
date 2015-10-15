@@ -67,7 +67,7 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     }); 
     
     $scope.$on('ZoneChanged', function(){
-    	$scope.searchClient($scope.keyword);
+    	$scope.searchSupplier($scope.keyword);
        // $("#keyword").focus().select();
     });
     
@@ -79,12 +79,8 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     
     $scope.selectSupplier = function(c)
     {
-    	$('#selectclientmodel').modal('hide');
-        $('#selectclientmodel').on('hidden.bs.modal', function () { // Jump to bottom of page
-            $('#productCode_1').focus();
-            csuggestion = -1;
-        })
-    	$scope.searchClient("");
+    	$('#selectSuppliermodel').modal('hide');
+    	$scope.searchSupplier("");
     	SharedService.setValue('supplierCode', c.supplierCode, 'handleSupplierUpdate');
     	SharedService.setValue('supplierName', c.supplierName, 'handleSupplierUpdate');
     	SharedService.setValue('countryName', c.countryName, 'handleSupplierUpdate');
@@ -160,11 +156,12 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
         'current_sorting' : 'asc',
         'status': '1',
         'countryName' : '',
+        'access':'',
 	};
     
-   $scope.searchClient = function(keyword)
+   $scope.searchSupplier = function(keyword)
     {   
-        
+        $scope.keyword.access = "search";
     	$timeout.cancel(fetchDataTimer);
     	fetchDataTimer = $timeout(function () {
 	    	if(keyword != "")
@@ -205,5 +202,6 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
 	        });
     	}, fetchDataDelay);
     }
+    
 	
 });

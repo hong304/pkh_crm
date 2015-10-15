@@ -360,8 +360,8 @@
                                     <th width="7%">單價</th>
                                     <th width="12%">採購折扣</th>
                                     <th width="7%">現金折扣</th>
-                                    <th width="12%">金額 (HK${{totalAmount}})</th>
-                                    <th width="7%"></th>
+                                    <th width="12%">金額 (HK${{totalAmount |number:2}})</th>
+                                    <th width="10%"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -406,7 +406,7 @@
                                     <td>
                                         <div class="">
                                             <div class="input-icon right" id="unitpricediv_{{i}}">
-                                                <input type="tel" onClick="this.select();"  id="unitprice_{{i}}" ng-model="product[i]['unitprice']" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['unitprice']" value="{{product[i]['unitprice']}}" maxlength="6" disabled >
+                                                <input type="tel" onClick="this.select();"  id="unitprice_{{i}}" ng-model="product[i]['unitprice']" data-ng-change="checkPrice(i);zeroDis(i,product[i]['unitprice']);" class="form-control" name="product[i]['unitprice']" value="{{product[i]['unitprice']}}" maxlength="6" disabled >
                                             </div>
                                         </div>
                                     </td>
@@ -423,9 +423,9 @@
                                        <td>
                                         <div class=" ">
                                             <div class="input-group">
-                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_1']" value="{{product[i]['allowance_1']}}" ng-change="updateQty(i,'allowance_1')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance']" maxlength="6">
-                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_2']" value="{{product[i]['allowance_2']}}" ng-change="updateQty(i,'allowance_2')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance1']" maxlength="6">
-                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['allowance_3']" value="{{product[i]['allowance_3']}}" ng-change="updateQty(i,'allowance_3')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance2']" maxlength="6">
+                                                <input onClick="this.select();" type="tel" id="discount_a{{i}}" ng-model="product[i]['allowance_1']" value="{{product[i]['allowance_1']}}" ng-change="updateQty(i,'allowance_1')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance']" maxlength="6" disabled>
+                                                <input onClick="this.select();" type="tel" id="discount_b{{i}}" ng-model="product[i]['allowance_2']" value="{{product[i]['allowance_2']}}" ng-change="updateQty(i,'allowance_2')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance1']" maxlength="6" disabled>
+                                                <input onClick="this.select();" type="tel" id="discount_c{{i}}" ng-model="product[i]['allowance_3']" value="{{product[i]['allowance_3']}}" ng-change="updateQty(i,'allowance_3')" data-ng-change="checkPrice(i)" class="form-control" name="product[i]['itemallowance2']" maxlength="6" disabled>
                                             </div>
                                         </div>
                                     </td>

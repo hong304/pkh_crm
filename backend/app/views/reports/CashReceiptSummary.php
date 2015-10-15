@@ -135,3 +135,35 @@
     <tr>
     </tbody>
 </table>
+
+<table class="table table-bordered table-hover" style="font-size:15px;">
+    <thead>
+    <tr role="row" class="heading">
+        <th width="100%" colspan="4">支出款項</th>
+    </tr>
+    </thead>
+
+    <thead>
+    <tr role="row" class="heading">
+        <th width="25%">停車場</th>
+        <th width="25%">隧道</th>
+        <th width="25%">採購貨品</th>
+        <th width="25%">雜費</th>
+    </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>HK$ <?php echo $expenses['cost1']; ?></td>
+            <td>HK$ <?php echo $expenses['cost2']; ?></td>
+            <td>HK$ <?php echo $expenses['cost3']; ?></td>
+            <td>HK$ <?php echo $expenses['cost4']; ?></td>
+        </tr>
+
+    <tr>
+        <td colspan="4" style="text-align:right;">
+            <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo $expenses['amount']; ?></span>
+        </td>
+    <tr>
+    </tbody>
+</table>

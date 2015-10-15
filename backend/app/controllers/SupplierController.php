@@ -29,7 +29,9 @@ class SupplierController extends BaseController
                 $joins->on('currencies.currencyId', '=','suppliers.currencyId');  
             })
             ->Orderby($filterId,$filterOrder);
-   
+            
+            if(isset($filter['findOverseas']))
+                $supplier->where('location',2);
            
             if ($filter['status'] == 99) {
                 $supplier->onlyTrashed();
@@ -52,9 +54,31 @@ class SupplierController extends BaseController
                         $query->orwhere('contactPerson_1', 'LIKE', '%' . $filter['contact'] . '%')
                                ->orwhere('contactPerson_2', 'LIKE', '%' . $filter['contact'] . '%');
                      })
-                    ->where('supplierCode', 'LIKE', '%' . $filter['id'] . '%')
-					 ->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
+                    ->where('supplierCode', 'LIKE', '%' . $filter['id'] . '%');
+                    
             });
+            
+           
+            if(isset($filter['access']) && (isset($filter['countryName']['countryName'])))
+            {
+                  $supplier->where(function ($query) use ($filter) {
+                 $query->where('countryName', 'LIKE', '%' .$filter['countryName']['countryName'] . '%');
+             });
+            }else if(isset($filter['findOverseas']) && (isset($filter['countryName']['countryName'])))
+            {
+             $supplier->where(function ($query) use ($filter) {
+                 $query->where('countryName', 'LIKE', '%' .$filter['countryName']['countryName'] . '%');
+             });
+            }
+            else if(isset($filter['country']))
+            {
+                 $supplier->where(function ($query) use ($filter) {
+                    $query->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
+                 });
+            }
+           
+             
+              
             
 
       //  ,'email','countries.countryName','currencies.currencyName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by')
@@ -80,10 +104,7 @@ class SupplierController extends BaseController
         return Response::json($supplier);
     }
     
-    public function doubleSupplier()
-    {
-        
-    }
+    
     
     public function jsonCheckSupplier()
     {
@@ -148,12 +169,9 @@ class SupplierController extends BaseController
                     'currencyId' => 'required',
                     'status'=> 'required',
                     'payment' => 'required',
-                    'phone_1' => 'size:8',
-                    'phone_2' => 'min:8',
-                    'fax_1' => 'size:8',
-                    'fax_2' => 'size:8',
-                     'email' => 'email',
-                     'location' => 'required',
+                    'email' => 'email',
+                    'location' => 'required',
+                    'supplierAbbre'=>'required|size:2',
 	        ];
          
       

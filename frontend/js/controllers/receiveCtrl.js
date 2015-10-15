@@ -43,13 +43,13 @@ app.controller('receiveCtrl', function($rootScope, $scope, $http, $timeout, Shar
     var yday = start_date.getDate();
     
 
-    $("#deliverydate,#deliverydate1,#deliverydate2").datepicker({
+   /* $("#deliverydate").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
     
-    $("#deliverydate,#deliverydate1,#deliverydate2").datepicker("setDate", yyear + '-' + ymonth + '-' + yday);
+    $("#deliverydate").datepicker("setDate", yyear + '-' + ymonth + '-' + yday); */
     
     
     $scope.orders.receiveDate = yyear + '-' + ymonth + '-' + yday;
@@ -327,12 +327,28 @@ $scope.an = false;
                 icon: 'warning' // put icon before the message
             });
     }
+    
+    function wrongMessage()
+    {
+          Metronic.alert({
+                container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
+                place: 'prepend', // append or prepent in container
+                type: 'danger',  // alert's type
+                message: '貨物編號不正確',  // alert's message
+                close: true, // make alert closable
+                reset: true, // close all previouse alerts first
+                focus: true, // auto scroll to the alert after shown
+                closeInSeconds: 0, // auto close after defined seconds
+                icon: 'warning' // put icon before the message
+            });
+    }
 
 
 
     $scope.submitOrder = function(v)
     {
         var generalError = false;
+      
         if($scope.orders.location == '2')
         {
              if(!$scope.orders.poCode || !$scope.orders.supplierCode||!$scope.orders.shippingId||!$scope.orders.containerId)
@@ -340,15 +356,18 @@ $scope.an = false;
                 alertBox();
              }else
              {
-                  generalError = true;
+                generalError = true;
              }
         }else if(!$scope.orders.poCode || !$scope.orders.supplierCode)
         {
             alertBox();
         }else
         {
-            generalError = true;
+            generalError = false;
         }
+
+        if($(".warning").text().length <= 0)
+        {
         if(generalError)
         {
             $http.post(
@@ -404,6 +423,11 @@ $scope.an = false;
                 });
       
         }
+        }else
+        {
+            wrongMessage();
+        }
+      
 
     }
     
@@ -419,6 +443,7 @@ $scope.an = false;
                     $scope.product[h]['productName'] = "";
                     $scope.product[h]['qty'] = "";
                     $scope.product[h]['unit'] = "";
+                    $scope.product[h]['unit_cost'] = "";
                    // $scope.product[h]['availableunit'] = 
                 }
                 else if(value == $scope.items[i].productId)
@@ -431,26 +456,27 @@ $scope.an = false;
                       $scope.b = $scope.items[i].product_detail.productPackingName.inner;
                       $scope.c = $scope.items[i].product_detail.productPackingName.unit;
                       
-                      $scope.Model[i] = [
-                        {
-                            unit: $scope.a
-                        },
-                        {
-                            unit: $scope.b
-                        },
-                        {
-                            unit: $scope.c
-                        },
-                      ];
-                      for(var k = 0;k < $scope.Model.length;k++)
+                      var availableunit = [];
+                      
+                      if($scope.a != undefined && $scope.a != "")
+                        availableunit = availableunit.concat([{value: 'carton', label: $scope.a}]);
+                      if($scope.b != undefined && $scope.b != "")
+                        availableunit = availableunit.concat([{value: 'inner', label: $scope.b}]);
+                      if($scope.c != undefined && $scope.c != "")
+                        availableunit = availableunit.concat([{value: 'unit', label: $scope.c}]);
+             
+                      $scope.product[h].availableunit = availableunit;
+                      //if($scope.items[i].productUnitName == "")
+                      var storeValue;
+                      for(var k = 0;k<$scope.product[h].availableunit ;k++)
                       {
-                          if($scope.Model[k].unit == $scope.items[i].productUnitName)
-                          {
-                              $scope.product[h]['unit'] = $scope.Model[k];
-                          }
+                         if($scope.items[i].productUnitName == $scope.product[h].availableunit[k]['label'])
+                         {
+                             storeValue = k;
+                         }
                       }
-
-                 //     $scope.product[h]['unit'] = $scope.items[i].productUnitName;
+                      $scope.product[h].unit = $scope.product[h].availableunit[k];
+                      $scope.product[h]['unit_cost'] = $scope.items[i].unitprice;
                       break;
                 }
             }
@@ -462,6 +488,7 @@ $scope.an = false;
            $scope.product[h]['productName'] = "";
            $scope.product[h]['qty'] = "";
            $scope.product[h]['unit'] = "";
+           $scope.product[h]['unit_cost'] = "";
           // $scope.product[h]['availableunit'] = 
         }
     }

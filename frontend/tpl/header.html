@@ -1,4 +1,10 @@
 <!-- BEGIN HEADER TOP -->
+<style>
+    .adjustHeight
+    {
+        min-height:128px;
+    }
+</style>
 <div class="page-header-top">
 	<div class="container-fluid">
 		<!-- BEGIN LOGO -->
@@ -197,26 +203,26 @@
             </li>
              -->
 				
-				<li class="menu-dropdown">
+				<li class="menu-dropdown" data-ng-if="systemInfo.permission.add_invoice == true">
 					<a href="/#/newOrder" ng-click="$state.go('newOrder', {}, {reload: true});"><i class="fa fa-plus"></i>增加訂單</a>
 				</li>
 				
-				<li class="menu-dropdown">
+				<li class="menu-dropdown" data-ng-if="systemInfo.permission.view_invoice == true">
 					<a href="/#/queryInvoice"><i class="fa fa-search"></i>搜尋訂單 </a>	
 				</li>
 
-                <li class="menu-dropdown">
+                <li class="menu-dropdown" data-ng-if="systemInfo.permission.view_invoice == true">
                     <a href="/#/queryProduct"><i class="fa fa-search"></i>銷售產品 </a>
                 </li>
 
 
                 <li class="menu-dropdown" data-ng-if="systemInfo.permission.add_po == true">
-                    <a href="/#/PoMain" ng-click="$state.go('PoMain', {}, {reload: true});" class="iconify">
+                    <a href="/#/PoMain" ng-click="hardRefresh('/#/PoMain')"  class="iconify">
                         <i class="fa fa-plus"></i>
                         增加購單 </a>
                 </li>
                 <li class="menu-dropdown" data-ng-if="systemInfo.permission.view_po == true">
-                    <a href="/#/searchPo" class="iconify">
+                    <a href="/#/searchPo" class="iconify" ng-click="hardRefresh('/#/searchPo')">
                         <i class="fa fa-search"></i>
                         搜尋購單 </a>
                 </li>
@@ -227,8 +233,8 @@
 				</li>-->
 
 
-
-                <li class="menu-dropdown">
+                <!--data-ng-if="systemInfo.permission.view_report == true" -->
+                <li class="menu-dropdown" >
                     <a href="/#/reportSelection" ><i class="fa fa-star-half-o"></i>報表系統</a>
                 </li>
 
@@ -262,6 +268,11 @@
                                                     <i class="icon-home"></i>
                                                    現金單付款處理</a>
                                             </li>
+                                            <li ng-if="systemInfo.permission.view_expenses == true">
+                                                <a href="/#/expensesListing" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    支出管理</a>
+                                            </li>
                                         </ul>
                                     </div>
 
@@ -284,7 +295,7 @@
 						<li>
 							<div class="mega-menu-content">
 								<div class="row">
-									<div class="col-md-3">
+									<div class="col-md-3 adjustHeight">
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>客戶相關</h3>
@@ -301,7 +312,7 @@
                                             </li>
 										</ul>
 									</div>
-									<div class="col-md-3" data-ng-if="systemInfo.permission.product_maintenance == true">
+									<div class="col-md-3 adjustHeight" data-ng-if="systemInfo.permission.product_maintenance == true">
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>產品相關</h3>
@@ -319,7 +330,7 @@
 											
 										</ul>
 									</div>
-									<div class="col-md-3">
+									<div class="col-md-3 adjustHeight">
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>用戶相關</h3>
@@ -336,7 +347,7 @@
                                             </li>
 										</ul>
 									</div>
-									<div class="col-md-3" >
+									<div class="col-md-3 adjustHeight" >
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>訂單相關</h3>
@@ -348,7 +359,7 @@
 											</li>
 										</ul>
 									</div>
-                                                                       <div class="col-md-3"  data-ng-if="systemInfo.permission.allow_edit == true">  
+                                                                       <div class="col-md-3 adjustHeight" >  
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>供應商相關</h3>
@@ -372,19 +383,19 @@
 										</ul>
 									</div>
                                                                     
-                                                                     <div class="col-md-3"  data-ng-if="systemInfo.permission.allow_edit == true">  
+                                                                     <div class="col-md-3 adjustHeight" >  
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>船務相關</h3>
 											</li>
 
 											 <li>
-                                                                                             <a href="/#/shipping" class="iconify">
+                                                                                             <a href="/#/shipping" class="iconify" ng-click="$state.go('shipping', {}, {reload: true});">
                                                                                              <i class="icon-home"></i>
                                                                                             船務管理 </a>
                                                                                          </li>
                                                                                           <li>
-                                                                                             <a href="/#/searchship" class="iconify">
+                                                                                             <a href="/#/searchship" class="iconify" ng-click="hardRefresh('/#/searchship')">
                                                                                              <i class="icon-home"></i>
                                                                                             搜尋船務 </a>
                                                                                          </li>      
@@ -396,7 +407,7 @@
 										</ul>
 									</div>
                                                                        
-                                                                          <div class="col-md-3"  data-ng-if="systemInfo.permission.allow_edit == true">  
+                                                                          <div class="col-md-3 adjustHeight"  data-ng-if="systemInfo.permission.view_receiving == true">  
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>收貨相關</h3>
@@ -406,6 +417,11 @@
                                                                                         <i class="icon-home"></i>
                                                                                          收貨管理 </a>
                                                                                     </li>
+																					 <li>
+                                                                                            <a href="/#/receiveList" class="iconify">
+                                                                                            <i class="icon-home"></i>
+                                                                                            收貨列表 </a>
+                                                                                        </li>
                                                                                                                                                              
 										</ul>
 									</div>

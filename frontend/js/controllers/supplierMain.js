@@ -47,7 +47,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 	var iutarget = endpoint + '/maniSupplier.json';
         var getChoice = endpoint + '/getChoice.json';
         var getCurrency = endpoint + '/getCurrency.json';
-       
+      
          // loadChoice();
      function paymentChange()
      {
@@ -65,14 +65,16 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                              $scope.customerInfo_def.creditAmount = 0;
                         }
                   });
-                  
-                  $("#countrySelect").change(function() {
-                        var storeId = $("#supplierCode").val().replace(/[A-Za-z]*/,"");
-                       // $("#supplierCode").val($scope.customerInfo_def.countryId+storeId);
-                        $scope.customerInfo_def.supplierCode=$scope.customerInfo_def.countryId+storeId;
-                       
-                  });
-                  
+
+                   $scope.changeCountry = function() {
+                           var storeId = $scope.customerInfo_def.supplierSuffix.replace(/[A-Za-z]*/,"");
+                           $scope.customerInfo_def.supplierSuffix=  $scope.customerInfo_def.countryId + storeId;
+                           if($scope.customerInfo_def.supplierSuffix == "undefined")
+                           {
+                               $scope.customerInfo_def.supplierSuffix= "";
+                           }
+                     
+                  }
  
                  });
      }
@@ -92,6 +94,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 	$scope.customerInfo_def = {
                         'supplierCodeOri' :'',
 			'supplierCode' :'',
+                        'supplierSuffix':'',
                         'supplierName' :' ',
                         'phone_1' :' ',
                         'phone_2' :' ',
@@ -111,11 +114,13 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                         'fax_2' :'',
                         'remark':'',
                         'location':'',
+                        'supplierAbbre':'',
                        
 	};
 	$scope.customerInfo_copy = {
                         'supplierCodeOri' :'',
 			'supplierCode' :'',
+                        'supplierSuffix':'',
                         'supplierName' :' ',
                         'phone_1' :' ',
                         'phone_2' :' ',
@@ -135,6 +140,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                         'fax_2' :'',
                          'remark':'',
                           'location':'',
+                          'supplierAbbre':'',
 	};
    
 	$scope.submitbtn = true;
@@ -177,13 +183,14 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
         $scope.action = "update";
         $scope.newId = "";
 //        $(".phone").inputmask("99999999");
-       
+        $scope.mySwitch = true;
     	$http.post(q2, {mode: "single", supplierCode: customerId})
     	.success(function(res, status, headers, config){    
          	//$scope.customerInfo = $.extend({}, res, $scope.customerInfo_def);
         $scope.customerInfo_def = res;
-
-        $scope.customerInfo_def.supplierCodeOri = $scope.customerInfo_def.supplierCode;
+        $scope.customerInfo_def.supplierCodeStore = $scope.customerInfo_def.supplierCodeOri = $scope.customerInfo_def.supplierCode;
+        $scope.customerInfo_def.supplierAbbre = $scope.customerInfo_def.supplierCodeStore.substring(0,2);
+        $scope.customerInfo_def.supplierSuffix = $scope.customerInfo_def.supplierCodeStore.substring(2);
    
         ($scope.customerInfo_def.payment == "Cash") ?  $("#creditDay,#creditLimit,#creditAmount").hide() : $("#creditDay,#creditLimit,#creditAmount").show();
 
@@ -194,7 +201,8 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 
   
              paymentChange();
-              $("#format_date").html(res.format_date.date);
+             $scope.customDate = res.format_date.date.split(" ")[0];
+             // $("#format_date").html(res.format_date.date);
          
     	});
     	
@@ -261,28 +269,13 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
 
     $scope.addSupplier = function()
     {
-      
          $scope.customerInfo_def = $scope.customerInfo_copy;     
          $scope.newId = "";
-        $scope.action = "create";
-		var statuscat = [];
-		statuscat = statuscat.concat([{value: '1', label: "Normal"}]);
-		statuscat = statuscat.concat([{value: '2', label: "Suspended"}]);
-    	$scope.statuscat = statuscat;
-
-        var statuscat1 = [];
-        statuscat1 = statuscat1.concat([{value: '1', label: "早班"}]);
-        statuscat1 = statuscat1.concat([{value: '2', label: "晚班"}]);
-        $scope.statuscat1 = statuscat1;
-
-    	//console.log($scope.statuscat );
+         $scope.action = "create";
+         $scope.mySwitch = false;
 
     	$scope.submitbtn = true;
     	$scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
-    	$scope.customerInfo.status = $scope.statuscat[0];
-        $scope.customerInfo.shift =     $scope.statuscat1[0];
-        
-
 
 //        $(".phone").inputmask("99999999");
     	$("#supplierFormModal").modal({backdrop: 'static'});
@@ -311,12 +304,13 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
     }
     $scope.submitCustomerForm = function()
     {     
+        $scope.customerInfo_def.supplierCode =  $scope.customerInfo_def.supplierAbbre + $scope.customerInfo_def.supplierSuffix;
         if( $scope.action == "create")
         {
             $scope.customerInfo_def.supplierCodeOri = "";
              $scope.customerInfo_def.supplierCode = "";
         }
-   
+        
         if(!$scope.submit)
             alert('客户編號不能用');
        
@@ -329,7 +323,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                             $("#currencyFormModal").modal('hide');
         		    $scope.updateDataSet();
                             $scope.submitbtn = false;
-                            $scope.newId = "編號: " + res.id;
+                            $scope.newId = "供應商編號: " + res.id;
                             $scope.updateDataSet();
                         }else
                         {
@@ -362,6 +356,17 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
     $scope.searchSupplier = function()
     {
         $scope.updateDataSet();
+    }
+    
+    $scope.capitalChar = function(value)
+    {
+        $scope.customerInfo_def.supplierAbbre = value.toUpperCase();
+        /*if($scope.customerInfo_def.supplierAbbre.length == 2 || $scope.customerInfo_def.supplierAbbre.length == 0)
+        {
+            $scope.newRegex = new RegExp("[^" +  $scope.customerInfo_def.countryId + "0-9]", "g");
+            $scope.customerInfo_def.supplierCode = $scope.customerInfo_def.supplierCode.replace($scope.newRegex,"");
+            $scope.customerInfo_def.supplierCode = $scope.customerInfo_def.supplierAbbre + $scope.customerInfo_def.supplierCode;
+        }    */
     }
 
       $scope.updateDataSet = function () {

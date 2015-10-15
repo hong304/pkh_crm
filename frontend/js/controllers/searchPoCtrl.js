@@ -6,6 +6,7 @@ function editPo(poId)
     var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
         scope.viewPurchaseOrder(poId);
+        scope.viewUpdateRecord(poId);
     });
 }
 
@@ -35,7 +36,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
     
  
 
-    $scope.keyword = {
+    $scope.keywordpo = {
         supplier: '',
         poCode: '',
         poStatus: '',
@@ -57,6 +58,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         poAmount: '',
         invoice_item: '',
         invoice: '',
+        location:'',
     };
     
     
@@ -90,14 +92,14 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
      });
      $("#endPodate").datepicker( "setDate", year + '-' + month + '-' + day );
      
-        $scope.keyword.startPodate = yyear+'-'+ymonth+'-'+yday;
-        $scope.keyword.endPodate = year+'-'+month+'-'+day;
+        $scope.keywordpo.startPodate = yyear+'-'+ymonth+'-'+yday;
+        $scope.keywordpo.endPodate = year+'-'+month+'-'+day;
 
         if($location.search().poDate  !== undefined)
         {
-            $scope.keyword.endPodate = $location.search().poDate;
-            $scope.keyword.startPodate = $location.search().poDate;
-            $scope.keyword.sorting = "purchaseorders.updated_at";  
+            $scope.keywordpo.endPodate = $location.search().poDate;
+            $scope.keywordpo.startPodate = $location.search().poDate;
+            $scope.keywordpo.sorting = "purchaseorders.updated_at";  
         }
      
      $scope.$watch(function() {
@@ -213,9 +215,9 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
      */
     $scope.updateStatus = function()
     {
-        if($scope.keyword.poStatus == 0)
+        if($scope.keywordpo.poStatus == 0)
         {
-             $scope.keyword.poStatus = '';
+             $scope.keywordpo.poStatus = '';
         }
         $scope.updateDataSet();
     }
@@ -226,7 +228,9 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         $http.post($scope.endpoint + "/queryPo.json", {
             poCode: poId, mode: 'single'
         }).success(function (data) {
+           console.log(data);
             $scope.order = data.po[0];
+            $scope.invoiceinfo.location = data.po[0].location;
             $scope.invoiceinfo.poCode = data.po[0].poCode;
             $scope.invoiceinfo.poDate = data.po[0].poDate;
             $scope.invoiceinfo.etaDate = data.po[0].etaDate;
@@ -259,9 +263,18 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
 
     }
     
-    $scope.genA4Invoice = function(poCode)
+    $scope.viewUpdateRecord = function(poId)
     {
-       window.open(endpoint + "/printPo.json?poCode=" + poCode); //window open is a new tab 
+        $http.post($scope.endpoint + "/queryPoUpdate.json", {
+            poCode: poId
+        }).success(function (data) {
+            $scope.poaduit = data;
+        });
+    }
+    
+    $scope.genA4Invoice = function(poCode,lang)
+    {
+       window.open(endpoint + "/printPo.json?poCode=" + poCode + "&lang=" + lang); //window open is a new tab 
     }
 
     $scope.goEdit = function (invoiceId)
@@ -276,6 +289,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 $location.url("/PoMain?poCode=" + invoiceId);
             }
         });
+        
     }
 
     $scope.voidPo = function (poCode)
@@ -296,6 +310,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         }
 
     }
+    
 
 
     $scope.updateDataSet = function () {
@@ -310,7 +325,6 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 $scope.firstload = false;
             }
 
-
             $('#datatable_ajax').dataTable({
                 // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
 
@@ -319,11 +333,14 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 "ajax": {
                     "url": queryPo, // ajax source
                     "type": 'POST',
-                    "data": {mode: "collection", filterData: $scope.keyword},
+                    "data": {mode: "collection", filterData: $scope.keywordpo},
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 50,
                 "pagingType": "full_numbers",
+                "fnDrawCallback" : function() {
+                   window.alert = function() {};
+                },
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",
@@ -353,7 +370,8 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 ]
 
             });
-
+            
+           
         });
     };
 
@@ -362,7 +380,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
     $scope.$on('handleSupplierUpdate', function () {
         // received client selection broadcast. update to the invoice portlet
         $scope.an = true;
-        $scope.keyword.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
+        $scope.keywordpo.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
   
         $scope.updateDataSet();
     });
@@ -370,16 +388,22 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
     $scope.click = function (event)
     {
 
-        $scope.keyword.sorting = event.target.id;
+        $scope.keywordpo.sorting = event.target.id;
 
-        if ($scope.keyword.current_sorting == 'asc') {
-            $scope.keyword.current_sorting = 'desc';
+        if ($scope.keywordpo.current_sorting == 'asc') {
+            $scope.keywordpo.current_sorting = 'desc';
         } else {
-            $scope.keyword.current_sorting = 'asc';
+            $scope.keywordpo.current_sorting = 'asc';
         }
 
         $scope.updateDataSet();
     }
+    
 
+    $scope.clearPoSearch = function()
+    {
+        $scope.keywordpo.supplier = "";
+        $scope.updateDataSet();
+    }
 
 });

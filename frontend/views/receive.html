@@ -319,7 +319,7 @@
                                             <span class="input-group-btn">
                                             </span>
                                         </div>
-                                         <span id="warning{{i}}" style="color:red;"></span>
+                                         <span id="warning{{i}}" style="color:red;" class="warning"></span>
                                     </td>
                                     <td style="line-height:35px;font-size:15px;">
                                         {{product[i]['productName']}}
@@ -342,7 +342,7 @@
                                              <select class="form-control"
                                                     id="unit_{{i}}"
                                                     ng-model="product[i]['unit']"
-                                                    data-ng-options="x.unit for x in Model[i] track by x.unit">
+                                                    data-ng-options="x.label for x in product[i].availableunit track by x.value">
                                             </select>
                                         </label>
                                     </td>
@@ -377,10 +377,11 @@
                                     </td>
                                     <td style="line-height:35px;font-size:15px;">
                                         <div class="input-group date " id="deliverydate{{i}}" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="product[i]['expiryDate']" >
-                                            <span class="input-group-btn">
-                                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
-                                            </span>
+                                            <!--<input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="product[i]['expiryDate']" > -->
+
+                                            <input type="date" class="form-control" datepicker-popup ng-model="product[i]['expiryDate']"  is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+
+
                                         </div>
                                     </td>
                                     <td>

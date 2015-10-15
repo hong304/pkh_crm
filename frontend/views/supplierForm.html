@@ -5,7 +5,7 @@
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true"></button>
 				
-                            <h4 class="modal-title">供應商管理 - (<span >最後修改日期:<font id="format_date"></font> 修改人:{{customerInfo_def.username}}</span><span>增加供應商</span>)</h4>
+                            <h4 class="modal-title">供應商管理 - (<span >最後修改日期:<font>{{customDate}}</font> 修改人:{{customerInfo_def.username}}</span><span>增加供應商</span>)</h4>
 			</div>
 			<div class="modal-body">
 				<form action="javascript:;" class="form-horizontal">
@@ -20,45 +20,62 @@
                                 <label class="control-label" data-ng-if="productIdused == true"><span style="color: red">供應商編號已被使用</span></label>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                           
-                         
-                        </div>
                                                 <div class="form-group">
 							<label class="col-md-2 control-label">供應商編號</label>
-							<div class="col-md-10">
-								<input type="text" id="supplierCode" ng-model="customerInfo_def.supplierCode" class="form-control" placeholder="Enter text" disabled = "true">
-                                                                
-							</div>
+                                                        <div class="col-md-13">
+                                                            <div class="col-md-3">
+								<input type="text" id="supplierAbbre" ng-model="customerInfo_def.supplierAbbre" class="form-control" placeholder="供應商公司縮寫" maxlength="2" ng-change="capitalChar(customerInfo_def.supplierAbbre)" ng-disabled ="mySwitch">  
+                                                            </div>
+                                                            <div class="col-md-7">
+							        <input  type="text" id="supplierSuffix" ng-model="customerInfo_def.supplierSuffix" class="form-control" placeholder="Enter text" disabled = "true" >
+                                                             </div>
+                                                        </div>
+						
 						</div>
                                             
-                                            <div class="form-group"  data-ng-if="systemInfo.permission.allow_edit == true">
+                                            
+                                            
+                                            <div class="form-group" >
 							<label class="col-md-2 control-label">國家</label>
 							<div class="col-md-10">
                                                                 <select class="form-control" 
 									ng-model="customerInfo_def.countryId" 
-									class="form-control" id="countrySelect">	
+									class="form-control" id="countrySelect" ng-click="changeCountry()" ng-disabled ="mySwitch">	
                                                                         <option value="HK">香港</option>
 									<option value="US">美國</option>
-                                                                        <option value="AF">非洲</option>
+                                                                        <option value="ZA">南非</option>
+                                                                        <option value="AR">阿根廷</option>
+                                                                        <option value="CH">中國</option>
+                                                                        <option value="UR">烏拉圭</option>
+                                                                        <option value="AU">澳洲</option>
+                                                                        <option value="NZ">紐西蘭</option>
+                                                                        <option value="AR">智利</option>
+                                                                        <option value="IR">伊朗</option>
+                                                                        <option value="TK">士耳其</option>
+                                                                        <option value="EY">埃及</option>
+                                                                        <option value="SP">西班牙</option>
+                                                                        <option value="IT">義大利</option>
+                                                                        <option value="TH">泰國</option>
+                                                                        <option value="MY">馬來西亞</option>
+                                                                        <option value="BZ">巴西</option>
+                                                                   
 								</select>
 							</div>
 						</div>
-                                            
-                                            <div class="form-group"  data-ng-if="systemInfo.permission.allow_edit == true">
+                                        
+                                            <div class="form-group">
 							<label class="col-md-2 control-label">地區</label>
 							<div class="col-md-10">
                                                                 <select class="form-control" 
 									ng-model="customerInfo_def.location" 
-									class="form-control" id="countrySelect">	
+									class="form-control" id="countrySelect" ng-disabled ="mySwitch">	
                                                                         <option value="1">本地</option>
 									<option value="2">海外</option>
 								</select>
 							</div>
 						</div>
                                             
-						<div class="form-group" data-ng-if="systemInfo.permission.allow_edit == true">
+						<div class="form-group">
 							<label class="col-md-2 control-label">名稱 * </label>
 							<div class="col-md-10">
 								<input type="text" id="address_cht" ng-model="customerInfo_def.supplierName" class="form-control" placeholder="Enter text">
@@ -102,16 +119,16 @@
 							</div>
 						</div>
                                             
-                                            <div class="form-group"  data-ng-if="systemInfo.permission.allow_edit == true">
+                                            <div class="form-group">
 							<label class="col-md-2 control-label">貨幣 *</label>
 							<div class="col-md-10">
                                                                 <select class="form-control" 
 									ng-model="customerInfo_def.currencyId" id ="currencyArea"
 									class="form-control">	
        
-                                                                       <option value="HK">港幣</option>
-									<option value="US">美元</option>
-                                                                        <option value="AF">非元</option>
+                                                                       <option value="HKD">港幣</option>
+									<option value="USD">美元</option>
+                                                                        <option value="CNY">人民幣</option>
 								</select>
                                                         </div>
 						</div>
@@ -153,24 +170,24 @@
 						</div>
                                            
 						
-						<div class="form-group" data-ng-if="systemInfo.permission.allow_edit == true">
+						<div class="form-group">
 							<label class="col-md-2 control-label">狀態 *</label>
 							<div class="col-md-10">
 								<select class="form-control" 
 									ng-model="customerInfo_def.status" 
 									 class="form-control">		
-                                                                        <option value="1">Normal</option>
-									<option value="2">Suspended</option>
+                                                                        <option value="1">正常</option>
+									<option value="2">暫停</option>
                                                                 </select>
 							</div>
 						</div>
-                                            <div  id="cashPayment" data-ng-if="systemInfo.permission.allow_edit == true">
+                                            <div  id="cashPayment">
 						<div class="form-group" >
 							<label class="col-md-2 control-label">付款方式 * </label>
 							<div class="col-md-10">
 								<select ng-model="customerInfo_def.payment" class="form-control" id="paymentgg">
-									<option value="Cash">Cash</option>
-									<option value="Credit">Credit</option>
+									<option value="COD">現金</option>
+									<option value="Credit">信貸</option>
 								</select>
 							</div>
 						</div>

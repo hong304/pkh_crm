@@ -1,0 +1,144 @@
+<form class="form-horizontal" role="form" id="queryInfo">
+    <div class="col-md-2">
+        <!-- Separate Client -->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">搜尋收貨記錄</span>
+                </div>
+            </div>
+     
+            
+             <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group">
+			<input id="client" class="form-control ng-pristine ng-valid" type="text" disabled="" name="product" placeholder="選擇供應商" data-ng-model="filterData.supplierCode" )="">
+                            <span class="input-group-btn">
+				<a href="#" data-target="#selectclientmodel" data-toggle="modal" id="selectclient" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"></i> 搜索</a>
+                            </span>
+			</div>
+		</div>
+            </div>
+            
+        </div>
+        
+        <div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">產品包裝</span>
+				</div>				
+			</div>
+			
+			<div class="portlet-body">				
+				<div class="md-col-12" style="margin-bottom:15px;">
+                                    <input type="text" ng-model="filterData.productId"  ng-change="checkProduct(filterData.productId)" class="form-control ng-pristine ng-valid" placeholder="輸入產品編號">
+				</div>
+                                <div class="md-col-12" style="margin-bottom:15px;">
+                                    <input type="text" id="productName" ng-model="filterData.productName"  class="form-control ng-pristine ng-valid" placeholder="產品名稱"  disabled="true">
+				</div>
+                                <a href="#" data-target="#repackAll" data-toggle="modal" id="selectR" class="btn btn-success" type="button" disabled=true><i class="fa fa-arrow-left fa-fw"></i>包裝</a>
+			</div>
+		</div>
+        
+           <!-- Status -->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">供應商地點</span>
+                </div>
+
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="radio-list">
+                        <label><input ng-model="filterData.location"  type="radio" name="supplierArea" id="status1" value="100" checked> 本地</label>
+                        <label><input ng-model="filterData.location"  type="radio" name="supplierArea" id="status2" value="1"> 外地</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+           
+           <div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">收貨日期</span>
+				</div>
+
+			</div>
+
+                <!-- date-picker -->
+                <div class="portlet-body">
+                    <div class="md-col-12" style="margin-bottom:15px;">
+                        <div class="input-group  date " id="startReceiveDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.startReceiveDate" data-ng-change="findDate();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                        </div>
+                        至
+                        <div class="input-group  date " id="endReceiveDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.endReceiveDate" data-ng-change="findDate();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+		</div>
+    </div>
+    
+    <div class="col-md-10">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs font-green-sharp"></i>
+                            <span class="caption-subject font-green-sharp bold uppercase">收貨列表</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <table class="table table-striped table-bordered table-hover" id="datatable_ajax" style="table-layout:fixed;">
+                            <thead>
+                            <tr role="row" class="heading">
+                                <th  id="receiveId" ng-click="click($event);">收貨編號 </th>
+                                <th  id="supplierName" ng-click="click($event);">供應商名稱 </th>
+                                <th  id="countryName" ng-click="click($event);">國家</th>
+                                <th  id="poCode" ng-click="click($event);">採購單編號</th>
+                                <th  id="shippingId" ng-click="click($event);">船務編號</th>
+                                <th  id="containerId" ng-click="click($event);">貨櫃編號 </th>
+                                <th  id="receiveDate" ng-click="click($event);">收貨日期 </th>
+                                <th  id="productId" ng-click="click($event);">產品 </th>
+                                <th  id="goodQty" ng-click="click($event);">好貨 </th>
+                                <th  id="expiryDate" ng-click="click($event);">到期日 </th>
+
+                            </tr>
+
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- END EXAMPLE TABLE PORTLET-->
+            </div>
+        </div>
+
+
+
+</div>
+</form>
+<!-- Customer Maintenance Form -->
+<div ng-include="'/views/model_selectsupplier.html'"></div>
+
+<div ng-include="'/views/model_repack.html'"></div>
+
+

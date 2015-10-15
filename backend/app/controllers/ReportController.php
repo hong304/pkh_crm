@@ -12,7 +12,7 @@ class ReportController extends BaseController {
         4 = Sales
         5 = Supervisor
         */
-        $filter = ['pickinglist','pickinglist9f','printlog','archivedreport','customerbreakdown','dailylist','reportstat','vanselllist'];
+        $filter = ['pickinglist','pickinglist9f','printlog','archivedreport','customerbreakdown','dailylist','vanselllist'];
 
         if(Auth::user()->can('view_creditsummary'))
            array_push($filter,'creditsummary');
@@ -38,8 +38,8 @@ class ReportController extends BaseController {
         if(Auth::user()->can('view_productReport'))
         array_push($filter,'productReport');
 
-       // if(Auth::user()->can('view_reportstat'))
-       // array_push($filter,'reportstat');
+        if(Auth::user()->id=='46' || Auth::user()->id=='23')
+        array_push($filter,'reportstat');
 
       //  if(Auth::user()->can('view_vanselllist'))
        //     array_push($filter,'vanselllist');

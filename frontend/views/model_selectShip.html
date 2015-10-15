@@ -1,11 +1,11 @@
-<div class="modal fade bs-modal-lg" id="selectShipModel"  data-ng-controller="selectPoControl" tabindex="-1" role="dailog" aria-hidden="false">
+<div class="modal fade bs-modal-lg" id="selectShipModel"  data-ng-controller="selectShipControl" tabindex="-1" role="dailog" aria-hidden="false">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true"></button>
 				
-				<h4 class="modal-title">查找供應商</h4>
+				<h4 class="modal-title">查找海外供應商</h4>
 			</div>
 			<div class="modal-body">
 			
@@ -16,10 +16,10 @@
 
                                 <div class="col-md-2">
                                     <select class="form-control"
-                                            ng-model="keyword.country"
+                                            ng-model="keyword.countryName"
                                             data-ng-options="c.countryName for c in countryData track by c.countryId"
                                             data-ng-change="searchSupplier();">
-                                        <option value=''>檢視全部</option>
+                                        <option value='' selected="selected">檢視全部</option>
                                         <option value=''>NA</option>
                                     </select>
                                 </div>
@@ -29,9 +29,9 @@
 									<div class="input-icon right">
 										<i class="icon-exclamation-sign"></i> 
 										<input autocomplete="off" ng-model="keyword.id" debounce="500" immediate="true"  id="keywordId"
-										type="text" placeholder="供應商編號" class="form-control" ng-change="searchSupplier(keyword)"
+										type="text" placeholder="海外供應商編號" class="form-control" ng-change="searchSupplier(supplier.supplierCode)"
 										/>
-                         			</div>
+                                                                        </div>
 								</div>
 
 
@@ -65,20 +65,20 @@
                                         <thead>
                                         <tr>
                                             <th style="width:10%;">#</th>
-                                            <th style="width:40%;">供應商名稱</th>
+                                            <th style="width:40%;">海外供應商名稱</th>
                                             <th style="width:40%;">國家</th>
                                         </tr>
                                         </thead>
-                                        <tbody data-ng-if="!clientSuggestion">
+                                        <tbody data-ng-if="!pullAll || pullAll.length == 0">
                                         <tr>
-                                            <td>未有找到供應商資料</td>
+                                            <td colspan="3">未有找到海外供應商資料</td>
                                         </tr>
                                         </tbody>
                                         <tbody>
-                                          <tr data-ng-repeat="supplier in clientSuggestion" ng-click="selectSupplier(supplier)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
-                                            <td>{{supplier.supplierCode}}</td>
-                                            <td>{{supplier.supplierName}} ({{supplier.phone_1}}) ({{supplier.status}})</td>
-                                            <td>{{supplier.countryName}}</td>
+                                          <tr data-ng-repeat="sup in pullAll" ng-click="selectSupplier(sup)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
+                                            <td>{{sup.supplierCode}}</td>
+                                            <td>{{sup.supplierName}} ({{sup.phone_1}}) <span data-ng-if="sup.status == 1">(正常)</span><span data-ng-if="sup.status == 2">(暫停)</span></td>
+                                            <td>{{sup.countryName}}</td>
                                           </tr>
                                         </tbody>
                                     </table>
@@ -98,15 +98,15 @@
                                         </thead>
                                         <tbody data-ng-if="!purchaseorder">
                                         <tr>
-                                            <td>請選擇供應商以展示相關採購單資料</td>
+                                            <td colspan="4">請選擇供應商以展示相關採購單資料</td>
                                         </tr>
                                         </tbody>
                                         <tbody>  
                                            <tr data-ng-repeat="pos in purchaseorder" ng-click="selectPo(pos)" id="suggestion_row1_{{$index}}" style="cursor: pointer;">
                                             <td>{{pos.poCode}}</td>
-                                            <td>{{pos.supplierName}} ({{pos.supplierCode}})</td>
+                                            <td>{{pos.supplier.supplierName}} ({{pos.supplierCode}})</td>
                                             <td>{{pos.poDate}}</td>
-                                            <td>{{pos.etaDate}}</td>                                         
+                                            <td>{{pos.etaDate}}</td>               
                                            </tr>
                                         </tbody>
                                     </table>

@@ -1,0 +1,108 @@
+<div class="modal fade bs-modal-lg " id="expensesFormModal" data-ng-init="" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+				<h4 class="modal-title">支出管理 - (最後修改日期:{{customerInfo.updated_at}} 修改人:{{customerInfo.updated_by_text}})</h4>
+			</div>
+			<div class="modal-body">
+				<form action="javascript:;" class="form-horizontal">
+					<div class="form-body">
+
+
+
+                        <div class="form-group">
+
+                            <label class="col-md-2 control-label">區域:
+                            </label>
+                            <div class="col-md-4">
+                                <select class="form-control"
+                                        ng-model="expenses.zone"
+                                        data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
+                                        >
+                                    <option value=''>選擇車號</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group" id="datepicker">
+                            <label class="col-md-2 control-label">選擇日期:
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-group input-medium date date-picker" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                    <input type="text" class="form-control" ng-model="expenses.deliveryDate"  readonly>
+											<span class="input-group-btn">
+												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+											</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">停車場:
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" data-ng-model="expenses.cost1" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">隊道:
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" data-ng-model="expenses.cost2" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">採購貨品:
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" data-ng-model="expenses.cost3" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">採購貨品註明:
+                            </label>
+                            <div class="col-md-4">
+                                <textarea class="form-control" data-ng-model="expenses.cost3_remark" placeholder=""></textarea>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">雜費:
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" data-ng-model="expenses.cost4" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">雜費註明:
+                            </label>
+                            <div class="col-md-4">
+                                <textarea class="form-control" data-ng-model="expenses.cost4_remark" placeholder=""></textarea>
+
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>
+				</form>
+				
+			</div>
+						<div class="modal-footer">
+					<button type="button" class="btn blue" data-ng-click="submitExpensesForm();">提交</button>
+					<button type="button" class="btn default" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>
+

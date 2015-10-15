@@ -6,6 +6,19 @@ Metronic.unblockUI();
 
 app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
 
+    $scope.shippingCost = {
+       cost_00 : 0,
+       cost_01 : 0,
+        cost_02 : 0,
+        cost_03 : 0,
+        cost_04 : 0,
+        cost_05 : 0,
+        cost_06 : 0,
+        cost_07 : 0,
+        cost_08 : 0,
+        cost_09 : 0,
+    }
+
     $scope.shipping = {
         shippingId:'',
         poCode: '',
@@ -17,16 +30,27 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         vessel:'',
         voyage:'',
         bl_number:'',
-        pol:'0',
-        pod:'0',
-        container_numbers:'0',
-        fsp:'0',
+        pol:'',
+        pod:'',
+        container_numbers:0,
+        fsp:7,
         remark:'',
         status:1,
         feight_payment:'',
         supplierName:'',
     };
-
+    
+       $scope.containerCost = {
+           containerId :'',
+           receiveDate:'',
+           container_size:'',
+           sale_method:'',
+           shippingId:'',
+       };
+    
+    $scope.totalCost = 0;
+    $scope.showOrNot = 0;
+     $scope.costsName = {'0':{'name':'運費','index':'0'},'1':{'name':'碼頭處理費','index':'1'},'2':{'name':'拖運費','index':'2'},'3':{'name':'卸貨費','index':'3'},'4':{'name':'外倉費','index':'4'},'5':{'name':'過期櫃租','index':'5'},'6':{'name':'過期交吉租','index':'6'},'7':{'name':'稅金','index':'7'},'8':{'name':'雜項','index':'8'},'9':{'name':'其他','index':'9'}};
     
  //Sunday is not allowed
     var today = new Date();
@@ -90,8 +114,24 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         deleted 	                :     0,
         remark:'',
         receiveDate:'',
+        cost : '',
+        sale_method:1,
+
+
     };
-   
+
+    $scope.shippingCostStructure={
+        cost_00 : 0,
+        cost_01 : 0,
+        cost_02 : 0,
+        cost_03 : 0,
+        cost_04 : 0,
+        cost_05 : 0,
+        cost_06 : 0,
+        cost_07 : 0,
+        cost_08 : 0,
+        cost_09 : 0,
+    }
 
     $scope.submitButtonText = '提交 (F10)';
     $scope.submitButtonColor = 'blue';
@@ -155,6 +195,7 @@ $scope.an = false;
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
+        $scope.determineAction();
 
 
         if(!$location.search().shippingId)
@@ -168,12 +209,12 @@ $scope.an = false;
 
             }, 1000);
             
-        $scope.$on('handleSupplierUpdate', function(){
+        $scope.$on('handleShipPassUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
-        $scope.an=true;
         $scope.shipping.supplierCode = SharedService.supplierCode;
         $scope.shipping.supplierName = SharedService.supplierName;
-
+        $scope.shipping.poCode = SharedService.poCode;
+        
         $scope.displayName = $scope.shipping.supplierCode + " (" + $scope.shipping.supplierName + ")";
         if($scope.shipping.supplierCode === undefined)
         {
@@ -184,11 +225,6 @@ $scope.an = false;
 
        });
        
-        $scope.$on('handlePoUpdate', function(){
-           $scope.an=true;
-           $scope.shipping.poCode = SharedService.supplierPoCode;
-           
-        });
      
         }
       else if($location.search().shippingId !="undefined")
@@ -207,7 +243,13 @@ $scope.an = false;
                 .success(function(data, status, headers, config){
 
 					$scope.shipping = data.shipping;
-					$scope.shipping.supplierName = data.shipping.supplier[0].supplierName;
+					 if($scope.shipping.supplier.length > 0)
+                                        {
+                                            $scope.shipping.supplierName = data.shipping.supplier[0].supplierName;
+                                        }else
+                                        {
+                                            $scope.shipping.supplierName = "";
+                                        }           
 					$scope.shippingItems = data.shippingItem;
 
    
@@ -270,7 +312,44 @@ $scope.an = false;
                         $scope.product[j]['feight_currency'] = item.feight_currency;
 			$scope.product[j]['feight_amount'] = item.feight_amount;
                         $scope.product[j]['remark'] = item.remark;
+                        $scope.product[j]['sale_method'] = item.sale_method;
+
+                        $scope.shippingCost = $.extend(true, {}, $scope.shippingCostStructure);
                         
+                        $scope.product[j].cost = $scope.shippingCost;
+                        
+                        $scope.shippingCost.cost_00 = item.cost_00;
+                        $scope.product[j]['cost']['cost_00'] = $scope.shippingCost.cost_00;
+                        
+                        $scope.shippingCost.cost_01 = item.cost_01;
+                        $scope.product[j]['cost']['cost_01'] = $scope.shippingCost.cost_01;
+                        
+                        $scope.shippingCost.cost_02 = item.cost_02;
+                        $scope.product[j]['cost']['cost_02'] = $scope.shippingCost.cost_02;
+                        
+                        $scope.shippingCost.cost_03 = item.cost_03;
+                        $scope.product[j]['cost']['cost_03'] = $scope.shippingCost.cost_03;
+                        
+                        $scope.shippingCost.cost_04 = item.cost_04;
+                        $scope.product[j]['cost']['cost_04'] = $scope.shippingCost.cost_04;
+                        
+                        $scope.shippingCost.cost_05 = item.cost_05;
+                        $scope.product[j]['cost']['cost_05'] = $scope.shippingCost.cost_05;
+                        
+                        $scope.shippingCost.cost_06 = item.cost_06;
+                        $scope.product[j]['cost']['cost_06'] = $scope.shippingCost.cost_06;
+                        
+                        $scope.shippingCost.cost_07 = item.cost_07;
+                        $scope.product[j]['cost']['cost_07'] = $scope.shippingCost.cost_07;
+                        
+                        $scope.shippingCost.cost_08 = item.cost_08;
+                        $scope.product[j]['cost']['cost_08'] = $scope.shippingCost.cost_08;
+                        
+                        $scope.shippingCost.cost_09 = item.cost_09;
+                        $scope.product[j]['cost']['cost_09'] = $scope.shippingCost.cost_09;
+    
+                        //Maybe one day refine it by a loop
+          
                         if(typeof $scope.product[j+1] == 'undefined')
                         {
                             $scope.newkey = $scope.itemlist.length + 1;
@@ -316,48 +395,11 @@ $scope.an = false;
     $scope.capital = function(i)
     {
         $scope.product[i]['serial_no'] = $scope.product[i]['serial_no'].toUpperCase();
+        $scope.product[i]['containerId'] = $scope.product[i]['containerId'].toUpperCase();
     }
 
 
 
-    $scope.searchProduct = function(i) {
-
-        var input = $("#productCode_" + i);
-
-        if($scope.product[i]['containerId'] !== "")
-      {
-
-            // UX Auto Add Next COlumn
-            if(typeof $scope.product[i+1] == 'undefined')
-            {
-                $scope.newkey = $scope.itemlist.length + 1;
-                $scope.itemlist.push($scope.newkey);
-                $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
-                $scope.timer.product[$scope.newkey] = $.extend(true, {}, $scope.timerProductStructure);
-            }
-
-
-
-            // enable delete button, but delay that with 2 seconds
-            $timeout(function(){
-                $("#deletebtn_" + i).css('display', '');
-                $("#remarkbtn_" + i).css('display', '');
-            }, 1000);
-
-
-        }
-        else
-        {
-            // reset the whole structure
-            $scope.product[i] = $.extend(true, {}, $scope.productStructure);
-
-            $("#deletebtn_" + i).css('display', 'none');
-
-            $("#remarkbtn_" + i).css('display', 'none');
-        }
-
-        $scope.timer.product[(i-1 < 1 ? 1 : i-1)]['completedRow'] = Date.now();
-    };
 
     $scope.$on('updateProductSelected', function(){
 
@@ -409,8 +451,7 @@ $scope.an = false;
     $scope.submitOrder = function(v)
     {
         var generalError = false;
-       
-
+        console.log($scope.product);
         $scope.timer.submit = Date.now();
 
         if(!$scope.allowSubmission)
@@ -421,8 +462,7 @@ $scope.an = false;
 
         $scope.allowSubmission = false;
 
-
-        if(!$scope.shipping.poCode || !$scope.shipping.supplierCode || !$scope.shipping.departure_date || !$scope.shipping.etaDate)
+        if(!$scope.shipping.poCode || !$scope.shipping.supplierCode || !$scope.shipping.departure_date || !$scope.shipping.etaDate || !$scope.shipping.fsp)
         {
             Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
@@ -438,7 +478,6 @@ $scope.an = false;
             generalError = true;
             $scope.allowSubmission = true;
         }
-        console.log($scope.shipping);
         if(!generalError)
         {
             $http.post(
@@ -448,7 +487,7 @@ $scope.an = false;
                   //  timer	:	$scope.timer,
                 }).
                 success(function(res, status, headers, config) {
-                   
+                   console.log(res);
                     if(res.result == true)
                     {
                         $scope.an=false;
@@ -502,6 +541,14 @@ $scope.an = false;
       }
 
     }
+    
+    $scope.checkFsp = function(value)
+    {
+        if(value <= 0)
+        {
+            $scope.shipping.fsp = 1;
+        }
+    }
 
    
 
@@ -526,17 +573,6 @@ $scope.an = false;
 
     $scope.deleteRow = function(i)
     {
-
-       /*for(var key = i; key<=$scope.itemlist.length; key++)
-         {
-
-         $scope.product[key] = $.extend(true, {}, $scope.product[key+1]);
-         $scope.productCode[key] = $scope.productCode[key+1];
-
-         }
-
-         $scope.product[$scope.itemlist.length] = $.extend(true, {}, $scope.productStructure);
-         $scope.productCode[$scope.itemlist.length] = '';*/
         
         $scope.product[i].deleted = 1;
        
@@ -544,21 +580,129 @@ $scope.an = false;
     }
 
 
-
-     $scope.openRemarkPanel = function(i)
+    $scope.openRemarkPanel = function(i)
     {
         $("#remarkModal").modal('toggle');
         $scope.editable_remark = $scope.product[i].remark;
         $scope.editable_row = i;
-
     }
 
     $scope.saveRemark = function(r)
     {
         $("#remarkModal").modal('hide');
         $scope.product[$scope.editable_row].remark = $scope.editable_remark;
+    }
+    
+    $scope.openCost = function(i)
+    {
+        $scope.totalCost = 0;
+        $("#costDetails").modal('toggle');
+        $scope.containerCost.shippingId = $scope.shipping.shippingId;
+        $scope.containerCost.containerId = $scope.product[i]['containerId'];
+        $scope.containerCost.receiveDate = $scope.product[i]['receiveDate'];
+        $scope.containerCost.container_size = $scope.product[i]['container_size'];
+        if($scope.product[i]['sale_method'] == 1)
+        {
+            $scope.containerCost.sale_method = "入倉";
+        }else 
+        {
+            $scope.containerCost.sale_method = "貿易部";
+        }
+
+       // for (var j = 1; j < 11; j++) {
+       //     if(typeof $scope.shippingCost[j] == 'undefined')
+        //    {
+              //  $scope.shippingCost[j] = $.extend(true, {}, $scope.shippingCostStructure);
+        //    }
+       // }
+        $scope.shippingCost = $.extend(true, {}, $scope.shippingCostStructure);
+       // $scope.shippingCost = $scope.product[i].cost;
+       // $scope.shippingCost.cost_01 = $scope.product[i].cost.cost_01;
+        if($scope.product[i].cost == null)
+        {
+             $scope.product[i].cost = $scope.shippingCost;
+        }
+        $scope.shippingCost.cost_00 = $scope.product[i].cost.cost_00;
+        $scope.shippingCost.cost_01 = $scope.product[i].cost.cost_01;
+        $scope.shippingCost.cost_02 = $scope.product[i].cost.cost_02;
+        $scope.shippingCost.cost_03 = $scope.product[i].cost.cost_03;
+        $scope.shippingCost.cost_04 = $scope.product[i].cost.cost_04;
+        $scope.shippingCost.cost_05 = $scope.product[i].cost.cost_05;
+        $scope.shippingCost.cost_06 = $scope.product[i].cost.cost_06;
+        $scope.shippingCost.cost_07 = $scope.product[i].cost.cost_07;
+        $scope.shippingCost.cost_08 = $scope.product[i].cost.cost_08;
+        $scope.shippingCost.cost_09 = $scope.product[i].cost.cost_09;
+       // $scope.shippingCost['cost_01'] = $scope.product[i].cost.cost_01;
+      //  $scope.shippingCost['cost_02'] = $scope.product[i].cost.cost_02;
+       $scope.editable_rowcost = i;
+      for(var k = 0;k<=9;k++)
+      {
+          var string = "$scope.shippingCost.cost_0"+k;
+          var g = eval(string);
+          $scope.totalCost += g;
+      }
+      if(isNaN($scope.totalCost))
+      {
+          $scope.totalCost = 0.00;
+      }
+      
+       
+    }
+    
+    $scope.saveCost = function(r)
+    {
+        $("#costDetails").modal('hide');
+  
+        $scope.product[$scope.editable_rowcost].cost = $scope.shippingCost;
+        $scope.product[$scope.editable_rowcost].cost.cost_00 =  $scope.shippingCost.cost_00;
+        $scope.product[$scope.editable_rowcost].cost.cost_01 =  $scope.shippingCost.cost_01;
+        $scope.product[$scope.editable_rowcost].cost.cost_02 =  $scope.shippingCost.cost_02;
+        $scope.product[$scope.editable_rowcost].cost.cost_03 =  $scope.shippingCost.cost_03;
+        $scope.product[$scope.editable_rowcost].cost.cost_04 =  $scope.shippingCost.cost_04;
+        $scope.product[$scope.editable_rowcost].cost.cost_05 =  $scope.shippingCost.cost_05;
+        $scope.product[$scope.editable_rowcost].cost.cost_06 =  $scope.shippingCost.cost_06;
+        $scope.product[$scope.editable_rowcost].cost.cost_07 =  $scope.shippingCost.cost_07;
+        $scope.product[$scope.editable_rowcost].cost.cost_08 =  $scope.shippingCost.cost_08;
+        $scope.product[$scope.editable_rowcost].cost.cost_09 =  $scope.shippingCost.cost_09;
+      //  $scope.product[$scope.editable_rowcost].cost.cost_01 =  $scope.shippingCost[$scope.editable_rowcost].cost_01;
+        //$scope.product[$scope.editable_rowcost].cost.cost_02 =    $scope.shippingCost[$scope.editable_rowcost].cost_02;
 
     }
+    
+    $scope.costNum = function() {
+        var total = 0;
+        var shippingCost = $scope.shippingCost;
+        if(!isNaN(shippingCost.cost_00))
+            total += shippingCost.cost_00;
+        if(!isNaN(shippingCost.cost_01))
+            total += shippingCost.cost_01;
+        if(!isNaN(shippingCost.cost_02))
+            total += shippingCost.cost_02;
+        if(!isNaN(shippingCost.cost_03))
+            total += shippingCost.cost_03;
+        if(!isNaN(shippingCost.cost_04))
+            total += shippingCost.cost_04;
+        if(!isNaN(shippingCost.cost_05))
+            total += shippingCost.cost_05;
+        if(!isNaN(shippingCost.cost_06))
+            total += shippingCost.cost_06;
+        if(!isNaN(shippingCost.cost_07))
+            total += shippingCost.cost_07;
+        if(!isNaN(shippingCost.cost_08))
+            total += shippingCost.cost_08;
+        if(!isNaN(shippingCost.cost_09))
+            total += shippingCost.cost_09;
+        $scope.totalCost = total; 
+    };
+        
+    $scope.determineAction = function()
+    {
+        if($window.location.href.search('shippingId') > -1)
+        {
+            $scope.showOrNot = 1;
+        } 
+    }
+    
     
 
     // set sidebar closed and body solid layout mode

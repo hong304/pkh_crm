@@ -15,9 +15,7 @@ class InvoiceManipulation {
                 
         if($this->action == 'create')
         {
-            $this->generateInvoiceId();
             $this->im = new Invoice();
-            
         }
         elseif($this->action == 'update')
         {
@@ -202,6 +200,15 @@ class InvoiceManipulation {
 	{
 	    if($this->action == 'create')
 	    {
+            Customer::where('customerId',$this->temp_invoice_information['clientId'])->update(['unlock'=>0]);
+
+            if(isset($this->temp_invoice_information['invoiceNumber']))
+                $this->invoiceId = $this->temp_invoice_information['invoiceNumber'];
+           else
+               $this->generateInvoiceId();
+
+
+
 	        $this->im->invoiceId = $this->invoiceId;
 	        $this->im->invoiceType = 'Salesman';
 	        $this->im->zoneId = $this->temp_invoice_information['zoneId'];
@@ -223,20 +230,16 @@ class InvoiceManipulation {
 	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount']; 
 	        $this->im->created_at = time();
 	        $this->im->updated_at = time();
-
-            Customer::where('customerId',$this->temp_invoice_information['clientId'])->update(['unlock'=>0]);
-
 	    }
 	    elseif($this->action == 'update')
 	    {
-
             $this->im->zoneId = $this->temp_invoice_information['zoneId'];
+            $this->im->receiveMoneyZone = $this->temp_invoice_information['zoneId'];
             $this->im->customerId = $this->temp_invoice_information['clientId'];
             $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
             $this->im->invoiceDiscount = $this->temp_invoice_information['discount'];
             $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
             $this->im->shift = $this->temp_invoice_information['shift'];
-
             $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
 	        $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
 	        $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
@@ -285,7 +288,17 @@ class InvoiceManipulation {
 	    
 	    return '0';
 	}
-	
+
+    public function saveInvoice(){
+        try {
+            $this->im->save();
+        } catch (Illuminate\Database\QueryException $e) {
+            $this->generateInvoiceId();
+            $this->im->invoiceId = $this->invoiceId;
+            $this->saveInvoice();
+        }
+    }
+
 	public function save()
 	{
 	    // first validate and prepare items
@@ -297,10 +310,9 @@ class InvoiceManipulation {
 	    // if this requests has item, save all
 	    if(count($this->items) > 0 && $this->status == true)
 	    {
-	        //dd($this->im->deliveryDate, strtotime("today 00:00"), strtotime("today 23:59"));
     	    // ok, save invoice first
-    	    $this->im->save();
-    	    
+            $this->saveInvoice();
+
     	    // save the client
     	    $client = Customer::where('customerId', $this->im->customerId)->first();
             $client->timestamps = false;

@@ -139,14 +139,14 @@ class InvoiceItem extends Eloquent  {
         if($this->invoice->invoiceStatus == 98){
             if($this->productQtyUnit == 'carton')
                 return $this->productQty*$inner*$unit*-1;
-            if($this->productQtyUnit == 'inner')
+            else if($this->productQtyUnit == 'inner')
                 return $this->productQty*$unit*-1;
             else
                 return $this->productQty * -1;
         }else{
             if($this->productQtyUnit == 'carton')
                 return $this->productQty*$inner*$unit;
-            if($this->productQtyUnit == 'inner')
+            else if($this->productQtyUnit == 'inner')
                 return $this->productQty*$unit;
             else
                 return $this->productQty;
