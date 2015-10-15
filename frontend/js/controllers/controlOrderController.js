@@ -822,8 +822,6 @@ else{
     $scope.checkPrice = function(i)
     {
 
-        console.log('checkPrice');
-
         var code = $scope.product[i]['code'];
         var item = $scope.retrievedProduct[code];
 
@@ -1076,6 +1074,15 @@ if($scope.order.invoiceNumber !='' && $scope.order.invoiceId == ''){
                     }else{
                         $scope.allowSubmission = true;
                         $scope.Idused = false;
+
+                        if($scope.order.invoiceNumber != ''){
+                            var inn = $scope.order.invoiceNumber;
+                            console.log(inn.length);
+                            if(inn.length != 12){
+                                $scope.allowSubmission = false;
+                            }else
+                                $scope.allowSubmission = true;
+                      }
                     }
 
                 });
