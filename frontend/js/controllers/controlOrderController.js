@@ -10,10 +10,9 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 
     /* Register shortcut key */
     $(document).ready(function(){
-
+        var csuggestion = 1;
         $('#order_form').keydown(function (e) {
-            var csuggestion = 1;
-            if (e.keyCode == 40) //down
+                       if (e.keyCode == 40) //down
             {
                 e.preventDefault();
                 csuggestion++;
