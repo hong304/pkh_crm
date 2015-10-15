@@ -990,7 +990,22 @@ else{
 
     }
 
+    $scope.checkIdexist = function(){
+        if($scope.order.invoiceId == ''){
+            var target = endpoint + '/checkInvoiceIdExist.json';
+            $http.post(target, {invoiceId: $scope.order.invoiceNumber})
+                .success(function(res, status, headers, config){
+                    if(res == 1){
+                        $scope.allowSubmission = false;
+                        $scope.Idused = true;
+                    }else{
+                        $scope.allowSubmission = true;
+                        $scope.Idused = false;
+                    }
 
+                });
+        }
+    }
 
     $scope.submitOrder = function(v)
     {

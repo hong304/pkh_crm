@@ -65,6 +65,8 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/getClientSameDayOrder.json','OrderController@jsonGetSameDayOrder');
     Route::post('/getAllLastItemPrice.json','OrderController@jsonGetLastItem');
     Route::post('/getNoOfOweInvoices.json','OrderController@getNoOfOweInvoices');
+    Route::post('/checkInvoiceIdExist.json','OrderController@checkInvoiceIdExist');
+
 
 
 

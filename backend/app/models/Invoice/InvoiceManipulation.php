@@ -201,7 +201,14 @@ class InvoiceManipulation {
 	    if($this->action == 'create')
 	    {
             Customer::where('customerId',$this->temp_invoice_information['clientId'])->update(['unlock'=>0]);
-            $this->generateInvoiceId();
+
+            if(isset($this->temp_invoice_information['invoiceNumber']))
+                $this->invoiceId = $this->temp_invoice_information['invoiceNumber'];
+           else
+               $this->generateInvoiceId();
+
+
+
 	        $this->im->invoiceId = $this->invoiceId;
 	        $this->im->invoiceType = 'Salesman';
 	        $this->im->zoneId = $this->temp_invoice_information['zoneId'];

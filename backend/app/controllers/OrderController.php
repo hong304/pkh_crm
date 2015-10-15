@@ -18,8 +18,19 @@ class OrderController extends BaseController
 
     }
 
+    public function checkInvoiceIdExist(){
+
+        $customer = Invoice::select('InvoiceId')->where('InvoiceId', Input::get('invoiceId'))->first();
+
+        $customer = count($customer);
+        return Response::json($customer);
+    }
+
     public function jsonNewOrder()
     {
+
+
+
         $itemIds = [];
 
         $product = Input::get('product');
@@ -28,6 +39,23 @@ class OrderController extends BaseController
 
         $order = Input::get('order');
         $timer = Input::get('timer');
+
+        if(isset($order['invoiceNumber']) and $order['invoiceId'] == ''){
+
+            $invoiceId = invoice::where('invoiceId',$order['invoiceNumber'])->first();
+            if($invoiceId === null){
+
+            }else{
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => $order['invoiceNumber'],
+                    'invoiceItemIds' => 0,
+                    'message' => 'Invoice no. exist, please re-enter!',
+                ];
+            }
+        }
+
 
         // Create the invoice
         $ci = new InvoiceManipulation($order['invoiceId']);
