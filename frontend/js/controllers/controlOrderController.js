@@ -947,9 +947,6 @@ else{
         //   var currentDate = new Date(new Date().getTime());
         //    var day = currentDate.getDate();
 
-       if($scope.order.invoiceNumber != '')
-           $scope.submitOrder(v);
-else{
         var currentDate = new Date(new Date().getTime());
         var day = currentDate.getDate();
         day = ("0" + day).slice(-2);
@@ -998,74 +995,10 @@ else{
             });
         else
             $scope.submitOrder(v);
-        }
+
     }
 
     $scope.checkIdexist = function(){
-
-
-
-
-        var target = endpoint + '/getHoliday.json';
-
-        $http.get(target)
-            .success(function(res){
-
-                var today = new Date();
-                var plus = today.getDay() == 6 ? 2 : 1;
-
-                var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-                if(today.getHours() > 11 || today.getDay() == 0)
-                {
-                    var nextDay = currentDate;
-                }
-                else
-                {
-                    var nextDay = today;
-                }
-
-                if($scope.order.invoiceNumber != '')
-                    var nextDay = today;
-
-                var flag = true;
-                var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-                do{
-                    flag= true;
-                    $.each( res, function( key, value ) {
-                        if(value == working_date){
-                            flag = false;
-                            var today = new Date(nextDay.getFullYear()+'-'+working_date);
-                            nextDay = new Date(today);
-                            nextDay.setDate(today.getDate()+1);
-
-                            if(nextDay.getDay() == 0)
-                                nextDay.setDate(today.getDate()+2);
-
-                            working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-                        }
-                    });
-                }while(flag == false);
-
-                var day = ("0" + (nextDay.getDate())).slice(-2);
-                var month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
-                var year = nextDay.getFullYear();
-
-                $('.date-picker').datepicker({
-                    rtl: Metronic.isRTL(),
-                    orientation: "left",
-                    autoclose: true
-                });
-
-                $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
-
-
-                $scope.order.deliveryDate = year + '-' + month + '-' + day;
-                $scope.order.dueDate = year + '-' + month + '-' + day;
-                $scope.order.invoiceDate = $scope.order.deliveryDate;
-            });
-
-
-
         if($scope.order.invoiceId == ''){
             var target = endpoint + '/checkInvoiceIdExist.json';
             $http.post(target, {invoiceId: $scope.order.invoiceNumber})
