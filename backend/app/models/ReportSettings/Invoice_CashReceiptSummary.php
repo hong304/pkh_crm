@@ -244,11 +244,13 @@ class Invoice_CashReceiptSummary {
         }
 //補收
 
-
-        $this->_expenses = expense::where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
-        $this->_expenses->amount = $this->_expenses->cost1+$this->_expenses->cost2+$this->_expenses->cost3+$this->_expenses->cost4;
+        
+        $this->_expenses = expense::select('*')->where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
+        if(isset($this->_expenses))
+        {
+            $this->_expenses->amount = $this->_expenses->cost1+$this->_expenses->cost2+$this->_expenses->cost3+$this->_expenses->cost4;
+        }
         $this->data = $this->_account;
-
         return $this->data;
 
     }
