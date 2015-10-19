@@ -246,6 +246,7 @@ if(!$empty){
         $month[4] = key(array_slice($time, -2, 1, true));
         $month[5] = key(array_slice($time, -1, 1, true));
         
+        pd($this->data);
         
          foreach ($this->data as $kk => $client) {
 
@@ -285,8 +286,7 @@ if(!$empty){
         $objPHPExcel->getActiveSheet()->setCellValue('F5', $month[4]);
         $objPHPExcel->getActiveSheet()->setCellValue('G5', $month[5]);
         
-        $storeMatch = array('B'=>0,'C'=>1,'D'=>2,'E'=>3,'F'=>4,'G=>5');
-        foreach($this->_monthly as $k=>$v)
+     /*   foreach($this->_monthly as $k=>$v)
         {
             foreach($v as $i=>$j)
             {
@@ -297,13 +297,28 @@ if(!$empty){
             }
         }
         
+        foreach ($info[1] as $k => $v) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $j, $v['truck']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $j, $v['noOfInvoices']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $j, $v['totalAmount']);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $j, $v['receiveTodaySales']);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $j, $v['previous']);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $j, $v['expenses']*-1);
+
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . $j, '=D'.$j.'+E'.$j.'+F'.$j);
+
+            $objPHPExcel->getActiveSheet()->setCellValue('H' . $j, $v['balanceBf']);
+            $objPHPExcel->getActiveSheet()->setCellValue('I' . $j, '=H'.$j.'+C'.$j.'-E'.$j.'-D'.$j);
+            $j++;
+        }*/
+        
      //   $objPHPExcel->getActiveSheet()->setCellValue('D1', date('Y-m-d',$this->_date1));
         
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+       /* $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="'."abc".'.xls"');
         header('Cache-Control: max-age=0');
-        $objWriter->save('php://output');
+        $objWriter->save('php://output');*/
     }
     
     public function outputPreview()
