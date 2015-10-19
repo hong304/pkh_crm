@@ -284,7 +284,7 @@ class Customer_MonthlyCreditSummary {
         $b = $j;
         $c = $j;
         
-        //pd($this->_monthly);
+        pd($this->_monthly);
         
         foreach ($this->_monthly as $ks => $vs) {
                 
