@@ -51,7 +51,7 @@ class shippingController extends BaseController {
                 Shippingitem::whereNotIn('id', $itemIds)->where('shippingId', $shipment['shippingId'])->delete();
             //If there is no shippingId, not only the records deleted in ui but also records in db will be deleted.
         }
-        //pd($shipItem);
+      
         foreach ($shipItem as $k) {
             if($k['deleted'] == 0)
             {    

@@ -128,7 +128,7 @@ class shippingMan
         if(count($this->items) > 0)
         {
             $this->sh->save();
-            
+     
             foreach($this->items as $i)
     	    {
                 if($i['dbid'])
@@ -136,16 +136,7 @@ class shippingMan
     	            $item = Shippingitem::where('id', $i['dbid'])->first();
     	            $item->updated_at = time();
                     $item->updated_by = Auth::user()->id;
-                    $item->cost_00 = $i['cost_00'];
-                $item->cost_01 = $i['cost_01'];
-                $item->cost_02 = $i['cost_02'];
-                $item->cost_03 = $i['cost_03'];
-                $item->cost_04 = $i['cost_04'];
-                $item->cost_05 = $i['cost_05'];
-                $item->cost_06 = $i['cost_06'];
-                $item->cost_07 = $i['cost_07'];
-                $item->cost_08 = $i['cost_08'];
-                $item->cost_09 = $i['cost_09'];
+
     	        }
     	        else
     	        {
@@ -165,6 +156,16 @@ class shippingMan
                 $item->container_weight = $i['container_weight'];
                 $item->container_capacity = $i['container_capacity'];
                 $item->sale_method = $i['sale_method'];
+                $item->cost_00 = $i['cost_00'];
+                $item->cost_01 = $i['cost_01'];
+                $item->cost_02 = $i['cost_02'];
+                $item->cost_03 = $i['cost_03'];
+                $item->cost_04 = $i['cost_04'];
+                $item->cost_05 = $i['cost_05'];
+                $item->cost_06 = $i['cost_06'];
+                $item->cost_07 = $i['cost_07'];
+                $item->cost_08 = $i['cost_08'];
+                $item->cost_09 = $i['cost_09'];
               
                 
             
