@@ -3,6 +3,17 @@ Metronic.unblockUI();
 
 app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $timeout, $location, $sce) {
 
+    $(document).ready(function(){
+
+        $('#queryInfo').keydown(function (e) {
+            if (e.keyCode == 13) {
+                $scope.loadReport();
+            }
+
+        });
+
+    });
+
     var today = new Date();
     var plus = today.getDay() == 6 ? 2 : 1;
 
@@ -44,7 +55,6 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 	
     $scope.$on('$viewContentLoaded', function() {
 
-
         if($location.search().product == null)
             $location.search().product = '100';
         if($location.search().client == null)
@@ -55,21 +65,20 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
         if($scope.setting.setting == true)
             $scope.loadReport();
     });  
-    
-	$scope.$watch(function() {
-	  return $scope.filterData;
-	}, function() {
 
-        $timeout.cancel(fetchDataTimer);
-        fetchDataTimer = $timeout(function () {
-            $scope.loadReport();
-        }, fetchDataDelay);
+    if($location.search().id != 'itemssummary'){
 
+        $scope.$watch(function() {
+          return $scope.filterData;
+        }, function() {
 
+            $timeout.cancel(fetchDataTimer);
+            fetchDataTimer = $timeout(function () {
+                $scope.loadReport();
+            }, fetchDataDelay);
+        }, true);
+    }
 
-
-	}, true);
-    
     $scope.loadSetting = function()
     {
     	
@@ -141,7 +150,6 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     
     $scope.loadReport = function()
     {
-console.log($scope.filterData);
 
 
         $scope.filterData.action = $location.search().action;

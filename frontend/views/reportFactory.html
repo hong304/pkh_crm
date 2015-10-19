@@ -22,7 +22,7 @@
 		</div>
 		
 		<div class="portlet light" data-ng-repeat="f in setting.filterOptions">
-			<div class="portlet-title">
+			<div class="portlet-title"  data-ng-if="f.type != 'submit'">
 				<div class="caption">
 					<i class="fa fa-cogs font-green-sharp"></i>
 					<span class="caption-subject font-green-sharp bold uppercase">{{f.label}}</span>
@@ -200,6 +200,7 @@
 					</div>
 				</div>
 			</div>
+
             <div class="portlet-body" id="shift" data-ng-if="f.type1 == 'shift'">
                 <div class="md-col-12">
                     <select class="form-control"
@@ -242,6 +243,14 @@
 
 				</div>
 			</div>
+
+
+                <div class="portlet-body" data-ng-if="f.type == 'submit'">
+                    <div class="md-col-12">
+                        <button type="button" ng-click="loadReport();" id="submitbutton" class="btn blue">提交</button>
+                    </div>
+                </div>
+
 
 
 		</div>

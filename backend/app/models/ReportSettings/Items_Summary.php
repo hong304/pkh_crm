@@ -172,6 +172,7 @@ class Items_Summary {
                 'label' => '產品資料',
             ],
 
+
             [
                 'id' => 'deliveryDate',
                 'type' => 'date-picker1',
@@ -179,6 +180,11 @@ class Items_Summary {
                 'model' => 'deliveryDate',
                 'id1' => 'deliveryDate2',
                 'model1' => 'deliveryDate2',
+            ],
+            [
+                'id' => 'submit',
+                'type' => 'submit',
+                'label' => '提交',
             ],
         ];
         
