@@ -250,6 +250,11 @@ class Invoice_9FPickingList {
                 'model' => 'deliveryDate',
                 'defaultValue' => date("Y-m-d", $this->_date),
             ],
+            [
+                'id' => 'submit',
+                'type' => 'submit',
+                'label' => '提交',
+            ],
         ];
 
         return $filterSetting;

@@ -66,9 +66,8 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
             $scope.loadReport();
     });  
 
-    if($location.search().id != 'itemssummary'){
 
-        $scope.$watch(function() {
+       /* $scope.$watch(function() {
           return $scope.filterData;
         }, function() {
 
@@ -76,8 +75,8 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
             fetchDataTimer = $timeout(function () {
                 $scope.loadReport();
             }, fetchDataDelay);
-        }, true);
-    }
+        }, true);*/
+
 
     $scope.loadSetting = function()
     {

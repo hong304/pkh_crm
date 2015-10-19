@@ -291,7 +291,12 @@ class Report_DailySummary
                 'optionList1' => $ashift,
                 'defaultValue1' => $this->_shift,
             ],
-            $ar
+            $ar,
+            [
+                'id' => 'submit',
+                'type' => 'submit',
+                'label' => '提交',
+            ],
 
 
         ];

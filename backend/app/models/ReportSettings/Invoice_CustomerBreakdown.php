@@ -539,6 +539,11 @@ class Invoice_CustomerBreakdown
                 'model' => 'deliveryDate1',
                 'defaultValue' => date("Y-m-d", $this->_date),
             ],
+            [
+                'id' => 'submit',
+                'type' => 'submit',
+                'label' => '提交',
+            ],
 
 
         ];
@@ -570,6 +575,7 @@ class Invoice_CustomerBreakdown
                 'name' => '匯出  Excel 版本',
                 'warning' => false,
             ],
+
         ];
 
         return $downloadSetting;

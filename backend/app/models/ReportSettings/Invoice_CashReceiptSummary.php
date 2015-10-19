@@ -674,6 +674,11 @@ $k = $i+1;
                 'model' => 'deliveryDate',
 
             ],
+            [
+                'id' => 'submit',
+                'type' => 'submit',
+                'label' => '提交',
+            ],
         ];
         
         return $filterSetting;

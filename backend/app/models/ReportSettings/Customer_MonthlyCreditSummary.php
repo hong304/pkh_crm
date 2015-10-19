@@ -154,6 +154,12 @@ class Customer_MonthlyCreditSummary {
                 'id1' => 'deliveryDate2',
                 'model1' => 'deliveryDate2',
             ],
+
+            [
+                'id' => 'submit',
+                'type' => 'submit',
+                'label' => '提交',
+            ],
                 /*  [
                   'id' => 'year',
                   'type' => 'single-dropdown',
