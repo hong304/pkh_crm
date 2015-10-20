@@ -47,14 +47,14 @@ class financialReportController extends BaseController
                     $data = [];
 
                     foreach ($time as $k => $v) {
-                        $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('zoneId',$i)->OrderBy('deliveryDate')->get();
+                        $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 1)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->whereNotIn('invoiceStatus',['2','30','99'])->where('zoneId',$i)->OrderBy('deliveryDate')->get();
 
                         foreach ($data[$k] as $invoice) {
 
                             if (!isset($this->_monthly[$i][$k]))
                                 $this->_monthly[$i][$k] = 0;
 
-                            $this->_monthly[$i][$k] += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
+                            $this->_monthly[$i][$k] += ($invoice->amount - ($invoice->paid + $invoice->discount_taken));
                            // $total += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
 
                         }
@@ -72,15 +72,14 @@ class financialReportController extends BaseController
         $objPHPExcel = new PHPExcel();
 
 
-        $today = date("Y-m-d");
         $objPHPExcel->getActiveSheet()->setCellValue('A1', '炳 記 行 貿 易 有 限 公 司');
         $objPHPExcel->getActiveSheet()->mergeCells('A1:D1');
         $objPHPExcel->getActiveSheet()->setCellValue('A2', '帳齡分析搞要(應收)');
         $objPHPExcel->getActiveSheet()->mergeCells('A2:E2');
-        $objPHPExcel->getActiveSheet()->setCellValue('A3', '至 [' . $today . "]");
+        $objPHPExcel->getActiveSheet()->setCellValue('A3', '至 [' . $ymd . "]");
         $objPHPExcel->getActiveSheet()->mergeCells('A3:C3');
 
-        $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, "客戶");
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, "車線");
 
         $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, "總和");
         $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $month[0]);
@@ -98,14 +97,13 @@ class financialReportController extends BaseController
         $b = $j;
 
 
-        pd($this->_monthly);
 
         foreach ($this->_monthly as $ks => $vs) {
 
-            foreach ($vs as $is => $vvs) {
+
 
                     $c = $j;
-                    foreach ($vvs as $g => $k) {
+                    foreach ($vs as $g => $k) {
                         //  $objPHPExcel->getActiveSheet()->setCellValue('A' . $j, $g);
 
                         for ($yy = 0; $yy < count($dateRange); $yy++) {
@@ -114,7 +112,7 @@ class financialReportController extends BaseController
                                 $c++;
                             }
                         }
-                    }
+
 
             }
             // $j++;
