@@ -245,6 +245,7 @@ class Customer_MonthlyCreditSummary {
                 foreach ($data[$k] as $invoice) {
                     $customerId = $invoice->customerId;
                     $customerName = $invoice->customerName;
+                    $deliveryZone = $invoice->zoneId;
 
                     if (!isset($this->_monthly[$k]['byCustomer'][$customerId]))
                         $this->_monthly[$k]['byCustomer'][$customerId] = 0;
@@ -253,6 +254,7 @@ class Customer_MonthlyCreditSummary {
                     $total += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
                     $this->_monthly['id'][$customerId] = $customerId;
                     $this->_monthly['name'][$customerId] = $customerName;
+                    $this->_monthly['diliveryZone'][$customerId] = $deliveryZone;
                 }
             }
         }
@@ -266,9 +268,9 @@ class Customer_MonthlyCreditSummary {
 
         $objPHPExcel = new PHPExcel();
         $this->generateExcelHeader($objPHPExcel);
-        $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, "客戶");  
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, "Customer");  
         
-        $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, "總和");
+        $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, "District");
         $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $month[0]);
         $objPHPExcel->getActiveSheet()->setCellValue('G' . $i, $month[1]);
         $objPHPExcel->getActiveSheet()->setCellValue('H' . $i, $month[2]);
@@ -283,6 +285,7 @@ class Customer_MonthlyCreditSummary {
         $a = $j;
         $b = $j;
         $c = $j;
+        $d = $j;
         
       //  pd($this->_monthly);
         
@@ -297,6 +300,10 @@ class Customer_MonthlyCreditSummary {
                     {
                         $objPHPExcel->getActiveSheet()->setCellValue('B' . $b, $vvs);
                         $b++;
+                    }else if($ks == "diliveryZone")
+                    {
+                        $objPHPExcel->getActiveSheet()->setCellValue('E' . $d, $vvs);
+                        $d++;
                     }else
                     {
                         $c = $j;
@@ -316,13 +323,13 @@ class Customer_MonthlyCreditSummary {
         }
         for($loopNum = 0;$loopNum<count($storeDate);$loopNum++)
         {
-              $objPHPExcel->getActiveSheet()->setCellValue('E' . $j,"=SUM(F".$j.":K".$j.")");
+              $objPHPExcel->getActiveSheet()->setCellValue('L' . $j,"=SUM(F".$j.":K".$j.")");
               $j++;      
         }
          $j++; 
          
          
-        $objPHPExcel->getActiveSheet()->setCellValue('A' . $j, "合共總額:");
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . $j, "Total all:(HK$):");
         
         $hh = $j -2;
 
@@ -331,24 +338,24 @@ class Customer_MonthlyCreditSummary {
                 'underline' => PHPExcel_Style_Font::UNDERLINE_DOUBLE
             )
         );
-        $dateRange[6] = "E";
+        $dateRange[6] = "L";
         for($count = 0;$count < count($dateRange);$count++)
         {
             $objPHPExcel->getActiveSheet()->setCellValue($dateRange[$count].  $j,"=SUM(".$dateRange[$count].$storeRow.":".$dateRange[$count].$hh.")");
-             $objPHPExcel->getActiveSheet()->getStyle($dateRange[$count].  $j)->applyFromArray($styleArray);
+             $objPHPExcel->getActiveSheet()->getStyle($dateRange[$count].  $j)->applyFromArray($styleArray); 
         }
 
         unset($styleArray);
-  /*      $data = array(
-    array ('Name', 'Surname'),
-    array('Schwarz', 'Oliver'),
-    array('Test', 'Peter')
-);
-$objPHPExcel->getActiveSheet()->fromArray($data, null, 'G1');*/
-        
-        //foreach() {
-            
-       // }
+for($start = 0;$start < count($dateRange);$start++)
+        {
+            $objPHPExcel->getActiveSheet()
+            ->getStyle($dateRange[$start].$storeRow.':'.$dateRange[$start].$j)
+            ->getNumberFormat()
+            ->setFormatCode(
+                '$#,##0.00;[Red]$#,##0.00'
+            ); 
+            $objPHPExcel->getActiveSheet()->getColumnDimension($dateRange[$start])->setWidth(15);
+        }
        
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
@@ -707,14 +714,14 @@ $objPHPExcel->getActiveSheet()->fromArray($data, null, 'G1');*/
 
     //aging pdf
 
-    public function generateExcelHeader($excel) {
+      public function generateExcelHeader($excel) {
         $today = date("Y-m-d");
-        $excel->getActiveSheet()->setCellValue('A1', '炳 記 行 貿 易 有 限 公 司');
-        $excel->getActiveSheet()->mergeCells('A1:D1');
-        $excel->getActiveSheet()->setCellValue('A2', '帳齡分析搞要(應收)');
-        $excel->getActiveSheet()->mergeCells('A2:E2');
-        $excel->getActiveSheet()->setCellValue('A3', '至 [' . $today . "]");
-        $excel->getActiveSheet()->mergeCells('A3:C3');
+        $excel->getActiveSheet()->setCellValue('A1', 'PING KEE HONG TRADING COMPANY LTD.');
+        $excel->getActiveSheet()->mergeCells('A1:F1');
+        $excel->getActiveSheet()->setCellValue('A2', 'Accounts Receivable Aging Report(Cash sales)');
+        $excel->getActiveSheet()->mergeCells('A2:F2');
+        $excel->getActiveSheet()->setCellValue('A3', 'As at[' . $today . "]");
+        $excel->getActiveSheet()->mergeCells('A3:D3');
     }
 
     public function generateHeader($pdf) {

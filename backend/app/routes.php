@@ -93,6 +93,8 @@ Route::group(array('before' => 'auth'), function()
     //financial report
     Route::any('/agingByZoneCash.json','financialReportController@getAgingByZoneCash');
     Route::any('/yearEndReport.json','financialReportController@getYearEndReport');
+    Route::any('/outputCredit.json','financialReportController@outputCashAndCredit');
+    Route::any('/outputCash.json','financialReportController@outputCashAndCredit');
 
     // Van sell
     Route::any('/getVansellreport.json', 'VanSellController@loadvanSellReport');
