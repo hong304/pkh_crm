@@ -180,7 +180,7 @@ class financialReportController extends BaseController
 
 
             //  $total = 0;
-         /*   for ($i = 0; $i < 23; $i++) {
+            for ($i = 0; $i < 23; $i++) {
 
                 //for ($i = $this->_reportMonth; $i > 0; $i--) {
                 $data = [];
@@ -199,12 +199,12 @@ class financialReportController extends BaseController
                     }
                 }
 
-            } */
+            }
 
         }
 
-        $value = debug::where('id',1)->first();
-        $this->_monthly = json_decode($value->content);
+      //  $value = debug::where('id',1)->first();
+     //   $this->_monthly = json_decode($value->content);
 
 
         $i = 5;
