@@ -89,7 +89,7 @@ class financialReportController extends BaseController
         $objPHPExcel->getActiveSheet()->mergeCells('I4:M4');
         $objPHPExcel->getActiveSheet()->setCellValue('I4', 'Cash Sales');
 
-        $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, "車線");
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, "月份");
 
         $objPHPExcel->getActiveSheet()->setCellValue('C' . $i,'No. of invoices');
         $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, 'Sales Amount');
@@ -110,21 +110,28 @@ class financialReportController extends BaseController
 
             $objPHPExcel->getActiveSheet()->setCellValue('A' . $j, $v);
 
-            $objPHPExcel->getActiveSheet()->setCellValue('C' . $j, $data[''.$v.''][0]->invoices);
-            $objPHPExcel->getActiveSheet()->setCellValue('D' . $j, $data[''.$v.''][0]->amount);
-            $objPHPExcel->getActiveSheet()->setCellValue('E' . $j, $data[''.$v.''][0]->settlement);
-            $objPHPExcel->getActiveSheet()->setCellValue('F' . $j, $data[''.$v.''][0]->discount);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $j, $data2[''.$v.''][0]->invoices);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $j, $data2[''.$v.''][0]->amount);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $j, $data2[''.$v.''][0]->settlement);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $j, $data2[''.$v.''][0]->discount);
             $objPHPExcel->getActiveSheet()->setCellValue('G' . $j, "=D" . $j . "-E" . $j. "-F" . $j);
 
-            $objPHPExcel->getActiveSheet()->setCellValue('I' . $j, $data2[''.$v.''][0]->invoices);
-            $objPHPExcel->getActiveSheet()->setCellValue('J' . $j, $data2[''.$v.''][0]->amount);
-            $objPHPExcel->getActiveSheet()->setCellValue('K' . $j, $data2[''.$v.''][0]->settlement);
-            $objPHPExcel->getActiveSheet()->setCellValue('L' . $j, $data2[''.$v.''][0]->discount);
+            $objPHPExcel->getActiveSheet()->setCellValue('I' . $j, $data[''.$v.''][0]->invoices);
+            $objPHPExcel->getActiveSheet()->setCellValue('J' . $j, $data[''.$v.''][0]->amount);
+            $objPHPExcel->getActiveSheet()->setCellValue('K' . $j, $data[''.$v.''][0]->settlement);
+            $objPHPExcel->getActiveSheet()->setCellValue('L' . $j, $data[''.$v.''][0]->discount);
             $objPHPExcel->getActiveSheet()->setCellValue('M' . $j, "=J" . $j . "-K" . $j. "-L" . $j);
 
             $j++;
         }
 
+
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('C7:M18')
+            ->getNumberFormat()
+            ->setFormatCode(
+                '$#,##0.00;[Red]$#,##0.00'
+            );
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
