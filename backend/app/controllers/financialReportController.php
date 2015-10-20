@@ -51,11 +51,11 @@ class financialReportController extends BaseController
             //  $total = 0;
 
                    foreach ($time as $k => $v) {
-                       $sql = 'SELECT SUM(CASE WHEN invoiceStatus IN (20,30) THEN (paid+discount_taken) ELSE amount END) AS settlement, SUM(CASE WHEN invoiceStatus IN (20,30) THEN (discount_taken) END) AS discount,SUM(amount) AS amount,COUNT(*) AS invoices FROM invoice WHERE paymentterms = 1 AND invoiceStatus IN (2,20,30) AND deliveryDate between '.strtotime($v[0]).' AND '.strtotime($v[1]);
-                       $data[$k] = DB::select(DB::raw($sql));
-
-                       $sql = 'SELECT SUM(CASE WHEN invoiceStatus IN (20,30) THEN (paid+discount_taken) ELSE amount END) AS settlement, SUM(CASE WHEN invoiceStatus IN (20,30) THEN (discount_taken) END) AS discount,SUM(amount) AS amount,COUNT(*) AS invoices FROM invoice WHERE paymentterms = 2 AND invoiceStatus IN (2,20,30) AND deliveryDate between '.strtotime($v[0]).' AND '.strtotime($v[1]);
+                       $sql = 'SELECT SUM(CASE WHEN invoiceStatus IN (20,30) THEN (paid+discount_taken) END) AS settlement, SUM(CASE WHEN invoiceStatus IN (20,30) THEN (discount_taken) END) AS discount,SUM(amount) AS amount,COUNT(*) AS invoices FROM invoice WHERE paymentterms = 2 AND invoiceStatus IN (2,20,30) AND deliveryDate between '.strtotime($v[0]).' AND '.strtotime($v[1]);
                        $data2[$k] = DB::select(DB::raw($sql));
+
+                       $sql = 'SELECT SUM(CASE WHEN invoiceStatus = 20 THEN paid WHEN invoiceStatus = 30 AND manual_complete = 0 THEN (paid+discount_taken) ELSE amount END) AS settlement, SUM(CASE WHEN invoiceStatus =30 THEN (discount_taken) END) AS discount,SUM(amount) AS amount,COUNT(*) AS invoices FROM invoice WHERE paymentterms = 1 AND invoiceStatus IN (2,20,30) AND deliveryDate between '.strtotime($v[0]).' AND '.strtotime($v[1]);
+                       $data[$k] = DB::select(DB::raw($sql));
 
                      }
 
