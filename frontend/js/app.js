@@ -817,7 +817,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         name: 'app',
                         insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                         files: [
-                            'js/controllers/agingByZoneCashCtrl.js',
+                            'js/controllers/financialReport/agingByZoneCashCtrl.js',
                             assets + '/global/plugins/bootbox/bootbox.min.js',
 
                             assets + '/global/plugins/datatables/all.min.js',
@@ -842,7 +842,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         name: 'app',
                         insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                         files: [
-                            'js/controllers/yearEndReportCtrl.js',
+                            'js/controllers/financialReport/yearEndReportCtrl.js',
                             assets + '/global/plugins/bootbox/bootbox.min.js',
 
                             assets + '/global/plugins/datatables/all.min.js',
@@ -867,7 +867,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         name: 'app',
                         insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                         files: [
-                            'js/controllers/agingByCustomerCredit.js',
+                            'js/controllers/financialReport/agingByCustomerCredit.js',
                             assets + '/global/plugins/bootbox/bootbox.min.js',
 
                             assets + '/global/plugins/datatables/all.min.js',
@@ -892,7 +892,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         name: 'app',
                         insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                         files: [
-                            'js/controllers/agingByCustomerCash.js',
+                            'js/controllers/financialReport/agingByCustomerCash.js',
                             assets + '/global/plugins/bootbox/bootbox.min.js',
 
                             assets + '/global/plugins/datatables/all.min.js',
