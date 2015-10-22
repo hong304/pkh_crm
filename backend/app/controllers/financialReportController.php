@@ -565,7 +565,7 @@ class financialReportController extends BaseController
               }
               $this->data = $this->_unPaid;
              $this->outputSalesSummaryExcel($this->data,$filter['paymentTerm']);
-        }
+        }else echo "這查詢沒有資料";
     }
     
     
