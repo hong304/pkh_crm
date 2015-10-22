@@ -89,6 +89,12 @@ class Report_Archived {
                 'optionList1' => $ashift,
                 'defaultValue1' => $this->_shift,
             ],
+            [
+                'id' => 'submit',
+                'type' => 'submit',
+                'label' => '提交',
+            ],
+
         ];
 
         return $filterSetting;
