@@ -12,7 +12,8 @@ app.controller('agingByCustomerCash', function($scope, $http, SharedService, $ti
             'phone':'',
             'datepicker1':'',
             'datepicker2':'',
-            'paymentTerm':'1'
+            'paymentTerm':'1',
+            groupName:'',
 	};
 
     var today = new Date();
@@ -44,7 +45,7 @@ app.controller('agingByCustomerCash', function($scope, $http, SharedService, $ti
     });
 
 
-    $scope.sendRealFile = function()
+    $scope.sendFile = function()
     {
         var queryObject = {
             filterData	:	$scope.filterData,
@@ -52,7 +53,7 @@ app.controller('agingByCustomerCash', function($scope, $http, SharedService, $ti
         };
 
         var queryString = $.param( queryObject );
-        window.open(endpoint + "/outputCash.json?" + queryString);
+        window.open(endpoint + "/outputCredit.json?" + queryString);
     }
 
     $scope.updateDataSet = function()

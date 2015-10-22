@@ -231,6 +231,7 @@ class Customer_MonthlyCreditSummary {
         foreach ($this->data as $i => $v) {
             $storeDate[$i] = $v['customer']; 
         }
+
         if(isset($storeDate))
         {
         $total = 0;
@@ -359,7 +360,7 @@ for($start = 0;$start < count($dateRange);$start++)
        
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="' . "abc" . '.xls"');
+        header('Content-Disposition: attachment;filename="' . "account sales summary" . '.xls"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
          }

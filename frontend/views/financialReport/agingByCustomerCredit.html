@@ -9,7 +9,7 @@
 			</div>
 			<div class="portlet-body">				
 				<div class="md-col-12" style="margin-bottom:15px;">
-					<button class="btn  blue-steel btn-block ng-binding ng-scope" data-ng-click="sendFile(1);">匯出帳齡摘要 (EXCEL)(Credit)</button><!-- end ngRepeat: d in setting.downloadOptions -->
+					<button class="btn  blue-steel btn-block ng-binding ng-scope" data-ng-click="sendFile();">匯出帳齡摘要 (EXCEL)(Credit)</button><!-- end ngRepeat: d in setting.downloadOptions -->
 				</div>
 			</div>
 
@@ -75,7 +75,8 @@
 
 
 
-		</div><!-- end ngRepeat: f in setting.filterOptions --><div>
+		</div><!-- end ngRepeat: f in setting.filterOptions --><div class="portlet light ng-scope">
+                        <div class="portlet-title ng-scope">
 			<!-- ngIf: f.type != 'submit' -->
 				<div class="caption">
 					<i class="fa fa-cogs font-green-sharp"></i>
@@ -140,7 +141,7 @@
                 <!-- ngIf: f.type == 'submit' -->
 
 
-
+               </div>
 		</div><!-- end ngRepeat: f in setting.filterOptions --><div class="portlet light ng-scope">
 			<!-- ngIf: f.type != 'submit' --><div class="portlet-title ng-scope" data-ng-if="f.type != 'submit'">
 				<div class="caption">

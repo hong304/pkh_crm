@@ -855,6 +855,57 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                 }]
             }
         })
+        
+         .state('agingByCustomerCredit', {
+            url: "/agingByCustomerCredit",
+            templateUrl: "views/financialReport/agingByCustomerCredit.html",
+            data: {pageTitle: '列印記錄', pageSubTitle: ''},
+            controller: "agingByCustomerCredit",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            'js/controllers/agingByCustomerCredit.js',
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        ]
+                    });
+                }]
+            }
+        })
+        
+        .state('agingByCustomerCash', {
+            url: "/agingByCustomerCash",
+            templateUrl: "views/financialReport/agingByCustomerCash.html",
+            data: {pageTitle: '列印記錄', pageSubTitle: ''},
+            controller: "agingByCustomerCash",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            'js/controllers/agingByCustomerCash.js',
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
 
         .state('dailyReport', {
             url: "/dailyReport",
