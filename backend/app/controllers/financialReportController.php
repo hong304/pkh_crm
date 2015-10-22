@@ -552,7 +552,10 @@ class financialReportController extends BaseController
                             ->where('Customer.customerId', 'LIKE', $filter['customerId'] . '%');
                     });
                 }
-              $invoices = $invoices->where('paymentTerms', $filter['paymentTerm'])->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->OrderBy('invoice.customerId', 'asc')->orderBy('deliveryDate')->get();  
+            if($filter['paymentTerm'] == 1)
+                $invoices = $invoices->where('paymentTerms', $filter['paymentTerm'])->where('invoiceStatus',20)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->OrderBy('invoice.customerId', 'asc')->orderBy('deliveryDate')->get();
+            else
+                $invoices = $invoices->where('paymentTerms', $filter['paymentTerm'])->where('invoiceStatus','!=',30)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->OrderBy('invoice.customerId', 'asc')->orderBy('deliveryDate')->get();
               foreach ($invoices as $invoice) {
                 if ($invoice->deliveryDate >= $this->_date1) {
                     $customerId = $invoice->customerId;
@@ -607,7 +610,10 @@ class financialReportController extends BaseController
             $data = [];
 
             foreach ($time as $k => $v) {
-                $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', $paymentTerms)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $kk)->OrderBy('deliveryDate')->get();  
+                if($paymentTerms == 1)
+                   $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('invoiceStatus',20)->where('paymentTerms', $paymentTerms)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $kk)->OrderBy('deliveryDate')->get();
+                else
+                   $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('invoiceStatus','!=',30)->where('paymentTerms', $paymentTerms)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $kk)->OrderBy('deliveryDate')->get();
 
                 foreach ($data[$k] as $invoice) {
                     $customerId = $invoice->customerId;
