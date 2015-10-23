@@ -15,7 +15,21 @@ function goEdit(invoiceId)
     });
 }
 
-app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
+app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state) {
+
+    $scope.invoiceIdForApprove='';
+    $(document).ready(function(){
+        $(document).keydown(function (e) {
+            if(($state.current.name=='pendingInvoice' || $state.current.name=='queryInvoice') && $scope.invoiceIdForApprove!=''){
+                if (e.keyCode == 121) //F10
+                {
+                  console.log('success approve');
+                  $scope.manipulate('Approve',$scope.invoiceIdForApprove);
+                  $scope.invoiceIdForApprove = '';
+                }
+            }
+        });
+    });
 
     $scope.systeminfo = $rootScope.systeminfo;
 	var fetchDataDelay = 500;   // milliseconds
@@ -331,8 +345,10 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     		$scope.nowUnixTime = Math.round(+new Date()/1000);
             $scope.invoiceinfo = res;
 
-                console.log($scope.invoiceinfo);
+
             $scope.invoiceinfo.invoiceStatus = parseInt($scope.invoiceinfo.invoiceStatus);
+                if($scope.invoiceinfo.invoiceStatus == 1)
+                    $scope.invoiceIdForApprove = invoiceId;
     		Metronic.unblockUI();
     		$("#productDetails").modal({backdrop: 'static'});
 
