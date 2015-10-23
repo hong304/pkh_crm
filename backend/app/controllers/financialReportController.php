@@ -252,8 +252,8 @@ class financialReportController extends BaseController
 
 
             foreach($month as $v){
-                    if(isset($vs->$v)){
-                        $objPHPExcel->getActiveSheet()->setCellValue($dateRange[$yy] . $j, $vs->$v);
+                    if(isset($vs[$v])){
+                        $objPHPExcel->getActiveSheet()->setCellValue($dateRange[$yy] . $j, $vs[$v]);
                     }
                 $yy++;
             }
