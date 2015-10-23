@@ -49,23 +49,23 @@
                                 <td>{{control.groupName}}</td>
                                 <td>
                                     <div class="control-label">
-                                        <input type="checkbox" ng-model="permissionControl[key]['action']['view_'+control.name]" ng-true-value="{{control.roleId}}" ng-false-value="" ng-checked="permissionControl[key]['action']['view_'+control.name]=={{control.roleId}}">
+                                        <input type="checkbox" ng-model="permissionControl[key]['action']['view_'+control.name]" ng-true-value="{{control.roleId}}" ng-false-value="" ng-checked="permissionControl[key]['action']['view_'+control.name]=={{control.roleId}}" data-ng-if="permissionControl[key]['action']['view_'+control.name]!==undefined">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="control-label">
-                                        <input type="checkbox" ng-model="permissionControl[key]['action']['edit_'+control.name]" ng-true-value="{{control.roleId}}" ng-false-value="" ng-checked="permissionControl[key]['action']['edit_'+control.name]=={{control.roleId}}">
+                                        <input type="checkbox" ng-model="permissionControl[key]['action']['edit_'+control.name]" ng-true-value="{{control.roleId}}" ng-false-value="" ng-checked="permissionControl[key]['action']['edit_'+control.name]=={{control.roleId}}" data-ng-if="permissionControl[key]['action']['edit_'+control.name]!==undefined">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="control-label">
-                                        <input type="checkbox" ng-model="permissionControl[key]['action']['add_'+control.name]" ng-true-value="{{control.roleId}}" ng-false-value="" ng-checked="permissionControl[key]['action']['add_'+control.name]=={{control.roleId}}">
+                                        <input type="checkbox" ng-model="permissionControl[key]['action']['add_'+control.name]" ng-true-value="{{control.roleId}}" ng-false-value="" ng-checked="permissionControl[key]['action']['add_'+control.name]=={{control.roleId}}" data-ng-if="permissionControl[key]['action']['add_'+control.name]!==undefined" >
                                     </div>
 
                                 </td>
                                 <td>
                                     <div class="control-label">
-                                        <input type="checkbox" ng-model="permissionControl[key]['action']['delete_'+control.name]" ng-true-value="{{control.roleId}}" ng-false-value="" ng-checked="permissionControl[key]['action']['delete_'+control.name]=={{control.roleId}}">
+                                        <input type="checkbox" ng-model="permissionControl[key]['action']['delete_'+control.name]" ng-true-value="{{control.roleId}}" ng-false-value="" ng-checked="permissionControl[key]['action']['delete_'+control.name]=={{control.roleId}}" data-ng-if="permissionControl[key]['action']['delete_'+control.name]!==undefined">
                                     </div>
 
                                 </td>

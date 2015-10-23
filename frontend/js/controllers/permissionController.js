@@ -51,7 +51,7 @@ app.controller('permissionController', function($scope, $rootScope, $http, Share
 
         $http.post(querytarget, {roleId:$scope.filterData.level})
         .success(function(res, status, headers, config){
-                console.log(res);
+
             res.forEach(function(item,key) {
                 var view = eval('item.action.view_'+item.name);
                 var edit = eval('item.action.edit_'+item.name);
@@ -68,6 +68,8 @@ app.controller('permissionController', function($scope, $rootScope, $http, Share
                 $scope.permissionControl[key]['name'] = item.name;
                 $scope.permissionControl[key]['roleId'] = item.roleId;
             });
+
+                console.log($scope.permissionControl);
         });
     }
 
