@@ -193,7 +193,7 @@ class financialReportController extends BaseController
                 $data = [];
 
                 foreach ($time as $k => $v) {
-                    $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 1)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->whereNotIn('invoiceStatus', ['2', '30', '99'])->where('zoneId', $i)->OrderBy('deliveryDate')->get();
+                    $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 1)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->whereNotIn('invoiceStatus', ['2', '30','98', '99'])->where('zoneId', $i)->OrderBy('deliveryDate')->get();
 
                     foreach ($data[$k] as $invoice) {
 
