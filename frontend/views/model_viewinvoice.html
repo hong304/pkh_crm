@@ -123,22 +123,22 @@
 																{{i.productId}}
 															</td>
 															<td >
-																{{invoiceinfo.products[i.productId].productName_chi}} - {{i.productRemark}}
+																{{i.product_detail.productName_chi}} - {{i.productRemark}}
 															</td>
 															<td>
 																{{i.productQty}}
 															</td>
 															<td>
-																<span>{{invoiceinfo.products[i.productId].productPackingName[i.productQtyUnit]}}</span>
+																<span>{{i.productUnitName}}</span>
 															</td>
 															<td>
 																${{i.productPrice | number : 1}}
 															</td>
 															<td>
-																<span>${{invoiceinfo.products[i.productId].productStdPrice[i.productQtyUnit]}}</span>
+																<span>${{i.productStandardPrice}}</span>
 															</td>
-															<td ng-if="systeminfo.permission.view_product_cost == true"> 
-																<span style="display:none;" id="cost_{{$index}}">${{invoiceinfo.products[i.productId].productCost_unit}}</span>
+															<td ng-if="systeminfo.permission.view_product_cost == true">
+                                                                <span style="display:none;" id="cost_{{$index}}">${{i.product_detail.productCost_unit}}</span>
 																<a href="#" ng-click="toggle($index)" id="controlcost_{{$index}}">[顯示]</a>
 															</td>
 															<td>
