@@ -129,7 +129,14 @@ class financialReportController extends BaseController
 
 
         $objPHPExcel->getActiveSheet()
-            ->getStyle('C7:M18')
+            ->getStyle('C7:G18')
+            ->getNumberFormat()
+            ->setFormatCode(
+                '$#,##0.00;[Red]$#,##0.00'
+            );
+
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('J7:M18')
             ->getNumberFormat()
             ->setFormatCode(
                 '$#,##0.00;[Red]$#,##0.00'
@@ -283,6 +290,17 @@ class financialReportController extends BaseController
 
         unset($styleArray);
 
+        foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+            // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
+            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('C6:I30')
+            ->getNumberFormat()
+            ->setFormatCode(
+                '$#,##0.00;[Red]$#,##0.00'
+            );
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
@@ -747,7 +765,7 @@ class financialReportController extends BaseController
         $today = date("Y-m-d");
         $excel->getActiveSheet()->setCellValue('A1', 'PING KEE HONG TRADING COMPANY LTD.');
         $excel->getActiveSheet()->mergeCells('A1:F1');
-        $excel->getActiveSheet()->setCellValue('A2', 'Accounts Receivable Aging Report(Cash sales)');
+        $excel->getActiveSheet()->setCellValue('A2', 'Accounts Receivable Aging Report');
         $excel->getActiveSheet()->mergeCells('A2:F2');
         $excel->getActiveSheet()->setCellValue('A3', 'As at[' . $today . "]");
         $excel->getActiveSheet()->mergeCells('A3:D3');
