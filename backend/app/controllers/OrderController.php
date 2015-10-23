@@ -430,13 +430,13 @@ class OrderController extends BaseController
         } elseif ($mode == 'single') {
             $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
                 ->with(['invoiceItem' => function ($query) use ($ids) {
-                    $query->orderBy('productLocation', 'asc')->orderBy('productQtyUnit', 'asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId', 'asc');
+                    $query->withTrashed()->orderBy('productLocation', 'asc')->orderBy('productQtyUnit', 'asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId', 'asc');
                 }])->with('products', 'client', 'staff', 'printqueue', 'audit', 'audit.User')
                 ->withTrashed()
                 ->first();
 
         }
-        //dd(DB::getQueryLog());
+
 
         return Response::json($invoices);
 

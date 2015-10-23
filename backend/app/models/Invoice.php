@@ -41,9 +41,8 @@ class Invoice extends Eloquent  {
 	            $original= $model->getOriginal($attribute);
 	            if(!in_array($attribute, array('created_by', 'created_at', 'updated_at','invoicePrintPDF','invoicePrintImage')))
 	            {
-	                $x = new TableAudit();
+	                $x = new invoiceaudit();
 	                $x->referenceKey = $model->invoiceId;
-	                $x->table = "Invoice";
 	                $x->attribute = $attribute;
 	                $x->data_from = $original;
 	                $x->data_to = $value;
@@ -269,7 +268,7 @@ class Invoice extends Eloquent  {
 	
 	public function audit()
 	{
-	    return $this->hasMany('TableAudit', 'referenceKey', 'invoiceId');
+	    return $this->hasMany('invoiceaudit', 'referenceKey', 'invoiceId');
 	}
 
 
