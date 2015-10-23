@@ -172,8 +172,8 @@ class Invoice_CashReceiptSummary {
             }
         }
 
-        //補收
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
+        //補收+所有當天支票
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20','98'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
 
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
@@ -218,7 +218,7 @@ class Invoice_CashReceiptSummary {
                     'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,2,'.',','),
                 ];
             }else if ($invoiceQ->receive_date == date('Y-m-d',$date) and $invoiceQ->ref_number != 'cash'){
-                $acc1 +=  ($invoiceQ->invoiceStatus == '98' || $invoiceQ->invoiceStatus == '97')? -$invoiceQ->paid:$invoiceQ->paid;
+                $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
                 $this->_invoices[] = $invoiceQ->invoiceId;
                 $this->_zoneName = $invoiceQ->zone->zoneName;
 
@@ -227,6 +227,7 @@ class Invoice_CashReceiptSummary {
                 $invoices[$invoiceId] = $invoiceQ;
                 $client = $invoiceQ['client'];
 
+                //所有支票
                 $this->_paidInvoice_cheque[] = [
                     'customerId' => $client->customerId,
                     'name' => $client->customerName_chi,
@@ -242,7 +243,7 @@ class Invoice_CashReceiptSummary {
 
 
         }
-//補收
+        //補收+所有當天支票
 
         
         $this->_expenses = expense::select('*')->where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
