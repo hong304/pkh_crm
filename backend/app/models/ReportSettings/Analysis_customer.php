@@ -305,15 +305,15 @@ class Analysis_customer {
         for ($k = 1; $k < 13; $k++) {
             if( isset($this->data[$k][$last_year]) && $this->data[$k][$last_year]['qty'] > 0){
                 $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
-                $objPHPExcel->getActiveSheet()->setCellValue('B' . $i,"HK$ ".number_format($this->data[$k][$last_year]['amount']));
-                $objPHPExcel->getActiveSheet()->setCellValue('C' . $i,number_format($this->data[$k][$last_year]['qty']));
-                $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, "HK$ ". number_format($this->data[$k][$last_year]['amount']/$this->data[$k][$last_year]['qty'], 2, '.', ','));
+                $objPHPExcel->getActiveSheet()->setCellValue('B' . $i,$this->data[$k][$last_year]['amount']);
+                $objPHPExcel->getActiveSheet()->setCellValue('C' . $i,$this->data[$k][$last_year]['qty']);
+                $objPHPExcel->getActiveSheet()->setCellValue('D' . $i,$this->data[$k][$last_year]['amount']/$this->data[$k][$last_year]['qty']);
 
             }else{
                 $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
-                $objPHPExcel->getActiveSheet()->setCellValue('B' . $i,"HK$0");
+                $objPHPExcel->getActiveSheet()->setCellValue('B' . $i,0);
                 $objPHPExcel->getActiveSheet()->setCellValue('C' . $i,0);
-                $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, "HK$0");
+                $objPHPExcel->getActiveSheet()->setCellValue('D' . $i,0);
             }
             $i++;
         }
@@ -323,20 +323,54 @@ class Analysis_customer {
         for ($k = 1; $k < 13; $k++) {
             if( isset($this->data[$k][$current_year]) && $this->data[$k][$current_year]['qty'] > 0 && $k <= date('n')){
                 $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
-                $objPHPExcel->getActiveSheet()->setCellValue('F' . $i,"HK$ ".number_format($this->data[$k][$current_year]['amount']));
-                $objPHPExcel->getActiveSheet()->setCellValue('G' . $i,number_format($this->data[$k][$current_year]['qty']));
-                $objPHPExcel->getActiveSheet()->setCellValue('H' . $i, "HK$ ". number_format($this->data[$k][$current_year]['amount']/$this->data[$k][$current_year]['qty'], 2, '.', ','));
+                $objPHPExcel->getActiveSheet()->setCellValue('F' . $i,$this->data[$k][$current_year]['amount'] );
+                $objPHPExcel->getActiveSheet()->setCellValue('G' . $i,$this->data[$k][$current_year]['qty']);
+                $objPHPExcel->getActiveSheet()->setCellValue('H' . $i,$this->data[$k][$current_year]['amount']/$this->data[$k][$current_year]['qty']);
 
             }else if($k > date('n')){
 
             }else{
                 $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $k);
-                $objPHPExcel->getActiveSheet()->setCellValue('F' . $i,"HK$0");
+                $objPHPExcel->getActiveSheet()->setCellValue('F' . $i,0);
                 $objPHPExcel->getActiveSheet()->setCellValue('G' . $i,0);
-                $objPHPExcel->getActiveSheet()->setCellValue('H' . $i, "HK$0");
+                $objPHPExcel->getActiveSheet()->setCellValue('H' . $i,0);
             }
             $i++;
         }
+
+        $column = ['B','C','D','F','G','H'];
+
+        foreach($column as $v)
+            $objPHPExcel->getActiveSheet()->setCellValue($v.'18', "=SUM(".$v."6:".$v."16)");
+
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('B5:B18')
+            ->getNumberFormat()
+            ->setFormatCode(
+                '$#,##0.00;[Red]$#,##0.00'
+            );
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('D5:D18')
+            ->getNumberFormat()
+            ->setFormatCode(
+                '$#,##0.00;[Red]$#,##0.00'
+            );
+
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('F5:F18')
+            ->getNumberFormat()
+            ->setFormatCode(
+                '$#,##0.00;[Red]$#,##0.00'
+            );
+
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('H5:H18')
+            ->getNumberFormat()
+            ->setFormatCode(
+                '$#,##0.00;[Red]$#,##0.00'
+            );
+
+
         //    $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '總計:');
         //  $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, sprintf("HK$ %s",end($this->data)['accumulator']));
 
