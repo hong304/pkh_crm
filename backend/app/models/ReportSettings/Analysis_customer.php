@@ -281,12 +281,12 @@ class Analysis_customer {
         $objPHPExcel = new PHPExcel ();
 
         $objPHPExcel->getActiveSheet()->mergeCells('A1:E1');
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', '產品分析');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '客戶分析');
         $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->applyFromArray(
             array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
         );
 
-        $objPHPExcel->getActiveSheet()->setCellValue('A2', '產品名稱');
+        $objPHPExcel->getActiveSheet()->setCellValue('A2', '客戶名稱');
         $objPHPExcel->getActiveSheet()->setCellValue('B2', $this->data[13][$current_year]['product_name'] ."(".$this->data[13][$current_year]['product_id'].")");
         //  $objPHPExcel->getActiveSheet()->setCellValue('C2', 'To');
         //  $objPHPExcel->getActiveSheet()->setCellValue('D2', date('Y-m-d',$this->_date2));
