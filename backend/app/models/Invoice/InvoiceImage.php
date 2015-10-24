@@ -73,14 +73,18 @@ class InvoiceImage
 
 
         # Setting about the invoice template
-        $max_item_per_section = ($i['invoiceRemark'] ? 6 : 8);
-        $number_of_item = count($i['invoice_item']);
+        //$max_item_per_section = ($i['invoiceRemark'] ? 6 : 8);
+        $max_item_per_section = 8;
+        $number_of_item = count($i['invoice_item']) + ($i['invoiceRemark'] ? 2 : 0);
         $section_required = ceil($number_of_item / $max_item_per_section);
 
         $item_counter = 1;
         $items_chunk = array_chunk($i['invoice_item'], $max_item_per_section, false);
 
-        //pd($items_chunk);
+
+
+        $numItems = count($items_chunk);
+
 
         # Now Process with each section
         foreach ($items_chunk as $p => $sections_items) {
@@ -380,11 +384,12 @@ class InvoiceImage
 
             }
 
-            $this->image[$p]->text($i['invoiceRemark'], 300, 800, function ($font) use ($font_file) {
-                $font->file($font_file);
-                $font->size(30);
-                $font->color('#000000');
-            });
+
+
+
+
+
+
         }
 
         
@@ -395,6 +400,194 @@ class InvoiceImage
 
         //      $total_amount = "合計  HKD " . $english_format_number = number_format(round($i['totalAmount']*$i['invoiceDiscount'],1), 2, '.', ',');;
         // $total_amount = "合計  HKD " . $i['invoiceTotalAmount'];
+
+        if($section_required > $numItems) {
+            $p = $p + 1;
+
+            $debug = 0;
+
+            if ($debug) {
+                $this->print = true;
+                $this->image[$p] = Image::make($image_template);
+                $this->image[$p]->resize(1654, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            } else if ($print_ver) {
+                $this->print = true;
+                $this->image[$p] = Image::canvas(1654, 1200);
+            } else {
+                $this->print = false;
+                $this->image[$p] = Image::make($image_template);
+                $this->image[$p]->resize(1654, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+
+            }
+
+
+            /*
+             * ===========================================================================================
+             *                                      Header Information
+             * ===========================================================================================
+            */
+
+            /*
+             * Add Direct Line information to customer
+             * Position 155W 230H
+             * Font Size: 37
+            */
+            $tel = '2455 2266';
+            if ($i['zone']['zonePhone'] != '') {
+                $tel = $i['zone']['zonePhone'];
+                $tel = chunk_split($tel, 4, ' ');
+            }
+            $this->image[$p]->text($tel, 155, 230, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(37);
+                $font->color('#000000');
+            });
+
+            /*
+             * Add client name to the invoice image
+             * Position: 155W 280H
+             * Font Size: 35
+            */
+
+            $this->image[$p]->text($i['client']['customerName_chi'] . '(' . $i['client']['customerId'] . ')', 155, 280, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(35);
+                $font->color('#000000');
+            });
+
+            $max_length = 18;
+            //  $address_splits = mb_substr($i['client']['address_chi'], $max_length,"UTF-8");
+
+            //   $address = implode("\n", $address_splits);
+            $array = [];
+            $string = $i['client']['address_chi'];
+            $strlen = mb_strlen($string);
+            while ($strlen) {
+                $array[] = mb_substr($string, 0, 1, "UTF-8");
+                $string = mb_substr($string, 1, $strlen, "UTF-8");
+                $strlen = mb_strlen($string);
+            }
+            $address = '';
+            foreach ($array as $k => $v) {
+                if ($k % $max_length == 0 && $k != 0)
+                    $address .= $v . "\n";
+                else
+                    $address .= $v;
+            }
+
+            $this->image[$p]->text($address, 155, 320, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(30);
+                $font->color('#000000');
+            });
+
+            $status1 = '';
+
+            if ($i['invoiceStatus'] == '96' || $i['invoiceStatus'] == '97' || $i['invoiceStatus'] == '98')
+                $status1 = $i['invoiceStatusText'] . '單';
+
+            $this->image[$p]->text($status1, 745, 320, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(60);
+                $font->color('#000000');
+            });
+
+
+            $this->image[$p]->text("車線 " . str_pad($i['zoneId'], 2, '0', STR_PAD_LEFT) . "/" . str_pad($i['routePlanningPriority'], 2, '0', STR_PAD_LEFT), 1002, 350, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(35);
+                $font->color('#000000');
+            });
+
+            $this->image[$p]->text($i['staff']['name'], 1000, 310, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(30);
+                $font->color('#000000');
+            });
+
+
+            /*
+             * Add Invoice Number to the invoice image
+             * Position: 1370W 205H
+             * Font Size: 30
+            */
+            $this->image[$p]->text($i['invoiceId'], 1370, 205, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(30);
+                $font->color('#000000');
+            });
+
+            /*
+             * Add Invoice Date to the invoice image
+             * Position:
+             * Font Size:
+            */
+            $this->image[$p]->text(date("Y-m-d", $i['invoiceDate']), 1370, 253, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(30);
+                $font->color('#000000');
+            });
+
+            /*
+             * Add Customer Reference to the invoice image
+             * Position:
+             * Font Size:
+            */
+            $reference = ($i['customerRef'] == "" ? "-----------------" : $i['customerRef']);
+            $this->image[$p]->text($reference, 1370, 298, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(30);
+                $font->color('#000000');
+            });
+
+            /*
+             * Add Payment Method to the invoice image
+             * Position:
+             * Font Size:
+            */
+            $paymentterms = $i['paymentTerms'] == "1" ? "C.O.D." : "Credit";
+            $this->image[$p]->text($paymentterms, 1370, 343, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(30);
+                $font->color('#000000');
+            });
+
+            /*
+             * Add Page Information to the invoice image
+            */
+
+            $current_page = $p + 1;
+            $page_text = "P. $current_page / $section_required";
+            $this->image[$p]->text($page_text, 1540, 1185, function ($font) use ($font_file) {
+                $font->file($font_file);
+                $font->size(30);
+                $font->color('#000000');
+            });
+
+            if ($adv != null) {
+                $max_length = 32;
+                //  $adv_splits = str_split_unicode($adv->advertisement, $max_length);
+                //   $adv1 = implode("\n", $adv_splits);
+
+
+                $this->image[$p]->text($adv->advertisement, 400, 930, function ($font) use ($font_file) {
+                    $font->file($font_file);
+                    $font->size(35);
+                    $font->color('#000000');
+                });
+            }
+        }
+
+
+        $this->image[$p]->text($i['invoiceRemark'], 300, 800, function ($font) use ($font_file) {
+            $font->file($font_file);
+            $font->size(30);
+            $font->color('#000000');
+        });
 
         $this->image[$p]->text('HKD ' . number_format(round($i['invoiceTotalAmount'] / ((100 - $i['invoiceDiscount']) / 100), 1), 2, '.', ','), 1550, 900, function ($font) use ($font_file) {
             $font->file($font_file);
