@@ -541,8 +541,8 @@ class financialReportController extends BaseController
     public function outputCashAndCredit()
     {
         $filter = Input::get('filterData');
-        $this->_date1 = (isset($filter['datepicker1']) ? strtotime($filter['datepicker1']) : strtotime("today"));
         $this->_date2 = (isset($filter['datepicker2'])) ? strtotime($filter['datepicker2']) : strtotime("today");
+
 
             if ($filter['groupName'] == '' && $filter['name'] == '' && $filter['phone'] == '' && $filter['customerId'] == '') {
             $empty = true;
@@ -570,51 +570,60 @@ class financialReportController extends BaseController
                             ->where('Customer.customerId', 'LIKE', $filter['customerId'] . '%');
                     });
                 }
-            if($filter['paymentTerm'] == 1)
-                $invoices = $invoices->where('paymentTerms', $filter['paymentTerm'])->where('invoiceStatus',20)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->OrderBy('invoice.customerId', 'asc')->orderBy('deliveryDate')->get();
+            if($filter['paymentTerm'] == 1) //COD
+                $invoices = $invoices->where('paymentTerms', $filter['paymentTerm'])->where('invoiceStatus',20)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('deliveryDate','<',$this->_date2)->OrderBy('invoice.customerId', 'asc')->orderBy('deliveryDate')->get();
             else
-                $invoices = $invoices->where('paymentTerms', $filter['paymentTerm'])->where('invoiceStatus','!=',30)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->OrderBy('invoice.customerId', 'asc')->orderBy('deliveryDate')->get();
+                $invoices = $invoices->where('paymentTerms', $filter['paymentTerm'])->where('invoiceStatus','!=',30)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('deliveryDate','<',$this->_date2)->OrderBy('invoice.customerId', 'asc')->orderBy('deliveryDate')->get();
               foreach ($invoices as $invoice) {
-                if ($invoice->deliveryDate >= $this->_date1) {
+
                     $customerId = $invoice->customerId;
 
                     $this->_unPaid[$customerId]['customer'] = [
                         'customerId' => $customerId,
                         'customerName' => $invoice->customerName_chi,
                     ];
-                }
+
               }
               $this->data = $this->_unPaid;
-             $this->outputSalesSummaryExcel($this->data,$filter['paymentTerm']);
+             $this->outputSalesSummaryExcel($this->data,$filter['paymentTerm'],$filter['datepicker2']);
         }else echo "這查詢沒有資料";
     }
     
     
-    public function outputSalesSummaryExcel($dataInput,$paymentTerms) {
+    public function outputSalesSummaryExcel($dataInput,$paymentTerms,$date) {
         
         $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
         $dateRange = ['F', 'G', 'H', 'I', 'J', 'K'];
 
         $first = true;
 
+        $ymd = $date;
+        $m = date("m", strtotime($date));
+        $y = date("Y", strtotime($date));
+
+
         foreach ($time_interval as $v) {
             if ($first) {
-                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
-                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
+                $time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime($ymd . "-" . $v[0] . " month"));
+                $time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime($ymd . "-" . $v[1] . " month"));
                 $first = false;
             } else {
-                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
-                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-t", strtotime("-" . $v[1] . " month"));
+                $time[date("Y-m", mktime(0, 0, 0, $m-$v[1], 1, $y))][0] = date("Y-m-01", mktime(0, 0, 0, $m-$v[0], 1, $y));
+                $time[date("Y-m", mktime(0, 0, 0, $m-$v[1], 1, $y))][1] = date("Y-m-t", mktime(0, 0, 0, $m-$v[1], 1, $y));
             }
         }
 
-        $month[0] = key(array_slice($time, -6, 1, true));
-        $month[1] = key(array_slice($time, -5, 1, true));
-        $month[2] = key(array_slice($time, -4, 1, true));
-        $month[3] = key(array_slice($time, -3, 1, true));
-        $month[4] = key(array_slice($time, -2, 1, true));
-        $month[5] = key(array_slice($time, -1, 1, true));
-        
+
+
+        $month[0] = substr($time[key(array_slice($time, -6, 1, true))][0],0,7);
+        $month[1] = substr($time[key(array_slice($time, -5, 1, true))][0],0,7);
+        $month[2] = substr($time[key(array_slice($time, -4, 1, true))][0],0,7);
+        $month[3] = substr($time[key(array_slice($time, -3, 1, true))][0],0,7). ' to '. substr($time[key(array_slice($time, -3, 1, true))][1],0,7);
+        $month[4] = substr($time[key(array_slice($time, -2, 1, true))][0],0,7). ' to '. substr($time[key(array_slice($time, -2, 1, true))][1],0,7);
+        $month[5] = key(array_slice($time, -1, 1, true)) .' or over';
+
+       // pd($month);
+
         if($dataInput !== ""){
         foreach ($dataInput as $i => $v) {
             $storeDate[$i] = $v['customer']; 
@@ -745,7 +754,7 @@ class financialReportController extends BaseController
             ->setFormatCode(
                 '$#,##0.00;[Red]$#,##0.00'
             ); 
-            $objPHPExcel->getActiveSheet()->getColumnDimension($dateRange[$start])->setWidth(15);
+            $objPHPExcel->getActiveSheet()->getColumnDimension($dateRange[$start])->setWidth(20);
         }
        
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
