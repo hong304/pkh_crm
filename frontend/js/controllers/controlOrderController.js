@@ -12,12 +12,13 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     $(document).ready(function(){
         var csuggestion = 1;
         $('#order_form').keydown(function (e) {
-                       if (e.keyCode == 40) //down
+
+         /*  if (e.keyCode == 40) //down
             {
                 e.preventDefault();
                 csuggestion++;
                 $("#productCode_" + csuggestion).focus();
-            }
+            }*/
 
             if(!$scope.submited){
                 if (e.keyCode == 121) {

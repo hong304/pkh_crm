@@ -628,7 +628,7 @@ class financialReportController extends BaseController
         foreach ($dataInput as $i => $v) {
             $storeDate[$i] = $v['customer']; 
         }
-        if(isset($storeDate))
+            if(isset($storeDate))
         {
         $total = 0;
         foreach ($storeDate as $kk => $client) {
