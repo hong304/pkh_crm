@@ -110,6 +110,7 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
                         icon: '' // put icon before the message
                     });
                 }else{
+                    $scope.invoicepaid = [];
                     $scope.payment = res;
                     $scope.invoiceinfo = res.data;
                     var i = 0;
@@ -162,6 +163,7 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
 
 $scope.updatePaidTotal = function(){
     $scope.totalAmount = 0;
+    console.log($scope.invoicepaid);
     $scope.invoicepaid.forEach(function(item){
             $scope.totalAmount += Number(item.settle);
     });
