@@ -195,8 +195,6 @@ class financeCashController extends BaseController {
         $ij = Input::get('filterData');
 
         $rules = [
-            'no' => 'required',
-            'amount' => 'required',
             'customerId' => 'required',
         ];
 
@@ -250,12 +248,17 @@ class financeCashController extends BaseController {
 
 
         $info->customerId = $ij['customerId'];
-        $info->ref_number = $ij['no'];
-        $info->bankCode = $ij['bankCode'];
+
+        if($ij['paymentType']=='cash'){
+            $info->ref_number = 'cash';
+            $ij['amount'] = $ij['cashAmount'];
+        }else{
+            $info->ref_number = $ij['no'];
+        }
+        $info->amount = $ij['amount'];
         $info->receive_date = $ij['receiveDate'];
         $info->start_date = $ij['startDate'];
         $info->end_date = $ij['endDate'];
-        $info->amount = $ij['amount'];
         $info->remark = $ij['remark'];
         $info->paymentType = 'COD';
 

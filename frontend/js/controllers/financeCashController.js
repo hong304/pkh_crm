@@ -283,6 +283,9 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.autoPost = function(){
 
+
+
+
         var owe = 0;
         $scope.paymentDetails.forEach(function(item) {
             if(item.invoiceId==$scope.filterData.invoiceId)

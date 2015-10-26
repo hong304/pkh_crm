@@ -102,11 +102,21 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-md-2 control-label">付款方式:</label>
+                                <div class="col-md-3">
+                                    <select ng-model="filterData.paymentType" class="form-control" >
+                                        <option value="cheque">支票</option>
+                                        <option value="cash">現金</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-md-2 control-label">支票號碼: <span class="required">
 										* </span>
                                 </label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control" data-ng-model="filterData.no" placeholder="">
+                                    <input type="text" class="form-control" data-ng-model="filterData.no" placeholder="" ng-disabled="filterData.paymentType == 'cash'">
                                 </div>
                             </div>
 
@@ -115,7 +125,7 @@
 										* </span>
                                 </label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control" data-ng-model="filterData.amount" placeholder="">
+                                    <input type="text" class="form-control" data-ng-model="filterData.amount" placeholder="" ng-disabled="filterData.paymentType == 'cash'">
 
                                 </div>
                             </div>
@@ -125,6 +135,15 @@
                                 </label>
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" data-ng-model="totalAmount" placeholder="" disabled>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">現金:
+                                </label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" data-ng-model="filterData.cashAmount" placeholder="" ng-disabled="filterData.paymentType == 'cheque'">
 
                                 </div>
                             </div>
@@ -202,7 +221,7 @@
                 </td>
                 <td>{{i.deliveryDate_date}}</td>
                 <td>{{i.realAmount}}</td>
-                <td><input data-ng-model="invoicepaid[k]['settle']" data-ng-change="updatePaidTotal();" onClick="this.select();" ng-disabled="i.realAmount < 0" /></td>
+                <td><input data-ng-model="invoicepaid[k]['settle']" data-ng-change="updatePaidTotal();" onClick="this.select();" /></td>
                 <td><input type="checkbox" data-ng-model="invoicepaid[k]['discount']" data-ng-if="i.realAmount != invoicepaid[k]['settle'] && invoicepaid[k]['settle'] != 0" /></td>
             </tr>
             <tr>

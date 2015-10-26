@@ -133,11 +133,17 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
 
 
     $scope.autoPost = function(){
-        if(!$scope.filterData.discount)
-            if($scope.totalAmount != $scope.filterData.amount) {
-                alert('需付金額不等於支票銀碼');
+
+      //  console.log($scope.filterData);
+      //  return false;
+
+        if(!$scope.filterData.discount){
+
+            if($scope.totalAmount != $scope.filterData.amount  && $scope.totalAmount != $scope.filterData.cashAmount) {
+                alert('需付金額不等於支票銀碼/現金');
                 return false;
             }
+        }
         var data = $scope.invoicepaid;
         $http({
             method: 'POST',
