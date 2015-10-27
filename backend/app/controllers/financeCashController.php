@@ -190,8 +190,6 @@ class financeCashController extends BaseController {
 
     public function addCheque(){
         $paid = Input::get('paid');
-
-
         $ij = Input::get('filterData');
 
         $rules = [
@@ -199,7 +197,6 @@ class financeCashController extends BaseController {
             'paymentType' => 'required',
             'no' => 'required_if:paymentType,cheque',
         ];
-
 
         $validator = Validator::make($ij, $rules);
         $errorMessage = '';
@@ -229,13 +226,10 @@ class financeCashController extends BaseController {
 
 
 
-                if($i->amount == $i->paid || $v['discount'] == 1)
-
+                if($i->paid >= $i->amount || $v['discount'] == 1)
                     if($i->invoiceStatus == 2 || $i->invoiceStatus == 20)
                         $i->invoiceStatus = 30;
-
                 $i->manual_complete = 1;
-
                 $i->discount = $v['discount'];
                 if(isset($ij['discount']))
                     $i->discount = 1;
@@ -247,8 +241,6 @@ class financeCashController extends BaseController {
 
 
         $info = new Payment();
-
-
         $info->customerId = $ij['customerId'];
 
         if($ij['paymentType']=='cash'){
