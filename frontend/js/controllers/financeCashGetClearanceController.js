@@ -138,13 +138,19 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
       //  console.log($scope.filterData);
       //  return false;
 
-        if(!$scope.filterData.discount){
-
-            if($scope.totalAmount != $scope.filterData.amount  && $scope.totalAmount != $scope.filterData.cashAmount) {
-                alert('需付金額不等於支票銀碼/現金');
+       // if(!$scope.filterData.discount){
+       if($scope.filterData.paymentType == 'cash'){
+           if($scope.totalAmount != $scope.filterData.cashAmount) {
+                alert('需付金額不等於現金數目');
+                return false;
+        }
+       }else if ($scope.filterData.paymentType == 'cheque'){
+            if($scope.totalAmount != $scope.filterData.amount) {
+                alert('需付金額不等於支票銀碼');
                 return false;
             }
-        }
+       }
+        // }
         var data = $scope.invoicepaid;
         $http({
             method: 'POST',

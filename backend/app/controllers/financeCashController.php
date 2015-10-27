@@ -196,6 +196,8 @@ class financeCashController extends BaseController {
 
         $rules = [
             'customerId' => 'required',
+            'paymentType' => 'required',
+            'no' => 'required_if:paymentType,cheque',
         ];
 
 
