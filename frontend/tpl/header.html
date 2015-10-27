@@ -359,48 +359,49 @@
 											</li>
 										</ul>
 									</div>
-                                                                       <div class="col-md-3 adjustHeight" >  
+
+                                     <div class="col-md-3 adjustHeight" >
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>供應商相關</h3>
 											</li>
 
 											<li>
-                                                                                             <a href="/#/supplierMain" class="iconify">
+                                                                                             <a href="/#/supplierMain" class="iconify"  data-ng-if="systemInfo.permission.view_supplier == true">
                                                                                              <i class="icon-home"></i>
                                                                                             供應商管理 </a>
                                                                                          </li>
                                                                                          <li>
-                                                                                             <a href="/#/countryController" class="iconify">
+                                                                                             <a href="/#/countryController" class="iconify"  data-ng-if="systemInfo.permission.view_supplier == true">
                                                                                              <i class="icon-home"></i>
                                                                                             國家管理 </a>
                                                                                          </li>
                                                                                           <li>
-                                                                                             <a href="/#/currencyController" class="iconify">
+                                                                                             <a href="/#/currencyController" class="iconify"  data-ng-if="systemInfo.permission.view_supplier == true">
                                                                                              <i class="icon-home"></i>
                                                                                             貨幣管理 </a>
                                                                                          </li>
 										</ul>
 									</div>
                                                                     
-                                                                     <div class="col-md-3 adjustHeight" >  
+                                    <div class="col-md-3 adjustHeight" >
 										<ul class="mega-menu-submenu">
 											<li>
 												<h3>船務相關</h3>
 											</li>
 
 											 <li>
-                                                                                             <a href="/#/shipping" class="iconify" ng-click="$state.go('shipping', {}, {reload: true});">
+                                                                                             <a href="/#/shipping" class="iconify" ng-click="$state.go('shipping', {}, {reload: true});" data-ng-if="systemInfo.permission.view_shipping == true">
                                                                                              <i class="icon-home"></i>
                                                                                             船務管理 </a>
                                                                                          </li>
                                                                                           <li>
-                                                                                             <a href="/#/searchship" class="iconify" ng-click="hardRefresh('/#/searchship')">
+                                                                                             <a href="/#/searchship" class="iconify" ng-click="hardRefresh('/#/searchship')"  data-ng-if="systemInfo.permission.view_shipping == true">
                                                                                              <i class="icon-home"></i>
                                                                                             搜尋船務 </a>
                                                                                          </li>      
                                                                                           <li>
-                                                                                             <a href="/#/ships" class="iconify">
+                                                                                             <a href="/#/ships" class="iconify"  data-ng-if="systemInfo.permission.view_shipping == true">
                                                                                              <i class="icon-home"></i>
                                                                                             船務管理列表 </a>
                                                                                          </li>   
