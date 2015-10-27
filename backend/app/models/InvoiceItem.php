@@ -22,10 +22,12 @@ class InvoiceItem extends Eloquent  {
 	
 	    InvoiceItem::updated(function($model)
 	    {
-         //   if($model->isDirty()){
-         //       p($model->getDirty());
-         //       pd($model->getOriginal());
-         //   }
+
+         /*  if($model->isDirty()){
+                p($model->getDirty());
+                pd($model->getOriginal());
+           }*/
+
 	        foreach($model->getDirty() as $attribute => $value){
 	            $original= $model->getOriginal($attribute);
 	            //echo "Changed $attribute from '$original' to '$value'<br/>";
@@ -92,7 +94,7 @@ class InvoiceItem extends Eloquent  {
                 
             }
             
-            $model->backgroundcode = ($model->approvedSupervisorId == "0" ? "background:#FC7E8B" : "");
+          //  $model->backgroundcode = ($model->approvedSupervisorId == "0" ? "background:#FC7E8B" : "");
 
                /*
             $inner = ($model->productPacking_inner) ? $model->productPacking_inner:1;

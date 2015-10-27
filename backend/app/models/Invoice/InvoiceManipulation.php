@@ -334,7 +334,8 @@ class InvoiceManipulation {
     	        if($i['dbid'])
     	        {
     	            $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
-    	            $item->updated_at = time();
+                   // pd($item);
+    	            //$item->updated_at = time();
     	        }
     	        else
     	        {
@@ -391,7 +392,7 @@ class InvoiceManipulation {
     	        $item->productDiscount = $i['productDiscount'];
     	        $item->productRemark = $i['productRemark'];
     	        $item->productStandardPrice = $i['productStandardPrice'];
-    	        $item->productUnitName = $i['productUnitName'];
+    	        $item->productUnitName = trim($i['productUnitName']);
     	        $item->approvedSupervisorId = $i['approvedSupervisorId'];
 
     	       /* if($i['dbid'] && $i['deleted'] == '1')
@@ -400,6 +401,10 @@ class InvoiceManipulation {
     	        }
     	        else
     	       */
+              /*  if($item->isDirty()){
+                    p($item->getDirty());
+                    pd($item->getOriginal());
+                }*/
     	       if($i['deleted'] == '0' && $i['productQty'] != 0)
     	        {
     	            $item->save();
