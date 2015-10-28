@@ -447,7 +447,7 @@ class InvoiceManipulation {
                         $undeductUnit = $normalizedUnit;
 
                         if($undeductUnit < 0){
-                            $receivings = Receiving::where('productId',$i['productId'])->where('good_qty','>=',$packingSize)->orderBy('expiry_date','asc')->first();
+                            $receivings = Receiving::where('productId',$i['productId'])->orderBy('expiry_date','desc')->first();
                             $receivings->good_qty -= $undeductUnit;
                             $receivings->save();
                             $invoiceitembatchs = new invoiceitemBatch();
