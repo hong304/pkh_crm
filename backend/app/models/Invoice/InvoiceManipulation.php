@@ -96,7 +96,7 @@ class InvoiceManipulation {
 	    return $this;
 	}
 	
-	public function setItem($dbid = false, $productId, $productPrice, $productQtyUnit,$productLocation, $productQty, $productDiscount = false, $productRemark = false, $deleted)
+	public function setItem($dbid = false, $productId, $productPrice, $productQtyUnit,$productLocation, $productQty, $productDiscount = false, $productRemark = false, $deleted,$productPacking)
 	{
 	    $this->items[] = [
 	        'dbid' => $dbid,
@@ -104,6 +104,7 @@ class InvoiceManipulation {
 	        'productPrice' => $productPrice,
 	        'productQtyUnit' => $productQtyUnit,
             'productLocation' => $productLocation,
+            'productPacking' => $productPacking,
 	        'productQty' => $productQty,
 	        'productDiscount' => $productDiscount,
 	        'productRemark' => $productRemark,
@@ -331,6 +332,9 @@ class InvoiceManipulation {
     	    // then, save all items one by one
     	    foreach($this->items as $i)
     	    {
+
+              //  pd($i);
+
     	        if($i['dbid'])
     	        {
     	            $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
@@ -340,7 +344,7 @@ class InvoiceManipulation {
     	        else
     	        {
     	            $item = new InvoiceItem();
-    	            $item->created_at = $item->updated_at = time();
+    	            $item->created_at = time();
     	        }
 
                 $productMap = ProductSearchCustomerMap::where('productId',$i['productId'])->where('customerId',$this->im->customerId)->first();
@@ -401,13 +405,81 @@ class InvoiceManipulation {
     	        }
     	        else
     	       */
-              /*  if($item->isDirty()){
-                    p($item->getDirty());
-                    pd($item->getOriginal());
-                }*/
+                if($i['dbid'])
+                    if($item->isDirty()){
+                        foreach($item->getDirty() as $attribute => $value) {
+                              if (!in_array($attribute, array('backgroundcode'))) {
+
+                                  if($i['productId'] == 218) {
+                                      $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
+                                      foreach ($invoiceitembatchs as $k1 => $v1) {
+                                          $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
+                                          $receivings->good_qty += $v1->unit;
+                                          $receivings->save();
+                                      }
+                                  }
+
+                                  $item->delete();
+                                  $item = new InvoiceItem();
+                                  $item->invoiceId = $this->invoiceId;
+                                  $item->productId = $i['productId'];
+                                  $item->productQtyUnit = $i['productQtyUnit']['value'];
+                                  $item->productLocation = $i['productLocation'];
+                                  $item->productQty = $i['productQty'];
+                                  $item->productPrice = $i['productPrice'];
+                                  $item->productDiscount = $i['productDiscount'];
+                                  $item->productRemark = $i['productRemark'];
+                                  $item->productStandardPrice = $i['productStandardPrice'];
+                                  $item->productUnitName = trim($i['productUnitName']);
+                                  $item->approvedSupervisorId = $i['approvedSupervisorId'];
+                                  $item->created_at = time();
+                            }
+                        }
+                    }
+
     	       if($i['deleted'] == '0' && $i['productQty'] != 0)
     	        {
-    	            $item->save();
+                    $item->save();
+
+                    if($i['productId'] == 218){
+                        $normalizedUnit = $this->normalizedUnit($i);
+                        $packingSize = $this->packingSize($i);
+                        $undeductUnit = $normalizedUnit;
+
+                        if($undeductUnit < 0){
+                            $receivings = Receiving::where('productId',$i['productId'])->where('good_qty','>=',$packingSize)->orderBy('expiry_date','asc')->first();
+                            $receivings->good_qty -= $undeductUnit;
+                            $receivings->save();
+                            $invoiceitembatchs = new invoiceitemBatch();
+                            $invoiceitembatchs->invoiceItemId = $item->invoiceItemId;
+                            $invoiceitembatchs->unit = $undeductUnit;
+                            $invoiceitembatchs->productId = $i['productId'];
+                            $invoiceitembatchs->receivingId = $receivings->receivingId;
+                            $invoiceitembatchs->save();
+                        }
+
+                        while($undeductUnit > 0 ){
+                            $receivings = Receiving::where('productId',$i['productId'])->where('good_qty','>=',$packingSize)->orderBy('expiry_date','asc')->first();
+
+                            if($normalizedUnit > $receivings->good_qty){
+                                $ava_qty = ($receivings->good_qty - ($receivings->good_qty % $packingSize));
+                                $undeductUnit -= $ava_qty;
+                            }else{
+                                $ava_qty = $undeductUnit;
+                                $undeductUnit = 0;
+                            }
+
+                            $receivings->good_qty -= $ava_qty;
+                            $receivings->save();
+
+                            $invoiceitembatchs = new invoiceitemBatch();
+                            $invoiceitembatchs->invoiceItemId = $item->invoiceItemId;
+                            $invoiceitembatchs->unit = $ava_qty;
+                            $invoiceitembatchs->productId = $i['productId'];
+                            $invoiceitembatchs->receivingId = $receivings->receivingId;
+                            $invoiceitembatchs->save();
+                        }
+                    }
     	        }
     	    }
 
@@ -549,5 +621,51 @@ class InvoiceManipulation {
         $this->generateInvoicePDF($this->invoiceId,Auth::user()->id);
 
 	}
+
+    public function normalizedUnit($i){
+        $inner = ($i['productPacking']['inner']) ? $i['productPacking']['inner']:1;
+        $unit = ($i['productPacking']['unit']) ? $i['productPacking']['unit']:1;
+
+        if($this->temp_invoice_information['status'] == 98){
+            if($i['productQtyUnit']['value'] == 'carton')
+                $real_normalized_unit =  $i['productQty']*$inner*$unit*-1;
+            else if($i['productQtyUnit']['value'] == 'inner')
+                $real_normalized_unit =   $i['productQty']*$unit*-1;
+            else
+                $real_normalized_unit =  $i['productQty'] * -1;
+        }else{
+            if($i['productQtyUnit']['value'] == 'carton')
+                $real_normalized_unit =  $i['productQty']*$inner*$unit;
+            else if($i['productQtyUnit']['value'] == 'inner')
+                $real_normalized_unit =   $i['productQty']*$unit;
+            else
+                $real_normalized_unit =  $i['productQty'];
+        }
+        return $real_normalized_unit;
+    }
+
+    public function packingSize($i){
+
+            $inner = ($i['productPacking']['inner']) ? $i['productPacking']['inner']:1;
+            $unit = ($i['productPacking']['unit']) ? $i['productPacking']['unit']:1;
+
+            if($this->temp_invoice_information['status'] == 98){
+                if($i['productQtyUnit']['value'] == 'carton')
+                    $real_normalized_unit =  $inner*$unit*-1;
+                else if($i['productQtyUnit']['value'] == 'inner')
+                    $real_normalized_unit =   $unit*-1;
+                else
+                    $real_normalized_unit =   $i['productQty'] * -1;
+            }else{
+                if($i['productQtyUnit']['value'] == 'carton')
+                    $real_normalized_unit =  $inner*$unit;
+                else if($i['productQtyUnit']['value'] == 'inner')
+                    $real_normalized_unit =   $unit;
+                else
+                    $real_normalized_unit =  $i['productQty'];
+            }
+            return $real_normalized_unit;
+
+    }
 	
 }

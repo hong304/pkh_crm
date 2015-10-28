@@ -19,31 +19,35 @@ class InvoiceItem extends Eloquent  {
 	public static function boot()
 	{
 	    parent::boot();
-	
-	    InvoiceItem::updated(function($model)
-	    {
 
-         /*  if($model->isDirty()){
+         InvoiceItem::updated(function($model)
+        {
+
+            unset($model->backgroundcode);
+
+        /*  if($model->isDirty()){
                 p($model->getDirty());
                 pd($model->getOriginal());
-           }*/
+           }
 
-	        foreach($model->getDirty() as $attribute => $value){
-	            $original= $model->getOriginal($attribute);
-	            //echo "Changed $attribute from '$original' to '$value'<br/>";
-	            if(!in_array($attribute, array('created_by', 'created_at', 'updated_at','productStandardPrice')))
-	            {
-    	            $x = new invoiceitemaudit();
-    	            $x->referenceKey = $model->invoiceId;
-    	            $x->attribute = $attribute;
-    	            $x->data_from = $original;
-    	            $x->data_to = $value;
-    	            $x->created_by = Auth::user()->id;
-    	            $x->created_at_micro = microtime(true);
-    	            $x->save();
-	            }
-	        }
-	    });
+            foreach($model->getDirty() as $attribute => $value){
+                $original= $model->getOriginal($attribute);
+                //echo "Changed $attribute from '$original' to '$value'<br/>";
+                if(!in_array($attribute, array('created_by', 'created_at', 'updated_at','productStandardPrice')))
+                {
+                    $x = new invoiceitemaudit();
+                    $x->referenceKey = $model->invoiceId;
+                    $x->attribute = $attribute;
+                    $x->data_from = $original;
+                    $x->data_to = $value;
+                    $x->created_by = Auth::user()->id;
+                    $x->created_at_micro = microtime(true);
+                    $x->save();
+                }
+
+	    }*/
+
+    });
 	    
 	    InvoiceItem::saving(function($invoiceitem)
 	    {
@@ -94,7 +98,7 @@ class InvoiceItem extends Eloquent  {
                 
             }
             
-          //  $model->backgroundcode = ($model->approvedSupervisorId == "0" ? "background:#FC7E8B" : "");
+            $model->backgroundcode = ($model->approvedSupervisorId == "0" ? "background:#FC7E8B" : "");
 
                /*
             $inner = ($model->productPacking_inner) ? $model->productPacking_inner:1;

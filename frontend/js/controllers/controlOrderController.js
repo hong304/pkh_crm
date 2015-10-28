@@ -159,7 +159,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         totalprice	:	0,
         remark		:	'',
         approverid	:	0,
-        deleted 	: 	'0'
+        deleted 	: 	'0',
+        productPacking : []
     };
     $scope.productTimerStructure = {
         openPanel	:	'',
@@ -664,6 +665,7 @@ else{
             $scope.product[i].productLocation = item.productLocation;
             $scope.product[i].spec = '(' + item.productPacking_carton + '*' + item.productPacking_inner + '*' + item.productPacking_unit + '*' + item.productPacking_size + ')';
             $scope.product[i].itemdiscount = item.itemdiscount;
+            $scope.product[i].productPacking = item.productPacking;
 
             // enable product qty
             //$("#spinner_" + i).spinner({value:0.5, step: 0.5, min: 0, max: 999});
@@ -1092,6 +1094,8 @@ if($scope.order.invoiceNumber !='' && $scope.order.invoiceId == ''){
 
     $scope.submitOrder = function(v)
     {
+        console.log($scope.product);
+     //   return false;
         var generalError = false;
 
 

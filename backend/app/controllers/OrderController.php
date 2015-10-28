@@ -38,7 +38,7 @@ class OrderController extends BaseController
         // pd($product);
 
         $order = Input::get('order');
-        $timer = Input::get('timer');
+     //   $timer = Input::get('timer');
 
         if(isset($order['invoiceNumber']) and $order['invoiceId'] == ''){
 
@@ -66,13 +66,17 @@ class OrderController extends BaseController
         foreach ($product as $p) {
             if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
                 $itemIds[] = $p['dbid'];
+         //   else if ($p['dbid'] && $p['deleted'])
+          //      $deletedItems[]=$p;
 
             if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] > 0){
                 $have_item = true;
             }
+
         }
 
         if ($order['invoiceId'] != '') {
+
             if (count($itemIds) == 0 && !$have_item)
                 return [
                     'result' => false,
@@ -82,13 +86,24 @@ class OrderController extends BaseController
                     'message' => '未有下單貨品',
                 ];
             else if (count($itemIds) == 0){
-                $i = InvoiceItem::where('invoiceId', $order['invoiceId']);
+                $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail');
                 $deletedItemFromDB = $i->get();
-                $i->delete();
+               $i->delete();
             }else{
-                $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId']);
+                $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail');
                 $deletedItemFromDB = $i->get();
                 $i->delete();
+            }
+           // pd($deletedItems);
+            foreach($deletedItemFromDB as $k => $v){
+                if($v->productId == 218){
+                    $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId',$v->invoiceItemId)->where('productId',$v->productId)->get();
+                    foreach($invoiceitembatchs as $k1 => $v1){
+                        $receivings = Receiving::where('productId',$v1->productId)->where('receivingId',$v1->receivingId)->first();
+                        $receivings->good_qty += $v1->unit;
+                        $receivings->save();
+                    }
+                }
             }
 
             foreach ($deletedItemFromDB as $v) {
@@ -120,6 +135,8 @@ class OrderController extends BaseController
                     'message' => '未有下單貨品',
                 ];
         }
+
+
         foreach ($product as $p) {
             /*  if($p!=0){
 
@@ -160,7 +177,7 @@ class OrderController extends BaseController
               } */
 
 
-            $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'], $p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted']);
+            $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'], $p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted'],$p['productPacking']);
         }
         $result = $ci->save();
 
@@ -178,6 +195,21 @@ class OrderController extends BaseController
 
         return Response::json($result);
 
+    }
+
+    public function normalizedUnit($i){
+        $inner = ($i->productDetail->productPacking['inner']) ? $$i->productDetail->productPacking['inner']:1;
+        $unit = ($i->productDetail->productPacking['unit']) ? $i->productDetail->productPacking['unit']:1;
+
+
+            if($i->productQtyUnit == 'carton')
+                $real_normalized_unit =  $i->productQty*$inner*$unit;
+            else if($i->productQtyUnit == 'inner')
+                $real_normalized_unit =   $i->productQty*$unit;
+            else
+                $real_normalized_unit = $i->productQty;
+
+        return $real_normalized_unit;
     }
 
     public function jsonVoidInvoice()
