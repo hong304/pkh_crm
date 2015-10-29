@@ -5,6 +5,13 @@ class UserController extends BaseController {
 
 	public function authenticationProcess()
 	{
+
+
+
+        if((isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Edge') !== false)))
+           die('Cant use IE, please use Chrome.');
+
+
 	    if(Input::has('_token'))
 	    {
 	        // Runs validator before db validation
