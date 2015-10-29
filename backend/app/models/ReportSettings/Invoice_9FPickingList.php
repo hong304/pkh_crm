@@ -63,7 +63,7 @@ class Invoice_9FPickingList {
 
         // get invoice from that date and that zone
         $this->goods = ['1F'=>[], '9F'=>[]];
-        $invoicesQuery = Invoice::select('*')->where('version',$this->_version)->where('shift',$this->_shift)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
+        $invoicesQuery = Invoice::select('*')->whereNotIn('version',[0,100])->where('shift',$this->_shift)->where('zoneId', $zone)->where('deliveryDate', $date)->with(['invoiceItem'=>function($query){
             $query->orderBy('productLocation')->orderBy('productQtyUnit');
         }])->with('products', 'client')->get();
 
@@ -98,73 +98,74 @@ class Invoice_9FPickingList {
                         $productDetail = $products[$productId];
                         $unit = $item->productQtyUnit;
 
-                        if($productDetail->productLocation == '9')
-                        {
+
+                        if($productDetail->productLocation == '9') {
                             $customerId = $client->customerId;
 
-
-                            if( isset($this->goods['9F'][$customerId.$invoiceId]['items'][$productId][$unit]) && $productDetail->allowSeparate) {
-                                if (!function_exists('fact')) {
-                                    function fact($goods, $customerId, $productId, $invoiceId, $unit, $n){
-                                        if (isset($goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $n][$unit])) {
-                                            return fact($goods, $customerId, $productId, $invoiceId, $unit, $n + 1);
-                                        } else {
-                                            return $n;
+                                if($invoiceQ->version == $this->_version){
+                                    if (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]) && $productDetail->allowSeparate) {
+                                        if (!function_exists('fact')) {
+                                            function fact($goods, $customerId, $productId, $invoiceId, $unit, $n)
+                                            {
+                                                if (isset($goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $n][$unit])) {
+                                                    return fact($goods, $customerId, $productId, $invoiceId, $unit, $n + 1);
+                                                } else {
+                                                    return $n;
+                                                }
+                                            }
                                         }
+
+                                        $v = fact($this->goods, $customerId, $productId, $invoiceId, $unit, '1');
+
+                                        $this->goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $v][$unit] = [
+                                            'productId' => $productId,
+                                            'name' => $productDetail->productName_chi,
+
+                                            'productPacking_carton' => $productDetail->productPacking_carton,
+                                            'productPacking_inner' => $productDetail->productPacking_inner,
+                                            'productPacking_unit' => $productDetail->productPacking_unit,
+                                            'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                            'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                            'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                            'productPackingSize' => $productDetail->productPacking_size,
+
+                                            'unit' => $unit,
+                                            'unit_txt' => $item->productUnitName,
+                                            'counts' => $item->productQty,
+                                            'stdPrice' => $productDetail->productStdPrice[$unit],
+                                        ];
+
+                                    } else {
+
+                                        $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit] = [
+                                            'productId' => $productId,
+                                            'name' => $productDetail->productName_chi,
+
+                                            'productPacking_carton' => $productDetail->productPacking_carton,
+                                            'productPacking_inner' => $productDetail->productPacking_inner,
+                                            'productPacking_unit' => $productDetail->productPacking_unit,
+                                            'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                            'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                            'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                            'productPackingSize' => $productDetail->productPacking_size,
+
+                                            'unit' => $unit,
+                                            'unit_txt' => $item->productUnitName,
+                                            'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                            'stdPrice' => $productDetail->productStdPrice[$unit],
+                                        ];
                                     }
+
+                                    $this->goods['9F'][$customerId . $invoiceId]['customerInfo'] = $client->toArray();
+                                    $this->goods['9F'][$customerId . $invoiceId]['invoiceId'] = $invoiceId;
+
+                                    if (isset($this->goods['9F'][$customerId . $invoiceId]))
+                                        $this->goods['9F'][$customerId . $invoiceId]['revised'] = ($invoiceQ->revised == true) ? "(修正)" : '';
                                 }
 
-                                $v =  fact($this->goods,$customerId,$productId,$invoiceId,$unit,'1');
 
-                                $this->goods['9F'][$customerId.$invoiceId]['items'][$productId.'-'.$v][$unit] = [
-                                    'productId' => $productId,
-                                    'name' => $productDetail->productName_chi,
-
-                                    'productPacking_carton' => $productDetail->productPacking_carton,
-                                    'productPacking_inner' => $productDetail->productPacking_inner,
-                                    'productPacking_unit' => $productDetail->productPacking_unit,
-                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
-                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
-                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
-                                    'productPackingSize' => $productDetail->productPacking_size,
-
-                                    'unit' => $unit,
-                                    'unit_txt' => $item->productUnitName,
-                                    'counts' => $item->productQty,
-                                    'stdPrice' => $productDetail->productStdPrice[$unit],
-                                ];
-
-                            }else {
-
-                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit] = [
-                                    'productId' => $productId,
-                                    'name' => $productDetail->productName_chi,
-
-                                    'productPacking_carton' => $productDetail->productPacking_carton,
-                                    'productPacking_inner' => $productDetail->productPacking_inner,
-                                    'productPacking_unit' => $productDetail->productPacking_unit,
-                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
-                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
-                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
-                                    'productPackingSize' => $productDetail->productPacking_size,
-
-                                    'unit' => $unit,
-                                    'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
-                                    'stdPrice' => $productDetail->productStdPrice[$unit],
-                                ];
-                            }
-
-                            $this->goods['9F'][$customerId.$invoiceId]['customerInfo'] = $client->toArray();
-                            $this->goods['9F'][$customerId.$invoiceId]['invoiceId'] = $invoiceId;
-
-                            if(isset($this->goods['9F'][$customerId.$invoiceId]))
-                                $this->goods['9F'][$customerId.$invoiceId]['revised'] = ($invoiceQ->revised == true)?"(修正)":'' ;
-
-
-
-                            if($unit == 'carton'){
-                                $this->goods['carton'][$productId]['items'][$invoiceQ->routePlanningPriority] = [
+                            if($unit == 'carton' && $item->productQty > 0.5){
+                                $this->goods['carton'][$productId]['items'] = [
                                     'productId' => $productId,
                                     'name' => $productDetail->productName_chi,
                                     'productPacking_carton' => $productDetail->productPacking_carton,
@@ -176,12 +177,35 @@ class Invoice_9FPickingList {
                                     'productPackingSize' => $productDetail->productPacking_size,
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]) ? $this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]['counts'] : 0) + $item->productQty,
-                                    'stdPrice' => $productDetail->productStdPrice[$unit],
+                                    'counts' => (isset($this->goods['carton'][$productId]['items']) ? $this->goods['carton'][$productId]['items']['counts'] : 0) + $item->productQty,
+
                                 ];
                                 $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
                                 $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
                             }
+
+                              /* group by route path
+                                if($unit == 'carton'){
+                                    $this->goods['carton'][$productId]['items'][$invoiceQ->routePlanningPriority] = [
+                                        'productId' => $productId,
+                                        'name' => $productDetail->productName_chi,
+                                        'productPacking_carton' => $productDetail->productPacking_carton,
+                                        'productPacking_inner' => $productDetail->productPacking_inner,
+                                        'productPacking_unit' => $productDetail->productPacking_unit,
+                                        'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                        'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                        'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                        'productPackingSize' => $productDetail->productPacking_size,
+                                        'unit' => $unit,
+                                        'unit_txt' => $item->productUnitName,
+                                        'counts' => (isset($this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]) ? $this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]['counts'] : 0) + $item->productQty,
+                                        'stdPrice' => $productDetail->productStdPrice[$unit],
+                                    ];
+                                    $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
+                                    $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
+                                } */
+
+
                         }
 
                     }
@@ -199,6 +223,7 @@ class Invoice_9FPickingList {
                 ksort($v['items']);
             }
         }
+
         $this->data = $this->goods;
         $this->data['version'] = $this->_version;
 
@@ -585,9 +610,94 @@ $i=3;
 
 
 
+        if(isset($this->data['carton'])){
+            $consec = $j = 0;
+            foreach($this->data['carton'] as $c=>$nf)
+            {
+
+                $consec += 1;
+                $nf['consec'] = count($nf['items']);
+                $nf['acccon'] = $consec;
+
+                // we can have 40 items as most per section
+                $ninefproducts1[$j][] = $nf;
+                if($consec > 20)
+                {
+                    array_pop($ninefproducts1[$j]);
+                    $nf['acccon'] = 1;
+                    $j++;
+                    $consec = $nf['acccon'];
+                    $ninefproducts1[$j][] = $nf;
+                }
+            }
+            //   pd($ninefproducts1);
+
+            foreach($ninefproducts1 as $index=>$order)
+            {
 
 
-        /*
+                // if it is in left section, add a new page
+                //  if($index % 2 == 0)
+                //   {
+
+                $pdf->AddPage();
+                $this->generateHeader($pdf);
+
+                $pdf->SetFont('chi','',10);
+                $pdf->setXY(10, $pdf->h-30);
+                $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+                $pdf->setXY(60, $pdf->h-30);
+                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+                $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+                $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+
+                $pdf->setXY(0, 0);
+
+                // add a straight line
+                //    $pdf->Line(105, 45, 105, 280);
+
+                $pdf->SetFont('chi','',10);
+                $pdf->setXY(500, $pdf->h-30);
+                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts1))) , 0, 0, "R");
+                //   }
+
+
+                // define left right position coordinate x differences
+                $y = 55;
+                $base_x = 10;
+
+
+                foreach($order as $k=>$o)
+                {
+
+
+
+                    $pdf->setXY($base_x + 0, $y);
+                    $pdf->SetFont('chi','',12);
+                    $pdf->Cell(0, 0, sprintf("%s - %s", $o['productDetail']['productId'],$o['productDetail']['productName_chi'], 0, 0, "L"));
+
+
+
+                    $pdf->setXY($base_x + 100, $y);
+                    $pdf->Cell(0, 0, "    " . sprintf("%s %s", $o['items']['counts'],$o['items']['unit_txt']), 0, 0, 'L');
+
+                    $pdf->SetFont('chi','',14);
+                    $pdf->setXY($base_x + 140, $y);
+                    $pdf->Cell(0, 0, "[  ]", 0, 0, 'L');
+
+                    $y += 10;
+
+                    $pdf->SetDash(1, 1);
+                    $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+                }
+
+            }
+        }
+
+
+/* group by route path
         if(isset($this->data['carton'])){
                 $consec = $j = 0;
                 foreach($this->data['carton'] as $c=>$nf)
@@ -597,7 +707,7 @@ $i=3;
                     $nf['consec'] = count($nf['items']);
                     $nf['acccon'] = $consec;
 
-                    // we can have 20 items as most per section
+                    // we can have 40 items as most per section
                     $ninefproducts1[$j][] = $nf;
                     if($consec > 40)
                     {
@@ -648,18 +758,7 @@ $i=3;
                     $base_x = 10;
 
 
-                    /*  if($index % 2 == 0)
-                      {
-                          $base_x = 5;
-                      }
-                      else
-                      {
-                          $base_x = 110;
-                      }*/
-
-
-        /*
-                    foreach($order as $k=>$o)
+                  foreach($order as $k=>$o)
                     {
 
 
@@ -704,8 +803,8 @@ $i=3;
                     }
 
                 }
-        }
-        */
+        } */
+
 
         // output
         return [

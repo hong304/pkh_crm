@@ -458,10 +458,11 @@ class InvoiceManipulation {
                             $invoiceitembatchs->save();
                         }
 
+
                         while($undeductUnit > 0 ){
                             $receivings = Receiving::where('productId',$i['productId'])->where('good_qty','>=',$packingSize)->orderBy('expiry_date','asc')->first();
 
-                            if($normalizedUnit > $receivings->good_qty){
+                            if($undeductUnit > $receivings->good_qty){
                                 $ava_qty = ($receivings->good_qty - ($receivings->good_qty % $packingSize));
                                 $undeductUnit -= $ava_qty;
                             }else{
