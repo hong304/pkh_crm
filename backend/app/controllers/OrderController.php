@@ -94,17 +94,8 @@ class OrderController extends BaseController
                 $deletedItemFromDB = $i->get();
                 $i->delete();
             }
-           // pd($deletedItems);
-            foreach($deletedItemFromDB as $k => $v){
-                if($v->productId == 218){
-                    $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId',$v->invoiceItemId)->where('productId',$v->productId)->get();
-                    foreach($invoiceitembatchs as $k1 => $v1){
-                        $receivings = Receiving::where('productId',$v1->productId)->where('receivingId',$v1->receivingId)->first();
-                        $receivings->good_qty += $v1->unit;
-                        $receivings->save();
-                    }
-                }
-            }
+
+            $this->backToStock($deletedItemFromDB);
 
             foreach ($deletedItemFromDB as $v) {
                 $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $order['clientId'] . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
@@ -223,6 +214,8 @@ class OrderController extends BaseController
         $i->save();
         $i->delete();
         invoiceitem::where('invoiceId', $invoiceId)->delete();
+
+        $this->backToStock($i->invoiceitem);
 
         foreach ($i->invoiceitem as $v) {
             $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $i->customerId . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
@@ -570,4 +563,16 @@ class OrderController extends BaseController
             return Response::json($count);
     }
 
+    public function backToStock($invoiceItems){
+        foreach($invoiceItems as $k => $v){
+            if($v->productId == 218){
+                $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId',$v->invoiceItemId)->where('productId',$v->productId)->get();
+                foreach($invoiceitembatchs as $k1 => $v1){
+                    $receivings = Receiving::where('productId',$v1->productId)->where('receivingId',$v1->receivingId)->first();
+                    $receivings->good_qty += $v1->unit;
+                    $receivings->save();
+                }
+            }
+        }
+    }
 }

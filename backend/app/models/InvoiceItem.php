@@ -23,8 +23,6 @@ class InvoiceItem extends Eloquent  {
          InvoiceItem::updated(function($model)
         {
 
-            unset($model->backgroundcode);
-
         /*  if($model->isDirty()){
                 p($model->getDirty());
                 pd($model->getOriginal());
