@@ -685,7 +685,7 @@ $i=3;
 
                     $pdf->SetFont('chi','',14);
                     $pdf->setXY($base_x + 140, $y);
-                    $pdf->Cell(0, 0, "[  ]", 0, 0, 'L');
+                    $pdf->Cell(0, 0, "[  ]   [  ]", 0, 0, 'L');
 
                     $y += 10;
 
