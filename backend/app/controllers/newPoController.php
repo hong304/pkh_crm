@@ -404,7 +404,7 @@ class newPoController extends BaseController {
         $this->setTableBox($pdf);
 
         $etaDate = DateTime::createFromFormat('Y-m-d',$poAndItems['etaDate']);
-        $pdf->Cell(100,5,$poAndItems['currency']['currencyName']."(".$poAndItems['currency']['currencyId']."D)",1,0,'C',true);
+        $pdf->Cell(100,5,$poAndItems['currency']['currencyName']."(".$poAndItems['currency']['currencyId'].")",1,0,'C',true);
         $pdf->Cell(100,5,date("F j, Y",strtotime($etaDate->format('d-m-Y'))),1,0,'C',true);
 
         $pdf->Ln();
@@ -433,9 +433,9 @@ class newPoController extends BaseController {
         $pdf->SetX(4);
        $this->setTableBox($pdf);
        if($lang == 'chi')
-           $pdf->Cell(1000,5,$poAndItems['currency']['currencyName']."(".$poAndItems['currency']['currencyId']."D)",1,0,'C',true);
+           $pdf->Cell(1000,5,$poAndItems['currency']['currencyName']."(".$poAndItems['currency']['currencyId'].")",1,0,'C',true);
        else if($lang == 'eng')
-           $pdf->Cell(100,5,$poAndItems['currency']['currencyId']."D",1,0,'C',true);
+           $pdf->Cell(100,5,$poAndItems['currency']['currencyId'],1,0,'C',true);
         $etaDate = DateTime::createFromFormat('Y-m-d',$poAndItems['etaDate']);
         $pdf->Cell(100,5,date("F j, Y",strtotime($etaDate->format('d-m-Y'))),1,0,'C',true);
        

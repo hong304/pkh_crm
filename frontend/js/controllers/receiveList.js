@@ -37,7 +37,8 @@ app.controller('receiveList', function($rootScope, $scope, $http, $timeout, Shar
         endReceiveDate:'',
         location:'',
         supplierCode:'',
-        productId:''
+        productId:'',
+        products:''
     };
  
 
@@ -156,12 +157,9 @@ $scope.findDate = function(){
               $http.post(target, {productId:ele}).success(function(res) {
                   if(typeof res == "object")
                   {
-                     for (ele in res) {
-                      //  $scope.filterData.productName = res[ele].productName_chi;
-                     }
-                     
                      SharedService.setValue('productId', $scope.filterData.productId, 'handleReUpdate');
                      SharedService.setValue('productName', $scope.filterData.productName, 'handleReUpdate');
+                     SharedService.setValue('products', res, 'handleReUpdate');
                    //  $("#selectR").attr('disabled',false);
                   }else 
                   {

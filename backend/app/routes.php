@@ -223,6 +223,8 @@ Route::group(array('before' => 'auth'), function()
     //rePackController
     Route::post('/getAllProducts.json','rePackController@getAllProducts');  //get all items from product table
     Route::post('/queryReceiving.json','rePackController@queryReceiving');  //get all items from product table
+    Route::post('/repack.json','rePackController@repack');
+    Route::post('/addAjust.json','rePackController@addAjust');
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');
@@ -246,6 +248,14 @@ Route::get('/json_decode', function(){
     pd( unserialize('a:2:{s:12:"deliveryDate";a:1:{i:0;i:1437408000;}s:13:"print_storage";a:1:{i:0;s:24:"print_I1507-026645-1.png";}}'));
 });
 
+/*Route::get('/insertDate', function(){
+    ini_set('max_execution_time', 600);
+    for($num = 5;$num<=1939;$num++)
+    {
+        DB::table('receivings')->where('id',$num)->update(['receivingId'=>'R00'.$num]);
+    }
+   
+});*/
 
 Route::get('/test', function(){
 
