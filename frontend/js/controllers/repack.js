@@ -63,12 +63,35 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
                 accumulate += parseInt($scope.selfdefine[j].qty);
         }
         nextOne($scope.repack.products, accumulate);
-        insertToAdjust($scope.selfdefine);
+        
 
-        console.log($scope.receiveInclude);
+       // console.log($scope.receiveInclude);
           
         
     }
+    
+     $scope.searchProduct = function (value,i) 
+     {
+          var target = endpoint + '/preRepackProduct.json';
+            $http.post(target, {productId:value})
+            .success(function (res, status, headers, config) {
+                if(typeof res == "object")
+                {
+                     var availableunit = [];
+                    if(res.productPacking_unit >= 1)
+                        availableunit = availableunit.concat([{value: 'unit', label: res.productPackingName_unit}]);
+                    if(res.productPacking_inner >= 1)
+                        availableunit = availableunit.concat([{value: 'inner', label: res.productPackingName_inner}]);
+                    if(res.productPacking_carton >= 1)
+                        availableunit = availableunit.concat([{value: 'carton', label: res.productPackingName_carton}]);
+                    $scope.selfdefine[i]['availableunit'] = availableunit;
+                    $scope.selfdefine[i]['unit'] = $scope.selfdefine[i]['availableunit'][0];
+                    $scope.selfdefine[i]['qty'] = 1;
+                    $scope.selfdefine[i]['productName'] = res.productName_chi;
+                }
+            });
+     }
+    
 
 
     function nextOne(ele, accumulate)
@@ -89,7 +112,7 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
             alert("不夠貨包裝");
         } else
         {
-            for (var x = 0; x < ele.length; x++)
+           /* for (var x = 0; x < ele.length; x++)
             { 
                 $scope.receiveInclude[x] = $.extend(true, {}, $scope.receive);
                 if (ele[x].good_qty > 0)
@@ -111,13 +134,12 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
                 }else
                 {
                     continue;
-                }
+                }*/
+                insertToAdjust($scope.selfdefine);
             }
             
             //Match new product to original branch
-            
-        }
-        
+
         //Remeber to send json to backend 
         //fix the bug please
      }
@@ -129,6 +151,7 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
             var target = endpoint + '/addAjust.json';
             $http.post(target, {items:items})
             .success(function (res, status, headers, config) {
+                console.log(res);
                 if(res.result)
                 {
                     alert("已成功包裝");
@@ -136,5 +159,7 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
             });
         }
      }
+     
+ 
      
 });
