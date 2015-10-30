@@ -8,6 +8,8 @@ class Customer_MonthlyCreditSummary {
     private $_monthly = [];
     private $_reportMonth = '';
     private $_acc = [];
+    private $time = '';
+    private $month = '';
 
     public function __construct($indata) {
 
@@ -30,6 +32,34 @@ class Customer_MonthlyCreditSummary {
         $this->_date1 = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
         $this->_date2 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         $this->_uniqueid = microtime(true);
+
+        $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
+
+        $first = true;
+
+        $ymd = date('Y-m-d',$this->_date2);
+        $m = date("m", $this->_date2);
+        $y = date("Y", $this->_date2);
+
+
+        foreach ($time_interval as $v) {
+            if ($first) {
+                $this->time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime($ymd . "-" . $v[0] . " month"));
+                $this->time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime($ymd . "-" . $v[1] . " month"));
+                $first = false;
+            } else {
+                $this->time[date("Y-m", mktime(0, 0, 0, $m-$v[1], 1, $y))][0] = date("Y-m-01", mktime(0, 0, 0, $m-$v[0], 1, $y));
+                $this->time[date("Y-m", mktime(0, 0, 0, $m-$v[1], 1, $y))][1] = date("Y-m-t", mktime(0, 0, 0, $m-$v[1], 1, $y));
+            }
+        }
+
+        $this->month[0] = substr( $this->time[key(array_slice( $this->time, -6, 1, true))][0],0,7);
+        $this->month[1] = substr( $this->time[key(array_slice( $this->time, -5, 1, true))][0],0,7);
+        $this->month[2] = substr( $this->time[key(array_slice( $this->time, -4, 1, true))][0],0,7);
+        $this->month[3] = substr( $this->time[key(array_slice( $this->time, -3, 1, true))][0],0,7). ' to '. substr( $this->time[key(array_slice( $this->time, -3, 1, true))][1],0,7);
+        $this->month[4] = substr( $this->time[key(array_slice( $this->time, -2, 1, true))][0],0,7). ' to '. substr( $this->time[key(array_slice( $this->time, -2, 1, true))][1],0,7);
+        $this->month[5] = key(array_slice( $this->time, -1, 1, true)) .' or over';
+
     }
 
     public function registerTitle() {
@@ -185,7 +215,12 @@ class Customer_MonthlyCreditSummary {
         $downloadSetting = [
             [
                 'type' => 'pdf',
-                'name' => '列印  PDF 版本',
+                'name' => '列印 PDF 版本',
+                'warning' => false,
+            ],
+            [
+                'type' => 'excel1',
+                'name' => '匯出 EXCEL 版本',
                 'warning' => false,
             ],
             [
@@ -203,6 +238,98 @@ class Customer_MonthlyCreditSummary {
         return $downloadSetting;
     }
 
+    public function outputExcel1()
+    {
+       foreach ($this->data as $client) {
+            foreach ($this->time as $k => $v) {
+                $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+                foreach ($data[$k] as $invoice) {
+                    $customerId = $invoice->customerId;
+                    $this->_monthly[$k][$customerId][] = [
+                        'accumulator' => (isset($this->_monthly[$k][$customerId]) ? end($this->_monthly[$k][$customerId])['accumulator'] : 0) + $invoice->realAmount - ($invoice->paid + $invoice->discount_taken)
+                    ];
+                }
+            }
+        }
+
+        require_once './Classes/PHPExcel/IOFactory.php';
+        require_once './Classes/PHPExcel.php';
+
+
+        $objPHPExcel = new PHPExcel();
+
+        $j=0;
+        foreach ($this->data as $client) {
+            $i=6;
+            $objWorkSheet =  $objPHPExcel->createSheet($j);
+
+            $objWorkSheet->setCellValue('A1', "客戶名稱");
+            $objWorkSheet->setCellValue('B1', $client['customer']['customerName']);
+
+            $objWorkSheet->setCellValue('A2', "客戶地址");
+            $objWorkSheet->setCellValue('B2', $client['customer']['customerAddress']);
+
+            $objWorkSheet->setCellValue('A3', "由日期");
+            $objWorkSheet->setCellValue('B3', $this->_date1);
+
+            $objWorkSheet->setCellValue('A4', "至日期");
+            $objWorkSheet->setCellValue('B4', $this->_date2);
+
+            $objWorkSheet->setCellValue('A' . $i, "發票日期");
+            $objWorkSheet->setCellValue('B' . $i, "發票編號");
+            $objWorkSheet->setCellValue('C' . $i, "借方");
+            $objWorkSheet->setCellValue('D' . $i, "貸方");
+            $objWorkSheet->setCellValue('E' . $i, "未清付金額");
+
+            $i++;
+
+            foreach($client['breakdown'] as $k => $v){
+
+                $ref = ($v['customerRef'] != '') ? $v['customerRef'] : '';
+                $ref = ($ref != '') ? ' (' . $ref . ')' : '';
+
+                $objWorkSheet->setCellValue('A' . $i, date('Y-m-d', $v['invoiceDate']));
+                $objWorkSheet->setCellValue('B' . $i, $v['invoice'] . $ref);
+                $objWorkSheet->setCellValue('C' . $i, $v['invoiceAmount']);
+                $objWorkSheet->setCellValue('D' . $i, $v['paid']);
+                $objWorkSheet->setCellValue('E' . $i, $v['accumulator']);
+
+                $i++;
+            }
+
+          //  $objWorkSheet->setCellValue('C' . $i,'=sum(C'.$i.':C'.--$i.')');
+           // $objWorkSheet->setCellValue('D' . $i, '=sum(D'.$i.':D'.--$i.')');
+
+            $i++;
+            $objWorkSheet->setCellValue('A' . $i, 'The outstanding balance is aged by invoice date as 2015-10-31 below:');
+
+            $i++;
+            $objWorkSheet->setCellValue('A' . $i, $this->month[0] );
+            $objWorkSheet->setCellValue('B' . $i,  $this->month[1]);
+            $objWorkSheet->setCellValue('C' . $i,  $this->month[2]);
+            $objWorkSheet->setCellValue('D' . $i,  $this->month[3]);
+
+            $i++;
+            $objWorkSheet->setCellValue('A' . $i,'$' . number_format(isset($this->_monthly[$this->month[0]][$customerId]) ? end($this->_monthly[$this->month[0]][$customerId])['accumulator'] : 0, 2, '.', ',') );
+            $objWorkSheet->setCellValue('B' . $i,'$' . number_format(isset($this->_monthly[$this->month[1]][$customerId]) ? end($this->_monthly[$this->month[1]][$customerId])['accumulator'] : 0, 2, '.', ',') );
+            $objWorkSheet->setCellValue('C' . $i,'$' . number_format(isset($this->_monthly[$this->month[2]][$customerId]) ? end($this->_monthly[$this->month[2]][$customerId])['accumulator'] : 0, 2, '.', ',') );
+            $objWorkSheet->setCellValue('D' . $i,'$' . number_format(isset($this->_monthly[$this->month[3]][$customerId]) ? end($this->_monthly[$this->month[3]][$customerId])['accumulator'] : 0, 2, '.', ',') );
+            $objWorkSheet->setCellValue('A' . ++$i, 'Payment received after statement date not included' );
+
+            $j++;
+        }
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . "monthly report" . '.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+
+        //p($this->data);
+        //pd($this->_monthly);
+    }
+
+    //aging excel
     public function outputExcel() {
         $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
         $dateRange = ['F', 'G', 'H', 'I', 'J', 'K'];
@@ -365,6 +492,7 @@ for($start = 0;$start < count($dateRange);$start++)
         $objWriter->save('php://output');
          }
     }
+    //aging excel
 
     public function outputPreview() {
 
@@ -712,7 +840,6 @@ for($start = 0;$start < count($dateRange);$start++)
         $pdf->Output('', 'I');
         // pd( $this->_monthly);
     }
-
     //aging pdf
 
       public function generateExcelHeader($excel) {
@@ -760,45 +887,24 @@ for($start = 0;$start < count($dateRange);$start++)
     // monthly report pdf
     public function outputPDF() {
 
-        $this->_reportMonth = date("n", $this->_date2);
-
-
-        $times = array();
-        for ($month = 1; $month <= 12; $month++) {
-            $first_minute = mktime(0, 0, 0, $month, 1, date('Y'));
-            $last_minute = mktime(23, 59, 0, $month, date('t', $first_minute), date('Y'));
-
-            if ($this->_reportMonth == $month)
-                $last_minute = $this->_date2;
-            $times[$month] = array($first_minute, $last_minute);
-        }
-
-
         $pdf = new PDF();
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
 
-
-
-
-
         foreach ($this->data as $client) {
-            for ($i = $this->_reportMonth; $i > 0; $i--) {
-
-                $data[$i] = Invoice::whereBetween('deliveryDate', $times[$i])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
-
-                foreach ($data[$i] as $invoice) {
+            foreach ($this->time as $k => $v) {
+                $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
+                foreach ($data[$k] as $invoice) {
                     $customerId = $invoice->customerId;
-                    $this->_monthly[$i][$customerId][] = [
-                        'accumulator' => (isset($this->_monthly[$i][$customerId]) ? end($this->_monthly[$i][$customerId])['accumulator'] : 0) + $invoice->realAmount - ($invoice->paid + $invoice->discount_taken)
+                    $this->_monthly[$k][$customerId][] = [
+                        'accumulator' => (isset($this->_monthly[$k][$customerId]) ? end($this->_monthly[$k][$customerId])['accumulator'] : 0) + $invoice->realAmount - ($invoice->paid + $invoice->discount_taken)
                     ];
                 }
             }
 
-            //  pd($this->_monthly);
-
             $pdf->AddPage();
             $this->generateHeader($pdf);
 
+            $i=0;
             $y = 50;
 
             $pdf->SetFont('chi', '', 10);
@@ -962,32 +1068,32 @@ for($start = 0;$start < count($dateRange);$start++)
 
             $pdf->SetFont('Arial', 'U', 12);
             $pdf->setXY(10, $y + 24);
-            $pdf->Cell(0, 0, date('Y') . '/' . $this->_reportMonth, 0, 0, "L");
+            $pdf->Cell(0, 0, $this->month[0], 0, 0, "L");
 
             $pdf->setXY(50, $y + 24);
-            $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth - 1), 0, 0, "L");
+            $pdf->Cell(0, 0, $this->month[1], 0, 0, "L");
 
             $pdf->setXY(90, $y + 24);
-            $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth - 2), 0, 0, "L");
+            $pdf->Cell(0, 0, $this->month[2], 0, 0, "L");
 
             $pdf->setXY(130, $y + 24);
-            $pdf->Cell(0, 0, date('Y') . '/' . ($this->_reportMonth - 3), 0, 0, "L");
+            $pdf->Cell(0, 0, $this->month[3], 0, 0, "L");
 
 
             $pdf->SetFont('Arial', '', 12);
             $pdf->setXY(10, $y + 30);
-            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth][$customerId]) ? end($this->_monthly[$this->_reportMonth][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
+            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[0]][$customerId]) ? end($this->_monthly[$this->month[0]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(50, $y + 30);
-            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth - 1][$customerId]) ? end($this->_monthly[$this->_reportMonth - 1][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
+            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[1]][$customerId]) ? end($this->_monthly[$this->month[1]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
             // $pdf->Cell(0, 0, '$' . number_format(0, 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(90, $y + 30);
-            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth - 2][$customerId]) ? end($this->_monthly[$this->_reportMonth - 2][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
+            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[2]][$customerId]) ? end($this->_monthly[$this->month[2]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
             //  $pdf->Cell(0, 0, '$' . number_format(0, 2, '.', ','), 0, 0, "L");
 
             $pdf->setXY(130, $y + 30);
-            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->_reportMonth - 3][$customerId]) ? end($this->_monthly[$this->_reportMonth - 3][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
+            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[3]][$customerId]) ? end($this->_monthly[$this->month[3]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
             // $pdf->Cell(0, 0, '$' .number_format(0, 2, '.', ','), 0, 0, "L");
 
 
@@ -1005,6 +1111,5 @@ for($start = 0;$start < count($dateRange);$start++)
             'associates' => null,
         ];
     }
-
     // end of monthly report pdf
 }
