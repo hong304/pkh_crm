@@ -262,7 +262,9 @@ class Customer_MonthlyCreditSummary {
         foreach ($this->data as $client) {
             $customerId = $client['customer']['customerId'];
             $i=6;
-            $objWorkSheet =  $objPHPExcel->createSheet($j);
+            $objPHPExcel->createSheet($j);
+            $objPHPExcel->setActiveSheetIndex($j);
+            $objWorkSheet = $objPHPExcel->getActiveSheet();
 
             $objWorkSheet->setCellValue('A1', "客戶名稱");
             $objWorkSheet->setCellValue('B1', $client['customer']['customerName']);
@@ -298,16 +300,24 @@ class Customer_MonthlyCreditSummary {
                 $i++;
             }
 
-            $objWorkSheet->setCellValue('C' . $i,"=SUM(C6:C".--$i.")");
-            $objWorkSheet->setCellValue('D' . $i,"=SUM(D6:D".--$i.")");
+            $t = $i-1;
+            $objWorkSheet->setCellValue('C' . $i,"=SUM(C6:C".$t.")");
+            $objWorkSheet->setCellValue('D' . $i,"=SUM(D6:D".$t.")");
+            $objWorkSheet->setCellValue('E' . $i,$v['accumulator']);
 
+            $objPHPExcel->getActiveSheet()
+                ->getStyle('C6:I'.$i)
+                ->getNumberFormat()
+                ->setFormatCode(
+                    '$#,##0.00;[Red]$#,##0.00'
+                );
 
             $i=$i+2;
             $objWorkSheet->setCellValue('A' . $i, 'The outstanding balance is aged by invoice date as '.date('Y-m-d',$this->_date2).' below:');
             $objWorkSheet->mergeCells('A'.$i.':F'.$i);
 
             $i++;
-            $objWorkSheet->setCellValue('A' . $i, $this->month[0] );
+            $objWorkSheet->setCellValue('A' . $i,  $this->month[0]);
             $objWorkSheet->setCellValue('B' . $i,  $this->month[1]);
             $objWorkSheet->setCellValue('C' . $i,  $this->month[2]);
             $objWorkSheet->setCellValue('D' . $i,  $this->month[3]);
