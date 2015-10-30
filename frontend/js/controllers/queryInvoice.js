@@ -48,7 +48,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         'status'		:	'101',
         'zone'			:	'',
         'created_by'	:	'0',
-        'invoiceNumber' :	''
+        'invoiceNumber' :	'',
+        'staffName' : ''
     };
 
     /*
@@ -263,7 +264,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     	$scope.updateDataSet();
     }
 
-    $scope.updateInvoiceNumber = function()
+    $scope.updateByDelay = function()
     {
     	$timeout.cancel(fetchDataTimer);
     	fetchDataTimer = $timeout(function () {

@@ -440,7 +440,14 @@ class OrderController extends BaseController
                 $invoice->where('customerId', $filter['clientId']);
             }
 
-            $invoices = $invoice->with('client', 'laststaff')->orderby('invoiceId', 'desc');
+            if($filter['staffName'])
+                $invoices = $invoice->with('client','laststaff')->whereHas('laststaff', function($q) use($filter)
+                {
+                    $q->where('name',$filter['staffName']);
+
+                })->orderby('invoiceId', 'desc');
+            else
+                $invoices = $invoice->with('client', 'laststaff')->orderby('invoiceId', 'desc');
 
             return Datatables::of($invoices)
                 ->addColumn('link', function ($invoice) {

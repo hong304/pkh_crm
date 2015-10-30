@@ -44,10 +44,28 @@
 			
 			<div class="portlet-body">				
 				<div class="md-col-12" style="margin-bottom:15px;">
-					<input type="text" id="invoiceNumber" ng-model="filterData.invoiceNumber" ng-change="updateInvoiceNumber();" class="form-control" placeholder="">
+					<input type="text" id="invoiceNumber" ng-model="filterData.invoiceNumber" ng-change="updateByDelay();" class="form-control" placeholder="">
 				</div>
 			</div>
 		</div>
+
+
+        <!--Staff Name-->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">員工名稱</span>
+                </div>
+            </div>
+
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <input type="text" id="staffName" ng-model="filterData.staffName" ng-change="updateByDelay();" class="form-control" placeholder="">
+                </div>
+            </div>
+        </div>
+
 
 		<!-- Status -->
 		<div class="portlet light">
