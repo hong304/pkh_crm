@@ -302,7 +302,7 @@ class Customer_MonthlyCreditSummary {
             $objWorkSheet->setCellValue('D' . $i,"=SUM(D6:D".--$i.")");
 
 
-            $i++;
+            $i=$i+2;
             $objWorkSheet->setCellValue('A' . $i, 'The outstanding balance is aged by invoice date as '.date('Y-m-d',$this->_date2).' below:');
             $objWorkSheet->mergeCells('A'.$i.':F'.$i);
 
@@ -323,6 +323,11 @@ class Customer_MonthlyCreditSummary {
             $objWorkSheet->mergeCells('A'.$i.':F'.$i);
 
             $j++;
+
+            foreach (range('A', $objWorkSheet->getHighestDataColumn()) as $col) {
+                // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
+                $objWorkSheet->getColumnDimension($col)->setAutoSize('15');
+            }
         }
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
