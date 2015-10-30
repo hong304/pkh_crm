@@ -225,6 +225,8 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/queryReceiving.json','rePackController@queryReceiving');  //get all items from product table
     Route::post('/repack.json','rePackController@repack');
     Route::post('/addAjust.json','rePackController@addAjust');
+    Route::post('/preRepackProduct.json','rePackController@preRepackProduct');
+    
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');

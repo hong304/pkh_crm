@@ -5,7 +5,7 @@ class rePackController extends BaseController {
     public function getAllProducts()
     {
         $productId = Input :: get('productId');
-        $sql = "Select r.good_qty,p.productName_chi,r.expiry_date,r.receivingId,r.id from receivings as r,product as p where p.productId = r.productId and r.productId ='".$productId."' order by expiry_date asc";
+        $sql = "Select r.good_qty,p.productName_chi,r.expiry_date,r.receivingId,r.id,p.productPacking_carton,p.productPacking_inner,p.productPacking_unit from receivings as r,product as p where p.productId = r.productId and p.product_flag = 'p' and r.productId ='".$productId."' order by expiry_date asc";
         $info = DB::select(DB::raw($sql));
         //$allProduct = Receiving::where('productId',$productId)->with('product')->orderby('expiry_date','asc')->get();
         if(count($info) > 0)
@@ -16,6 +16,17 @@ class rePackController extends BaseController {
             $store = "false";
         }
         return Response::json($store); 
+    }
+    
+    public function preRepackProduct()
+    {
+        $productId = Input :: get('productId');
+        $productName = Product :: select ('productName_chi','productPacking_carton','productPackingName_carton','productPacking_inner','productPackingName_inner','productPacking_unit','productPackingName_unit')->where('productId',$productId)->first();
+        if(isset($productName))
+            return Response::json($productName); 
+        else
+            return "";
+        
     }
 
     public function queryReceiving(){
@@ -42,10 +53,13 @@ class rePackController extends BaseController {
         $storeMessage = array();
         //Adjust
         $adjustTable = Input::get('items');
+        $rece = new ReceiveMan();
         $adjustMain = new AdjustMain();
         $receiving = new ReceiveRepackMain();
+        
         if(isset($adjustTable))
         {
+           //$product = Product ::select()
            foreach($adjustTable as $obj)
            {
                $adjustMain->setItems($obj['adjustId'],$obj['adjustType'],$obj['qty'],$obj['productId']);
@@ -64,6 +78,20 @@ class rePackController extends BaseController {
                 }
 
         return $storeMessage;
+    }
+    
+    public function reunit($v)
+    {
+        $carton = ($v->productPacking_carton) ? $v->productPacking_carton:1;
+        $inner = ($v->productPacking_inner) ? $v->productPacking_inner:1;
+        $unit = ($v->productPacking_unit) ? $v->productPacking_unit:1;
+
+        if($v->productQtyUnit == 'carton')
+            $real_normalized_unit =  $v->productQty*$inner*$unit;
+        else if($v->productQtyUnit == 'inner')
+            $real_normalized_unit =  $v->productQty*$unit;
+        else
+            $real_normalized_unit =  $v->productQty;
     }
     
 }
