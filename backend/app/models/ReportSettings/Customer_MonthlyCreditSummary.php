@@ -306,7 +306,7 @@ class Customer_MonthlyCreditSummary {
             $objWorkSheet->setCellValue('E' . $i,$v['accumulator']);
 
             $objPHPExcel->getActiveSheet()
-                ->getStyle('C6:I'.$i)
+                ->getStyle('C6:E'.$i)
                 ->getNumberFormat()
                 ->setFormatCode(
                     '$#,##0.00;[Red]$#,##0.00'
