@@ -260,6 +260,7 @@ class Customer_MonthlyCreditSummary {
 
         $j=0;
         foreach ($this->data as $client) {
+            $customerId = $client['customer']['customerId'];
             $i=6;
             $objWorkSheet =  $objPHPExcel->createSheet($j);
 
@@ -270,10 +271,10 @@ class Customer_MonthlyCreditSummary {
             $objWorkSheet->setCellValue('B2', $client['customer']['customerAddress']);
 
             $objWorkSheet->setCellValue('A3', "由日期");
-            $objWorkSheet->setCellValue('B3', $this->_date1);
+            $objWorkSheet->setCellValue('B3', date('Y-m-d',$this->_date1));
 
             $objWorkSheet->setCellValue('A4', "至日期");
-            $objWorkSheet->setCellValue('B4', $this->_date2);
+            $objWorkSheet->setCellValue('B4', date('Y-m-d',$this->_date2));
 
             $objWorkSheet->setCellValue('A' . $i, "發票日期");
             $objWorkSheet->setCellValue('B' . $i, "發票編號");
@@ -297,11 +298,13 @@ class Customer_MonthlyCreditSummary {
                 $i++;
             }
 
-          //  $objWorkSheet->setCellValue('C' . $i,'=sum(C'.$i.':C'.--$i.')');
-           // $objWorkSheet->setCellValue('D' . $i, '=sum(D'.$i.':D'.--$i.')');
+            $objWorkSheet->setCellValue('C' . $i,"=SUM(C6:C".--$i.")");
+            $objWorkSheet->setCellValue('D' . $i,"=SUM(D6:D".--$i.")");
+
 
             $i++;
-            $objWorkSheet->setCellValue('A' . $i, 'The outstanding balance is aged by invoice date as 2015-10-31 below:');
+            $objWorkSheet->setCellValue('A' . $i, 'The outstanding balance is aged by invoice date as '.date('Y-m-d',$this->_date2).' below:');
+            $objWorkSheet->mergeCells('A'.$i.':F'.$i);
 
             $i++;
             $objWorkSheet->setCellValue('A' . $i, $this->month[0] );
@@ -314,7 +317,10 @@ class Customer_MonthlyCreditSummary {
             $objWorkSheet->setCellValue('B' . $i,'$' . number_format(isset($this->_monthly[$this->month[1]][$customerId]) ? end($this->_monthly[$this->month[1]][$customerId])['accumulator'] : 0, 2, '.', ',') );
             $objWorkSheet->setCellValue('C' . $i,'$' . number_format(isset($this->_monthly[$this->month[2]][$customerId]) ? end($this->_monthly[$this->month[2]][$customerId])['accumulator'] : 0, 2, '.', ',') );
             $objWorkSheet->setCellValue('D' . $i,'$' . number_format(isset($this->_monthly[$this->month[3]][$customerId]) ? end($this->_monthly[$this->month[3]][$customerId])['accumulator'] : 0, 2, '.', ',') );
-            $objWorkSheet->setCellValue('A' . ++$i, 'Payment received after statement date not included' );
+
+            $i++;
+            $objWorkSheet->setCellValue('A' . $i, 'Payment received after statement date not included' );
+            $objWorkSheet->mergeCells('A'.$i.':F'.$i);
 
             $j++;
         }
