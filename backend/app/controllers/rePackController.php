@@ -46,6 +46,13 @@ class rePackController extends BaseController {
         $good_qty = Input::get('good_qty');
         DB::table('receivings')->where('receivingId',$receivingId)->update(['good_qty'=>$good_qty]);
     }
+    
+    public function transaction($id,$good_qty,$receivingId,$poCode,$storeAccum,$originalItem)
+    {
+         DB::table('receivings')->where('id',$id)->where('good_qty','>',0)->update(['good_qty'=>$good_qty]);
+         $AjustSql = "Insert into adjusts(receivingId,poCode,adjustType,adjust_qty,productId) values ('".$receivingId."','".$poCode."','1','".$storeAccum."','".$originalItem."')"; 
+         DB::insert(DB::raw($AjustSql)); 
+    }
 
     
     public function addAjust()
@@ -55,15 +62,97 @@ class rePackController extends BaseController {
         $adjustTable = Input::get('items');
         $rece = new ReceiveMan();
         $adjustMain = new AdjustMain();
+
+        $originalItem = Input::get('originalProductid');
+        $sql = "Select r.good_qty,p.productName_chi,r.expiry_date,r.receivingId,r.id,r.poCode,p.productPacking_carton,p.productPacking_inner,p.productPacking_unit from receivings as r,product as p where p.productId = r.productId and p.product_flag = 'p' and r.productId ='".$originalItem."' order by expiry_date asc";
+        $info = DB::select(DB::raw($sql));
+        $count = 0;
+        if(count($info)>0)
+        {
+            $store = $info;
+            $instorage = 0;
+            $require = 0;
+            if(isset($adjustTable))
+            {
+                foreach($adjustTable as $k=>$v)
+                {
+                    $repackedProductSql = "Select productPacking_carton,productPacking_inner,productPacking_unit from Product where productId=".$v['productId'];
+                    $repackedProduct = DB::select(DB::raw($repackedProductSql));
+                    $smallUnit = $this->reunit($repackedProduct[0],$v['good_qty'],$v['productlevel']['value']);
+                    $adjustTable[$count]['good_qty'] = $smallUnit;
+                    $count++;
+                    $require += $smallUnit;
+                }
+                //accumulate storage
+                foreach($store as $k1=>$v1)
+                {
+                    $instorage += $v1->good_qty;
+                }
+                if($require > $instorage)
+                {
+                    return "不夠貨包裝";
+                }
+                
+                $nextLopp = 0;
+                $flag = 0; 
+                foreach($adjustTable as $k2=>$v3)
+                {
+                    $storeAccum = $v3['good_qty'];
+                    foreach($store as $k1=>$v1)
+                    {
+                        if($v1->good_qty > 0)
+                        {
+                            $accum = $v1->good_qty - $storeAccum;
+                            $storeAccum = $accum;
+                            if($accum >= 0)
+                            {
+                                DB::table('receivings')->where('id',$v1->id)->where('good_qty','>',0)->update(['good_qty'=>$accum]); // withdraw storage,update original record 
+                                $posAjustSql = "Insert into adjusts(receivingId,poCode,adjustType,adjust_qty,productId) values ('".$v1->receivingId."','".$v1->poCode."','1','".abs($storeAccum)."','".$originalItem."')"; 
+                                 //create adjust record for original record
+                                DB::insert(DB::raw($posAjustSql));
+                                
+                               // if($flag == 0)
+                                    $adjustTable[$nextLopp]['adjustId'] = $v1->id;
+                               // else if($flag > 0)
+                                break; 
+                            }else
+                            {
+                                 DB::table('receivings')->where('id',$v1->id)->where('good_qty','>',0)->update(['good_qty'=>0]);
+                                 $negAjustSql = "Insert into adjusts(receivingId,poCode,adjustType,adjust_qty,productId) values ('".$v1->receivingId."','".$v1->poCode."','1','".$storeAccum."','".$originalItem."')"; 
+                                 DB::insert(DB::raw($negAjustSql)); 
+                               //  $flag = 1;
+                                 $storeAccum = abs($storeAccum);
+                                 continue;
+                            }   
+                        }else 
+                        {
+                            continue;
+                        }
+                            //$updateReceivingSql = "Update receivings set good_qty = (CASE good_qty WHEN good_qty >= ".$v3['good_qty']." THEN good_qty - ".$v3['good_qty']." ELSE good_qty END) where good_qty > 0 and id = ".$v1->id;
+                    }             
+                    $nextLopp++;
+                  
+                }
+                pd($adjustTable);
+                  //DB::table('receivings')->where('id',$v1->id)->where('good_qty','>',0)->update(['good_qty'=>$storageminus]);
+                
+            }
+        }else
+        {
+             return "empty";
+        }
+          
+       
+       /* 
         $receiving = new ReceiveRepackMain();
         
         if(isset($adjustTable))
         {
-           //$product = Product ::select()
+         //  $product = Product ::select()
            foreach($adjustTable as $obj)
            {
-               $adjustMain->setItems($obj['adjustId'],$obj['adjustType'],$obj['qty'],$obj['productId']);
-               $adjustMain->setReceiveItems($obj['adjustId'],$obj['qty'],$obj['productId'],$obj['unit']);
+               $adjustMain->setItems($obj['adjustId'],$obj['adjustType'],$obj['good_qty'],$obj['productId']);
+               $adjustMain->setReceiveItems($obj['adjustId'],$obj['good_qty'],$obj['productId'],$obj['unit']);
            }
            $storeMessage[] =  $adjustMain->save();
         }
@@ -77,21 +166,22 @@ class rePackController extends BaseController {
                     $storeMessage[] = $receiving->save();
                 }
 
-        return $storeMessage;
+        return $storeMessage;*/
     }
     
-    public function reunit($v)
+    public function reunit($v,$productQty,$qty)
     {
         $carton = ($v->productPacking_carton) ? $v->productPacking_carton:1;
         $inner = ($v->productPacking_inner) ? $v->productPacking_inner:1;
         $unit = ($v->productPacking_unit) ? $v->productPacking_unit:1;
-
-        if($v->productQtyUnit == 'carton')
-            $real_normalized_unit =  $v->productQty*$inner*$unit;
-        else if($v->productQtyUnit == 'inner')
-            $real_normalized_unit =  $v->productQty*$unit;
+        $real_normalized_unit = 0;
+        if($qty == 'carton')
+            $real_normalized_unit =  $productQty*$inner*$unit;
+        else if($qty == 'inner')
+            $real_normalized_unit =  $productQty*$unit;
         else
-            $real_normalized_unit =  $v->productQty;
+            $real_normalized_unit =  $productQty;
+        return $real_normalized_unit;
     }
     
 }
