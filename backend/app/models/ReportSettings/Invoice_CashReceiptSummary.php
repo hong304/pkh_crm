@@ -130,7 +130,7 @@ class Invoice_CashReceiptSummary {
                     'customerId' => $client->customerId,
                     'name' => $client->customerName_chi,
                     'invoiceNumber' => $invoiceId,
-                    'accumulator' =>number_format($acc1,2,'.',','),
+                    'accumulator' =>$acc1,
                     'amount' => number_format($invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ,2,'.',','),
                 ];
 
@@ -160,7 +160,7 @@ class Invoice_CashReceiptSummary {
                 'name' => $client->customerName_chi,
                 'invoiceNumber' => $invoiceId,
                 'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98')? -$paid:$paid ,
-                'accumulator' =>number_format($acc,2,'.',','),
+                'accumulator' =>$acc,
                 'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$paid:$paid,2,'.',','),
             ];
 
@@ -214,7 +214,7 @@ class Invoice_CashReceiptSummary {
                     'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                     'invoiceNumber' => $invoiceId,
                     'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid ,
-                    'accumulator' =>number_format($acc,2,'.',','),
+                    'accumulator' =>$acc,
                     'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,2,'.',','),
                 ];
             }else if ($invoiceQ->receive_date == date('Y-m-d',$date) and $invoiceQ->ref_number != 'cash'){
@@ -234,7 +234,7 @@ class Invoice_CashReceiptSummary {
                     'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                     'invoiceNumber' => $invoiceId,
                     'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid ,
-                    'accumulator' =>number_format($acc1,2,'.',','),
+                    'accumulator' =>$acc1,
                     'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,2,'.',','),
                     'bankCode' => $invoiceQ->bankCode,
                     'chequeNo' => $invoiceQ->ref_number,
@@ -503,7 +503,7 @@ class Invoice_CashReceiptSummary {
     
     public function outputPreview()
     {
-        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('backaccount',$this->_backaccount)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->with('expenses',$this->_expenses)->render();
+        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->with('backaccount',$this->_backaccount)->with('expenses',$this->_expenses)->render();
     }
     
     
@@ -527,76 +527,334 @@ class Invoice_CashReceiptSummary {
     
     public function outputPDF()
     {
-        
+
+        $last1= 195;
+        $last2 = 170;
+        $last3 = 120;
+        $last4 = 100;
+
         $pdf = new PDF();
-        $i = 0;
+
 
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
 
-        $datamart = array_chunk($this->data, 30, true);
+       // $datamart = array_chunk($this->data, 30, true);
 
 
-        foreach($datamart as $i=>$f)
-        {
-            // for first Floor
-            $pdf->AddPage();
-        
-            $this->generateHeader($pdf);
-        
-            $pdf->SetFont('chi','',10);   
-        
-            $pdf->setXY(10, 50);
-            $pdf->Cell(0, 0, "訂單編號", 0, 0, "L");
-        
-            $pdf->setXY(40, 50);
-            $pdf->Cell(0, 0, "客戶", 0, 0, "L");
-        
-            $pdf->setXY(130, 50);
-            $pdf->Cell(0, 0, "應收金額", 0, 0, "L");
-        
-            $pdf->setXY(160, 50);
-            $pdf->Cell(0, 0, "累計", 0, 0, "L");
-                
-            $pdf->Line(10, 53, 190, 53);
-        
-            $y = 60;
-        
-            $pdf->setXY(10, $pdf->h-30);
-            $pdf->Cell(0, 0, "收帳人", 0, 0, "L");
-        
-            $pdf->setXY(60, $pdf->h-30);
-            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
-        
-            $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
-            $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
-        
-            $pdf->setXY(500, $pdf->h-30);
-            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i+1, count($datamart)) , 0, 0, "R");
-        
-        
-            foreach($f as $id=>$e)
-            {
-       
-                $pdf->setXY(10, $y);
-                $pdf->Cell(0, 0, $e['invoiceNumber'], 0, 0, "L");
-    
-                $pdf->setXY(40, $y);
-                $pdf->Cell(0, 0, $e['name'], 0, 0, "L");
-    
-                $pdf->setXY(130, $y);
-                $pdf->Cell(0, 0, sprintf("HK$ %s", $e['amount']), 0, 0, "L");
-    
-                $pdf->setXY(160, $y);
-                $pdf->Cell(0, 0, sprintf("HK$ %s", $e['accumulator']), 0, 0, "L");
-                $lt = $e['accumulator'];
-                $y += 6;
-               
-            }
+        $pdf->AddPage();
+
+        $this->generateHeader($pdf);
+
+
+        $pdf->SetFont('chi','',12);
+        $y=55;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, '應收現金:', 0, 0, "L");
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, sprintf("$%s + $%s - $%s = $%s",number_format(end($this->_account)['accumulator'],2,'.',','),number_format(end($this->_paidInvoice)['accumulator'],2,'.',','),number_format($this->_expenses['amount'],2,'.',','), number_format(end($this->_paidInvoice)['accumulator']+end($this->_account)['accumulator']-$this->_expenses['amount'],2,'.',',')) , 0, 0, "L");
+
+        $y+=5;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, '實收現金:', 0, 0, "L");
+
+        $cash = end($this->_paidInvoice)['accumulator']+end($this->_account)['accumulator']-$this->_expenses['amount'];
+        $coins = 5;
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($cash,2,'.',','),$coins, number_format($coins+$cash,2,'.',',')), 0, 0, "L");
+
+
+        $sql = 'select count(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 2 THEN amount END) - SUM(CASE WHEN invoiceStatus = 98 and paymentTerms = 2 THEN amount ELSE 0 END) AS amount_credit, count(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 1 THEN amount END) - SUM(CASE WHEN invoiceStatus = 98 and paymentTerms = 1 THEN amount ELSE 0 END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
+        $cod = DB::select(DB::raw($sql));
+        foreach($cod as $v)
+        $summary =  (array) $v;
+
+
+
+        $y+=5;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, sprintf('月結單數:%s',$summary['count_credit']), 0, 0, "L");
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_credit'],2,',','.')), 0, 0, "L");
+
+        $y+=5;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, sprintf('現金單數:%s',$summary['count_cod']), 0, 0, "L");
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_cod'],2,',','.')), 0, 0, "L");
+
+
+        $y = 80;
+
+        //補收
+        $pdf->SetFont('chi','',12);
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0,'補收款項', 0, 0, "L");
+
+        $pdf->SetFont('chi','',10);
+        $y += 6;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, "訂單編號", 0, 0, "L");
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, "客戶", 0, 0, "L");
+
+        $pdf->setXY($last3, $y);
+        $pdf->Cell(0, 0, "送貨日期", 0, 0, "L");
+
+        $pdf->setXY($last2, $y);
+        $pdf->Cell(1, 0, "收回金額", 0, 0, "R");
+
+        $pdf->setXY($last1, $y);
+        $pdf->Cell(1, 0, "累計", 0, 0, "R");
+
+        $pdf->Line(10, $y+4, 200, $y+4);
+
+        $y += 8;
+
+
+        foreach($this->_paidInvoice as $k => $v){
+
+            $pdf->setXY(10, $y);
+            $pdf->Cell(0, 0, $v['invoiceNumber'], 0, 0, "L");
+
+            $pdf->setXY(40, $y);
+            $pdf->Cell(0, 0, $v['name'], 0, 0, "L");
+
+            $pdf->setXY($last3, $y);
+            $pdf->Cell(0, 0, $v['deliveryDate'], 0, 0, "L");
+
+            $pdf->setXY($last2, $y);
+            $pdf->Cell(1, 0, $v['amount'], 0, 0, "R");
+
+            $pdf->setXY($last1, $y);
+            $pdf->Cell(1, 0, number_format($v['accumulator'],2,',','.'), 0, 0, "R");
+
+            $y += 5;
 
         }
-        $pdf->Line(10, $y, 190, $y);
-        $pdf->setXY(152, $y+6);
-        $pdf->Cell(0, 0, sprintf("總數 HK$ %s", $lt), 0, 0, "L");
+
+        $pdf->Line(10, $y, 200, $y);
+        $y+=5;
+
+        $pdf->SetFont('Arial','B',11);
+        $pdf->setXY($last1, $y);
+        $pdf->Cell(1, 0, sprintf("$%s", number_format(end($this->_paidInvoice)['accumulator'],2,'.',',')), 0, 0, "R");
+        $pdf->SetFont('chi','',10);
+        //end of 補收
+
+        //支出
+        $y+=5;
+
+        $pdf->SetFont('chi','',12);
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0,'支出款項', 0, 0, "L");
+
+        $pdf->SetFont('chi','',10);
+        $y += 6;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, "停車場", 0, 0, "L");
+
+        $pdf->setXY(30, $y);
+        $pdf->Cell(0, 0, "隨道", 0, 0, "L");
+
+        $pdf->setXY(50, $y);
+        $pdf->Cell(0, 0, "採購貨品", 0, 0, "L");
+
+        $pdf->setXY(70, $y);
+        $pdf->Cell(0, 0, "採購貨品註解", 0, 0, "L");
+
+        $pdf->setXY(130, $y);
+        $pdf->Cell(0, 0, "雜費", 0, 0, "L");
+
+        $pdf->setXY(150, $y);
+        $pdf->Cell(0, 0, "雜費註解", 0, 0, "L");
+
+        $pdf->Line(10, $y+4, 200, $y+4);
+
+        $y += 8;
+
+
+
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, '$'.$this->_expenses['cost1'], 0, 0, "L");
+
+        $pdf->setXY(30, $y);
+        $pdf->Cell(0, 0, '$'.$this->_expenses['cost2'], 0, 0, "L");
+
+        $pdf->setXY(50, $y);
+        $pdf->Cell(0, 0, '$'.$this->_expenses['cost3'], 0, 0, "L");
+
+        $pdf->setXY(70, $y);
+        $pdf->Cell(0, 0, $this->_expenses['cost3_remark'], 0, 0, "L");
+
+        $pdf->setXY(130, $y);
+        $pdf->Cell(0, 0, '$'.$this->_expenses['cost4'], 0, 0, "L");
+
+        $pdf->setXY(150, $y);
+        $pdf->Cell(0, 0, $this->_expenses['cost4_remark'], 0, 0, "L");
+
+        $y+=5;
+        $pdf->Line(10, $y, 200, $y);
+        $y+=5;
+        $pdf->setXY($last1, $y);
+        $pdf->SetFont('Arial','B',11);
+        $pdf->Cell(1, 0, sprintf("$%s", $this->_expenses['amount']), 0, 0, "R");
+        $pdf->SetFont('chi','',10);
+//支出
+
+
+               //未收款項
+        $y+=5;
+        $pdf->SetFont('chi','',12);
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0,'未收款項', 0, 0, "L");
+
+        $pdf->SetFont('chi','',10);
+        $y += 6;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, "訂單編號", 0, 0, "L");
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, "客戶", 0, 0, "L");
+
+
+        $pdf->setXY($last2, $y);
+        $pdf->Cell(1, 0, "尚欠金額", 0, 0, "R");
+
+        $pdf->setXY($last1, $y);
+        $pdf->Cell(1, 0, "累計", 0, 0, "R");
+
+        $pdf->Line(10, $y+4, 200, $y+4);
+
+        $y += 8;
+
+
+        foreach($this->_backaccount as $k => $v){
+
+            $pdf->setXY(10, $y);
+            $pdf->Cell(0, 0, $v['invoiceNumber'], 0, 0, "L");
+
+            $pdf->setXY(40, $y);
+            $pdf->Cell(0, 0, $v['name'], 0, 0, "L");
+
+            $pdf->setXY($last2, $y);
+            $pdf->Cell(1, 0, $v['amount'], 0, 0, "R");
+
+            $pdf->setXY($last1, $y);
+            $pdf->Cell(1, 0, number_format($v['accumulator'],2,'.',','), 0, 0, "R");
+
+            $y += 5;
+
+        }
+
+        $pdf->Line(10, $y, 200, $y);
+        $y+=5;
+        $pdf->setXY($last1, $y);
+        $pdf->SetFont('Arial','B',11);
+        $pdf->Cell(1, 0, sprintf("$%s", number_format(end($this->_backaccount)['accumulator'],2,'.',',')), 0, 0, "R");
+        $pdf->SetFont('chi','',10);
+//未收款項完
+
+        //支票
+        if(count($this->_paidInvoice)+count($this->_backaccount)+count($this->_paidInvoice_cheque) > 20){
+            $pdf->AddPage();
+            $this->generateHeader($pdf);
+            $y=55;
+        }else
+            $y+=5;
+        $pdf->SetFont('chi','',12);
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0,'支票', 0, 0, "L");
+
+        $pdf->SetFont('chi','',10);
+        $y += 6;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, "訂單編號", 0, 0, "L");
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, "客戶", 0, 0, "L");
+
+        $pdf->setXY($last4, $y);
+        $pdf->Cell(0, 0, "支票號碼", 0, 0, "L");
+
+        $pdf->setXY($last3, $y);
+        $pdf->Cell(0, 0, "送貨日期", 0, 0, "L");
+
+        $pdf->setXY($last2, $y);
+        $pdf->Cell(1, 0, "收回金額", 0, 0, "R");
+
+        $pdf->setXY($last1, $y);
+        $pdf->Cell(1, 0, "累計", 0, 0, "R");
+
+        $pdf->Line(10, $y+4, 200, $y+4);
+
+        $y += 8;
+
+
+        foreach($this->_paidInvoice_cheque as $k => $v){
+
+            $pdf->setXY(10, $y);
+            $pdf->Cell(0, 0, $v['invoiceNumber'], 0, 0, "L");
+
+            $pdf->setXY(40, $y);
+            $pdf->Cell(0, 0, $v['name'], 0, 0, "L");
+
+            $pdf->setXY($last4, $y);
+            $pdf->Cell(0, 0, $v['chequeNo'], 0, 0, "L");
+
+            $pdf->setXY($last3, $y);
+            $pdf->Cell(0, 0, $v['deliveryDate'], 0, 0, "L");
+
+            $pdf->setXY($last2, $y);
+            $pdf->Cell(1, 0, $v['amount'], 0, 0, "R");
+
+            $pdf->setXY($last1, $y);
+            $pdf->Cell(1, 0, number_format($v['accumulator'],2,',','.'), 0, 0, "R");
+
+            $y += 5;
+
+        }
+
+        $pdf->Line(10, $y, 200, $y);
+
+        $y+=5;
+
+        $pdf->setXY($last1, $y);
+        $pdf->SetFont('Arial','B',11);
+        $pdf->Cell(1, 0, sprintf("$%s", number_format(end($this->_paidInvoice_cheque)['accumulator'],2,'.',',')), 0, 0, "R");
+        $pdf->SetFont('chi','',10);
+//收支票完
+
+
+
+
+
+
+        /*  foreach($datamart as $i=>$f)
+          {
+
+
+              $pdf->setXY(10, $pdf->h-30);
+              $pdf->Cell(0, 0, "收帳人", 0, 0, "L");
+
+              $pdf->setXY(60, $pdf->h-30);
+              $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+              $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+              $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+
+              $pdf->setXY(500, $pdf->h-30);
+              $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i+1, count($datamart)) , 0, 0, "R");
+
+         }*/
+
+      //  $pdf->Line(10, $y, 190, $y);
+      //  $pdf->setXY(152, $y+6);
+      //  $pdf->Cell(0, 0, sprintf("總數 HK$ %s", $lt), 0, 0, "L");
         // output
         return [
             'pdf' => $pdf,

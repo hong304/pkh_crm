@@ -577,6 +577,10 @@ for ($i = 0; $i <22; $i++){
 
 Route::get('/dashboard', 'SystemController@getDashboard');
 
+Route::get('/vansales',function(){
+    return View::make('vansales');
+});
+
 Route::get('/setZone', function(){
     $zoneid = Input::get('id');
     Session::put('zone', $zoneid);
