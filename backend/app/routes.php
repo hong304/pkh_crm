@@ -581,6 +581,8 @@ Route::get('/vansales',function(){
     return View::make('vansales');
 });
 
+Route::post('/vans', 'VanSellController@postVans');
+
 Route::get('/setZone', function(){
     $zoneid = Input::get('id');
     Session::put('zone', $zoneid);

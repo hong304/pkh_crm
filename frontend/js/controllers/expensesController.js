@@ -69,6 +69,7 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
         $scope.updateDataSet();
+       // console.log($scope.filterData);
    });
 
     $scope.$watch(function() {
