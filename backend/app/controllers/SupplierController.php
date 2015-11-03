@@ -21,14 +21,29 @@ class SupplierController extends BaseController
       
        //   Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
              //select(['ipfId','from', 'to', 'size']);
-          $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','suppliers.currencyId','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
-           ->leftJoin('countries', function($join) {
+            
+            if(Auth::user()->can('view_local')){
+                $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','suppliers.currencyId','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
+                           ->leftJoin('countries', function($join) {
                 $join->on('countries.countryId', '=','suppliers.countryId');
             })
             ->leftJoin('currencies', function($joins) {
                 $joins->on('currencies.currencyId', '=','suppliers.currencyId');  
             })
+            ->where('suppliers.countryId','HK')
             ->Orderby($filterId,$filterOrder);
+            }else
+            {
+                $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','suppliers.currencyId','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
+                ->leftJoin('countries', function($join) {
+                    $join->on('countries.countryId', '=','suppliers.countryId');
+                })
+                ->leftJoin('currencies', function($joins) {
+                    $joins->on('currencies.currencyId', '=','suppliers.currencyId');  
+                })
+            ->Orderby($filterId,$filterOrder);
+            }
+       
             
             if(isset($filter['findOverseas']))
                 $supplier->where('location',2);
@@ -151,8 +166,7 @@ class SupplierController extends BaseController
             return $errorMessage;
            // return Response::json($errorMessage);
         }
-        
- 
+
     }
     
     

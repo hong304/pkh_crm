@@ -176,9 +176,9 @@ class PurchaseorderManipulation
 	        $this->po->poReference = $this->temp_invoice_information['poReference'];
 	        $this->po->poDate = $this->temp_invoice_information['poDate'];
                 $this->po->etaDate = $this->temp_invoice_information['etaDate'];
-                if(isset($this->temp_invoice_information['actualDate']))
+                if(isset($this->temp_invoice_information['actualDate']) && $this->temp_invoice_information['actualDate'] != "")
                     $this->po->actualDate = $this->temp_invoice_information['actualDate'];
-                if(isset($this->temp_invoice_information['receiveDate']))
+                if(isset($this->temp_invoice_information['receiveDate']) && $this->temp_invoice_information['receiveDate'] != "")
                      $this->po->receiveDate = $this->temp_invoice_information['receiveDate'] ;
                 $this->po->supplierCode = $this->temp_invoice_information['supplierCode'];
 	        $this->po->currencyId = $this->temp_invoice_information['currencyId'];

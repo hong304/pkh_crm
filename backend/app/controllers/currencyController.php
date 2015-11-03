@@ -31,11 +31,16 @@ class currencyController extends BaseController {
         
         if($mode == 'collection')
         {
-
-            $currency = Currency :: select('*');
+            if(Auth::user()->can('view_local')){
+                $currency = Currency :: select( '*' )->where('currencyId','HKD')->orwhere('currencyId','CNY');
+            }else
+            {
+                $currency = Currency :: select('*');
+            }
+            
             return Datatables::of($currency)
                 ->addColumn('link', function ($currenc) {
-                    if(Auth::user()->can('allow_edit')) return '<span onclick="editCurrency(\''.$currenc->currencyId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                  //  if(Auth::user()->can('allow_edit')) return '<span onclick="editCurrency(\''.$currenc->currencyId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                 })
                 ->editColumn('currencyId', function ($currenc) {
                   //  return  date("Y-m-d", $ip->from);
@@ -57,6 +62,7 @@ class currencyController extends BaseController {
           //  $country->countryName = $country->countryName;
             //If the field in database is not found , just put the -> here
         }
+
         
         return Response::json($currency);
     }

@@ -40,13 +40,11 @@ class newPoController extends BaseController {
               Poitem::whereNotIn('id', $itemIds)->where('poCode', $order['poCode'])->delete();
 
           } 
-          
         
-  
        
             foreach ($product as $p) {
-            $this->po->setItem($p['dbid'],$p['code'], $p['unitprice'], $p['unit'], $p['qty'], $p['discount_1'], $p['discount_2'], $p['discount_3'], $p['allowance_1'], $p['allowance_2'], $p['allowance_3'], $p['deleted'], $p['currencyId'], $p['remark']);
-
+                $store = trim(str_replace('/n/r','',$p['remark']));
+                $this->po->setItem($p['dbid'],$p['code'], $p['unitprice'], $p['unit'], $p['qty'], $p['discount_1'], $p['discount_2'], $p['discount_3'], $p['allowance_1'], $p['allowance_2'], $p['allowance_3'], $p['deleted'], $p['currencyId'], $store);
             }
         $message = $this->doValidation($order); 
         if($message == "")
@@ -238,7 +236,6 @@ class newPoController extends BaseController {
         if(isset($poAndItems)){
         
         $pdf = new PDF();
-        $pdf->AliasNbPages();
         $pdf->AddPage();
         
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
@@ -301,11 +298,11 @@ class newPoController extends BaseController {
         if($lang == 'chi')
         {
             $pdf->SetFont('chi','',10);
-            $pdf->setXY(150, 40);
+            $pdf->setXY(135, 40);
             $pdf->Cell(0, 0,"採購單日期:",0,1,"L");
 
             $pdf->SetFont('chi','',10);
-            $pdf->setXY(150, 45);
+            $pdf->setXY(135, 45);
             $pdf->Cell(0, 0,"採購單編號:",0,1,"L");
 
             $pdf->SetFont('chi','',10);
@@ -335,11 +332,11 @@ class newPoController extends BaseController {
         if($lang == 'eng')
         {
             $pdf->SetFont('chi','',10);
-            $pdf->setXY(145, 40);
+            $pdf->setXY(140, 40);
             $pdf->Cell(0, 0,"Date:",0,1,"L");
 
             $pdf->SetFont('chi','',10);
-            $pdf->setXY(145, 45);
+            $pdf->setXY(140, 45);
             $pdf->Cell(0, 0,"Purchase No.:",0,1,"L");
 
             $pdf->SetFont('chi','',10);
@@ -359,17 +356,18 @@ class newPoController extends BaseController {
         
         $poDate = DateTime::createFromFormat('Y-m-d',$poAndItems['poDate']);
         $pdf->SetFont('chi','',10);
-        $pdf->setXY(175, 40);
+        $pdf->setXY(155, 40);
         $pdf->Cell(0, 0,date("F j, Y",strtotime($poDate->format('d-m-Y'))),0,1,"L");
         
-        $pdf->SetFont('chi','',10);
-        $pdf->setXY(175, 45);
+        $pdf->SetFont('chi','',15);
+        $pdf->setXY(155, 45);
         $pdf->Cell(0, 0,$poAndItems['poCode'],0,1,"L");
         
 
         $pdf->SetFont('chi','',10);
         $pdf->setXY(40, 65);
-        $pdf->Cell(0, 0,$poAndItems['supplier']['supplierName'],0,1,"L");
+        
+        $pdf->Cell(0, 0,trim($poAndItems['supplier']['supplierName']),0,1,"L");
         
         $pdf->SetFont('chi','',10);
         $pdf->setXY(40, 70);
@@ -377,15 +375,15 @@ class newPoController extends BaseController {
          
         $pdf->SetFont('chi','',10);
         $pdf->setXY(40, 75);
-        $pdf->Cell(0, 0,$poAndItems['supplier']['address'],0,1,"L");
+        $pdf->Cell(0, 0,trim($poAndItems['supplier']['address']),0,1,"L");
         
         $pdf->SetFont('chi','',10);
         $pdf->setXY(40, 76);
-        $pdf->Cell(0, 0,$poAndItems['supplier']['address1'],0,1,"L");
+        $pdf->Cell(0, 0,trim($poAndItems['supplier']['address1']),0,1,"L");
         
         $pdf->SetFont('chi','',10);
         $pdf->setXY(40, 80);
-        $pdf->Cell(0, 0,$poAndItems['supplier']['address2'],0,1,"L");
+        $pdf->Cell(0, 0,trim($poAndItems['supplier']['address2']),0,1,"L");
         
        
            
@@ -395,17 +393,19 @@ class newPoController extends BaseController {
 
     if($lang == 'chi')
     {
-        $pdf->Cell(100,5,"貨幣",1,0,'C',true);
-        $pdf->Cell(100,5,"預算到貨日期",1,0,'C',true);
+        $pdf->Cell(65,5,"貨幣",1,0,'C',true);
+        $pdf->Cell(65,5,"付款方式",1,0,'C',true);
+        $pdf->Cell(70,5,"預算到貨日期",1,0,'C',true);
 
         $pdf->Ln();  // line break 
 
-         $pdf->SetX(4);
+        $pdf->SetX(4);
         $this->setTableBox($pdf);
-
         $etaDate = DateTime::createFromFormat('Y-m-d',$poAndItems['etaDate']);
-        $pdf->Cell(100,5,$poAndItems['currency']['currencyName']."(".$poAndItems['currency']['currencyId'].")",1,0,'C',true);
-        $pdf->Cell(100,5,date("F j, Y",strtotime($etaDate->format('d-m-Y'))),1,0,'C',true);
+        $paymentMethod = ($poAndItems['supplier']['payment'] == 'Credit') ? '信貸':'現金';
+        $pdf->Cell(65,5,$poAndItems['currency']['currencyName']."(".$poAndItems['currency']['currencyId'].")",1,0,'C',true);
+        $pdf->Cell(65,5,$paymentMethod,1,0,'C',true);
+        $pdf->Cell(70,5,date("F j, Y",strtotime($etaDate->format('d-m-Y'))),1,0,'C',true);
 
         $pdf->Ln();
 
@@ -414,11 +414,11 @@ class newPoController extends BaseController {
         $this->setTableTitle($pdf);
 
         $pdf->Cell(10,5,"編號",1,0,'C',true);
-        $pdf->Cell(50,5,"產品",1,0,'C',true);
+        $pdf->Cell(56,5,"產品",1,0,'C',true);
         $pdf->Cell(12,5,"數量",1,0,'C',true);
         $pdf->Cell(12,5,"單位",1,0,'C',true);
-        $pdf->Cell(39,5,"折扣(%)",1,0,'C',true);
-        $pdf->Cell(39,5,"現金折扣($)",1,0,'C',true);
+        $pdf->Cell(36,5,"折扣(%)",1,0,'C',true);
+        $pdf->Cell(36,5,"現金折扣($)",1,0,'C',true);
         $pdf->Cell(15,5,"單價($)",1,0,'C',true);
         $pdf->Cell(23,5,"總數($)",1,0,'C',true);
     }
@@ -447,11 +447,11 @@ class newPoController extends BaseController {
        $this->setTableTitle($pdf);
 
        $pdf->Cell(10,5,"No.",1,0,'C',true);
-       $pdf->Cell(50,5,"Product",1,0,'C',true);
+       $pdf->Cell(56,5,"Product",1,0,'C',true);
        $pdf->Cell(12,5,"Num",1,0,'C',true);
        $pdf->Cell(12,5,"Uom",1,0,'C',true);
-       $pdf->Cell(39,5,"Discount(%)",1,0,'C',true);
-       $pdf->Cell(39,5,"Cash Dis($)",1,0,'C',true);
+       $pdf->Cell(36,5,"Discount(%)",1,0,'C',true);
+       $pdf->Cell(36,5,"Cash Dis($)",1,0,'C',true);
        $pdf->Cell(15,5,"Price($)",1,0,'C',true);
        $pdf->Cell(23,5,"Total($)",1,0,'C',true);
     }
@@ -467,11 +467,11 @@ class newPoController extends BaseController {
     // $j+=5;
         $pdf->SetX(4);
             $pdf->Cell(10,5,$num,1,0,'C',true);
-            $pdf->Cell(50,5,$i['product_detail']['productName_chi']."(".$i['productId'].")",1,0,'L',true);
-            $pdf->Cell(12,5,$i['productQty'],1,0,'L',true);
+            $pdf->Cell(56,5,$i['product_detail']['productName_chi']."  (".$i['productId'].")",1,0,'L',true);
+            $pdf->Cell(12,5,number_format($i['productQty']),1,0,'R',true);
             if($lang == 'chi')
             {
-                $pdf->Cell(12,5,$i['productUnitName'],1,0,'L',true);
+                $pdf->Cell(12,5,$i['productUnitName'],1,0,'C',true);
             }
             else
             {
@@ -484,11 +484,11 @@ class newPoController extends BaseController {
                 }
             }
               
-            $pdf->Cell(39,5,$this->discountString($i['discount_1'],$i['discount_2'],$i['discount_3'],'%'),1,0,'L',true);
-            $pdf->Cell(39,5,$this->discountString($i['allowance_1'],$i['allowance_2'],$i['allowance_3'],'$'),1,0,'L',true);
+            $pdf->Cell(36,5,$this->discountString($i['discount_1'],$i['discount_2'],$i['discount_3'],'%'),1,0,'L',true);
+            $pdf->Cell(36,5,$this->discountString($i['allowance_1'],$i['allowance_2'],$i['allowance_3'],'$'),1,0,'L',true);
             
-            $pdf->Cell(15,5,$i['unitprice'],1,0,'L',true);
-            $pdf->Cell(23,5,$i['unitprice'] * $i['productQty'],1,0,'L',true);
+            $pdf->Cell(15,5,number_format($i['unitprice'],2),1,0,'L',true);
+            $pdf->Cell(23,5,number_format($i['unitprice'] * $i['productQty'],2),1,0,'R',true);
             $total += $i['unitprice'] * $i['productQty'] * (100 - $i['discount_1'])/100 * (100 - $i['discount_2'])/100 * (100 - $i['discount_3'])/100 - $i['allowance_1'] - $i['allowance_2'] - $i['allowance_3'];
             $pdf->Ln();  
             $num++;
@@ -498,65 +498,76 @@ class newPoController extends BaseController {
      {
       $pdf->SetDrawColor(255);
       $pdf->Ln(3);  
-      $pdf->Cell(149,0,"",1,0,'L',true);
+      $pdf->Cell(130,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"原價:",1,0,'L',true);
-      $pdf->Cell(25,5,'$ '.round($total, 2, PHP_ROUND_HALF_UP),1,0,'R',true);
-      
+      $pdf->Cell(44,5,'$ '.number_format($total, 2),1,0,'R',true);
+      $pdf->Ln(3); 
 
      if($poAndItems['discount_1'] != 0)
      {
-      $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(149,0,"",1,0,'L',true);
+      $pdf->Cell(130,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"採購折扣1:",1,0,'L',true);
-      $pdf->Cell(25,5,$poAndItems['discount_1'] . '%',1,0,'R',true);
+      $pdf->Cell(44,5,number_format($poAndItems['discount_1'],2) . '%',1,0,'R',true);
+      $pdf->Ln(3); 
      }
      
      if($poAndItems['discount_2'] != 0)
      {
-      $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(149,0,"",1,0,'L',true);
+      $pdf->Cell(130,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"採購折扣2:",1,0,'L',true);
-      $pdf->Cell(25,5,$poAndItems['discount_2']. '%',1,0,'R',true);
+      $pdf->Cell(44,5,number_format($poAndItems['discount_2'],2). '%',1,0,'R',true);
+      $pdf->Ln(3); 
      }
      
      if($poAndItems['allowance_1'] != 0)
      {
-      $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(149,0,"",1,0,'L',true);
+      $pdf->Cell(130,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"現金折扣1:",1,0,'L',true);
-      $pdf->Cell(25,5,'$'.$poAndItems['allowance_1'],1,0,'R',true);
+      $pdf->Cell(44,5,'$'.number_format($poAndItems['allowance_1'],2),1,0,'R',true);
+      $pdf->Ln(3); 
      }
      
      if($poAndItems['allowance_2'] != 0)
      {
-      $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(149,0,"",1,0,'L',true);
+      $pdf->Cell(130,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"現金折扣2:",1,0,'L',true);
-      $pdf->Cell(25,5,'$'.$poAndItems['allowance_2'],1,0,'R',true);
+      $pdf->Cell(44,5,'$'.number_format($poAndItems['allowance_2'],2),1,0,'R',true);
+      $pdf->Ln(3); 
      }
       
       $countTotal = $total * (100 - $poAndItems['discount_1'])/100 * (100 - $poAndItems['discount_2'])/100 - $poAndItems['allowance_1'] - $poAndItems['allowance_2'];
       $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(149,0,"",1,0,'L',true);
+      $pdf->Cell(130,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"總額:",1,0,'L',true);
-      $pdf->Cell(25,5,'$ '.round($countTotal, 2, PHP_ROUND_HALF_UP),1,0,'R',true);
+      $pdf->Cell(44,5,'$ '.number_format($countTotal, 2),1,0,'R',true);
       
        $pdf->Ln(20);  
        
        $pdf->SetDrawColor(255);
-       $pdf->SetFont('chi','',10);  
-       $pdf->Cell(10, 5,$poAndItems['poRemark'],0,1);
+       $pdf->SetFont('chi','',10); 
+       $pdf->Cell(1,0,"",1,0,'L',true);
+       $pdf->Cell(20, 5,"備註:",0,1);
+       if(strpos($poAndItems['poRemark'], "\n") !== FALSE) {
+            $pdf->Cell(10,0,"",1,0,'L',true);
+            $pdf->Cell(20, 5,substr($poAndItems['poRemark'],0,strpos($poAndItems['poRemark'], "\n")),0,1);
+            $pdf->Cell(10,0,"",1,0,'L',true);
+            $pdf->Cell(20, 5,substr($poAndItems['poRemark'],strpos($poAndItems['poRemark'], "\n")+1),0,1); 
+       }
+       //$pdf->Cell(10, 5,sprintf("%s", trim($poAndItems['poRemark']), 1, '/n', ''),0,1);
+  
+       
+       
       // $pdf->Cell(10, $j -100,"1.Please send two copies of your invoice.:",0,1,"L");
        
    
@@ -601,56 +612,56 @@ class newPoController extends BaseController {
      {
       $pdf->SetDrawColor(255);
       $pdf->Ln(3);  
-      $pdf->Cell(139,0,"",1,0,'L',true);
+      $pdf->Cell(120,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(30,5,"Original price:",1,0,'L',true);
-      $pdf->Cell(25,5,'$ '.round($total, 2, PHP_ROUND_HALF_UP),1,0,'R',true);
+      $pdf->Cell(44,5,'$ '.number_format($total, 2),1,0,'R',true);
       
       if($poAndItems['discount_1'] != 0)
       {
       $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(139,0,"",1,0,'L',true);
+      $pdf->Cell(120,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(30,5,"Discount1:",1,0,'L',true);
-      $pdf->Cell(25,5,$poAndItems['discount_1'] . '%',1,0,'R',true);
+      $pdf->Cell(44,5,number_format($poAndItems['discount_1'],2) . '%',1,0,'R',true);
       }
       if($poAndItems['discount_2'] != 0)
       {
       $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(139,0,"",1,0,'L',true);
+      $pdf->Cell(120,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(30,5,"Discount2:",1,0,'L',true);
-      $pdf->Cell(25,5,$poAndItems['discount_2']. '%',1,0,'R',true);
+      $pdf->Cell(44,5,number_format($poAndItems['discount_2'],2). '%',1,0,'R',true);
       }
       if($poAndItems['allowance_1'] != 0)
       {
       $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(139,0,"",1,0,'L',true);
+      $pdf->Cell(120,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(30,5,"Cash Discount1:",1,0,'L',true);
-      $pdf->Cell(25,5,'$'.$poAndItems['allowance_1'],1,0,'R',true);
+      $pdf->Cell(44,5,'$'.number_format($poAndItems['allowance_1'],2),1,0,'R',true);
       }
       
       if($poAndItems['allowance_2'] != 0)
       {
       $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(139,0,"",1,0,'L',true);
+      $pdf->Cell(120,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(30,5,"Cash Discount2:",1,0,'L',true);
-      $pdf->Cell(25,5,'$'.$poAndItems['allowance_2'],1,0,'R',true);
+      $pdf->Cell(44,5,'$'.number_format($poAndItems['allowance_2'],2),1,0,'R',true);
       }
       
       $countTotal = $total * (100 - $poAndItems['discount_1'])/100 * (100 - $poAndItems['discount_2'])/100 - $poAndItems['allowance_1'] - $poAndItems['allowance_2'];
       $pdf->Ln();
       $pdf->SetDrawColor(255);
-      $pdf->Cell(139,0,"",1,0,'L',true);
+      $pdf->Cell(120,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
       $pdf->Cell(30,5,"Total:",1,0,'L',true);
-      $pdf->Cell(25,5,'$ '.round($countTotal, 2, PHP_ROUND_HALF_UP),1,0,'R',true);
+      $pdf->Cell(44,5,'$ '.number_format($countTotal,2),1,0,'R',true);
       
        $pdf->Ln(20);  
        
@@ -677,7 +688,7 @@ class newPoController extends BaseController {
        $pdf->SetX(15);
        $pdf->Cell(15, 5,$poAndItems['supplier']['address2'],0,1);*/
        
-        $pdf->Ln(20);  
+       $pdf->Ln(20);  
   
      //  $pdf->SetXY( 15,  $j - 80);
        $pdf->SetFont('chi','',10);
@@ -704,16 +715,16 @@ class newPoController extends BaseController {
      {
          if($sign == '%')
          {
-             $percent1 = ($ele1 != 0) ? round($ele1).'%' : '';
-             $percent2 = ($ele2 != 0) ? ' ,'.round($ele2).'%' : '';
-             $percent3 = ($ele3 != 0) ? ' ,'.round($ele3).'%' : '';
+             $percent1 = ($ele1 != 0) ? $ele1.'%' : '';
+             $percent2 = ($ele2 != 0) ? ' ,'.$ele2.'%' : '';
+             $percent3 = ($ele3 != 0) ? ' ,'.$ele3.'%' : '';
              return $percent1.$percent2.$percent3;
          } 
          else if($sign == "$")
          {
-             $allowance1 = ($ele1 != 0) ? '$'.round($ele1) : '';
-             $allowance2 = ($ele2 != 0) ? ' ,$'.round($ele2) : '';
-             $allowance3 = ($ele3 != 0) ? ' ,$'.round($ele3) : '';
+             $allowance1 = ($ele1 != 0) ? '$'.$ele1 : '';
+             $allowance2 = ($ele2 != 0) ? ' ,$'.$ele2 : '';
+             $allowance3 = ($ele3 != 0) ? ' ,$'.$ele3 : '';
              return $allowance1.$allowance2.$allowance3;
          }
              
