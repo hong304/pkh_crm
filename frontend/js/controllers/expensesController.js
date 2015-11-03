@@ -33,8 +33,11 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
 
     var today = new Date();
     var plus = today.getDay() == 6 ? 3 : 2;
+
+    var min = today.getDay() == 1 ? 2 : 1;
+
     var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
+    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * min);
 
     var ymonth = start_date.getMonth() + 1;
     var yyear = start_date.getFullYear();
