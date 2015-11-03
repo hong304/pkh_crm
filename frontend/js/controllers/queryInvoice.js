@@ -233,6 +233,7 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
             deliverydate2 : year+'-'+month+'-'+day,
             'created_by'	:	'0',
             'invoiceNumber' :	'',
+            'staffName' : ''
         };
         $scope.updateDataSet();
     }
