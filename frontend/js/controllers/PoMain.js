@@ -62,15 +62,15 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
     var yday = start_date.getDate();
    
     var now=new Date();
-    $("#deliverydate").datepicker({
+    /*$("#deliverydate").datepicker({
         language: 'en-US',
         startDate: now,
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
-    });
+    });*/
 
-    $("#deliverydate1,#deliverydate2").datepicker({
+    $("#deliverydate,#deliverydate1,#deliverydate2").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
@@ -335,7 +335,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                 {
                     $scope.displayName = "";
                 }
-
+               
 
                 for (var t = 0; t < $scope.countryDataList.length; t++)
                 {
@@ -914,14 +914,12 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
         for (var k = 1; k < $scope.product.length; k++)
         {
             $scope.product[k].currencyId = $scope.order.currencyId;
-
         }
-
         if (!generalError)
         {
 
             SharedService.setValue('poDate', $scope.order.poDate, 'handlePoUpdate');
-
+            console.log($scope.order);
             $scope.order.print = v;
             $http.post(
                     endpoint + '/newPoOrder.json', {

@@ -116,7 +116,9 @@ Route::group(array('before' => 'auth'), function()
      //Po Maintenance
     Route::post('/queryPo.json', 'newPoController@jsonQueryPo');
     Route::post('/voidPo.json', 'newPoController@voidPo');
-	
+    Route::post('/newPoAdult.json', 'newPoController@newPoAdult');
+    Route::post('/queryPoUpdate.json', 'newPoController@queryPoUpdate');	
+    
     // Group Maintenance
     Route::post('/queryGroup.json', 'GroupController@jsonQueryGroup');
     Route::post('/manipulateGroup.json', 'GroupController@jsonManiulateGroup');
