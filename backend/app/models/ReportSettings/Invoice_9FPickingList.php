@@ -609,7 +609,7 @@ $i=3;
         }
 
 
-
+/*
         if(isset($this->data['carton'])){
             $consec = $j = 0;
             foreach($this->data['carton'] as $c=>$nf)
@@ -695,7 +695,7 @@ $i=3;
 
             }
         }
-
+*/
 
 /* group by route path
         if(isset($this->data['carton'])){
