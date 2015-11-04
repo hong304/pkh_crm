@@ -441,12 +441,12 @@ class InvoiceManipulation {
     	        {
                     $item->save();
 
-                    if($i['productId'] == 218){
+                    if($i['productId'] == 218 && $this->temp_invoice_information['status'] != 98){
                         $normalizedUnit = $this->normalizedUnit($i);
                         $packingSize = $this->packingSize($i);
                         $undeductUnit = $normalizedUnit;
 
-                        if($undeductUnit < 0){
+                       /* if($undeductUnit < 0){
                             $receivings = Receiving::where('productId',$i['productId'])->orderBy('expiry_date','desc')->first();
                             $receivings->good_qty -= $undeductUnit;
                             $receivings->save();
@@ -456,7 +456,7 @@ class InvoiceManipulation {
                             $invoiceitembatchs->productId = $i['productId'];
                             $invoiceitembatchs->receivingId = $receivings->receivingId;
                             $invoiceitembatchs->save();
-                        }
+                        }*/
 
 
                         while($undeductUnit > 0 ){
@@ -627,21 +627,21 @@ class InvoiceManipulation {
         $inner = ($i['productPacking']['inner']) ? $i['productPacking']['inner']:1;
         $unit = ($i['productPacking']['unit']) ? $i['productPacking']['unit']:1;
 
-        if($this->temp_invoice_information['status'] == 98){
+       /* if($this->temp_invoice_information['status'] == 98){
             if($i['productQtyUnit']['value'] == 'carton')
                 $real_normalized_unit =  $i['productQty']*$inner*$unit*-1;
             else if($i['productQtyUnit']['value'] == 'inner')
                 $real_normalized_unit =   $i['productQty']*$unit*-1;
             else
                 $real_normalized_unit =  $i['productQty'] * -1;
-        }else{
+        }else{*/
             if($i['productQtyUnit']['value'] == 'carton')
                 $real_normalized_unit =  $i['productQty']*$inner*$unit;
             else if($i['productQtyUnit']['value'] == 'inner')
                 $real_normalized_unit =   $i['productQty']*$unit;
             else
                 $real_normalized_unit =  $i['productQty'];
-        }
+       // }
         return $real_normalized_unit;
     }
 

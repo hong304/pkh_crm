@@ -18,6 +18,27 @@ class VanSellController extends BaseController
     private $_zonename = '';
     private $kk = '';
 
+    public function postVans(){
+
+        $productGroup = ['B010','101','167','100','170','200','203','218','O029','N002'];
+
+        van::where('deliveryDate', Input::get('deliveryDate'))->where('zoneId', Input::get('zoneId'))->delete();
+
+            foreach($productGroup as $v){
+                $van_insert = new van();
+                $van_insert->deliveryDate = Input::get('deliveryDate');
+                $van_insert->zoneId = Input::get('zoneId');
+                $van_insert->productId = $v;
+                $van_insert->van_qty = Input::get($v);
+                $van_insert->productlevel = 'carton';
+                $van_insert->pic = Input::get('pic');
+                $van_insert->save();
+            }
+
+       echo '提交成功!';
+
+    }
+
     public function loadvanSellReport()
     {
         $indata = Input::all();
@@ -72,10 +93,10 @@ class VanSellController extends BaseController
         if ($this->_output == 'create') {
             $selfdefine = Input::get('selfdefine');
 
-            $debug = new debug();
-            $debug->content = 'SelfDefine - zoneId:'.$this->_zone."shift:".$this->_shift;
-            $debug->content .= json_encode($selfdefine);
-            $debug->save();
+           // $debug = new debug();
+          //  $debug->content = 'SelfDefine - zoneId:'.$this->_zone."shift:".$this->_shift;
+          //  $debug->content .= json_encode($selfdefine);
+          //  $debug->save();
 
             vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define',true)->delete();
 
@@ -100,10 +121,10 @@ class VanSellController extends BaseController
 
 
 
-            $debug = new debug();
-            $debug->content = 'zoneId:'.$this->_zone."shift:".$this->_shift;
-            $debug->content .= json_encode(Input::get('data'));
-            $debug->save();
+           // $debug = new debug();
+           // $debug->content = 'zoneId:'.$this->_zone."shift:".$this->_shift;
+           // $debug->content .= json_encode(Input::get('data'));
+          //  $debug->save();
 
             foreach (Input::get('data') as $v) {
               //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
@@ -183,12 +204,11 @@ class VanSellController extends BaseController
 
         // get invoice from that date and that zone
         $this->goods = ['1F' => [], '9F' => []];
-        $invoices = Invoice::select('*')->wherein('invoiceStatus', ['2','1','96','97'])->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoices = Invoice::select('invoiceId')->wherein('invoiceStatus', ['2','1','96','97'])->where('zoneId', $zone)->where('deliveryDate', $date);
 
         if($this->_shift != '-1')
             $invoices->where('shift', $this->_shift);
-        $invoices->with('invoiceItem', 'products', 'client')
-            ->chunk(50, function ($invoicesQuery) {
+        $invoices->with('invoiceItem', 'products')->chunk(50, function ($invoicesQuery) {
 
 
                 // first of all process all products
@@ -209,7 +229,6 @@ class VanSellController extends BaseController
                     // first, store all invoices
                     $invoiceId = $invoiceQ->invoiceId;
                     $invoices[$invoiceId] = $invoiceQ;
-                    $client = $invoiceQ['client'];
 
                     // second, separate 1F goods and 9F goods
                     foreach ($invoiceQ['invoiceItem'] as $item) {
@@ -234,11 +253,19 @@ class VanSellController extends BaseController
 
             });
 
+
+
         $this->_data = $this->goods['1F'];
+
+
 
         $allIds =[];
         foreach ($this->_data as $g) {
             foreach ($g as $k => $v) {
+                $van = van::where('zoneId',$this->_zone)->where('deliveryDate',date('Y-m-d',$this->_date))->where('productId',$v['productId'])->where('productlevel',$v['unit'])->lists('van_qty');
+                $van_qty = 0;
+                if($van)
+                    $van_qty = $van[0];
                 $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define',false)->first();
                 if (count($vansell) == 0) {
                     $create = new vansell();
@@ -247,6 +274,7 @@ class VanSellController extends BaseController
                     $create->unit = $v['unit_txt'];
                     $create->org_qty = $v['counts'];
                     $create->productlevel = $v['unit'];
+                    $create->van_qty = $van_qty;
                     $create->date = $this->_date;
                     $create->zoneId = $this->_zone;
                     $create->shift = $this->_shift;
@@ -255,6 +283,7 @@ class VanSellController extends BaseController
                     if($vansell->qty==$vansell->org_qty && $vansell->self_enter == 0)
                         $vansell->qty = $v['counts'];
                     $vansell->org_qty = $v['counts'];
+                    $vansell->van_qty = $van_qty;
                     $vansell->save();
                 }
 
@@ -288,6 +317,8 @@ class VanSellController extends BaseController
         $vansells_pdf = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->get()->toArray();
 
         $this->_pdf = $vansells_pdf;
+
+
 
     }
 

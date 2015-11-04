@@ -12,7 +12,9 @@ class expensesController extends BaseController {
         if($filter['id']!=''){
             $expenses = expense::where('id',$filter['id'])->first();
         }else{
-            $expenses = new expense();
+            $expenses = expense::where('deliveryDate',$filter['deliveryDate'])->where('zoneId',$filter['zone']['zoneId'])->first();
+            if(count($expenses) == null)
+                $expenses = new expense();
         }
         $expenses->zoneId = $filter['zone']['zoneId'];
         $expenses->deliveryDate = $filter['deliveryDate'];
