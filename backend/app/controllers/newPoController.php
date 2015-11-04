@@ -502,7 +502,7 @@ class newPoController extends BaseController {
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"原價:",1,0,'L',true);
       $pdf->Cell(44,5,'$ '.number_format($total, 2),1,0,'R',true);
-      $pdf->Ln(3); 
+      $pdf->Ln(6); 
 
      if($poAndItems['discount_1'] != 0)
      {
@@ -511,7 +511,7 @@ class newPoController extends BaseController {
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"採購折扣1:",1,0,'L',true);
       $pdf->Cell(44,5,number_format($poAndItems['discount_1'],2) . '%',1,0,'R',true);
-      $pdf->Ln(3); 
+      $pdf->Ln(6); 
      }
      
      if($poAndItems['discount_2'] != 0)
@@ -521,7 +521,7 @@ class newPoController extends BaseController {
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"採購折扣2:",1,0,'L',true);
       $pdf->Cell(44,5,number_format($poAndItems['discount_2'],2). '%',1,0,'R',true);
-      $pdf->Ln(3); 
+      $pdf->Ln(6); 
      }
      
      if($poAndItems['allowance_1'] != 0)
@@ -531,7 +531,7 @@ class newPoController extends BaseController {
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"現金折扣1:",1,0,'L',true);
       $pdf->Cell(44,5,'$'.number_format($poAndItems['allowance_1'],2),1,0,'R',true);
-      $pdf->Ln(3); 
+      $pdf->Ln(6); 
      }
      
      if($poAndItems['allowance_2'] != 0)
@@ -541,7 +541,7 @@ class newPoController extends BaseController {
       $pdf->SetDrawColor(0);
       $pdf->Cell(20,5,"現金折扣2:",1,0,'L',true);
       $pdf->Cell(44,5,'$'.number_format($poAndItems['allowance_2'],2),1,0,'R',true);
-      $pdf->Ln(3); 
+      $pdf->Ln(6); 
      }
       
       $countTotal = $total * (100 - $poAndItems['discount_1'])/100 * (100 - $poAndItems['discount_2'])/100 - $poAndItems['allowance_1'] - $poAndItems['allowance_2'];
