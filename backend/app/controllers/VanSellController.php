@@ -204,23 +204,25 @@ class VanSellController extends BaseController
 
         // get invoice from that date and that zone
         $this->goods = ['1F' => [], '9F' => []];
-        $invoices = Invoice::select('invoiceId')->wherein('invoiceStatus', ['2','1','96','97'])->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::select('invoiceId')->wherein('invoiceStatus', ['2','1','96','97'])->where('zoneId', $zone)->where('deliveryDate', $date);
 
         if($this->_shift != '-1')
-            $invoices->where('shift', $this->_shift);
-        $invoices->with('invoiceItem', 'products')->chunk(50, function ($invoicesQuery) {
+            $invoicesQuery->where('shift', $this->_shift);
+        $invoicesQuery=$invoicesQuery->with(['invoiceItem'=>function($q){
+            $q->with('productDetail');
+        }])->get();
 
 
                 // first of all process all products
-                $productsQuery = array_pluck($invoicesQuery, 'products');
-//pd($productsQuery);
+              /*  $productsQuery = array_pluck($invoicesQuery, 'products');
+
                 foreach ($productsQuery as $productQuery) {
                     $productQuery = head($productQuery);
                     //pd($productQuery);
                     foreach ($productQuery as $pQ) {
                         $products[$pQ->productId] = $pQ;
                     }
-                }
+                }*/
 
                 // second process invoices
                 foreach ($invoicesQuery as $invoiceQ) {
@@ -233,15 +235,18 @@ class VanSellController extends BaseController
                     // second, separate 1F goods and 9F goods
                     foreach ($invoiceQ['invoiceItem'] as $item) {
                         // determin its product location
+
+
+
                         $productId = $item->productId;
 
-                        $productDetail = $products[$productId];
+                      //  $productDetail = $products[$productId];
                         $unit = $item->productQtyUnit;
 
-                        if ($productDetail->productLocation == '1') {
+                        if ($item->productDetail->productLocation == '1') {
                             $this->goods['1F'][$productId][$unit] = [
                                 'productId' => $productId,
-                                'name' => $productDetail->productName_chi,
+                                'name' => $item->productDetail->productName_chi,
                                 'unit' => $unit,
                                 'unit_txt' => $item->productUnitName,
                                 'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
@@ -251,9 +256,10 @@ class VanSellController extends BaseController
                     }
                 }
 
-            });
 
 
+    // pd($this->goods['1F']);
+      //  pd(DB::getQueryLog());
 
         $this->_data = $this->goods['1F'];
 
