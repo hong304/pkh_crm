@@ -405,5 +405,10 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
         $scope.keywordpo.supplier = "";
         $scope.updateDataSet();
     }
+    
+    $scope.overseaPoGetISnvoice = function(poCode)
+    {
+        window.open(endpoint + "/overseaPoGetISnvoice.json?poCode=" + poCode); //window open is a new tab 
+    }
 
 });

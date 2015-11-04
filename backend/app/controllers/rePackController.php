@@ -133,7 +133,7 @@ class rePackController extends BaseController {
                     $nextLopp++;
                   
                 }
-                pd($adjustTable);
+    
                   //DB::table('receivings')->where('id',$v1->id)->where('good_qty','>',0)->update(['good_qty'=>$storageminus]);
                 
             }

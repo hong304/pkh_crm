@@ -84,7 +84,7 @@ class newPoController extends BaseController {
                 $sorting = $filter['sorting'];
              }
 
-
+            if(!Auth::user()->can('view_local')){
             $purchaseOrder = Purchaseorder::select(['poCode', 'poDate', 'etaDate', 'actualDate', 'poStatus', 'suppliers.supplierName', 'purchaseorders.updated_at', 'users.username','poAmount','purchaseorders.location'])
                     ->leftJoin('suppliers', function($join) {
                         $join->on('suppliers.supplierCode', '=', 'purchaseorders.supplierCode');
@@ -93,7 +93,18 @@ class newPoController extends BaseController {
                         $join->on('users.id', '=', 'purchaseorders.updated_by');
                     })
                     ->orderby($sorting, $current_sorting);
-               
+            }else
+            {
+                  $purchaseOrder = Purchaseorder::select(['poCode', 'poDate', 'etaDate', 'actualDate', 'poStatus', 'suppliers.supplierName', 'purchaseorders.updated_at', 'users.username','poAmount','purchaseorders.location'])
+                    ->leftJoin('suppliers', function($join) {
+                        $join->on('suppliers.supplierCode', '=', 'purchaseorders.supplierCode');
+                    })
+                    ->leftJoin('users', function($join) {
+                        $join->on('users.id', '=', 'purchaseorders.updated_by');
+                    })
+                    ->where('purchaseorders.location',1)
+                    ->orderby($sorting, $current_sorting);
+            }
                  /*     if ($filter['poStatus'] == 99) {
                 $purchaseOrder->onlyTrashed();
             } else if ($filter['poStatus'] != 100) {
@@ -236,8 +247,9 @@ class newPoController extends BaseController {
         if(isset($poAndItems)){
         
         $pdf = new PDF();
-        $pdf->AddPage();
         
+        $pdf->AddPage();
+       
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
         
         $this->generateHeader($pdf,$lang);
@@ -247,6 +259,8 @@ class newPoController extends BaseController {
          $pdf->Output('','I');
         }
     }
+    
+    
     
     public function generateHeader($pdf,$lang)
     {
@@ -359,9 +373,18 @@ class newPoController extends BaseController {
         $pdf->setXY(155, 40);
         $pdf->Cell(0, 0,date("F j, Y",strtotime($poDate->format('d-m-Y'))),0,1,"L");
         
-        $pdf->SetFont('chi','',15);
-        $pdf->setXY(155, 45);
-        $pdf->Cell(0, 0,$poAndItems['poCode'],0,1,"L");
+        if($lang == 'eng')
+        {
+            $pdf->SetFont('chi','',15);
+            $pdf->setXY(165, 45);
+            $pdf->Cell(0, 0,$poAndItems['poCode'],0,1,"L");
+        } else if($lang == 'chi')
+        {
+            $pdf->SetFont('chi','',15);
+            $pdf->setXY(155, 45);
+            $pdf->Cell(0, 0,$poAndItems['poCode'],0,1,"L");
+        }
+        
         
 
         $pdf->SetFont('chi','',10);
@@ -545,7 +568,6 @@ class newPoController extends BaseController {
      }
       
       $countTotal = $total * (100 - $poAndItems['discount_1'])/100 * (100 - $poAndItems['discount_2'])/100 - $poAndItems['allowance_1'] - $poAndItems['allowance_2'];
-      $pdf->Ln();
       $pdf->SetDrawColor(255);
       $pdf->Cell(130,0,"",1,0,'L',true);
       $pdf->SetDrawColor(0);
@@ -667,7 +689,12 @@ class newPoController extends BaseController {
        
        $pdf->SetDrawColor(255);
        $pdf->SetFont('chi','',10);  
-       $pdf->Cell(10, 5,$poAndItems['poRemark'],0,1);
+       if(strpos($poAndItems['poRemark'], "\n") !== FALSE) {
+            $pdf->Cell(10,0,"",1,0,'L',true);
+            $pdf->Cell(20, 5,substr($poAndItems['poRemark'],0,strpos($poAndItems['poRemark'], "\n")),0,1);
+            $pdf->Cell(10,0,"",1,0,'L',true);
+            $pdf->Cell(20, 5,substr($poAndItems['poRemark'],strpos($poAndItems['poRemark'], "\n")+1),0,1); 
+       }
       // $pdf->Cell(10, $j -100,"1.Please send two copies of your invoice.:",0,1,"L");
        
    
@@ -780,7 +807,6 @@ class newPoController extends BaseController {
     public function purchaseOrderForm()
     {
         $pdf = new PDF();
-        $pdf->AliasNbPages();
         $pdf->AddPage();
         
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
@@ -1052,6 +1078,39 @@ class newPoController extends BaseController {
         $object = Input ::get('poId');
         $poAdultMan = new poaduditManipaulation($object);
         return $poAdultMan->save();
+    }
+    
+    public function overseaPoGetISnvoice()
+    {
+        $poCode = Input::get('poCode');
+        
+        $pdf = new PDF();
+ 
+        $pdf->AddPage();
+        $pdf->SetFont('chi','',12);
+        $pdf->setXY(10, 40);
+        $pdf->Cell(0, 0,"炳 記 行 貿 易 有 限 公 司",0,1,"L");
+
+
+        $pdf->SetFont('chi','',9);
+        $pdf->setXY(10, 45);
+        $pdf->Cell(0, 0,"Flat B, 9/F., Wang Cheung Industrial Building, ",0,1,"L");
+        
+        $pdf->SetFont('chi','',9);
+        $pdf->setXY(10, 50);
+        $pdf->Cell(0, 0,"6 Tsing Yeung St., Tuen Mun, N.T. Hong Kong., ",0,1,"L");
+        
+        $image = public_path('logo.jpg');
+        $pdf->Cell( 40, 40, $pdf->Image($image, 10, 7, 25,28), 0, 0, 'L', false );
+        
+        $pdf->SetFont('chi','',9);
+        $pdf->setXY(10, 55);
+        $pdf->Cell(0, 0,"TEL:852 24618500    FAX:852 24552449",0,1,"L");
+            
+        $pdf->SetFont('chi','',20);
+        $pdf->setXY(150, 20);
+        $pdf->Cell(0, 0,"PURCHASE ORDER",0,1,"L");
+
     }
     
 }
