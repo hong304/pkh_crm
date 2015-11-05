@@ -257,7 +257,7 @@ class VanSellController extends BaseController
 
         $this->_data = $this->goods['1F'];
 
-        $vansell_query = vansell::select('productId', 'productlevel')->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->get()->toArray();
+        $vansell_query = vansell::select('productId', 'productlevel','org_qty','van_qty')->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->get()->toArray();
         $van_query = van::select('productId', 'productlevel','van_qty')->where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->get()->toArray();
 
        // pd($vansell_query);
@@ -281,12 +281,14 @@ class VanSellController extends BaseController
 
                 foreach ($vansell_query as $k1 => $v1){
                     if ($v1['productId'] == $v['productId'] && $v1['productlevel'] == $v['unit']) {
-                        $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->first();
-                        if ($vansell->qty == $vansell->org_qty && $vansell->self_enter == 0)
-                            $vansell->qty = $v['counts'];
-                        $vansell->org_qty = $v['counts'];
-                        $vansell->van_qty = $van_qty;
-                        $vansell->save();
+                        if($v1['van_qty'] != $van_qty || $v1['org_qty']!=$v['counts']){
+                            $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->first();
+                            if ($vansell->qty == $vansell->org_qty && $vansell->self_enter == 0)
+                                $vansell->qty = $v['counts'];
+                            $vansell->org_qty = $v['counts'];
+                            $vansell->van_qty = $van_qty;
+                            $vansell->save();
+                        }
                         $skip = true;
                         break;
                     }
@@ -330,8 +332,8 @@ class VanSellController extends BaseController
                 $index++;
             }
         }
-
-        vansell::insert($create);
+        if(count($create)>0)
+            vansell::insert($create);
 
 
         $dbIds = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->lists('productId');
@@ -366,8 +368,7 @@ class VanSellController extends BaseController
 
     }
 
-public
-function registerFilter()
+public function registerFilter()
 {
     /*
      * Type:
