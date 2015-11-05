@@ -32,8 +32,6 @@ $scope.totalline = 0;
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.loadSetting();
-        if($scope.filterData.deliveryDate != '')
-            $scope.loadReport();
     });
 
 
@@ -43,18 +41,6 @@ $scope.totalline = 0;
 	}, function() {
 	 // $scope.loadReport();
 	}, true);
-
-    $scope.updateZone = function(){
-        $scope.loadReport();
-    }
-
-    $scope.updateShift = function(){
-        $scope.loadReport();
-    }
-
-    $scope.updateDate = function(){
-        $scope.loadReport();
-    }
 
     $scope.loadSetting = function()
     {
@@ -114,9 +100,14 @@ $scope.totalline = 0;
 
 
     }
-    
+
+    $scope.reset = function(){
+        $scope.prepareforreport = false;
+    }
     $scope.loadReport = function()
     {
+
+        $scope.prepareforreport = true;
     	$http.post(querytarget, {reportId: 'vanselllist', output: "preview", filterData: $scope.filterData})
             .success(function(res){
 
@@ -191,7 +182,10 @@ $scope.totalline = 0;
     $scope.sendRealFile = function()
     {
 
-console.log($scope.qty);
+if(!$scope.prepareforreport){
+    alert('請按提交,再產生PDF');
+    return false;
+}
 
         $http.post(querytarget, {reportId: 'vanselllist', output: "create", filterData: $scope.filterData,data:$scope.qty,selfdefine:$scope.selfdefine})
             .success(function(res, status, headers, config){

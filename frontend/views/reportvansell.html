@@ -25,7 +25,7 @@
 					<div class="input-group">
 						<select class="form-control"
 							ng-model="filterData[f.model]" 
-							data-ng-options="x.label for x in f.optionList track by x.value" data-ng-change="updateZone();">
+							data-ng-options="x.label for x in f.optionList track by x.value" data-ng-change="reset();">
 						</select>
 					</div>
 				</div>
@@ -34,7 +34,7 @@
             <div class="portlet-body" id="shift" data-ng-if="f.type == 'single-dropdown'">
                 <div class="md-col-12">
                     <select class="form-control"
-                            ng-model="filterData.shift" data-ng-change="updateShift();">
+                            ng-model="filterData.shift" data-ng-change="reset();">
                         <option value='1'>早班</option>
                         <option value='2'>晚班</option>
                         <option value='-1'>全部</option>
@@ -46,13 +46,22 @@
 			<div class="portlet-body" data-ng-if="f.type == 'date-picker'">
 				<div class="md-col-12" style="margin-bottom:15px;">
 					<div class="input-group  date " id="{{f.id}}" data-date-format="yyyy-mm-dd" data-date-start-date="-5d">
-						<input type="text" class="form-control" readonly ng-model="filterData[f.model]" data-ng-change="updateDate();">
+						<input type="text" class="form-control" readonly ng-model="filterData[f.model]" data-ng-change="reset();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
 					</div>
 				</div>
 			</div>
+
+
+                <div class="portlet-body" data-ng-if="f.type == 'submit'">
+                    <div class="md-col-12">
+                        <button type="button" ng-click="loadReport();" id="submitbutton" class="btn blue">提交</button>
+                    </div>
+                </div>
+         
+
 		</div>
 	</div>
 
