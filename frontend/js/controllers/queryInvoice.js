@@ -1,10 +1,10 @@
 'use strict';
 
-function viewInvoice(invoiceId)
+function viewInvoice(invoiceId,invoiceStatus)
 {
 	var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
-    	scope.viewInvoice(invoiceId);
+    	scope.viewInvoice(invoiceId,invoiceStatus);
     });
 }
 function goEdit(invoiceId)
@@ -339,10 +339,10 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     	});
     }
 
-    $scope.viewInvoice = function(invoiceId)
+    $scope.viewInvoice = function(invoiceId,invoiceStatus)
     {
     	Metronic.blockUI();
-    	$http.post(querytarget, {mode: "single", invoiceId: invoiceId})
+    	$http.post(querytarget, {mode: "single", invoiceId: invoiceId,invoiceStatus:invoiceStatus})
     	.success(function(res, status, headers, config){
     		$scope.nowUnixTime = Math.round(+new Date()/1000);
             $scope.invoiceinfo = res;

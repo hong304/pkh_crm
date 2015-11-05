@@ -213,6 +213,8 @@ class OrderController extends BaseController
         $i->invoiceStatus = 99;
         $i->save();
         $i->delete();
+
+        invoiceitem::where('invoiceId', $invoiceId)->update(['itemStatus'=>99]);
         invoiceitem::where('invoiceId', $invoiceId)->delete();
 
         $this->backToStock($i->invoiceitem);
@@ -451,7 +453,7 @@ class OrderController extends BaseController
 
             return Datatables::of($invoices)
                 ->addColumn('link', function ($invoice) {
-                    return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+                    return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\',\''.$invoice->invoiceStatus.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
                 })->addColumn('id', function ($invoice) {
                     return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">' . $invoice->invoiceId . '</a>';
                 })->setRowClass(function ($invoice) {
@@ -460,10 +462,13 @@ class OrderController extends BaseController
                 ->make(true);
 
         } elseif ($mode == 'single') {
+
+
             $invoices = Invoice::where('invoiceId', Input::get('invoiceId'))
                 ->with(['invoiceItem' => function ($query) use ($ids) {
                     $query->orderBy('productLocation', 'asc')->orderBy('productQtyUnit', 'asc')->orderByRaw(DB::raw("FIELD(productUnitName, $ids) DESC"))->orderBy('productId', 'asc')->with('productDetail');
-
+                if(Input::get('invoiceStatus') == '99')
+                        $query->where('itemStatus',99)->withTrashed();
                 }])->with('client', 'staff', 'printqueue', 'audit', 'audit.User')
                 ->withTrashed()
                 ->first();

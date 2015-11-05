@@ -76,7 +76,16 @@ class InvoiceStatusManager {
             $i->restore();
             $i->invoiceStatus = $i->previous_status;
             $i->save();
-            invoiceitem::where('invoiceId',$i->invoiceId)->restore();
+
+
+            $ii = invoiceitem::onlyTrashed()->where('invoiceId',$i->invoiceId)->where('itemStatus',99)->get();
+            foreach($ii as $v){
+                    $v->restore();
+                     $v->itemStatus = null;
+                    $v->save();
+            }
+
+
         }
         return $this;
     }
