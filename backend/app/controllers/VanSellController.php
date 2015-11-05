@@ -260,7 +260,7 @@ class VanSellController extends BaseController
         $vansell_query = vansell::select('productId', 'productlevel')->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->get()->toArray();
         $van_query = van::select('productId', 'productlevel','van_qty')->where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->get()->toArray();
 
-        // pd($van_query);
+       // pd($vansell_query);
         //  pd($this->_data);
 
         $allIds = [];
