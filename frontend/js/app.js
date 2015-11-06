@@ -1088,10 +1088,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 						//assets + '/global/plugins/datatables/all.min.js',
 						//assets + '/global/scripts/datatable.js',
 
-                        assets + '/css/dataTable/bootstrap.min.css',
-                        assets + '/css/dataTable/dataTables.bootstrap.css',
-                        assets + '/js/dataTable/jquery.dataTables.min.js',
-                        assets + '/js/dataTable/dataTables.bootstrap.js',
+                        assets + '/global/plugins/datatables/all.min.js',
+                        assets + '/global/scripts/datatable.js',
+
 						assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
 						assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
                         assets + '/global/plugins/bootbox/bootbox.min.js',

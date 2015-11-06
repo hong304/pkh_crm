@@ -271,7 +271,7 @@ class UserController extends BaseController {
 	    if($mode == 'collection')
 	    {
 	        $filter = Input::get('filterData');
-            Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+           // Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
 	        $staff = User::select('*');
 
             if($filter['ceritera'] != '')
@@ -280,30 +280,32 @@ class UserController extends BaseController {
                       ->orwhere('name', 'LIKE', '%'.$filter['ceritera'].'%');
             }
 
-	        $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-	        $staff = $staff->with('role')->paginate($page_length);
+	      //  $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
+	        $staff = $staff->with('role');
 
-	        foreach($staff as $c)
-	        {
-                if($c->disabled == 0){
-                    $c->disabled = '正常';
-                }else{
-                    $c->disabled = '暫停';
-                }
-                if(Auth::user()->can('delete_staff'))
-                    $c->delete = '<span onclick="delCustomer(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
-                else
-                    $c->delete = '';
 
-                if(Auth::user()->can('edit_staff'))
-                    $c->link = '<span onclick="editStaff(\''.$c['id'].'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
-                else
-                    $c->link = '';
 
-                $c->m_role = '';
-                foreach($c->role as $v)
-	                $c->m_role =  $v->name;
-	        }
+            return Datatables::of($staff)
+                ->addColumn('delete', function ($s) {
+                    if(Auth::user()->can('delete_staff'))
+                        return '<span onclick="delCustomer(\''.$s->id.'\')" class="btn btn-xs default"><i class="fa glyphicon glyphicon-remove"></i> 刪除</span>';
+                    else
+                        return '';
+                })->addColumn('link', function ($s) {
+                    if(Auth::user()->can('edit_staff'))
+                        return '<span onclick="editStaff(\''.$s->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    else
+                        return '';
+
+                })->editColumn('disabled',function($c) {
+                    if($c->disabled == 0){
+                        return '正常';
+                    }else{
+                        return '暫停';
+                    }
+                })
+                ->make(true);
+
 
 	    }
 
@@ -336,7 +338,7 @@ class UserController extends BaseController {
 	        {
 	            $lr->hash = Crypt::encrypt($lr->id);
 	        }
-	        
+            return Response::json($staff);
 	    }
 	    elseif($mode == 'forcelogout')
 	    {
@@ -352,9 +354,12 @@ class UserController extends BaseController {
 	        $user->save();
 	        
 	        $staff = [];
+
+            return Response::json($staff);
+
 	    }
 	
-	    return Response::json($staff);
+
 	}
 
 }
