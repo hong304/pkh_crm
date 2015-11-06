@@ -175,7 +175,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         start		:	Date.now(),
         selected_client	:	'',
         product		:	[],
-        submit		:	'',
+        submit		:	''
     }
 
     // product: select, change_qty, change_unit
@@ -442,6 +442,23 @@ else{
                     var inf = data.invoice;
 
                     // set client information
+                    $scope.order.zoneId = inf.zoneId;
+
+                    var zoneDB = $scope.systeminfo.availableZone;
+                    var pos = zoneDB.map(function(e) {
+                        return e.zoneId;
+                    }).indexOf(parseInt(inf.zoneId));
+
+                    if(typeof zoneDB[pos] == 'undefined'){
+                        $scope.allowSubmission = false;
+                        return false;
+                    }
+
+                    if(!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)){
+                        $scope.allowSubmission = false;
+                        return false;
+                    }
+
                     $scope.order.clientId = res.customerId;
                     $scope.order.clientName = res.customerName_chi;
                     $scope.order.address = res.address_chi;
@@ -450,12 +467,9 @@ else{
                     $scope.order.dueDate = inf.dueDateDate;
                     $scope.order.status = inf.invoiceStatus;
 
-                    if(!$scope.systeminfo.permission.sa_up && $scope.order.status > 3){
-                        $scope.allowSubmission = false;
-                        return false;
-                    }
 
-                    $scope.order.zoneId = inf.zoneId;
+
+
                     $scope.order.zoneName = data.entrieinfo;
                     $scope.order.route = res.routePlanningPriority;
                     $scope.order.discount = inf.invoiceDiscount;
@@ -616,7 +630,7 @@ else{
                             }).indexOf('unit');
                         }
                         $scope.product[j]['unit'] = $scope.product[j]['availableunit'][pos];
-                        console.log($scope.product[j]['availableunit']);
+                      //  console.log($scope.product[j]['availableunit']);
                         $scope.checkPrice(j);
 
 
@@ -728,7 +742,7 @@ else{
                 // $scope.getLastItem(code, $scope.order.clientId, i, 0);
                 if($scope.allLastItemPrice[code.toUpperCase()]) {
                     $scope.lastitem = $scope.allLastItemPrice[code.toUpperCase()];
-                    console.log($scope.lastitem);
+                   // console.log($scope.lastitem);
                     if( $scope.lastitem.qty > 0){
                         $scope.product[i].unitprice =  $scope.lastitem.price;
                         var pos = $scope.product[i]['availableunit'].map(function(e) {
@@ -804,7 +818,7 @@ else{
     $scope.updateStandardPrice = function (i)
     {
 
-        console.log('updatePrice');
+
         var code = $scope.product[i]['code'];
         var item = $scope.retrievedProduct[code];
         var unit = $scope.product[i]['unit'].value;
@@ -1080,7 +1094,7 @@ if($scope.order.invoiceNumber !='' && $scope.order.invoiceId == ''){
 
                         if($scope.order.invoiceNumber != ''){
                             var inn = $scope.order.invoiceNumber;
-                            console.log(inn.length);
+                           // console.log(inn.length);
                             if(inn.length != 12){
                                 $scope.allowSubmission = false;
                             }else
