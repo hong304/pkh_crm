@@ -118,7 +118,7 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/voidPo.json', 'newPoController@voidPo');
     Route::post('/newPoAdult.json', 'newPoController@newPoAdult');
     Route::post('/queryPoUpdate.json', 'newPoController@queryPoUpdate');	
-    Route::post('/overseaPoGetISnvoice.json', 'newPoController@overseaPoGetISnvoice');	
+    Route::get('/overseaPoGetISnvoice.json', 'newPoController@overseaPoGetISnvoice');	
     
     
     // Group Maintenance
