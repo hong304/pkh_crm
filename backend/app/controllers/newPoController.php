@@ -128,7 +128,7 @@ class newPoController extends BaseController {
 
             return Datatables::of($purchaseOrder)
                             ->addColumn('link', function ($purchaseOrde) {
-                                return '<span onclick="editPo(\'' . $purchaseOrde->poCode . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+                                return '<span onclick="editPo(\'' . $purchaseOrde->poCode . '\',\''. $purchaseOrde->location .'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
                             })
                             ->editColumn('poStatus', function($purchaseOrde) {
                                 $statusValue = "";
@@ -780,10 +780,14 @@ class newPoController extends BaseController {
         $pdf->SetLineWidth(.1);  //set the line width of box
     }
     
-    public function outputShipNote()
+    public function setOverseaTableBox($pdf)
     {
-        
+        $pdf->SetFillColor(255, 255, 0); //box color
+        $pdf->SetTextColor(0); 
+        $pdf->SetDrawColor(92,92,92);
+        $pdf->SetLineWidth(.1);  //set the line width of box
     }
+    
     
     public function genHead($pdf)
     {
@@ -1084,32 +1088,142 @@ class newPoController extends BaseController {
     {
         $poCode = Input::get('poCode');
         
+        $supplierImfo = Purchaseorder :: select('*')->where('poStatus',1)->where('poCode',$poCode)->with('supplier')->first()->toArray();
+       // pd($supplierImfo);
         $pdf = new PDF();
  
         $pdf->AddPage();
-        $pdf->SetFont('chi','',12);
+        $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
+        $pdf->SetFont('chi','',15);
         $pdf->setXY(10, 40);
         $pdf->Cell(0, 0,"炳 記 行 貿 易 有 限 公 司",0,1,"L");
-
-
-        $pdf->SetFont('chi','',9);
-        $pdf->setXY(10, 45);
-        $pdf->Cell(0, 0,"Flat B, 9/F., Wang Cheung Industrial Building, ",0,1,"L");
         
-        $pdf->SetFont('chi','',9);
-        $pdf->setXY(10, 50);
-        $pdf->Cell(0, 0,"6 Tsing Yeung St., Tuen Mun, N.T. Hong Kong., ",0,1,"L");
+        $pdf->SetFont('chi','',15);
+        $pdf->setXY(10, 47);
+        $pdf->Cell(0, 0,"PING KEE HONG TRADING CO., LTD",0,1,"L");
+
+
+        $pdf->SetFont('chi','',8);
+        $pdf->setXY(10, 53);
+        $pdf->Cell(0, 0,"Flat B,Wang Cheung Industrial Building., 6 Tsing Yeung st., N.Y.Hong Kong., ",0,1,"L");
+        
         
         $image = public_path('logo.jpg');
-        $pdf->Cell( 40, 40, $pdf->Image($image, 10, 7, 25,28), 0, 0, 'L', false );
+        $pdf->Cell( 40, 55, $pdf->Image($image, 10, 7, 25,28), 0, 0, 'L', false );
         
-        $pdf->SetFont('chi','',9);
-        $pdf->setXY(10, 55);
+        $pdf->SetFont('chi','',8);
+        $pdf->setXY(10, 58);
         $pdf->Cell(0, 0,"TEL:852 24618500    FAX:852 24552449",0,1,"L");
             
         $pdf->SetFont('chi','',20);
-        $pdf->setXY(150, 20);
+        $pdf->setXY(125, 20);
         $pdf->Cell(0, 0,"PURCHASE ORDER",0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(10, 68);
+        $pdf->Cell(0, 0,"Supplier Name:",0,1,"L");
+
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(40, 68);
+        $pdf->Cell(0, 0,$supplierImfo['supplier']['supplierName'],0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(10, 73);
+        $pdf->Cell(0, 0,"Supplier Code:",0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(40, 73);
+        $pdf->Cell(0, 0,$supplierImfo['supplier']['supplierCode'],0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(10, 78);
+        $pdf->Cell(0, 0,"Supplier Address:",0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(40, 78);
+        $pdf->Cell(0, 0,$supplierImfo['supplier']['address'],0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(40, 83);
+        $pdf->Cell(0, 0,$supplierImfo['supplier']['address1'],0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(40, 89);
+        $pdf->Cell(0, 0,$supplierImfo['supplier']['address2'],0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(10, 94);
+        $pdf->Cell(0, 0,"Contact person:",0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(40, 94);
+        $pdf->Cell(0, 0,$supplierImfo['supplier']['contactPerson_1'],0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(140, 40);
+        $pdf->Cell(0, 0,"P.O. Date:",0,1,"L");
+        
+        $poDate = DateTime::createFromFormat('Y-m-d',$supplierImfo['poDate']);
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(160, 40);
+        $pdf->Cell(0, 0,date("F j, Y",strtotime($poDate->format('d-m-Y'))),0,1,"L");
+        
+        $pdf->SetFont('chi','',10);
+        $pdf->setXY(140, 45);
+        $pdf->Cell(0, 0,"P.O. Number:",0,1,"L");
+        
+        $pdf->SetFont('chi','',13);
+        $pdf->setXY(166, 45);
+        $pdf->Cell(0, 0,$supplierImfo['poCode'],0,1,"L");
+        
+        $pdf->Ln();  // line break 
+        
+        $pdf->SetXY(10,100);
+        $pdf->SetFont('chi','',11);
+        $this->setOverseaTableBox($pdf);
+        
+        $pdf->Cell(30,10,"SHIPPED VIA",1,0,'C',true);
+        $pdf->Cell(45,10,"TOTAL FCL LOAD",1,0,'C',true);
+        $pdf->Cell(40,10,"ETA HK",1,0,'C',true);
+        $pdf->Cell(40,10,"SHIPPING TERMS",1,0,'C',true);
+        $pdf->Cell(40,10,"CURRENCY",1,0,'C',true);
+        
+        $pdf->Ln();  // line break 
+        
+        $pdf->SetY(110);
+        
+        $pdf->SetFillColor(255); //box color
+        
+        $pdf->Cell(30,7,"SEA",1,0,'C',true);
+        $pdf->Cell(45,7,"1x20'",1,0,'C',true);
+        
+        $etaengDate = DateTime::createFromFormat('Y-m-d',$supplierImfo['etaDate']);
+        $pdf->Cell(40, 7,date("F j, Y",strtotime($etaengDate->format('d-m-Y'))),1,0,'C',true);
+        
+        $pdf->Cell(40,7,"CIF",1,0,'C',true);
+        $pdf->Cell(40,7,$supplierImfo['currencyId'],1,0,'C',true);
+        
+        $pdf->Ln();
+        
+        $pdf->SetY(120);
+        
+        $pdf->SetFillColor(255, 255, 0);
+        $this->setOverseaTableBox($pdf);
+        
+        $pdf->Cell(10,10,"NO.",1,0,'C',true);
+        $pdf->Cell(45,10,"",1,0,'C',true);
+        $pdf->Cell(20,10,"GRADE",1,0,'C',true);
+        $pdf->Cell(20,10,"MARK",1,0,'C',true);
+        $pdf->Cell(20,10,"COUNT",1,0,'C',true);
+        $pdf->Cell(20,10,"QTY",1,0,'C',true);
+        $pdf->Cell(20,10,"UOM",1,0,'C',true);
+        $pdf->Cell(20,10,"UNIT PRICE($)",1,0,'C',true);
+        $pdf->Cell(20,10,"TOTAL",1,0,'C',true);
+        
+        
+        
+        
+        $pdf->Output('','I');
 
     }
     

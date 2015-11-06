@@ -1,12 +1,12 @@
 'use strict';
 
 
-function editPo(poId)
+function editPo(poId,location)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
-        scope.viewPurchaseOrder(poId);
-        scope.viewUpdateRecord(poId);
+        scope.viewPurchaseOrder(poId,location);
+        scope.viewUpdateRecord(poId,location);
     });
 }
 
@@ -223,7 +223,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
     }
     
   
-    $scope.viewPurchaseOrder = function (poId)
+    $scope.viewPurchaseOrder = function (poId,location)
     {
         $http.post($scope.endpoint + "/queryPo.json", {
             poCode: poId, mode: 'single'
@@ -242,7 +242,6 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
             $scope.invoiceinfo.poAmount = data.po[0].poAmount;
             $scope.invoiceinfo.supplierName = data.po[0].supplierName;
             $scope.invoiceinfo.currencyName = data[0].currencyName;
-            console.log(data);
             $scope.invoiceinfo.invoice_item = data.items;
             $scope.invoiceinfo.invoice = data.po[0];
         //    $scope.invoiceinfo.unitprice = data.items[0].unitprice;
@@ -258,7 +257,10 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
                 $scope.invoiceinfo.totalsAmount += (data.items[i].productQty * data.items[i].unitprice * (100-data.items[i].discount_1)/100 * (100-data.items[i].discount_2)/100 * (100-data.items[i].discount_3)/100) - data.items[i].allowance_1 - data.items[i].allowance_2 - data.items[i].allowance_3;
             }
         })
-
+        if(location == 1)
+            $scope.locationShow = true;
+        else if(location == 2)
+            $scope.locationShow = false;
         $("#poDetails").modal({backdrop: 'static'});
 
     }

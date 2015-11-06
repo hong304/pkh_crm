@@ -241,9 +241,9 @@
 
 
                                
-                                            <button type="button" class="btn grey-cascade" data-ng-click="genA4Invoice(invoiceinfo.poCode,'eng');">本地英文版單據</button>
-                                            <button type="button" class="btn grey-cascade" data-ng-if = "invoiceinfo.location == 1" data-ng-click="genA4Invoice(invoiceinfo.poCode,'chi');">本地中文版單據</button>
-                                            <button type="button" class="btn grey-cascade" data-ng-click="overseaPoGetISnvoice(invoiceinfo.poCode);">外地單據</button>
+                                            <button type="button" class="btn grey-cascade" data-ng-click="genA4Invoice(invoiceinfo.poCode,'eng');" data-ng-if="locationShow == true">本地英文版單據</button>
+                                            <button type="button" class="btn grey-cascade" data-ng-if = "invoiceinfo.location == 1" data-ng-click="genA4Invoice(invoiceinfo.poCode,'chi');" data-ng-if="locationShow == true">本地中文版單據</button>
+                                            <button type="button" class="btn grey-cascade" data-ng-click="overseaPoGetISnvoice(invoiceinfo.poCode);"  data-ng-if="locationShow == false">外地單據</button>
                                         </div>
                                         </div>
                                         <!-- /.modal-content -->
