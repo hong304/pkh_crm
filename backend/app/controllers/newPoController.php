@@ -1087,9 +1087,13 @@ class newPoController extends BaseController {
     public function overseaPoGetISnvoice()
     {
         $poCode = Input::get('poCode');
-        
-        $supplierImfo = Purchaseorder :: select('*')->where('poStatus',1)->where('poCode',$poCode)->with('supplier')->first()->toArray();
-       // pd($supplierImfo);
+       
+        $supplierImfo = Purchaseorder :: select('*')->where('poStatus',1)->where('poCode',$poCode)->with('supplier')->with('Poitem')->with(['Poitem'=>function($query){$query->with('productDetail');}])
+                ->first()->toArray();
+       // $poAndItems = Purchaseorder::where('poCode',$poCode)->with(['Poitem'=>function($query){
+      //      $query->with('productDetail');
+      //  }])->with('Supplier','Currency')->first();
+   
         $pdf = new PDF();
  
         $pdf->AddPage();
@@ -1152,7 +1156,7 @@ class newPoController extends BaseController {
         $pdf->Cell(0, 0,$supplierImfo['supplier']['address2'],0,1,"L");
         
         $pdf->SetFont('chi','',10);
-        $pdf->setXY(10, 94);
+        $pdf->setXY(10, 83);
         $pdf->Cell(0, 0,"Contact person:",0,1,"L");
         
         $pdf->SetFont('chi','',10);
@@ -1178,7 +1182,7 @@ class newPoController extends BaseController {
         
         $pdf->Ln();  // line break 
         
-        $pdf->SetXY(10,100);
+        $pdf->SetXY(10,90);
         $pdf->SetFont('chi','',11);
         $this->setOverseaTableBox($pdf);
         
@@ -1190,7 +1194,7 @@ class newPoController extends BaseController {
         
         $pdf->Ln();  // line break 
         
-        $pdf->SetY(110);
+        $pdf->SetY(100);
         
         $pdf->SetFillColor(255); //box color
         
@@ -1205,24 +1209,56 @@ class newPoController extends BaseController {
         
         $pdf->Ln();
         
-        $pdf->SetY(120);
+        $pdf->SetY(115);
         
         $pdf->SetFillColor(255, 255, 0);
         $this->setOverseaTableBox($pdf);
         
+        $pdf->SetFont('chi','',9);
         $pdf->Cell(10,10,"NO.",1,0,'C',true);
-        $pdf->Cell(45,10,"",1,0,'C',true);
+        $pdf->Cell(40,10,"DESCRIPTION PACKING",1,0,'C',true);
         $pdf->Cell(20,10,"GRADE",1,0,'C',true);
         $pdf->Cell(20,10,"MARK",1,0,'C',true);
         $pdf->Cell(20,10,"COUNT",1,0,'C',true);
         $pdf->Cell(20,10,"QTY",1,0,'C',true);
         $pdf->Cell(20,10,"UOM",1,0,'C',true);
-        $pdf->Cell(20,10,"UNIT PRICE($)",1,0,'C',true);
-        $pdf->Cell(20,10,"TOTAL",1,0,'C',true);
+        $pdf->Cell(25,10,"UNIT PRICE($)",1,0,'C',true);
+        $pdf->Cell(20,10,"TOTAL($)",1,0,'C',true);
         
+        $pdf->Ln();
         
+        $pdf->SetY(125);
+        $pdf->SetFillColor(255);
+        $pdf->SetFont('chi','',9);
         
+        $storePack = array("箱"=>"carton","盒"=>"set");
+        $unit =   $storePack[$supplierImfo['poitem'][0]['productUnitName']] != "" ? $storePack[$supplierImfo['poitem'][0]['productUnitName']] : "";
         
+        for($row = 1; $row<count($supplierImfo['poitem']) +5; $row++)
+        {
+            $pdf->Cell(10,7,$row,1,0,'C',true);
+            $pdf->Cell(40,7,$supplierImfo['poitem'][0]['product_detail']['productName_chi'],1,0,'C',true);
+            $pdf->Cell(20,7,"",1,0,'C',true);
+            $pdf->Cell(20,7,"",1,0,'C',true);
+            $pdf->Cell(20,7,"",1,0,'C',true);
+            $pdf->Cell(20,7, $supplierImfo['poitem'][0]['productQty'],1,0,'C',true);
+            $pdf->Cell(20,7,$unit,1,0,'C',true);
+            $pdf->Cell(25,7,$supplierImfo['poitem'][0]['unitprice'],1,0,'C',true);
+            $pdf->Cell(20,7,$supplierImfo['poitem'][0]['productQty'] * $supplierImfo['poitem'][0]['unitprice'],1,0,'C',true);
+            $pdf->Ln();
+        }
+
+        $pdf->SetY(170);
+        $pdf->SetFont('chi','',10);
+        $pdf->SetFillColor(255, 255, 0);
+        $pdf->Cell(90,8,"Special Instructions/Documents Required",1,0,'L',true);
+        $pdf->Ln();
+        $pdf->SetFillColor(255);
+        $pdf->Cell(90,25,$supplierImfo['poRemark'],1,0,'L',true);
+        
+        $pdf->SetXY(140,165);
+        $pdf->Cell(65,35,$supplierImfo['poRemark'],1,0,'L',true);
+
         $pdf->Output('','I');
 
     }

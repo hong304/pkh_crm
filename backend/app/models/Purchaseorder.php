@@ -51,6 +51,7 @@ class Purchaseorder extends Eloquent {
         public function Receiving(){
             return $this->hasMany('Receiving','poCode','poCode');
         }
+        
 
     public static function getFullPo($base) {
         // get invoices and items
