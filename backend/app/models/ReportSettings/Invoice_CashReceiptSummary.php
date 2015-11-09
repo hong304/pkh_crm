@@ -569,7 +569,7 @@ class Invoice_CashReceiptSummary {
         }
 
         $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($cash,2,'.',','),$coins, number_format($coins+$cash,2,'.',',')), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($cash,2,'.',','),number_format($coins,2,'.',','), number_format($coins+$cash,2,'.',',')), 0, 0, "L");
 
 
         $sql = 'select count(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 2 THEN amount END) - SUM(CASE WHEN invoiceStatus = 98 and paymentTerms = 2 THEN amount ELSE 0 END) AS amount_credit, count(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 1 THEN amount END) - SUM(CASE WHEN invoiceStatus = 98 and paymentTerms = 1 THEN amount ELSE 0 END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
