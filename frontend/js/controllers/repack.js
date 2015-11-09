@@ -7,7 +7,7 @@ Metronic.unblockUI();
 app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state, $stateParams) {
     /* Register shortcut key */
 
-
+$scope.itemlist = [0];
     $scope.repack = {
         productId: '',
         productName: '',
@@ -23,6 +23,7 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
         'adjustId':'',
         'receivingId':'',
         'good_qty':'',
+        deleted : 0
      
     }
 
@@ -37,25 +38,43 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
         $scope.repack.productId = SharedService.productId;
         $scope.repack.productName = SharedService.productName;
         $scope.repack.products = SharedService.products;
+        console.log($scope.repack);
 
     });
 
-    $scope.totalline = 0;
+
+
+    $scope.itemlist.forEach(function(key){
+        $scope.selfdefine[key] = $.extend(true, {}, $scope.selfdefineS);
+       // console.log( $scope.selfdefine);
+    });
+
+    $scope.totalline = 1;
 
     $scope.addRows = function () {
         var j = $scope.totalline;
         $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
-        $scope.selfdefine[j]['productId'] = '';
+       /* $scope.selfdefine[j]['productId'] = '';
         $scope.selfdefine[j]['productName'] = '';
         $scope.selfdefine[j]['qty'] = '';
         $scope.selfdefine[j]['unit'] = '';
         $scope.selfdefine[j]['adjustId'] = '';
-        $scope.selfdefine[j]['receivingId'] = '';
+        $scope.selfdefine[j]['receivingId'] = '';*/
         $scope.totalline += 1;
     }
 
+    $scope.deleteRow = function(i)
+    {
+        console.log(i);
+        //console.log($scope.selfdefine);
+        $scope.selfdefine[i].deleted = 1;
+
+    }
 
     $scope.submitRepack = function () {
+
+        console.log($scope.selfdefine);
+
         var accumulate = 0;
         for (var j = 0; j < $scope.selfdefine.length; j++) // Change the value of original product
         {
@@ -69,7 +88,16 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
           
         
     }
-    
+
+
+    $scope.searchReceiving = function(){
+        var target = endpoint + '/outRepackProduct.json';
+        $http.post(target, {productId:$scope.out.productId})
+            .success(function (res, status, headers, config) {
+
+            });
+    }
+
      $scope.searchProduct = function (value,i) 
      {
           var target = endpoint + '/preRepackProduct.json';
@@ -78,12 +106,14 @@ app.controller('repack', function ($rootScope, $scope, $http, $timeout, SharedSe
                 if(typeof res == "object")
                 {
                      var availableunit = [];
-                    if(res.productPacking_unit >= 1)
+                    if(res.productPackingInterval_unit > 0)
                         availableunit = availableunit.concat([{value: 'unit', label: res.productPackingName_unit}]);
-                    if(res.productPacking_inner >= 1)
+                    if(res.productPackingInterval_inner > 0)
                         availableunit = availableunit.concat([{value: 'inner', label: res.productPackingName_inner}]);
-                    if(res.productPacking_carton >= 1)
+                    if(res.productPackingInterval_carton > 0)
                         availableunit = availableunit.concat([{value: 'carton', label: res.productPackingName_carton}]);
+
+                   // $scope.selfdefine[i]['availableunit'] = availableunit.reverse();
                     $scope.selfdefine[i]['availableunit'] = availableunit;
                     $scope.selfdefine[i]['unit'] = $scope.selfdefine[i]['availableunit'][0];
                     $scope.selfdefine[i]['qty'] = 1;

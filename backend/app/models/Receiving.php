@@ -14,7 +14,7 @@ class Receiving extends Eloquent {
     
     public function product()
     {
-        return $this->hasMany('Product', 'productId','productId');
+        return $this->hasOne('Product', 'productId','productId');
     }
 
 }

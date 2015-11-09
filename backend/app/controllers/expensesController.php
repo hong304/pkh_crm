@@ -55,7 +55,7 @@ class expensesController extends BaseController {
                 $expenses->wherein('zoneId', $permittedZone);
             }
 
-            $expenses->whereBetween('deliveryDate',[date('Y-m-d',strtotime($filter['deliverydate'])),date('Y-m-d',strtotime($filter['deliverydate2']))])->orderby('deliveryDate','desc');
+            $expenses->whereBetween('deliveryDate',[date('Y-m-d',strtotime($filter['deliverydate'])),date('Y-m-d',strtotime($filter['deliverydate2']))])->orderby('deliveryDate','desc')->orderby('zoneId','asc');
 
 
             return Datatables::of($expenses)

@@ -17,11 +17,19 @@ class rePackController extends BaseController {
         }
         return Response::json($store); 
     }
-    
+
+    public function outRepackProduct(){
+        $productId = Input :: get('productId');
+        $recevings = Receiving::where('productId',$productId)->where('good_qty','>',0)->with('product')->get();
+        foreach($recevings as $k => $v){
+            //$result =
+        }
+    }
+
     public function preRepackProduct()
     {
         $productId = Input :: get('productId');
-        $productName = Product :: select ('productName_chi','productPacking_carton','productPackingName_carton','productPacking_inner','productPackingName_inner','productPacking_unit','productPackingName_unit')->where('productId',$productId)->first();
+        $productName = Product :: select ('productName_chi','productPacking_carton','productPackingName_carton','productPacking_inner','productPackingName_inner','productPacking_unit','productPackingName_unit','productPackingInterval_inner','productPackingInterval_unit','productPackingInterval_carton')->where('productId',$productId)->first();
         if(isset($productName))
             return Response::json($productName); 
         else

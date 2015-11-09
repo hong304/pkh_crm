@@ -3,21 +3,72 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="frontReceive">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"aria-hidden="true"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                 <h4 class="modal-title">產品包裝</h4>
             </div>
+
             <div class="modal-body">
                 <form class="form-horizontal" role="form">
                     <div class="form-body">
                         <div class="">
                             <div class="form-group ">
-                                <div class="col-md-10">
+
+                                <div class="col-md-12">
                                          <div class="row">
-                                                <div class="col-md-10">
-                                                    <label>產品名稱:<br/>{{repack.productName}}({{repack.productId}})</label>
+                                                <div class="col-md-12">
+                                                    <label>產品名稱:</label>
                                                 </div>
                                           </div>
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                <tr role="row" class="heading">
+                                                    <th width="20%">
+                                                        貨品編號
+                                                    </th>
+                                                    <th width="50%">
+                                                        貨品名稱
+                                                    </th>
+                                                    <th width="10%">
+                                                        數量
+                                                    </th>
+                                                    <th width="10%">
+                                                        單位 <a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default"><i class="fa fa-plus"> </i></a>
+                                                    </th>
+                                                    <th width="10%">
+
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td><input type="text"  class="form-control" data-ng-model="out.productId" ng-change="searchReceiving()"></td>
+                                                    <td><input type="text" class="form-control" data-ng-model="out.productId"></td>
+                                                    <td><input type="text"  class="form-control" data-ng-model="out.qty"></td>
+                                                    <td>
+                                                     <select ng-model="out.unit" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value"></select>
+                                                    </td>
+                                                    <td></td>
+                                                  </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label>產品名稱:</label>
+                                        </div>
+                                    </div>
+                                </div>
+
                                  <div class="col-md-12">
                                          <div class="row">
                                                 <div class="col-md-12">
@@ -42,23 +93,16 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr data-ng-repeat="(k,i) in selfdefine">
+                                                            <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">
                                                                 <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)"></td>
                                                                 <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']"></td>
                                                                 <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']"></td>
                                                                 <td>           
                                                                     <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value">
-                                                                       <!--<option value="箱">箱</option>
-                                                                        <option value="包">包</option>
-                                                                        <option value="桶">桶</option>
-                                                                        <option value="札">札</option>
-                                                                        <option value="盒">盒</option>
-                                                                        <option value="排">排</option>
-                                                                        <option value="隻">隻</option>-->
-                                                                    </select>
+                                                                       </select>
                                                                 </td>
                                                                 <td>
-                                                                     <button type="button" class="btn btn-danger" id="deletebtn_1" data-ng-click="deleteRow(i);">刪除
+                                                                     <button type="button" class="btn btn-danger" id="deletebtn_1" data-ng-click="deleteRow(k);">刪除
                                                                     </button>
                                                                 </td>
                                                             </tr>

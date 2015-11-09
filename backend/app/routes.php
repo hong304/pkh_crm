@@ -230,6 +230,7 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/repack.json','rePackController@repack');
     Route::post('/addAjust.json','rePackController@addAjust');
     Route::post('/preRepackProduct.json','rePackController@preRepackProduct');
+    Route::post('/outRepackProduct.json','rePackController@outRepackProduct');
     
 
     //Permission Control
