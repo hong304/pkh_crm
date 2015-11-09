@@ -1216,9 +1216,9 @@ class newPoController extends BaseController {
         
         $pdf->SetFont('chi','',9);
         $pdf->Cell(10,10,"NO.",1,0,'C',true);
-        $pdf->Cell(40,10,"DESCRIPTION PACKING",1,0,'C',true);
-        $pdf->Cell(20,10,"GRADE",1,0,'C',true);
-        $pdf->Cell(20,10,"MARK",1,0,'C',true);
+        $pdf->Cell(45,10,"DESCRIPTION / PACKING",1,0,'C',true);
+        $pdf->Cell(17,10,"GRADE",1,0,'C',true);
+        $pdf->Cell(18,10,"MARK",1,0,'C',true);
         $pdf->Cell(20,10,"COUNT",1,0,'C',true);
         $pdf->Cell(20,10,"QTY",1,0,'C',true);
         $pdf->Cell(20,10,"UOM",1,0,'C',true);
@@ -1231,33 +1231,38 @@ class newPoController extends BaseController {
         $pdf->SetFillColor(255);
         $pdf->SetFont('chi','',9);
         
-        $storePack = array("箱"=>"carton","盒"=>"set");
-        $unit =   $storePack[$supplierImfo['poitem'][0]['productUnitName']] != "" ? $storePack[$supplierImfo['poitem'][0]['productUnitName']] : "";
+        $storePack = array("箱"=>"carton","盒"=>"set","扎"=>"sheaf");
+        $unit =   isset($storePack[$supplierImfo['poitem'][0]['productUnitName']]) ? $storePack[$supplierImfo['poitem'][0]['productUnitName']] : "";
         
         for($row = 1; $row<count($supplierImfo['poitem']) +5; $row++)
         {
             $pdf->Cell(10,7,$row,1,0,'C',true);
-            $pdf->Cell(40,7,$supplierImfo['poitem'][0]['product_detail']['productName_chi'],1,0,'C',true);
+            $pdf->Cell(45,7,$supplierImfo['poitem'][0]['product_detail']['productName_chi'],1,0,'L',true);
+            $pdf->Cell(17,7,"",1,0,'C',true);
+            $pdf->Cell(18,7,"",1,0,'C',true);
             $pdf->Cell(20,7,"",1,0,'C',true);
-            $pdf->Cell(20,7,"",1,0,'C',true);
-            $pdf->Cell(20,7,"",1,0,'C',true);
-            $pdf->Cell(20,7, $supplierImfo['poitem'][0]['productQty'],1,0,'C',true);
-            $pdf->Cell(20,7,$unit,1,0,'C',true);
-            $pdf->Cell(25,7,$supplierImfo['poitem'][0]['unitprice'],1,0,'C',true);
-            $pdf->Cell(20,7,$supplierImfo['poitem'][0]['productQty'] * $supplierImfo['poitem'][0]['unitprice'],1,0,'C',true);
+            $pdf->Cell(20,7, $supplierImfo['poitem'][0]['productQty'],1,0,'R',true);
+            $pdf->Cell(20,7,$unit,1,0,'L',true);
+            $pdf->Cell(25,7,"$   ".$supplierImfo['poitem'][0]['unitprice'],1,0,'C',true);
+            $pdf->Cell(20,7,"$   ".$supplierImfo['poitem'][0]['productQty'] * $supplierImfo['poitem'][0]['unitprice'],1,0,'C',true);
             $pdf->Ln();
         }
 
         $pdf->SetY(170);
         $pdf->SetFont('chi','',10);
         $pdf->SetFillColor(255, 255, 0);
-        $pdf->Cell(90,8,"Special Instructions/Documents Required",1,0,'L',true);
+        $pdf->Cell(90,8,"Special Instructions / Documents Required",1,0,'L',true);
         $pdf->Ln();
         $pdf->SetFillColor(255);
         $pdf->Cell(90,25,$supplierImfo['poRemark'],1,0,'L',true);
         
         $pdf->SetXY(140,165);
         $pdf->Cell(65,35,$supplierImfo['poRemark'],1,0,'L',true);
+        
+        $pdf->SetFont('Times','U');
+        $pdf->SetXY(140,165);
+        $pdf->Cell(65,35,"DETAILS:",1,0,'L',true);
+        
 
         $pdf->Output('','I');
 

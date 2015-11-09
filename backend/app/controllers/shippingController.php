@@ -447,5 +447,6 @@ class shippingController extends BaseController {
         $queryPo = Purchaseorder :: where('supplierCode',$supplierCode)->where('location',2)->with('supplier')->get();
         return Response::json($queryPo);
     }
+    
 
 }
