@@ -184,7 +184,8 @@ Route::group(array('before' => 'auth'), function()
     Route::post('addExpenses.json','expensesController@addExpenses');
     Route::post('queryExpenses.json','expensesController@queryExpenses');
 
-
+    Route::post('addIncome.json','incomeController@addIncome');
+    Route::post('queryIncome.json','incomeController@queryIncome');
 
     //Data analysis
     Route::any('/searchProductDataProduct.json', 'DataWarehouseController@jsonSearchDataProduct');

@@ -1,0 +1,73 @@
+<div class="modal fade bs-modal-lg " id="incomeFormModal" data-ng-init="" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+				
+				<h4 class="modal-title">支出管理 - (最後修改日期:{{income.updated_at}} 修改人:{{income.updated_by_text}})</h4>
+			</div>
+			<div class="modal-body">
+				<form action="javascript:;" class="form-horizontal">
+					<div class="form-body">
+
+
+
+                        <div class="form-group">
+
+                            <label class="col-md-2 control-label">區域:
+                            </label>
+                            <div class="col-md-4">
+                                <select class="form-control"
+                                        ng-model="income.zone"
+                                        data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
+                                        >
+                                    <option value=''>選擇車號</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group" id="datepicker">
+                            <label class="col-md-2 control-label">選擇日期:
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-group input-medium date " id="incomeDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                    <input type="text" class="form-control" ng-model="income.deliveryDate"  readonly>
+											<span class="input-group-btn">
+												<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+											</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">紙幣:
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" data-ng-model="income.notes" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">硬幣:
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" data-ng-model="income.coins" placeholder="">
+                            </div>
+                        </div>
+
+
+                    </div>
+				</form>
+				
+			</div>
+						<div class="modal-footer">
+					<button type="button" class="btn blue" data-ng-click="submitincomeForm();">提交</button>
+					<button type="button" class="btn default" data-dismiss="modal">取消</button>
+				</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+</div>
+

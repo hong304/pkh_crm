@@ -558,8 +558,9 @@ class Invoice_CashReceiptSummary {
         $pdf->setXY(10, $y);
         $pdf->Cell(0, 0, '實收現金:', 0, 0, "L");
 
-        $cash = end($this->_paidInvoice)['accumulator']+end($this->_account)['accumulator']-$this->_expenses['amount'];
-        $coins = 5;
+        $incomes = income::where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
+        $cash = $incomes->notes;
+        $coins = $incomes->coins;
 
         $pdf->setXY(40, $y);
         $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($cash,2,'.',','),$coins, number_format($coins+$cash,2,'.',',')), 0, 0, "L");

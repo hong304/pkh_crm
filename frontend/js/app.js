@@ -1299,6 +1299,32 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }
         })
 
+
+        .state('incomeListing', {
+            url: "/incomeListing",
+            templateUrl: "views/incomeListing.html",
+            data: {pageTitle: '現金客列表', pageSubTitle: ''},
+            controller: "incomeController",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            'js/controllers/incomeController.js',
+
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
         .state('expenses', {
             url: "/expenses",
             templateUrl: "views/payment/expenses.html",

@@ -1,33 +1,29 @@
 <?php
 
-class expensesController extends BaseController {
+class incomeController extends BaseController {
 
 
-    public function addExpenses()
+    public function addIncome()
     {
 
 
         $filter = Input::get('filterData');
 
         if($filter['id']!=''){
-            $expenses = expense::where('id',$filter['id'])->first();
+            $expenses = income::where('id',$filter['id'])->first();
         }else{
-            $expenses = expense::where('deliveryDate',date('Y-m-d',strtotime($filter['deliveryDate'])))->where('zoneId',$filter['zone']['zoneId'])->first();
+            $expenses = income::where('deliveryDate',$filter['deliveryDate'])->where('zoneId',$filter['zone']['zoneId'])->first();
             if(count($expenses) == null)
-                $expenses = new expense();
+                $expenses = new income();
         }
         $expenses->zoneId = $filter['zone']['zoneId'];
-        $expenses->deliveryDate = date('Y-m-d',strtotime($filter['deliveryDate']));
-        $expenses->cost1 = $filter['cost1'];
-        $expenses->cost2 = $filter['cost2'];
-        $expenses->cost3 = $filter['cost3'];
-        $expenses->cost4 = $filter['cost4'];
-        $expenses->cost3_remark = $filter['cost3_remark'];
-        $expenses->cost4_remark = $filter['cost4_remark'];
+        $expenses->deliveryDate = $filter['deliveryDate'];
+        $expenses->notes = $filter['notes'];
+        $expenses->coins = $filter['coins'];
         $expenses->save();
     }
 
-    public function queryExpenses()
+    public function queryIncome()
     {
 
         $mode = Input::get('mode');
@@ -38,7 +34,7 @@ class expensesController extends BaseController {
             if (!isset($filter['zone']['zoneId']))
                 $filter['zone']['zoneId'] = '';
 
-            $expenses = expense::select('*');
+            $expenses = income::select('*');
 
             // zone
             $permittedZone = explode(',', Auth::user()->temp_zone);
@@ -60,16 +56,18 @@ class expensesController extends BaseController {
 
             return Datatables::of($expenses)
                 ->addColumn('link', function ($expense) {
-                    if (Auth::user()->can('edit_expenses'))
-                        return '<span onclick="editExpenses(\'' . $expense->id . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
+                    if (Auth::user()->can('edit_income'))
+                        return '<span onclick="editIncome(\'' . $expense->id . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                     else
                         return '';
                 }) ->addColumn('updated_by_text', function ($expense) {
                             return $expense->updated_by_text;
+                }) ->addColumn('total', function ($expense) {
+                    return $expense->coins+$expense->notes;
                 })->make(true);
 
         } elseif ($mode == 'single') {
-            $expenses = expense::find(Input::get('id'));
+            $expenses = income::find(Input::get('id'));
             return Response::json($expenses);
         }
 

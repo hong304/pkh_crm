@@ -1,0 +1,152 @@
+<!--financeCashController-->
+<form class="form-horizontal" role="form" id="queryInfo">
+
+
+    <div class="col-md-2">
+
+
+        <!-- Zone -->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">車號</span>
+                </div>
+
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <select class="form-control"
+                            ng-model="filterData.zone"
+                            data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
+                            data-ng-change="updateDataSet();">
+                        <option value=''>檢視全部</option>
+
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delivery Date -->
+
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">送貨日期</span>
+                </div>
+
+            </div>
+
+            <!-- date-picker -->
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group  date " id="deliverydate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate" data-ng-change="updateDataSet();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                    </div>
+                    至
+                    <div class="input-group  date " id="deliverydate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                        <input type="text" class="form-control" readonly ng-model="filterData.deliverydate2" data-ng-change="updateDataSet();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+
+    <div class="col-md-10" id="firstContainer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs font-green-sharp"></i>
+                            <span class="caption-subject font-green-sharp bold uppercase">實收列表</span>
+                        </div>
+
+                            <div class="actions" ng-if="systemInfo.permission.add_cashCustomer == true">
+                                <a href="javascript:;" ng-click="addIncome();" class="btn btn-default btn-circle">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="hidden-480"> 新增實收 </span> </a>
+                            </div>
+
+
+                    </div>
+                    <div class="portlet-body">
+                            <table class="table table-striped table-bordered table-hover" id="datatable_ajax">
+                                <thead>
+                                <tr role="row" class="heading">
+                                    <th>
+                                        車區
+                                    </th>
+                                    <th>
+                                        送貨日期
+                                    </th>
+                                    <th>
+                                        紙幣
+                                    </th>
+                                    <th>
+                                        硬幣
+                                    </th>
+                                    <th>
+                                        合共
+                                    </th>
+                                    <th>
+                                        修改人
+                                    </th>
+                                    <th>
+
+                                    </th>
+
+
+                                </tr>
+
+                                </thead>
+                               <!-- <tr data-ng-repeat="(k,i) in invoiceinfo" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+
+                                    <td>
+                                        {{i.invoiceId}}
+                                    </td>
+                                    <td>{{i.deliveryDate_date}}</td>
+                                    <td>{{i.zoneId}}</td>
+                                    <td>{{i.customerName_chi}}</td>
+                                    <td>{{i.amount}}</td>
+                                    <td>{{i.remain}}</td>
+                                    <td>{{i.invoiceStatusText}}</td>
+                                    <td ng-init="invoicepaid[k]['paid']=20">
+                                        <label><input type="radio" name="r1{{k}}" ng-model="invoicepaid[k]['paid']" value="20" />已收貨</label>
+                                        <label> <input type="radio" name="r1{{k}}" ng-model="invoicepaid[k]['paid']" value="30" />完成</label>
+                                    </td>
+
+                                   <!-- <td>
+                                        <input type="text" ng-model="invoicepaid[k]['date']" ng-if="invoicepaid[k]['paid'] == '30'" value=" {{invoicepaid[k]['date'] | date: 'yyyy-MM-dd"}}">
+                                    </td>
+                                </tr>-->
+
+
+                            </table>
+                    </div>
+                </div>
+                <!-- END EXAMPLE TABLE PORTLET-->
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+
+<!-- Customer Maintenance Form -->
+<div ng-include="'/views/model_income.html'"></div>

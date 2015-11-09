@@ -1,14 +1,14 @@
 'use strict';
 
-function editExpenses (id)
+function editIncome (id)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
-        scope.editExpenses (id);
+        scope.editIncome (id);
     });
 }
 
-app.controller('expensesController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
+app.controller('incomeController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
 
     $scope.filterData = {
         'deliverydate'	:	'',
@@ -16,20 +16,16 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
         'zone'			:	''
 
     };
-    $scope.expenses = {};
-    $scope.expenses_def={
+    $scope.income = {};
+    $scope.income_def={
         'id': '',
-        'cost1' :'',
-        'cost2' :'',
-        'cost3' :'',
-        'cost4' :'',
-        'cost3_remark' :'',
-        'cost4_remark' :'',
+        'notes' :'',
+        'coins' :'',
         'deliveryDate' :'',
         'zone' : ''
     }
 
-    var query = endpoint + '/queryExpenses.json';
+    var query = endpoint + '/queryIncome.json';
 
     var today = new Date();
     var plus = today.getDay() == 6 ? 3 : 2;
@@ -69,8 +65,8 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
         $scope.updateDataSet();
-       // console.log($scope.filterData);
-   });
+        // console.log($scope.filterData);
+    });
 
     $scope.$watch(function() {
         return $rootScope.systeminfo;
@@ -78,14 +74,14 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
         $scope.systeminfo = $rootScope.systeminfo;
     }, true);
 
-    $scope.editExpenses = function(id){
+    $scope.editIncome = function(id){
 
 
         $http.post(query, {mode: "single", id: id})
             .success(function(res, status, headers, config){
-               // $scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
-                $scope.expenses = $.extend(true, {}, $scope.expenses_def);
-                $scope.expenses = res;
+                // $scope.customerInfo = $.extend(true, {}, $scope.customerInfo_def);
+                $scope.income = $.extend(true, {}, $scope.income_def);
+                $scope.income = res;
 
                 $('.date-picker').datepicker({
                     rtl: Metronic.isRTL(),
@@ -93,47 +89,47 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
                     autoclose: true
                 });
 
-                $("#expensesFormModal").modal({backdrop: 'static'});
+                $("#incomeFormModal").modal({backdrop: 'static'});
 
 
                 var pos = $scope.systeminfo.availableZone.map(function(e) {
                     return e.zoneId;
                 }).indexOf(res.zoneId);
 
-                $scope.expenses.zone = $scope.systeminfo.availableZone[pos];
+                $scope.income.zone = $scope.systeminfo.availableZone[pos];
             });
 
     }
-$scope.submitExpensesForm = function(){
-    $scope.buttonText = '提交中...';
-    $http({
-        method: 'POST',
-        url: endpoint + '/addExpenses.json',
-        data: {filterData: $scope.expenses}
-    }).success(function (res) {
-      //  $scope.buttonText = '提交成功';
-      //  $("#submitbutton").prop("disabled",true);
-        $("#expensesFormModal").modal('hide');
-        $scope.updateDataSet();
-    });
-}
+    $scope.submitincomeForm = function(){
+        $scope.buttonText = '提交中...';
+        $http({
+            method: 'POST',
+            url: endpoint + '/addIncome.json',
+            data: {filterData: $scope.income}
+        }).success(function (res) {
+            //  $scope.buttonText = '提交成功';
+            //  $("#submitbutton").prop("disabled",true);
+            $("#incomeFormModal").modal('hide');
+            $scope.updateDataSet();
+        });
+    }
 
 
-    $scope.addExpenses = function()
+    $scope.addIncome = function()
     {
         $scope.buttonText = '提交';
-        $scope.expenses = $.extend(true, {}, $scope.expenses_def);
+        $scope.income = $.extend(true, {}, $scope.income_def);
 
-        $('#expensesDate').datepicker({
+        $('#incomeDate').datepicker({
             rtl: Metronic.isRTL(),
             orientation: "left",
             autoclose: true
         });
 
-        $scope.expenses.deliveryDate = yyear+'-'+ymonth+'-'+yday;
+        $scope.income.deliveryDate = yyear+'-'+ymonth+'-'+yday;
 
-        $('#expensesDate').datepicker( "setDate" , yyear + '-' + ymonth + '-' + yday );
-        $("#expensesFormModal").modal({backdrop: 'static'});
+        $('#incomeDate').datepicker( "setDate" , yyear + '-' + ymonth + '-' + yday );
+        $("#incomeFormModal").modal({backdrop: 'static'});
 
     }
 
@@ -198,12 +194,9 @@ $scope.submitExpensesForm = function(){
                 "columns": [
                     { "data": "zoneId", "width":"3%" },
                     { "data": "deliveryDate", "width":"7%" },
-                    { "data": "cost1", "width":"5%" },
-                    { "data": "cost2",  "width":"5%"},
-                    { "data": "cost3", "width":"5%" },
-                    { "data": "cost3_remark", "width":"20%" },
-                    { "data": "cost4", "width":"6%" },
-                    { "data": "cost4_remark", "width":"20%" },
+                    { "data": "notes", "width":"5%" },
+                    { "data": "coins",  "width":"5%"},
+                    { "data": "total",  "width":"5%"},
                     { "data": "updated_by_text", "width":"5%" },
                     { "data": "link", "width":"5%" }
 
