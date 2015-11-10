@@ -74,6 +74,11 @@ app.controller('incomeController', function($scope, $rootScope, $http, SharedSer
         $scope.systeminfo = $rootScope.systeminfo;
     }, true);
 
+    $scope.calc = function(){
+        var coins = $scope.income.coins;
+        var notes = $scope.income.notes;
+        $scope.income.total = Number(coins) + Number(notes);
+    }
     $scope.editIncome = function(id){
 
 

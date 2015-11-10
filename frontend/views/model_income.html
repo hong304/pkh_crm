@@ -45,17 +45,24 @@
                             <label class="col-md-2 control-label">紙幣:
                             </label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" data-ng-model="income.notes" placeholder="">
+                                <input type="text" class="form-control" data-ng-model="income.notes" placeholder="" data-ng-change="calc();">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 control-label">硬幣:
                             </label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" data-ng-model="income.coins" placeholder="">
+                                <input type="text" class="form-control" data-ng-model="income.coins" placeholder="" data-ng-change="calc();">
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">總和:
+                            </label>
+                            <div class="col-md-4">
+                                <span class="form-control" >{{income.total | number:2}}</span>
+                            </div>
+                        </div>
 
                     </div>
 				</form>

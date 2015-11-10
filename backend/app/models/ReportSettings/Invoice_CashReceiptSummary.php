@@ -584,14 +584,14 @@ class Invoice_CashReceiptSummary {
         $pdf->Cell(0, 0, sprintf('月結單數:%s',$summary['count_credit']), 0, 0, "L");
 
         $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_credit'],2,',','.')), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_credit'],2,'.',',')), 0, 0, "L");
 
         $y+=5;
         $pdf->setXY(10, $y);
         $pdf->Cell(0, 0, sprintf('現金單數:%s',$summary['count_cod']), 0, 0, "L");
 
         $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_cod'],2,',','.')), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_cod'],2,'.',',')), 0, 0, "L");
 
 
         $y = 80;
