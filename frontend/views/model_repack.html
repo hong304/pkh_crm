@@ -47,10 +47,10 @@
                                                 <tbody>
                                                 <tr>
                                                     <td><input type="text"  class="form-control" data-ng-model="out.productId" ng-change="searchReceiving()"></td>
-                                                    <td><input type="text" class="form-control" data-ng-model="out.productId"></td>
-                                                    <td><input type="text"  class="form-control" data-ng-model="out.qty"></td>
+                                                    <td><input type="text" class="form-control" data-ng-model="out.productName" disabled></td>
+                                                    <td><input type="text"  class="form-control" data-ng-model="out.qty" ng-change="calc()"></td>
                                                     <td>
-                                                     <select ng-model="out.unit" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value"></select>
+                                                     <select ng-model="out.unit" class="form-control" data-ng-options="x.label for x in out.availableunit track by x.value"></select>
                                                     </td>
                                                     <td></td>
                                                   </tr>
@@ -94,11 +94,11 @@
                                                             </thead>
                                                             <tbody>
                                                             <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">
-                                                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)"></td>
-                                                                <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']"></td>
-                                                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']"></td>
+                                                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)" ng-change="calcIn()"></td>
+                                                                <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']" disabled></td>
+                                                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']" ng-change="calcIn()"></td>
                                                                 <td>           
-                                                                    <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value">
+                                                                    <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value" ng-change="calcIn()">
                                                                        </select>
                                                                 </td>
                                                                 <td>
@@ -121,7 +121,13 @@
             <div class="modal-footer">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-md-12">
+
+                        <div class="pull-left">
+                            <label>Out amount: {{out.total_normalized_unit}}</label>,
+                            <label>In amount: {{totalAmount}}</label>
+                        </div>
+
+                        <div class="pull-right">
                                 <button type="button" class="btn default" style=" background-color:blue;color:white;" ng-click="submitRepack();">提交</button>
                                 <button type="button" class="btn default" data-dismiss="modal">取消</button>
                         </div>

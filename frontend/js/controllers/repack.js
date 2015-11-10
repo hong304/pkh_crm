@@ -95,7 +95,44 @@ $scope.itemlist = [0];
         $http.post(target, {productId:$scope.out.productId})
             .success(function (res, status, headers, config) {
 
+                $scope.out.productName = res.productName;
+                var availableunit = [];
+                if(res.productPackingName_carton != '')
+                    availableunit = availableunit.concat([{value: 'carton', label: res.productPackingName_carton}]);
+                if(res.productPackingName_inner != '')
+                    availableunit = availableunit.concat([{value: 'inner', label: res.productPackingName_inner}]);
+                if(res.productPackingName_unit != '')
+                    availableunit = availableunit.concat([{value: 'unit', label: res.productPackingName_unit}]);
+                $scope.out.unit = availableunit[0];
+
+                $scope.out.availableunit = availableunit;
+                $scope.out.normalized_unit = res.normalized_unit;
+                console.log($scope.out);
             });
+    }
+
+    $scope.calc = function(){
+        $scope.out.total_normalized_unit =  $scope.out.normalized_unit * $scope.out.qty
+    }
+
+    $scope.calcIn = function(){
+        $scope.totalAmount = 0;
+
+        $scope.selfdefine.forEach(function(item){
+            if(item.deleted == 0)
+            {
+                var finalize_amount = 0;
+                if(item.unit.value=='carton')
+                    finalize_amount  = item.normalized_unit * item.qty;
+                else if (item.unit.value=='inner')
+                    finalize_amount = item.normalized_inner * item.qty;
+                else
+                    finalize_amount = item.qty
+
+                $scope.totalAmount += Number(finalize_amount);
+
+            }
+        });
     }
 
      $scope.searchProduct = function (value,i) 
@@ -116,8 +153,10 @@ $scope.itemlist = [0];
                    // $scope.selfdefine[i]['availableunit'] = availableunit.reverse();
                     $scope.selfdefine[i]['availableunit'] = availableunit;
                     $scope.selfdefine[i]['unit'] = $scope.selfdefine[i]['availableunit'][0];
-                    $scope.selfdefine[i]['qty'] = 1;
+                    $scope.selfdefine[i]['qty'] = '';
                     $scope.selfdefine[i]['productName'] = res.productName_chi;
+                    $scope.selfdefine[i]['normalized_unit'] = res.normalized_unit;
+                    $scope.selfdefine[i]['normalized_inner'] = res.productPacking_unit;
                 }
             });
      }
