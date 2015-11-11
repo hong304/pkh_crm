@@ -175,8 +175,6 @@ class Invoice_CashReceiptSummary {
         //補收+所有當天支票
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20','98'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
 
-        pd($invoicesQuery);
-
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
 
