@@ -87,6 +87,8 @@ class rePackController extends BaseController {
         $storeMessage = array();
         //Adjust
         $adjustTable = Input::get('items');
+        p(Input::get('outProduct'));
+        pd($adjustTable);
         $rece = new ReceiveMan();
         $adjustMain = new AdjustMain();
 

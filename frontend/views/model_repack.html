@@ -37,7 +37,7 @@
                                                         數量
                                                     </th>
                                                     <th width="10%">
-                                                        單位 <a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default"><i class="fa fa-plus"> </i></a>
+                                                        單位
                                                     </th>
                                                     <th width="10%">
 
@@ -50,7 +50,7 @@
                                                     <td><input type="text" class="form-control" data-ng-model="out.productName" disabled></td>
                                                     <td><input type="text"  class="form-control" data-ng-model="out.qty" ng-change="calc()"></td>
                                                     <td>
-                                                     <select ng-model="out.unit" class="form-control" data-ng-options="x.label for x in out.availableunit track by x.value"></select>
+                                                     <select ng-model="out.unit" class="form-control" data-ng-options="x.label for x in out.availableunit track by x.value"  ng-change="calc()"></select>
                                                     </td>
                                                     <td></td>
                                                   </tr>

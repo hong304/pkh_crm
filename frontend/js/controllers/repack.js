@@ -73,6 +73,21 @@ $scope.itemlist = [0];
 
     $scope.submitRepack = function () {
 
+
+        if($scope.out.total_normalized_unit != $scope.totalAmount){
+            alert('輸出及輸入數量必需相同');
+            return false
+        }
+
+        if($scope.out.total_normalized_unit > $scope.out.available){
+            alert('Repack amount cant more than available amount');
+            return false
+        }
+
+
+        insertToAdjust($scope.selfdefine);
+
+        /*
         console.log($scope.selfdefine);
 
         var accumulate = 0;
@@ -82,7 +97,7 @@ $scope.itemlist = [0];
                 accumulate += parseInt($scope.selfdefine[j].qty);
         }
         nextOne($scope.repack.products, accumulate);
-        
+        */
 
        // console.log($scope.receiveInclude);
           
@@ -99,20 +114,26 @@ $scope.itemlist = [0];
                 var availableunit = [];
                 if(res.productPackingName_carton != '')
                     availableunit = availableunit.concat([{value: 'carton', label: res.productPackingName_carton}]);
-                if(res.productPackingName_inner != '')
-                    availableunit = availableunit.concat([{value: 'inner', label: res.productPackingName_inner}]);
                 if(res.productPackingName_unit != '')
                     availableunit = availableunit.concat([{value: 'unit', label: res.productPackingName_unit}]);
                 $scope.out.unit = availableunit[0];
-
+                $scope.out.available = res.total;
                 $scope.out.availableunit = availableunit;
                 $scope.out.normalized_unit = res.normalized_unit;
-                console.log($scope.out);
+
             });
     }
 
     $scope.calc = function(){
-        $scope.out.total_normalized_unit =  $scope.out.normalized_unit * $scope.out.qty
+
+        var finalize_amount = 0;
+        if($scope.out.unit.value=='carton')
+            finalize_amount  = $scope.out.normalized_unit * $scope.out.qty;
+        else if ($scope.out.unit.value=='unit')
+            finalize_amount = $scope.out.qty;
+
+
+        $scope.out.total_normalized_unit =  finalize_amount;
     }
 
     $scope.calcIn = function(){
@@ -204,7 +225,7 @@ $scope.itemlist = [0];
                 {
                     continue;
                 }*/
-                insertToAdjust($scope.selfdefine);
+               // insertToAdjust($scope.selfdefine);
             }
             
             //Match new product to original branch
@@ -218,10 +239,9 @@ $scope.itemlist = [0];
         if(items != "")
         {
             var target = endpoint + '/addAjust.json';
-            $http.post(target, {items:items})
+            $http.post(target, {items:items,outProduct:$scope.out})
             .success(function (res, status, headers, config) {
-                console.log(res);
-                if(res.result)
+              if(res.result)
                 {
                     alert("已成功包裝");
                 }
