@@ -35,7 +35,7 @@
 <table class="table table-bordered table-hover" style="font-size:15px;">
     <thead>
     <tr role="row" class="heading">
-        <th width="100%" colspan="5">補收款項</th>
+        <th width="100%" colspan="5">補收及代收款項</th>
     </tr>
     </thead>
 

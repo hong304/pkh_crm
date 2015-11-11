@@ -103,7 +103,7 @@ class Invoice_CashReceiptSummary {
         }
         //當天單,收支票
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('zoneId', $zone)->where('deliveryDate', $date);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
 
@@ -155,6 +155,8 @@ class Invoice_CashReceiptSummary {
             }
 
             $acc +=  ($invoiceQ->invoiceStatus == '98')? -$paid:$paid;
+
+            //已收
             $this->_account[] = [
                 'customerId' => $client->customerId,
                 'name' => $client->customerName_chi,
@@ -163,7 +165,7 @@ class Invoice_CashReceiptSummary {
                 'accumulator' =>$acc,
                 'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$paid:$paid,2,'.',','),
             ];
-
+            //end of 已收
         }
 
         foreach( $this->_backaccount as $k =>$v){
@@ -172,9 +174,8 @@ class Invoice_CashReceiptSummary {
             }
         }
 
-        //補收+所有當天支票
+        //補收+代收+所有當天支票
         $invoicesQuery = Invoice::whereIn('invoiceStatus',['30','20','98'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
-
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
 
@@ -183,7 +184,7 @@ class Invoice_CashReceiptSummary {
         })->leftJoin('payments', function ($join) {
             $join->on('invoice_payment.payment_id', '=', 'payments.id');
         })->where('receive_date', '=', date('Y-m-d',$date))->get();
-
+      //  pd($invoicesQuery);
         //->WhereHas('payment', function($q) use($date)
         // {
         //     $q->where('receive_date', '=', date('Y-m-d',$date));
@@ -198,7 +199,7 @@ class Invoice_CashReceiptSummary {
         {
 
 
-            if($invoiceQ->ref_number == 'cash' and $invoiceQ->receive_date == date('Y-m-d',$date) and $invoiceQ->deliveryDate < $date){
+            if($invoiceQ->ref_number == 'cash' and $invoiceQ->receive_date == date('Y-m-d',$date) and ($invoiceQ->deliveryDate < $date || $invoiceQ->receiveMoneyZone != $invoiceQ->zoneId)){
                 $acc +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
                 $this->_invoices[] = $invoiceQ->invoiceId;
                 $this->_zoneName = $invoiceQ->zone->zoneName;
@@ -208,6 +209,7 @@ class Invoice_CashReceiptSummary {
                 $invoices[$invoiceId] = $invoiceQ;
                 $client = $invoiceQ['client'];
 
+                //補收+代收
                 $this->_paidInvoice[] = [
                     'customerId' => $client->customerId,
                     'name' => $client->customerName_chi,
@@ -217,6 +219,8 @@ class Invoice_CashReceiptSummary {
                     'accumulator' =>$acc,
                     'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,2,'.',','),
                 ];
+                //END OF 補收+代收
+
             }else if ($invoiceQ->receive_date == date('Y-m-d',$date) and $invoiceQ->ref_number != 'cash'){
                 $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
                 $this->_invoices[] = $invoiceQ->invoiceId;
@@ -243,7 +247,7 @@ class Invoice_CashReceiptSummary {
 
 
         }
-        //補收+所有當天支票
+        //補收+代收+所有當天支票
 
         
         $this->_expenses = expense::select('*')->where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
@@ -596,10 +600,10 @@ class Invoice_CashReceiptSummary {
 
         $y = 80;
 
-        //補收
+        //補收+代收
         $pdf->SetFont('chi','',12);
         $pdf->setXY(10, $y);
-        $pdf->Cell(0, 0,'補收款項', 0, 0, "L");
+        $pdf->Cell(0, 0,'補收及代收款項', 0, 0, "L");
 
         $pdf->SetFont('chi','',10);
         $y += 6;
@@ -651,7 +655,7 @@ class Invoice_CashReceiptSummary {
         $pdf->setXY($last1, $y);
         $pdf->Cell(1, 0, sprintf("$%s", number_format(end($this->_paidInvoice)['accumulator'],2,'.',',')), 0, 0, "R");
         $pdf->SetFont('chi','',10);
-        //end of 補收
+        //end of 補收+代收
 
         //支出
         $y+=5;
