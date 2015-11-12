@@ -2,6 +2,7 @@
 
 class rePackController extends BaseController {
 
+    public $adjustTable = "";
     public function getAllProducts()
     {
         $productId = Input :: get('productId');
@@ -86,24 +87,25 @@ class rePackController extends BaseController {
     {
         $storeMessage = array();
         //Adjust
-        $adjustTable = Input::get('items');
-        p(Input::get('outProduct'));
-        pd($adjustTable);
+        $this->adjustTable = Input::get('items');
+       
         $rece = new ReceiveMan();
         $adjustMain = new AdjustMain();
-
-        $originalItem = Input::get('originalProductid');
+        $originalItem = Input::get('outProduct')['productId'];
         $sql = "Select r.good_qty,p.productName_chi,r.expiry_date,r.receivingId,r.id,r.poCode,p.productPacking_carton,p.productPacking_inner,p.productPacking_unit from receivings as r,product as p where p.productId = r.productId and p.product_flag = 'p' and r.productId ='".$originalItem."' order by expiry_date asc";
         $info = DB::select(DB::raw($sql));
+        
         $count = 0;
-        if(count($info)>0)
-        {
+      
+       // if(count($info)>0)
+        //{
             $store = $info;
             $instorage = 0;
             $require = 0;
-            if(isset($adjustTable))
+
+            if(isset($this->adjustTable))
             {
-                foreach($adjustTable as $k=>$v)
+               /* foreach($adjustTable as $k=>$v)
                 {
                     $repackedProductSql = "Select productPacking_carton,productPacking_inner,productPacking_unit from Product where productId=".$v['productId'];
                     $repackedProduct = DB::select(DB::raw($repackedProductSql));
@@ -120,15 +122,18 @@ class rePackController extends BaseController {
                 if($require > $instorage)
                 {
                     return "不夠貨包裝";
-                }
+                }*/
                 
                 $nextLopp = 0;
                 $flag = 0; 
-                foreach($adjustTable as $k2=>$v3)
+   
+                
+                foreach($this->adjustTable as $k2=>$v3)
                 {
-                    $storeAccum = $v3['good_qty'];
+                    $storeAccum = $v3['qty'] * $v3['normalized_unit'];
                     foreach($store as $k1=>$v1)
                     {
+                        pd($storeAccum);
                         if($v1->good_qty > 0)
                         {
                             $accum = $v1->good_qty - $storeAccum;
@@ -158,13 +163,12 @@ class rePackController extends BaseController {
                             continue;
                         }
                             //$updateReceivingSql = "Update receivings set good_qty = (CASE good_qty WHEN good_qty >= ".$v3['good_qty']." THEN good_qty - ".$v3['good_qty']." ELSE good_qty END) where good_qty > 0 and id = ".$v1->id;
-                    }             
+                   // }             
                     $nextLopp++;
                   
                 }
     
-                  //DB::table('receivings')->where('id',$v1->id)->where('good_qty','>',0)->update(['good_qty'=>$storageminus]);
-                
+                  //DB::table('receivings')->where('id',$v1->id)->where('good_qty','>',0)->update(['good_qty'=>$storageminus]); 
             }
         }else
         {
