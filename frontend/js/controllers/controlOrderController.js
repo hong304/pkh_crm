@@ -735,6 +735,8 @@ else{
             $timeout(function(){
                 $("#deletebtn_" + i).css('display', '');
                 $("#remarkbtn_" + i).css('display', '');
+                if($scope.order.status != '97' && $scope.order.status != '96')
+                    $("#unitprice_" + i).removeAttr('disabled');
             }, 500);
 
             if(flag != 'unload') {
@@ -825,7 +827,7 @@ else{
         var unit = $scope.product[i]['unit'].value;
 
 
-        if($scope.order.status == '97'){
+        if($scope.order.status == '97' || $scope.order.status == '96'){
             $scope.product[i]['unitprice'] = 0;
         }else{
             // *** to be updated - non-hard-coding
@@ -951,11 +953,13 @@ else{
 
         if($scope.order.status == '98')
             $scope.order.invoiceRemark = '退貨單'
-        if($scope.order.status == '96')
-            $scope.order.invoiceRemark = '補貨單';
-        if($scope.order.status == '97') {
 
-            $scope.order.invoiceRemark = '換貨單';
+        if($scope.order.status == '97' || $scope.order.status == '96') {
+
+            if($scope.order.status == '97')
+                $scope.order.invoiceRemark = '換貨單';
+            else
+                $scope.order.invoiceRemark = '補貨單';
 
             var i = 1;
             $scope.product.forEach(function(item){
@@ -975,6 +979,7 @@ else{
             });
 
         }
+
         if($scope.order.status == '2')
             $scope.order.invoiceRemark = ''
 
