@@ -743,8 +743,12 @@ else{
                     $scope.lastitem = $scope.allLastItemPrice[code.toUpperCase()];
                    // console.log($scope.lastitem);
                     if( $scope.lastitem.qty > 0){
-                        $scope.product[i].unitprice =  $scope.lastitem.price;
-                        var pos = $scope.product[i]['availableunit'].map(function(e) {
+                        if($scope.order.status == '97' || $scope.order.status == '96'){
+                             $scope.product[i].unitprice = 0;
+                        }else
+                            $scope.product[i].unitprice =  $scope.lastitem.price;
+
+                            var pos = $scope.product[i]['availableunit'].map(function(e) {
                             return e.value;
                         }).indexOf( $scope.lastitem.unit_level);
                         $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];

@@ -139,20 +139,26 @@ $scope.itemlist = [0];
     $scope.calcIn = function(){
         $scope.totalAmount = 0;
 
+        var i = 0;
         $scope.selfdefine.forEach(function(item){
             if(item.deleted == 0)
             {
                 var finalize_amount = 0;
-                if(item.unit.value=='carton')
-                    finalize_amount  = item.normalized_unit * item.qty;
-                else if (item.unit.value=='inner')
+                if(item.unit.value=='carton') {
+                    finalize_amount = item.normalized_unit * item.qty;
+                    $scope.selfdefine[i]['packing_size'] = item.normalized_unit;
+                }else if (item.unit.value=='inner'){
                     finalize_amount = item.normalized_inner * item.qty;
-                else
+                    $scope.selfdefine[i]['packing_size'] = item.normalized_inner;
+                }else{
                     finalize_amount = item.qty
-
+                    $scope.selfdefine[i]['packing_size'] = item.qty;
+                }
                 $scope.totalAmount += Number(finalize_amount);
+                $scope.selfdefine[i]['total_finalized_unit'] = finalize_amount;
 
             }
+            i++;
         });
     }
 

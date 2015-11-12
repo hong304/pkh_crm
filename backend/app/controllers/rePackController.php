@@ -3,6 +3,8 @@
 class rePackController extends BaseController {
 
     public $adjustTable = "";
+    public $remain = 0;
+   // public $expiry_date = '';
     public function getAllProducts()
     {
         $productId = Input :: get('productId');
@@ -85,13 +87,68 @@ class rePackController extends BaseController {
     
     public function addAjust()
     {
-        $storeMessage = array();
+       // $storeMessage = array();
         //Adjust
-        $this->adjustTable = Input::get('items');
-       
+        //$this->adjustTable =
+
+            $items = Input::get('items');
+            $outProduct = Input::get('outProduct');
+
+        foreach ($items as $k => $v){
+            if($v['deleted'] == 0){
+                $undeductUnit = $v['total_finalized_unit'];
+                //$this->expiry_date  = '';
+                $this->remain = 0;
+                while($undeductUnit > 0 ){
+                    $receiving = Receiving::where('productId',$outProduct['productId'])->where('good_qty','>=',$v['packing_size'])->orderBy('expiry_date','asc')->first();
+                    $receiving->good_qty+=$this->remain;
+                    if($undeductUnit > $receiving->good_qty){
+                        $this->remain = $receiving->good_qty % $v['packing_size'];
+
+                       // if($this->expiry_date == '')
+                        //    $this->expiry_date = $receiving->expiry_date;
+
+                        $actual_deduct_qty = $receiving->good_qty;
+                        $ava_qty = ($receiving->good_qty-$this->remain);
+                        $undeductUnit -= $ava_qty;
+                    }else{
+                        $actual_deduct_qty = $undeductUnit;
+                        $ava_qty = $undeductUnit;
+                        $undeductUnit = 0;
+                    }
+
+                    $receiving->good_qty -= $actual_deduct_qty;
+                    $receiving->save();
+
+                    $adjusts = new adjust();
+                    $adjusts->adjustId = $receiving->id;
+                        $reId = Receiving::where('receivingId','LIKE','Re%')->orderBy('receivingId','desc')->first();
+                        if(count($reId)>0){
+                            $id = substr($reId->receivingId,2);
+                            $id += 1;
+                        }else{
+                            $id = 1;
+                        }
+                    $adjusts->receivingId = 'Re'.$id;
+                    $adjusts->adjustType = 1;
+                    $adjusts->adjust_qty = $ava_qty;
+                    $adjusts->productId = $v['productId'];
+                    $adjusts->save();
+
+                    $new_receiving = new Receiving();
+                    $new_receiving->receivingId = $adjusts->receivingId;
+                    $new_receiving->adjustId = $adjusts->adjustId;
+                    $new_receiving->good_qty = $adjusts->adjust_qty;
+                    $new_receiving->productId = $v['productId'];
+                    $new_receiving->expiry_date = $receiving->expiry_date;
+                    $new_receiving->save();
+
+                }
+            }
+        }
+die();
         $rece = new ReceiveMan();
         $adjustMain = new AdjustMain();
-        $originalItem = Input::get('outProduct')['productId'];
         $sql = "Select r.good_qty,p.productName_chi,r.expiry_date,r.receivingId,r.id,r.poCode,p.productPacking_carton,p.productPacking_inner,p.productPacking_unit from receivings as r,product as p where p.productId = r.productId and p.product_flag = 'p' and r.productId ='".$originalItem."' order by expiry_date asc";
         $info = DB::select(DB::raw($sql));
         
