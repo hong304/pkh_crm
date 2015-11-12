@@ -735,7 +735,6 @@ else{
             $timeout(function(){
                 $("#deletebtn_" + i).css('display', '');
                 $("#remarkbtn_" + i).css('display', '');
-                $("#unitprice_" + i).removeAttr('disabled');
             }, 500);
 
             if(flag != 'unload') {
@@ -817,23 +816,23 @@ else{
 
     $scope.updateStandardPrice = function (i)
     {
-
-
         var code = $scope.product[i]['code'];
         var item = $scope.retrievedProduct[code];
         var unit = $scope.product[i]['unit'].value;
 
-        // *** to be updated - non-hard-coding
-        if(unit == 'carton')
-            $scope.product[i]['unitprice'] = Number(item.productStdPrice_carton);
-        else if(unit == 'inner')
-            $scope.product[i]['unitprice'] = Number(item.productStdPrice_inner);
-        else if(unit == 'unit')
-            $scope.product[i]['unitprice'] = Number(item.productStdPrice_unit);
 
-        $("#unitprice_" + i).removeAttr('disabled');
-
-
+        if($scope.order.status == '97'){
+            $scope.product[i]['unitprice'] = 0;
+        }else{
+            // *** to be updated - non-hard-coding
+            if(unit == 'carton')
+                $scope.product[i]['unitprice'] = Number(item.productStdPrice_carton);
+            else if(unit == 'inner')
+                $scope.product[i]['unitprice'] = Number(item.productStdPrice_inner);
+            else if(unit == 'unit')
+                $scope.product[i]['unitprice'] = Number(item.productStdPrice_unit);
+            $("#unitprice_" + i).removeAttr('disabled');
+        }
     }
 
     $scope.checkPrice = function(i)
@@ -950,10 +949,33 @@ else{
             $scope.order.invoiceRemark = '退貨單'
         if($scope.order.status == '96')
             $scope.order.invoiceRemark = '補貨單';
-        if($scope.order.status == '97')
+        if($scope.order.status == '97') {
+
             $scope.order.invoiceRemark = '換貨單';
+
+            var i = 1;
+            $scope.product.forEach(function(item){
+                if(item.deleted == 0)
+                {
+                    $scope.product[i].unitprice = 0;
+                }
+                $("#unitprice_" + i).attr('disabled', 'true');
+                i++;
+            });
+
+        }else{
+            var i = 1;
+            $scope.product.forEach(function(){
+                $("#unitprice_" + i).removeAttr('disabled');
+                i++;
+            });
+
+        }
         if($scope.order.status == '2')
             $scope.order.invoiceRemark = ''
+
+
+
     }
 
 
