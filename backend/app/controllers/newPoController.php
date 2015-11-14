@@ -507,10 +507,10 @@ class newPoController extends BaseController {
                 }
             }
               
-            $pdf->Cell(36,5,$this->discountString($i['discount_1'],$i['discount_2'],$i['discount_3'],'%'),1,0,'L',true);
-            $pdf->Cell(36,5,$this->discountString($i['allowance_1'],$i['allowance_2'],$i['allowance_3'],'$'),1,0,'L',true);
+            $pdf->Cell(36,5,$this->discountString($i['discount_1'],$i['discount_2'],$i['discount_3'],'%'),1,0,'C',true);
+            $pdf->Cell(36,5,$this->discountString($i['allowance_1'],$i['allowance_2'],$i['allowance_3'],'$'),1,0,'C',true);
             
-            $pdf->Cell(15,5,number_format($i['unitprice'],2),1,0,'L',true);
+            $pdf->Cell(15,5,number_format($i['unitprice'],2),1,0,'R',true);
             $pdf->Cell(23,5,number_format($i['unitprice'] * $i['productQty'],2),1,0,'R',true);
             $total += $i['unitprice'] * $i['productQty'] * (100 - $i['discount_1'])/100 * (100 - $i['discount_2'])/100 * (100 - $i['discount_3'])/100 - $i['allowance_1'] - $i['allowance_2'] - $i['allowance_3'];
             $pdf->Ln();  
@@ -1241,10 +1241,10 @@ class newPoController extends BaseController {
             $pdf->Cell(17,7,"",1,0,'C',true);
             $pdf->Cell(18,7,"",1,0,'C',true);
             $pdf->Cell(20,7,"",1,0,'C',true);
-            $pdf->Cell(20,7, $supplierImfo['poitem'][0]['productQty'],1,0,'R',true);
-            $pdf->Cell(20,7,$unit,1,0,'L',true);
-            $pdf->Cell(25,7,"$   ".$supplierImfo['poitem'][0]['unitprice'],1,0,'C',true);
-            $pdf->Cell(20,7,"$   ".$supplierImfo['poitem'][0]['productQty'] * $supplierImfo['poitem'][0]['unitprice'],1,0,'C',true);
+            $pdf->Cell(20,7, $supplierImfo['poitem'][0]['productQty'],1,0,'C',true);
+            $pdf->Cell(20,7,$unit,1,0,'C',true);
+            $pdf->Cell(25,7,"$".number_format($supplierImfo['poitem'][0]['unitprice'],2),1,0,'R',true);
+            $pdf->Cell(20,7,"$".number_format($supplierImfo['poitem'][0]['productQty'] * $supplierImfo['poitem'][0]['unitprice'],2),1,0,'R',true);
             $pdf->Ln();
         }
 
@@ -1256,12 +1256,12 @@ class newPoController extends BaseController {
         $pdf->SetFillColor(255);
         $pdf->Cell(90,25,$supplierImfo['poRemark'],1,0,'L',true);
         
-        $pdf->SetXY(140,165);
-        $pdf->Cell(65,35,$supplierImfo['poRemark'],1,0,'L',true);
+      //  $pdf->SetXY(140,165);
+      //  $pdf->Cell(65,35,$supplierImfo['poRemark'],1,0,'L',true);
         
         $pdf->SetFont('Times','U');
-        $pdf->SetXY(140,165);
-        $pdf->Cell(65,35,"DETAILS:",1,0,'L',true);
+        $pdf->SetXY(140,170);
+        $pdf->Cell(65,30,"DETAILS:",1,0,'L',true);
         
 
         $pdf->Output('','I');
