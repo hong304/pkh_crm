@@ -1260,8 +1260,8 @@ class newPoController extends BaseController {
       //  $pdf->Cell(65,35,$supplierImfo['poRemark'],1,0,'L',true);
         
         $pdf->SetFont('Times','U');
-        $pdf->SetXY(140,170);
-        $pdf->Cell(65,30,"DETAILS:",1,0,'L',true);
+        $pdf->SetXY(130,170);
+        $pdf->Cell(75,33,"DETAILS:",1,0,'L',true);
         
 
         $pdf->Output('','I');
