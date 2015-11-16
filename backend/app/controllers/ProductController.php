@@ -81,7 +81,7 @@ class ProductController extends BaseController {
                 ->where('customerId', 'LIKE', $filter['customerId'] . '%');
         })->lists('customerName_chi','customerId');
 
-        $invoices =  Invoice::select('invoice.invoiceId','deliveryDate','zoneId','customerId','productName_chi','invoiceitem.productId','productPrice','productQty','productUnitName')
+        $invoices =  Invoice::select('invoice.invoiceId','deliveryDate','zoneId','customerId','productName_chi','invoiceitem.productId','productPrice','productQty','productUnitName','invoiceStatus')
             ->leftJoin('InvoiceItem', function($join) {
                 $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
             })
@@ -143,6 +143,11 @@ class ProductController extends BaseController {
                 return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';})
             ->addColumn('customerName_chi', function ($invoice) use($customers) {
                 return $customers[$invoice->customerId];
+            })->editColumn('productQty', function ($invoice){
+                if($invoice->invoiceStatus == '98')
+                    return $invoice->productQty*-1;
+                else
+                    return $invoice->productQty*1;
             })
                     ->make(true);
 
