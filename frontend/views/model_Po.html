@@ -162,7 +162,7 @@
                                                                                 </ul>
                                                                            </td>                                                
                                                                             <td>
-                                                                                ${{(i.productQty * i.unitprice * (100 - i.discount_1)/100 * (100 -i.discount_2)/100 * (100-i.discount_3)/ 100) - i.allowance_1 - i.allowance_2 - i.allowance_3 | number:2 }}
+                                                                                ${{i.productQty * i.unitprice - (i.productQty * i.unitprice * i.discount_1/100) - (i.productQty * i.unitprice * i.discount_2/100) - (i.productQty * i.unitprice * i.discount_3/100) - i.allowance_1 - i.allowance_2 - i.allowance_3 | number:2 }}
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
@@ -170,10 +170,10 @@
                    
                                                                         </tr>
                                                                         <tr ng-if="invoiceinfo.discount_1 != 0">
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">採購單折扣1 ({{invoiceinfo.discount_1}}%off): HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * (100 - invoiceinfo.discount_1) /100) | number:2}} </td>                                                                
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">採購單折扣1 ({{invoiceinfo.discount_1}}%off): HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) | number:2}} </td>                                                                
                                                                         </tr>
                                                                          <tr ng-if="invoiceinfo.discount_2 != 0">
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">採購單折扣2 ({{invoiceinfo.discount_2}}%off): HK${{(invoiceinfo.totalsAmount * (100 - invoiceinfo.discount_1) /100) * (invoiceinfo.discount_2) / 100 | number:2}} </td>                                                                
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">採購單折扣2 ({{invoiceinfo.discount_2}}%off): HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) -  (invoiceinfo.totalsAmount * invoiceinfo.discount_2 /100) | number:2}} </td>                                                                
                                                                         </tr>
                                                                          <tr ng-if="invoiceinfo.allowance_1 != 0">
                                                                             <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">現金折扣1 (${{invoiceinfo.allowance_1}}): HK${{invoiceinfo.allowance_1 | number:2}} </td>                                                                
@@ -182,7 +182,7 @@
                                                                             <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">現金折扣2 (${{invoiceinfo.allowance_2}}) : ${{invoiceinfo.allowance_2 | number:2}} </td>                                                                
                                                                         </tr>
                                                                          <tr>
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">應交款項: HK${{(invoiceinfo.totalsAmount * (100 - invoiceinfo.discount_2)/100 *  (100 - invoiceinfo.discount_1)/100) - invoiceinfo.allowance_1 - invoiceinfo.allowance_2 | number:2}} </td>                                                                
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">應交款項: HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) -  (invoiceinfo.totalsAmount * invoiceinfo.discount_2 /100) - invoiceinfo.allowance_1 - invoiceinfo.allowance_2 | number:2}} </td>                                                                
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>

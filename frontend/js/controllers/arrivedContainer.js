@@ -7,6 +7,14 @@ Metronic.unblockUI();
 app.controller('arrivedContainer', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
  
  
+   $scope.arriveData={
+       containerId:'',
+       actualDateStart :'',
+       actualDateEnd :'',
+   };
+    var querytarget = endpoint + '/jqueryGetArrived.json';
+
+   
    $scope.$on('$viewContentLoaded', function () {
         // initialize core components
         Metronic.initAjax();
@@ -20,7 +28,17 @@ app.controller('arrivedContainer', function($rootScope, $scope, $http, $timeout,
           autoclose: true
      });
      
-     var querytarget = endpoint + '/jqueryGetArrived.json';
+     $scope.searchContainer = function()
+     {
+            $http.post(querytarget, {filterData:$scope.arriveData})
+                .success(function (res, status, headers, config) {
+                 console.log(res);
+                 $scope.updateDataSet();
+                });
+     }
+     
+     
+    
        $scope.updateDataSet = function () {
         $(document).ready(function () {
 
@@ -41,7 +59,7 @@ app.controller('arrivedContainer', function($rootScope, $scope, $http, $timeout,
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
-                    "data": {mode: "collection", filterData: $scope.keywordpo},
+                    "data": {mode: "collection", filterData: $scope.arriveData},
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 50,
@@ -66,15 +84,15 @@ app.controller('arrivedContainer', function($rootScope, $scope, $http, $timeout,
                 },
                 "columns": [
                     {"data": "shipCompany", "width": "10%"},
-                   // {"data": "poDate", "width": "10%"},
-                  //  {"data": "etaDate", "width": "10%"},
-                  //  {"data": "actualDate", "width": "10%"},
-                 //   {"data": "supplierName", "width": "10%"},
-                 //   {"data": "poAmount", "width": "10%"},
-                //    {"data": "poStatus", "width": "10%"},
-                //    {"data": "username", "width": "10%"},
-                //    {"data": "updated_at", "width": "10%"},
-                //    {"data": "link", "width": "10%"}
+                    {"data": "container_size", "width": "10%"},
+                    {"data": "supplierName", "width": "10%"},
+                    {"data": "vessel", "width": "10%"},
+                    {"data": "containerId", "width": "10%"},
+                    {"data": "productName_chi", "width": "10%"},
+                    {"data": "rec_receiveQty", "width": "10%"},
+                    {"data": "actualDate", "width": "10%"},
+                    {"data": "fspDate", "width": "10%"},
+                    {"data": "container_receiveDate", "width": "10%"},
                 ]
 
             });

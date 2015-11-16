@@ -1,0 +1,120 @@
+<style>
+    .portlet-bodyss
+    {
+        height: 800px;
+        overflow: auto;
+        
+    }
+    
+    .portlet.light .portlet-bodyss
+    {
+        padding-top:78px;
+    }
+    
+      .portlet-bodys
+    {
+        height: 370px;
+        overflow: auto;
+        
+    }
+    
+    .portlet.light .portlet-bodys
+    {
+        padding-top: 40px;
+    }
+    td
+    {
+        width: 63px;
+    }
+    
+    tr
+    {
+            background-color: white;
+    }
+    
+    #hh
+    {
+        display:none;
+    }
+</style>
+
+<form class="form-horizontal" role="form" id="queryInfo">
+
+    <div class="col-md-12">
+        <div class="portlet light col-md-4" style="margin-top: 18px;">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs font-green-sharp"></i>
+                        <span class="caption-subject font-green-sharp bold uppercase">選擇日期</span>
+		    </div>
+		</div>
+                <div class="portlet dateR" id="gg">
+                    <div class="md-col-12" style="margin-bottom:15px;">
+                        由:
+                        <div class="input-group  date " id="shippingDeliverDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.shippingDeliverDate" data-ng-change="shippingContainerReport();">
+                            <span class="input-group-btn">
+				<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+         
+                    </div>
+                </div>
+        </div>
+        
+        <!--<div class="portlet light col-md-6" style="margin-top: 18px;float:right;">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs font-green-sharp"></i>
+                        <span class="caption-subject font-green-sharp bold uppercase">船務概覽</span><span style="margin-left: 20px;">(只顯示今日前和今日後七天的船務記錄)</span>
+		    </div>
+		</div>
+                <div class="portlet dateR" id="gg">
+                    <div class="md-col-12" style="margin-bottom:15px;" ng-bind-html="shippingNote">      
+                        
+                    </div>
+                </div>
+            
+        </div>-->
+        <!--<div class="row">
+            <div class="col-md-12 shipform" id="tooltips">
+                 <div class="portlet-bodys" style="text-align: center;">
+                     ToolTips
+                 </div>
+            </div>
+        </div>-->
+        
+        <div class="row">
+            <div class="col-md-12 shipform" id="shipmentSch">
+                <div class="portlet light">
+                    
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs font-green-sharp"></i>
+                            <span class="caption-subject font-green-sharp bold uppercase">船務管理列表</span>
+                        </div>
+                    </div>
+                    
+                    <div class="portlet-bodyss" ng-bind-html="shippingContainerReport" style="text-align: center;">
+                        <!--<table border="1">
+                            <tr>
+                                <th>&nbsp;</th>
+                                 <th  ng-repeat = "row in rows">{{row.date}}</th>
+                            </tr>
+                            <tr ng-repeat = "row in rows">
+                                <th>{{row.shippingId}}</th>
+                                <td ng-repeat = "row in rows" ng-if>{{row.no}}</td>
+                            </tr>
+                        </table>-->
+                        
+                    </div>
+                </div>
+                <!-- END EXAMPLE TABLE PORTLET-->
+            </div>
+            
+        </div>
+
+
+
+</div>
+</form>
