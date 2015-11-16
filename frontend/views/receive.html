@@ -301,11 +301,10 @@
                                     <th width="7%">貨品名稱</th>
                                     <th width="7%">數量</th>
                                     <th width="7%">單位</th>
-                                    <th width="7%">收到數量</th>
                                     <th width="7%">好貨</th>
                                     <th width="7%">壞貨</th>
                                     <th width="7%">保留貨</th>
-                                    <th width="10%">過期日</th>
+                                    <th width="10%">有效日期</th>
                                     <th width="7%">擺放位置</th>
                                     <th width="5%"></th>
                                 </tr>
@@ -330,7 +329,7 @@
                                                 <div class="input-group" style="width:100px;">
                                                      <input type="tel"  id="qty_{{i}}" class="spinner-input form-control" maxlength="5"
                                                      ng-model="product[i]['qty']" ng-change="updateQty(i,'qty');"
-                                                     ng-blur="">
+                                                     ng-blur="" disabled="true">
 
                                                 </div>
                                             </div>
@@ -342,16 +341,9 @@
                                              <select class="form-control"
                                                     id="unit_{{i}}"
                                                     ng-model="product[i]['unit']"
-                                                    data-ng-options="x.label for x in product[i].availableunit track by x.value">
+                                                    data-ng-options="x.label for x in product[i].availableunit track by x.value" disabled="true">
                                             </select>
                                         </label>
-                                    </td>
-                                    <td>
-                                        <div class="">
-                                            <div class="input-icon right" id="unitpricediv_{{i}}">
-                                                <input type="tel" onClick="this.select();"  id="unitprice_{{i}}" ng-model="product[i]['receive_qty']" data-ng-change="" class="form-control" name="product[i]['unitprice']" value="{{product[i]['unitprice']}}" maxlength="6" >
-                                            </div>
-                                        </div>
                                     </td>
                                      <td>
                                         <div class="">

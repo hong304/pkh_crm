@@ -214,6 +214,7 @@ Route::group(array('before' => 'auth'), function()
      Route::post('/loadPo.json','shippingController@loadPo');   
      Route::any('/printPo.json','newPoController@printPo');
      Route::any('/outputShipNote.json','shippingController@outputShipNote');
+     Route::any('/outputShipContainer.json','shippingController@outputShipContainer');
      
      //Receiving
      Route::post('/searchSupplier.json','receiveController@searchSupplier');
@@ -233,10 +234,14 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/preRepackProduct.json','rePackController@preRepackProduct');
     Route::post('/outRepackProduct.json','rePackController@outRepackProduct');
     
+    
+    
 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');
     Route::get('/getUserGroup.json','permissionController@getUserGroup');
+    
+    Route::post('/jqueryGetArrived.json','arrivedContainerController@jqueryGetArrived');
 
 });
 

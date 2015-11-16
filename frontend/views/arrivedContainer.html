@@ -12,8 +12,8 @@
                 <div class="col-md-12 alert alert-success alert-borderless">
                     <div class="input-icon right">
                         <i class="icon-exclamation-sign"></i>
-                        <input autocomplete="off" ng-model="filterData.id" debounce="500" immediate="true"  id="keywordId"
-                               type="text" placeholder="貨櫃編號" class="form-control" ng-change="searchSupplier()"
+                        <input autocomplete="off" ng-model="arriveData.containerId" debounce="500" immediate="true"  id="arriveDatacontainerId"
+                               type="text" placeholder="貨櫃編號" class="form-control" ng-change="searchContainer()"
                                 />
                     </div>
                 </div>
@@ -32,14 +32,14 @@
                <div class="portlet-body">
                     <div class="md-col-12" style="margin-bottom:15px;">
                         <div class="input-group  date " id="actualDateStart" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.startReceiveDate" data-ng-change="findDate();">
+                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="arriveData.actualDateStart" data-ng-change="searchContainer();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>
                         </div>
                         至
                         <div class="input-group  date " id="actualDateEnd" data-date-format="yyyy-mm-dd" data-date-start-date="">
-                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="filterData.endReceiveDate" data-ng-change="findDate();">
+                            <input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="arriveData.actualDateEnd" data-ng-change="searchContainer();">
 						<span class="input-group-btn">
 							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
 						</span>

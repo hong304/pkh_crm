@@ -448,5 +448,26 @@ class shippingController extends BaseController {
         return Response::json($queryPo);
     }
     
+    public function outputShipContainer()
+    {
+        $param = Input :: get('filterData');
+        
+        $today = strtotime(date("Y-m-d"));
+
+        $range[0] = date('Y-m-d',$today - 14 * 24 * 60 * 60);
+        $range[1] = date('Y-m-d',$today + 14 * 24 * 60 * 60);
+        $actualDate = shipping::where('actualDate', '!=' ,'')->with('Shippingitem')->where('status','!=',99)->get()->toArray();
+        $etaDate = shipping:: where('etaDate','!=','')->with('shippingitem')->where('status','!=',99)->get()->toArray();
+        $initial = strtotime($range[0]);
+        $dateRange[] = date('Y-m-d',$initial);
+        while($initial < strtotime($range[1]))
+        {
+            $initial = $initial + 1 * 24 * 60 * 60;
+            $dateRange[] = date('Y-m-d',$initial);
+         
+        }
+        return View::make('shippingContainerNote')->with(['daterange' => $dateRange,'startToEnd' => $range])->render();
+    }
+    
 
 }
