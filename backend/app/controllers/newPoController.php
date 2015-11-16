@@ -1236,6 +1236,7 @@ class newPoController extends BaseController {
         
         for($row = 1; $row<count($supplierImfo['poitem']) +5; $row++)
         {
+            //$row1 = printf('%s',$row);
             $pdf->Cell(10,7,$row,1,0,'C',true);
             $pdf->Cell(45,7,$supplierImfo['poitem'][0]['product_detail']['productName_chi'],1,0,'L',true);
             $pdf->Cell(17,7,"",1,0,'C',true);
