@@ -441,12 +441,12 @@ class InvoiceManipulation {
     	        {
                     $item->save();
 
-                    if($i['productId'] == 218 && $this->temp_invoice_information['status'] != 98){
+                    if($i['productId'] == 218){
                         $normalizedUnit = $this->normalizedUnit($i);
                         $packingSize = $this->packingSize($i);
                         $undeductUnit = $normalizedUnit;
 
-                       /* if($undeductUnit < 0){
+                        if($undeductUnit < 0){
                             $receivings = Receiving::where('productId',$i['productId'])->orderBy('expiry_date','desc')->first();
                             $receivings->good_qty -= $undeductUnit;
                             $receivings->save();
@@ -456,7 +456,7 @@ class InvoiceManipulation {
                             $invoiceitembatchs->productId = $i['productId'];
                             $invoiceitembatchs->receivingId = $receivings->receivingId;
                             $invoiceitembatchs->save();
-                        }*/
+                        }
 
 
                         while($undeductUnit > 0 ){

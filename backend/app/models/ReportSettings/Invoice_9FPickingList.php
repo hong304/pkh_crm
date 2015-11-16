@@ -99,7 +99,7 @@ class Invoice_9FPickingList {
                         $unit = $item->productQtyUnit;
 
 
-                        if($productDetail->productLocation == '9') {
+                        if($productDetail->productLocation == '9' && $item->productQty > 0) {
                             $customerId = $client->customerId;
 
                                 if($invoiceQ->version == $this->_version){
@@ -164,46 +164,46 @@ class Invoice_9FPickingList {
                                 }
 
 
-                            if($unit == 'carton' && $item->productQty > 0.5){
-                                $this->goods['carton'][$productId]['items'] = [
-                                    'productId' => $productId,
-                                    'name' => $productDetail->productName_chi,
-                                    'productPacking_carton' => $productDetail->productPacking_carton,
-                                    'productPacking_inner' => $productDetail->productPacking_inner,
-                                    'productPacking_unit' => $productDetail->productPacking_unit,
-                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
-                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
-                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
-                                    'productPackingSize' => $productDetail->productPacking_size,
-                                    'unit' => $unit,
-                                    'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods['carton'][$productId]['items']) ? $this->goods['carton'][$productId]['items']['counts'] : 0) + $item->productQty,
+                            /*  if($unit == 'carton' && $item->productQty > 0.5){
+                                 $this->goods['carton'][$productId]['items'] = [
+                                     'productId' => $productId,
+                                     'name' => $productDetail->productName_chi,
+                                     'productPacking_carton' => $productDetail->productPacking_carton,
+                                     'productPacking_inner' => $productDetail->productPacking_inner,
+                                     'productPacking_unit' => $productDetail->productPacking_unit,
+                                     'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                     'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                     'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                     'productPackingSize' => $productDetail->productPacking_size,
+                                     'unit' => $unit,
+                                     'unit_txt' => $item->productUnitName,
+                                     'counts' => (isset($this->goods['carton'][$productId]['items']) ? $this->goods['carton'][$productId]['items']['counts'] : 0) + $item->productQty,
 
-                                ];
-                                $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
-                                $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
-                            }
+                                 ];
+                                 $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
+                                 $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
+                             }
 
-                              /* group by route path
-                                if($unit == 'carton'){
-                                    $this->goods['carton'][$productId]['items'][$invoiceQ->routePlanningPriority] = [
-                                        'productId' => $productId,
-                                        'name' => $productDetail->productName_chi,
-                                        'productPacking_carton' => $productDetail->productPacking_carton,
-                                        'productPacking_inner' => $productDetail->productPacking_inner,
-                                        'productPacking_unit' => $productDetail->productPacking_unit,
-                                        'productPackingName_carton' => $productDetail->productPackingName_carton,
-                                        'productPackingName_inner' => $productDetail->productPackingName_inner,
-                                        'productPackingName_unit' => $productDetail->productPackingName_unit,
-                                        'productPackingSize' => $productDetail->productPacking_size,
-                                        'unit' => $unit,
-                                        'unit_txt' => $item->productUnitName,
-                                        'counts' => (isset($this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]) ? $this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]['counts'] : 0) + $item->productQty,
-                                        'stdPrice' => $productDetail->productStdPrice[$unit],
-                                    ];
-                                    $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
-                                    $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
-                                } */
+                               group by route path
+                                 if($unit == 'carton'){
+                                     $this->goods['carton'][$productId]['items'][$invoiceQ->routePlanningPriority] = [
+                                         'productId' => $productId,
+                                         'name' => $productDetail->productName_chi,
+                                         'productPacking_carton' => $productDetail->productPacking_carton,
+                                         'productPacking_inner' => $productDetail->productPacking_inner,
+                                         'productPacking_unit' => $productDetail->productPacking_unit,
+                                         'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                         'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                         'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                         'productPackingSize' => $productDetail->productPacking_size,
+                                         'unit' => $unit,
+                                         'unit_txt' => $item->productUnitName,
+                                         'counts' => (isset($this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]) ? $this->goods['carton'][$productId][$invoiceQ->routePlanningPriority]['counts'] : 0) + $item->productQty,
+                                         'stdPrice' => $productDetail->productStdPrice[$unit],
+                                     ];
+                                     $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
+                                     $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
+                                 } */
 
 
                         }
@@ -217,12 +217,13 @@ class Invoice_9FPickingList {
             return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
         });
 
+        /*
         if(isset($this->goods['carton'])){
             ksort($this->goods['carton']);
             foreach ($this->goods['carton'] as &$v){
                 ksort($v['items']);
             }
-        }
+        }*/
 
         $this->data = $this->goods;
         $this->data['version'] = $this->_version;

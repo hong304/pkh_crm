@@ -232,22 +232,22 @@ class VanSellController extends BaseController
             foreach ($invoiceQ['invoiceItem'] as $item) {
                 // determin its product location
 
+                if($item->productQty > 0){
+                                $productId = $item->productId;
 
-                $productId = $item->productId;
+                                //  $productDetail = $products[$productId];
+                                $unit = $item->productQtyUnit;
 
-                //  $productDetail = $products[$productId];
-                $unit = $item->productQtyUnit;
-
-                if ($item->productDetail->productLocation == '1') {
-                    $this->goods['1F'][$productId][$unit] = [
-                        'productId' => $productId,
-                        'name' => $item->productDetail->productName_chi,
-                        'unit' => $unit,
-                        'unit_txt' => $item->productUnitName,
-                        'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
-                    ];
+                                if ($item->productDetail->productLocation == '1') {
+                                    $this->goods['1F'][$productId][$unit] = [
+                                        'productId' => $productId,
+                                        'name' => $item->productDetail->productName_chi,
+                                        'unit' => $unit,
+                                        'unit_txt' => $item->productUnitName,
+                                        'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                                    ];
+                                }
                 }
-
             }
         }
 

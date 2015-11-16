@@ -57,13 +57,23 @@ class OrderController extends BaseController
         }
 
 
+
         // Create the invoice
         $ci = new InvoiceManipulation($order['invoiceId']);
         $ci->setInvoice($order);
 
 
         $have_item = false;
+        $i=0;
+        $j=0;
         foreach ($product as $p) {
+
+            if ($p['deleted'] == 0 && $p['qty'] > 0  && $p['productLocation'] > 0)
+                $i++;
+
+            if ($p['deleted'] == 0 && $p['qty'] < 0 && $p['productLocation'] > 0)
+                $j++;
+
             if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
                 $itemIds[] = $p['dbid'];
          //   else if ($p['dbid'] && $p['deleted'])
@@ -74,6 +84,18 @@ class OrderController extends BaseController
             }
 
         }
+if($order['status'] == 97){
+    if($i < 1 || $j < 1){
+        return [
+            'result' => false,
+            'status' => 0,
+            'invoiceNumber' => '',
+            'invoiceItemIds' => 0,
+            'message' => 'Can not submit, please contact Cherie!',
+        ];
+    }
+}
+
 
         if ($order['invoiceId'] != '') {
 

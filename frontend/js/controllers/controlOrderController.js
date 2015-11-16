@@ -915,7 +915,7 @@ else{
         // check if number
         var qty = $scope.product[i]['qty'];
 
-        if(isNaN(qty))
+        if(isNaN(qty) && $scope.order.status != 97)
         {
             $scope.product[i]['qty'] = 1;
         }
