@@ -84,17 +84,18 @@ class OrderController extends BaseController
             }
 
         }
-if($order['status'] == 97){
-    if($i < 1 || $j < 1){
-        return [
-            'result' => false,
-            'status' => 0,
-            'invoiceNumber' => '',
-            'invoiceItemIds' => 0,
-            'message' => 'Can not submit, please contact Cherie!',
-        ];
-    }
-}
+
+        if($order['status'] == 97){
+            if($i < 1 || $j < 1){
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => '',
+                    'invoiceItemIds' => 0,
+                    'message' => '此單未完成',
+                ];
+            }
+        }
 
 
         if ($order['invoiceId'] != '') {
