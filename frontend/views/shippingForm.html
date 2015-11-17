@@ -405,6 +405,7 @@
                             
                                
                                     <td style="line-height:35px;font-size:15px;">
+                                        <button type="button" class="btn productbtn" style="background-color:#cccccc;color:black;" id="productbtn_{{i}}"  data-ng-click="openProductDetails(i);">貨物</button>
                                         <button type="button" class="btn costbtn" style="background-color:#99CC00;color:white;" id="costbtn_{{i}}"  data-ng-click="openCost(i);" ng-if="showOrNot == 1">成本</button>
                                         <button type="button" class="btn btn-primary" id="remarkbtn_{{i}}"  data-ng-click="openRemarkPanel(i);">備註</button>
                                         <button type="button" class="btn btn-danger" id="deletebtn_{{i}}"  data-ng-click="deleteRow(i);">刪除</button>
@@ -610,6 +611,81 @@
                    </div>
                                         <div class="modal-footer" >
                                             <button type="button" class="btn default" style = "background-color:blue;color:white;" ng-click="saveCost()">提交</button>
+                                            <button type="button" class="btn default" data-dismiss="modal">取消</button>
+                                        </div>
+                          </div>
+              </div>
+</div>
+
+<!-- container product Model -->
+<div class="modal fade bs-modal-lg" id="containerProduct" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">貨品資料</h4>
+            </div>
+            <div class="modal-body">
+                <!-- h4>{{invoiceinfo.client.customerName_chi}} @ {{invoiceinfo.deliveryDate  * 1000 | date: 'yyyy.MM.dd'}}</h4> -->
+
+                <div class="col-md-12">
+
+                    <div class="portlet light">
+                        <div class="portlet-title">
+                            <div class="caption font-green-sharp">
+                                <i class="icon-speech font-green-sharp"></i>
+                                <span class="caption-subject bold uppercase">貨品資料</span>
+                                <span class="caption-helper"><span>
+                            </div>
+                        </div>
+                         <div class="row">
+                               <div class="col-md-2">
+                                    <label>船務編號</label>
+                               </div>
+                               <div class="col-md-4">
+                                    <label>{{containerCost.shippingId}}</label>
+                               </div>
+                               <div class="col-md-2">
+                                    <label>貨櫃編號</label>
+                               </div>
+                               <div class="col-md-4">
+                                    <label>{{containerCost.containerId}}</label>
+                               </div>
+                         </div>
+                    
+                        <div class="portlet-body">
+                            <table class="col-md-12">
+                                <thead>
+                                       <th>貨物編號</th>
+                                       <th>貨物名稱</th>
+                                       <th>數量</th>
+                                       <th>單位</th>
+                                </thead>
+                                <tbody>
+                                        <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">
+                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)" ng-change="calcIn()"></td>
+                                            <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']" disabled></td>
+                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']" ng-change="calcIn()"></td>
+                                            <td>           
+                                                <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value" ng-change="calcIn()">
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger" id="deletebtn_1" data-ng-click="deleteRow(k);">刪除
+                                                </button>
+                                            </td>
+                                        </tr>       
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                                   
+                                        <div style="clear:both;"></div>
+                         </div>
+                   </div>
+                                        <div class="modal-footer" >
+                                            <button type="button" class="btn default" style = "background-color:blue;color:white;" ng-click="saveProductDetails()">提交</button>
                                             <button type="button" class="btn default" data-dismiss="modal">取消</button>
                                         </div>
                           </div>

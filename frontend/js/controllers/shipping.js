@@ -47,6 +47,22 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
            sale_method:'',
            shippingId:'',
        };
+       
+       $scope.containerProduct = {
+           containerId :'',
+           productId : '',
+           qty : '',
+           unit :'',
+           unitName :'',
+       };
+       
+       $scope.containerProductProcedure = {
+           containerId :'',
+           productId : '',
+           qty : '',
+           unit :'',
+           unitName :'',
+       };
     
     $scope.totalCost = 0;
     $scope.showOrNot = 0;
@@ -116,8 +132,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         receiveDate:'',
         cost : '',
         sale_method:1,
-
-
+        product_details:'',
     };
 
     $scope.shippingCostStructure={
@@ -451,7 +466,6 @@ $scope.an = false;
     $scope.submitOrder = function(v)
     {
         var generalError = false;
-        console.log($scope.product);
         $scope.timer.submit = Date.now();
 
         if(!$scope.allowSubmission)
@@ -647,6 +661,23 @@ $scope.an = false;
       }
       
        
+    }
+    
+    $scope.openProductDetails = function(i)
+    {
+        $("#containerProduct").modal('toggle');
+    }
+    
+    $scope.saveProductDetails = function()
+    {
+        
+    }
+    
+    $scope.addRows = function () {
+        var j = $scope.totalline;
+        $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
+      
+        $scope.totalline += 1;
     }
     
     $scope.saveCost = function(r)
