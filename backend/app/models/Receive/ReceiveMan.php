@@ -24,7 +24,6 @@ class ReceiveMan
          $newContainerCode = "R";
          $suffix = 10000;
          $re = Receiving :: select('*')->where('receivingId', 'LIKE',  'R' . '%')->orderby('receivingId','desc')->first();
-        
          if(count($re) == 0)
          {
              $this->newContainerCode = $newContainerCode . $suffix;
