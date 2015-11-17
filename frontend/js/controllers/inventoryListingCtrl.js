@@ -58,7 +58,8 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 			'productId' : '',
 			'good_qty' : '',
 			'damage_qty' :	'',
-            'expiry_date': ''
+            'expiry_date': '',
+            'remark' : ''
 
 	};
 	
@@ -145,8 +146,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
     		$scope.info = res;
             $scope.info.adjusted_good_qty = res.good_qty;
             $scope.info.adjusted_damage_qty = res.damage_qty;
-
-         		$("#inventoryFormModal").modal({backdrop: 'static'});
+      		$("#inventoryFormModal").modal({backdrop: 'static'});
     	});
     	
     	
@@ -195,39 +195,12 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 
     $scope.submitProductForm = function()
     {
-
-        if(!$scope.submit)
-            alert('產品編號不能用');
-    	else if(
-    			$scope.info.productLocation == "" ||
-    			$scope.info.productName_chi == ""  ||
-    			(!$scope.info.productId && !$scope.info.group) || (!$scope.info.productId && !$scope.info.productnewId)
-    	)
-    	{
-    		alert('請輸入所需資料');
-    	}
-    	else
-    	{
-    		$scope.submitbtn = false;
     		 $http.post(iutarget, {info: $scope.info})
         	.success(function(res, status, headers, config){    
-        		   
-        		$scope.submitbtn = false;
-
-        		if(res.mode == 'update')
-        		{
-        			$("#productFormModal").modal('hide');
-        		}
-        		else
-        		{
-        			$scope.newId = "編號: " + res.id;
-        		}
+      			$("#inventoryFormModal").modal('hide');
         		$scope.updateDataSet();
-        		
         	});
-    		 
-    	}
-    	
+
     }
     
     $scope.updateKeyword = function()

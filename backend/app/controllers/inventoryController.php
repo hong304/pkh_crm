@@ -4,54 +4,11 @@ class inventoryController extends BaseController {
 
     public $_shift = '';
     public $message = "";
-    public function jsonGetAllProduct()
-    {
-        // $time_start = microtime(true);
 
-        $productList = Input::get('productList');
+    public function manipulateInventory(){
 
-        $pa = [];
-        if(count($productList)>0 ){
-            foreach ($productList as $p){
-                $pa[]= $p['productId'];
-            }
-
-        }
-
-        // $products = Cache::remember('AllProducts', 5, function() use($pa)
-        //   {
-        $products = Product::select('productId', 'productName_chi','productLocation',
-            'productPacking_carton', 'productPacking_inner', 'productPacking_unit', 'productPacking_size',
-            'productPackingName_inner', 'productPackingName_unit', 'productPackingName_carton',
-            'productPackingInterval_carton', 'productPackingInterval_inner', 'productPackingInterval_unit',
-            'productMinPrice_carton', 'productMinPrice_inner', 'productMinPrice_unit',
-            'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit','allowNegativePrice',
-            'supplierStdPrice_inner','supplierStdPrice_unit','productCost_unit',
-            'supplierPackingInterval_carton', 'supplierPackingInterval_inner', 'supplierPackingInterval_unit');
-
-        $products->where('productStatus', 'o');
-
-        if(count($pa)>0){
-            $products->orwherein('productId',$pa);
-        }
-        $products = $products->get()->toArray();
-
-
-        // Switch to standard array
-        $products = Product::compileProductStandardForm($products);
-
-        // if customerid is given, get a compiled products json with customer discount information
-        //$products = Product::compileProductAddCustomerDiscount($products, Input::get('customerId'));
-
-        //    return $products;
-        //   });
-
-        // $time_end = microtime(true);
-        //$time = $time_end - $time_start;
-        //syslog(LOG_INFO, "Searched all products in $time seconds");
-
-        return Response::json($products);
     }
+
 
     public function queryInventory_(){
 
