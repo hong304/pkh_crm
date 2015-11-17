@@ -135,7 +135,7 @@ $scope.an = false;
             $scope.orders.shippingdbid = SharedService.shippingdbid;
             $scope.orders.location = SharedService.location;
             $scope.items = SharedService.items;
-            
+ 
             if($scope.countryDataList !== undefined)
             {
                  for(var t = 0;t<$scope.countryDataList.length;t++)
@@ -157,6 +157,45 @@ $scope.an = false;
                     }
              }
             }
+            
+             
+            if(typeof $scope.items != 'undefined')
+            {
+                $scope.product[i] = $.extend(true, {}, $scope.productStructure);
+                var i = 1;
+                $scope.items.forEach(function (item) {
+                    var availableunit = [];
+                    var storeUnit = [];
+                    $scope.product[i].productId = item.productId;
+                    $scope.product[i].productName = item.product_detail.productName_chi;
+                    $scope.product[i].qty = item.productQty;
+                    $scope.product[i]['good_qty'] = item.productQty;
+                  //  $scope.product[i].unit = item.productQty;
+                 
+                  //  
+                  if(item.product_detail.supplierPackingInterval_carton > 0)
+                  {
+                      availableunit = availableunit.concat([{value: 'carton', label: item.product_detail.productPackingName_carton}]);
+                      storeUnit[0] = 'carton';
+                  }else if(item.product_detail.supplierPackingInterval_inner > 0)
+                  {
+                       availableunit = availableunit.concat([{value: 'inner', label: item.product_detail.productPackingName_inner}]);
+                       storeUnit[1] = 'inner';
+                  }else if(item.product_detail.supplierPackingInterval_unit > 0)
+                  {
+                       availableunit = availableunit.concat([{value: 'unit', label: item.product_detail.productPackingName_unit}]);
+                       storeUnit[2] = 'unit';
+                  }
+   
+                  $scope.product[i].availableunit = availableunit;
+                   var indexNum = storeUnit.indexOf(item.productQtyUnit);
+                  $scope.product[i]['unit'] = availableunit[indexNum];
+                  
+                  i++;
+               });
+            }
+          
+           
      
      
         });
@@ -328,20 +367,6 @@ $scope.an = false;
             });
     }
     
-    function wrongMessage()
-    {
-          Metronic.alert({
-                container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
-                place: 'prepend', // append or prepent in container
-                type: 'danger',  // alert's type
-                message: '貨物編號不正確',  // alert's message
-                close: true, // make alert closable
-                reset: true, // close all previouse alerts first
-                focus: true, // auto scroll to the alert after shown
-                closeInSeconds: 0, // auto close after defined seconds
-                icon: 'warning' // put icon before the message
-            });
-    }
 
 
 
@@ -366,10 +391,8 @@ $scope.an = false;
             generalError = false;
         }
 
-        if($(".warning").text().length <= 0)
-        {
-        if(generalError)
-        {
+
+       
             $http.post(
                 endpoint + '/newReceive.json', {
                     product : $scope.product,
@@ -422,12 +445,8 @@ $scope.an = false;
 
                 });
       
-        }
-        }else
-        {
-            wrongMessage();
-        }
-      
+        
+        
 
     }
     

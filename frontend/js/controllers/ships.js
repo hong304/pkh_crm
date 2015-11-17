@@ -46,7 +46,7 @@ app.controller('ships', function ($scope, $rootScope, $http, SharedService, $loc
         $scope.viewPo();
         $scope.viewShippingNote();
        // $scope.viewPoNote();
-        
+        $scope.outputshipContainer();
     });
 
     var queryPo = $scope.endpoint + "/queryPo.json";
@@ -170,9 +170,14 @@ app.controller('ships', function ($scope, $rootScope, $http, SharedService, $loc
             });     
      }
      
-     $scope.viewPoNote = function()
+     $scope.outputshipContainer = function()
      {
-         
+          $http.post($scope.endpoint + "/outputshipContainer.json").success(function (data) {
+                if(data !== "")
+                {
+                     $scope.shippingNote = $sce.trustAsHtml(data);
+                }
+            });     
      }
    
    	
