@@ -68,11 +68,13 @@ class OrderController extends BaseController
         $j=0;
         foreach ($product as $p) {
 
-            if ($p['deleted'] == 0 && $p['qty'] > 0  && $p['productLocation'] > 0)
-                $i++;
+             if ($p['deleted'] == 0 && $p['qty'] > 0 && $p['productLocation'] > 0)
+                    $i++;
 
-            if ($p['deleted'] == 0 && $p['qty'] < 0 && $p['productLocation'] > 0)
-                $j++;
+                if ($p['deleted'] == 0 && $p['qty'] < 0 && $p['productLocation'] > 0)
+                    $j++;
+
+
 
             if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
                 $itemIds[] = $p['dbid'];

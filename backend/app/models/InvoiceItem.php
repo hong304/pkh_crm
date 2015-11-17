@@ -98,7 +98,7 @@ class InvoiceItem extends Eloquent  {
             
             $model->backgroundcode = ($model->approvedSupervisorId == "0" ? "background:#FC7E8B" : "");
 
-               /*
+              /*
             $inner = ($model->productPacking_inner) ? $model->productPacking_inner:1;
             $unit = ($model->productPacking_unit) ? $model->productPacking_unit:1;
 
