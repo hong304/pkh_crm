@@ -130,6 +130,8 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/manipulateProduct.json', 'ProductController@jsonManiulateProduct');
     Route::post('/queryProductwithItem.json', 'ProductController@queryProduct');
 
+    //Inventory Management
+    Route::post('/queryInventory.json', 'InventoryController@queryInventory');
 
     
     Route::post('/queryProductDepartment.json', 'ProductController@jsonQueryProductDepartment');
