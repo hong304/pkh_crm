@@ -21,15 +21,16 @@ class ReceiveMan
      
      public function generateId()
      {
-         $newContainerCode = "r";
+         $newContainerCode = "R";
          $suffix = 10000;
-         $re = Receiving :: select('*')->orderby('receivingId','desc')->first();
+         $re = Receiving :: select('*')->where('receivingId', 'LIKE',  'R' . '%')->orderby('receivingId','desc')->first();
+        
          if(count($re) == 0)
          {
              $this->newContainerCode = $newContainerCode . $suffix;
          }else
          {
-             $b = str_replace("r", "", $re->toArray()['receivingId']);
+             $b = str_replace("R", "", $re->toArray()['receivingId']);
              $newCode = (int)$b +1;
              $this->newContainerCode = $newContainerCode . $newCode;
          }

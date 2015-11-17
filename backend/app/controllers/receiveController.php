@@ -83,6 +83,7 @@ class receiveController extends BaseController {
         if(isset($location))
         {
             $object = Input::get('order');
+       
             $product = Input::get('product');
             $receiveId = isset($object['receivingId']) ? $object['receivingId'] : '';
     
@@ -128,10 +129,20 @@ class receiveController extends BaseController {
 
                     //Insert records into receiving tables
                 $this->new = new ReceiveMan($receiveId);
-                foreach($product as $k=>$v)
+                if($location == 2)
                 {
-                    if($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" )
-                         $this->new->setItemss($v['dbid'],$object['poCode'],$object['shippingId'],$object['containerId'],$object['receivingId'],$v['productId'],$v['good_qty'],$v['damage_qty'],$v['on_hold_qty'],$v['expiryDate'],$v['good_qty'],$v['damage_qty'],$object['receiveDate'],$v['unit_cost'],$v['bin_location'],$v['deleted']);
+                    foreach($product as $k=>$v)
+                    {
+                        if($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" )
+                             $this->new->setItemss($v['dbid'],$object['poCode'],$object['shippingId'],$object['containerId'],$object['receivingId'],$v['productId'],$v['good_qty'],$v['damage_qty'],$v['on_hold_qty'],$v['expiryDate'],$v['good_qty'],$v['damage_qty'],$object['receiveDate'],$v['unit_cost'],$v['bin_location'],$v['deleted']);
+                    }
+                }else if($location == 1)
+                {
+                    foreach($product as $k=>$v)
+                    {
+                        if($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" )
+                             $this->new->setItemss($v['dbid'],$object['poCode'],"","",$object['receivingId'],$v['productId'],$v['good_qty'],$v['damage_qty'],$v['on_hold_qty'],$v['expiryDate'],$v['good_qty'],$v['damage_qty'],$object['receiveDate'],$v['unit_cost'],$v['bin_location'],$v['deleted']);
+                    }
                 }
                 $message = $this->new->save();
                 

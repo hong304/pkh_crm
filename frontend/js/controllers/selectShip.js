@@ -164,21 +164,22 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
         }else if($scope.orders.location == '1')
         {
                $("#selectShipModel").hide();
-               
-        }
-        
-        var taPost = endpoint + '/getPurchaseAll.json';
+                 var taPost = endpoint + '/getPurchaseAll.json';
         
         $http.post(taPost, {poCode: $scope.storePoSecond })
         .success(function (res, status, headers, config) {
+
             if(res.length > 0)
             {
                  SharedService.setValue('items', res[0].poitem, 'handleShippingUpdate');
-                 console.log(res[0].poitem);
+                 
             }
-               
-                
+
         });
+               
+        }
+        
+      
         
     }
     
