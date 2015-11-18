@@ -317,21 +317,21 @@ class financialReportController extends BaseController
         //expenses
         $expenses = expense::where('deliveryDate',date('Y-m-d',$this->_date))->get();
         foreach($expenses as $v){
-            if(!isset($expenses_amount[$v->zoneId]))
-                $expenses_amount[$v->zoneId] = 0;
-            $expenses_amount[$v->zoneId] = $v->cost1+$v->cost2+$v->cost3+$v->cost4;
+            if(!isset($expenses_amount[$v->receiveMoneyZone]))
+                $expenses_amount[$v->receiveMoneyZone] = 0;
+            $expenses_amount[$v->receiveMoneyZone] = $v->cost1+$v->cost2+$v->cost3+$v->cost4;
         }
         //expenses
 
         // pd($expenses_amount);
         //B/F
-        $invoices = Invoice::where('paymentTerms',1)->where('deliveryDate','<',$this->_date)->where('invoiceStatus',20)->orderBy('zoneId')->get();
+        $invoices = Invoice::where('paymentTerms',1)->where('deliveryDate','<',$this->_date)->where('invoiceStatus',20)->orderBy('receiveMoneyZone')->get();
         $balance_bf = [];
         foreach($invoices as $v){
 
-            if(!isset($balance_bf[$v->zoneId]))
-                $balance_bf[$v->zoneId] = 0;
-            $balance_bf[$v->zoneId] += $v->remain;
+            if(!isset($balance_bf[$v->receiveMoneyZone]))
+                $balance_bf[$v->receiveMoneyZone] = 0;
+            $balance_bf[$v->receiveMoneyZone] += $v->remain;
         }
         //B/F
 
@@ -346,30 +346,30 @@ class financialReportController extends BaseController
         foreach($invoices as $invoiceQ){
             foreach($invoiceQ->payment as $v1){
                 if($v1->receive_date == date('Y-m-d',$this->_date) and $invoiceQ->deliveryDate < $this->_date ){
-                    $previous[$invoiceQ->zoneId] = (isset($previous[$invoiceQ->zoneId]))?$previous[$invoiceQ->zoneId]:0;
-                    $previous[$invoiceQ->zoneId] += $v1->pivot->paid;
+                    $previous[$invoiceQ->receiveMoneyZone] = (isset($previous[$invoiceQ->receiveMoneyZone]))?$previous[$invoiceQ->receiveMoneyZone]:0;
+                    $previous[$invoiceQ->receiveMoneyZone] += $v1->pivot->paid;
                 }
             }
         }
         //補收
 
         //當天單,不是當天收錢
-           $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1);
-           $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
-               $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
-           })->leftJoin('payments', function ($join) {
-               $join->on('invoice_payment.payment_id', '=', 'payments.id');
-           })->where('deliveryDate', '=', $this->_date)
-               ->where(function ($query) {
-                   $query->where('receive_date', '!=', date('y-m-d',$this->_date));
-               })->get();
+        $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1);
+        $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
+            $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
+        })->leftJoin('payments', function ($join) {
+            $join->on('invoice_payment.payment_id', '=', 'payments.id');
+        })->where('deliveryDate', '=', $this->_date)
+            ->where(function ($query) {
+                $query->where('receive_date', '!=', date('y-m-d',$this->_date));
+            })->get();
 
-           $uncheque = [];
-           foreach($invoicesQuery as $v){
-               if(!isset($uncheque[$v->invoiceId]))
-                   $uncheque[$v->invoiceId] = 0;
-               $uncheque[$v->invoiceId] += $v->paid;
-           }
+        $uncheque = [];
+        foreach($invoicesQuery as $v){
+            if(!isset($uncheque[$v->invoiceId]))
+                $uncheque[$v->invoiceId] = 0;
+            $uncheque[$v->invoiceId] += $v->paid;
+        }
         //當天單,不是當天收錢
 
 
@@ -380,15 +380,15 @@ class financialReportController extends BaseController
         foreach ($invoices as $invoiceQ){
 
             if($invoiceQ->paymentTerms == 1){
-                if(!isset($NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->zoneId]))
-                    $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->zoneId] = 0;
+                if(!isset($NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]))
+                    $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone] = 0;
 
-                $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->zoneId] += 1;
+                $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone] += 1;
 
-                if(!isset( $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['totalAmount']))
-                    $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['totalAmount'] = 0;
-                if(!isset( $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['receiveTodaySales']))
-                    $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['receiveTodaySales'] = 0;
+                if(!isset( $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount']))
+                    $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount'] = 0;
+                if(!isset( $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['receiveTodaySales']))
+                    $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['receiveTodaySales'] = 0;
 
                 if ($invoiceQ->invoiceStatus == 30 || $invoiceQ->invoiceStatus == 20){
                     $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
@@ -397,28 +397,28 @@ class financialReportController extends BaseController
                     $paid = $invoiceQ->amount;
                 }
 
-                $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId] = [
-                    'truck' => $invoiceQ->zoneId,
-                    'noOfInvoices' => $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->zoneId],
-                    'balanceBf' => isset($balance_bf[$invoiceQ->zoneId])?$balance_bf[$invoiceQ->zoneId]:0,
-                    'totalAmount' => $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
-                    'previous'=>isset($previous[$invoiceQ->zoneId])?$previous[$invoiceQ->zoneId]:0,
-                    'receiveTodaySales' => $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['receiveTodaySales'] += (($invoiceQ->invoiceStatus == '98')? -$paid:$paid),
-                    'expenses' =>  isset($expenses_amount[$invoiceQ->zoneId])?$expenses_amount[$invoiceQ->zoneId]:0,
+                $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone] = [
+                    'truck' => $invoiceQ->receiveMoneyZone,
+                    'noOfInvoices' => $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone],
+                    'balanceBf' => isset($balance_bf[$invoiceQ->receiveMoneyZone])?$balance_bf[$invoiceQ->receiveMoneyZone]:0,
+                    'totalAmount' => $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
+                    'previous'=>isset($previous[$invoiceQ->receiveMoneyZone])?$previous[$invoiceQ->receiveMoneyZone]:0,
+                    'receiveTodaySales' => $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['receiveTodaySales'] += (($invoiceQ->invoiceStatus == '98')? -$paid:$paid),
+                    'expenses' =>  isset($expenses_amount[$invoiceQ->receiveMoneyZone])?$expenses_amount[$invoiceQ->receiveMoneyZone]:0,
                 ];
             }else if($invoiceQ->paymentTerms == 2){
 
-                if(!isset($NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->zoneId]))
-                    $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->zoneId] = 0;
+                if(!isset($NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]))
+                    $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone] = 0;
 
-                $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->zoneId] += 1;
+                $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone] += 1;
 
-                if(!isset( $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['totalAmount']))
-                    $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['totalAmount'] = 0;
+                if(!isset( $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount']))
+                    $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount'] = 0;
 
-                $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId] = [
-                    'noOfInvoices' => $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->zoneId],
-                    'totalAmount' => $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
+                $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone] = [
+                    'noOfInvoices' => $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone],
+                    'totalAmount' => $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
                 ];
 
             }
