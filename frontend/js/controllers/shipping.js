@@ -63,6 +63,15 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
            unit :'',
            unitName :'',
        };
+       
+    $scope.selfdefine = [];
+    $scope.selfdefineS = {
+        productId: '',
+        productName: '',
+        qty: '',
+        availableunit: '',
+        deleted : 0
+    }
     
     $scope.totalCost = 0;
     $scope.showOrNot = 0;
@@ -460,7 +469,11 @@ $scope.an = false;
         });
        
     }
-
+    
+    $scope.saveProductDetails = function()
+    {
+        $("#containerProduct").modal('hide');
+    }
 
 
     $scope.submitOrder = function(v)
@@ -587,12 +600,13 @@ $scope.an = false;
 
     $scope.deleteRow = function(i)
     {
-        
         $scope.product[i].deleted = 1;
-       
-     
     }
-
+    
+    $scope.deleteProductRow = function(k)
+    {
+        $scope.selfdefine[i].deleted = 1;
+    }
 
     $scope.openRemarkPanel = function(i)
     {
@@ -663,15 +677,31 @@ $scope.an = false;
        
     }
     
+    var target = endpoint + '/getPurchaseAll.json';
     $scope.openProductDetails = function(i)
     {
         $("#containerProduct").modal('toggle');
+        $scope.containerCost.containerId = $scope.product[i]['containerId'];
+        if($scope.shipping.poCode != "")
+        {
+           $http.post(target, {poCode : $scope.shipping.poCode})
+           .success(function (res, status, headers, config) {
+                console.log(res);
+           });
+        } 
     }
     
     $scope.saveProductDetails = function()
     {
-        
+        $("#containerProduct").modal('hide');
     }
+    
+    $scope.itemlist.forEach(function(key){
+        $scope.selfdefine[key] = $.extend(true, {}, $scope.selfdefineS);
+       // console.log( $scope.selfdefine);
+    });
+
+    $scope.totalline = 1;
     
     $scope.addRows = function () {
         var j = $scope.totalline;
