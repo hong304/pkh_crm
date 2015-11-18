@@ -79,7 +79,7 @@
 		</div>			
 		
 	</div>
-	<div class="col-md-10">
+	<div class="col-md-10" id="firstContainer">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="portlet light">
@@ -88,17 +88,7 @@
 							<i class="fa fa-cogs font-green-sharp"></i>
 							<span class="caption-subject font-green-sharp bold uppercase">產品列表</span>
 						</div>
-						<div class="actions">
-							<a href="javascript:;" ng-click="addProduct();" class="btn btn-default btn-circle" data-ng-if="systemInfo.permission.add_product == true">
-								<i class="fa fa-plus"></i>
-								<span class="hidden-480"> 新增產品 </span> 
-							</a>	
-							
-							<a href="/#/productDepartmentMaintenance" class="btn btn-default btn-circle" data-ng-if="systemInfo.permission.view_productGroup == true">
-								<i class="fa fa-list-ul"></i>
-								<span class="hidden-480"> 産品類別 </span> 
-							</a>					
-						</div>		
+
 					</div>
 					<div class="portlet-body">
 						<table class="table table-striped table-bordered table-hover" id="datatable_ajax">

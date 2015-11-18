@@ -42,7 +42,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
 	var querytarget = endpoint + '/queryInventory.json';
-	var iutarget = endpoint + '/manipulateProduct.json';
+	var iutarget = endpoint + '/manipulateInventory.json';
 	
 	$scope.filterData = {
 			'group'	:	'',
@@ -199,6 +199,19 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
         	.success(function(res, status, headers, config){    
       			$("#inventoryFormModal").modal('hide');
         		$scope.updateDataSet();
+
+                     Metronic.alert({
+                         container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                         place: 'prepend', // append or prepent in container
+                         type: 'success',  // alert's type
+                         message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
+                         close: true, // make alert closable
+                         reset: true, // close all previouse alerts first
+                         focus: true, // auto scroll to the alert after shown
+                         closeInSeconds: 0, // auto close after defined seconds
+                         icon: 'warning' // put icon before the message
+                     });
+
         	});
 
     }

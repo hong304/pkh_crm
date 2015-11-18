@@ -7,6 +7,22 @@ class inventoryController extends BaseController {
 
     public function manipulateInventory(){
 
+        $info = Input::get('info');
+        $adjusts = new adjust();
+        $adjusts->poCode =$info['poCode'];
+        $adjusts->receivingId =$info['receivingId'];
+        $adjusts->productId =$info['productId'];
+        $adjusts->adjusted_good_qty =$info['adjusted_good_qty'];
+        $adjusts->adjusted_damage_qty =$info['adjusted_damage_qty'];
+        $adjusts->good_qty =$info['good_qty'];
+        $adjusts->damage_qty =$info['damage_qty'];
+        $adjusts->adjustType = '2';
+        $adjusts->save();
+
+        $receivings = Receiving::where('id',$info['id'])->first();
+        $receivings->good_qty =$info['adjusted_good_qty'];
+        $receivings->damage_qty =$info['adjusted_damage_qty'];
+        $receivings->save();
     }
 
 

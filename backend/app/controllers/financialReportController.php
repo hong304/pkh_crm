@@ -354,9 +354,7 @@ class financialReportController extends BaseController
         //補收
 
         //當天單,不是當天收錢
-        /*   $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1);
-           if($this->_shift != '-1')
-               $invoicesQuery->where('shift',$this->_shift);
+           $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1);
            $invoicesQuery = $invoicesQuery->leftJoin('invoice_payment', function ($join) {
                $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
            })->leftJoin('payments', function ($join) {
@@ -371,7 +369,7 @@ class financialReportController extends BaseController
                if(!isset($uncheque[$v->invoiceId]))
                    $uncheque[$v->invoiceId] = 0;
                $uncheque[$v->invoiceId] += $v->paid;
-           }*/
+           }
         //當天單,不是當天收錢
 
 
@@ -393,8 +391,8 @@ class financialReportController extends BaseController
                     $info[$invoiceQ->paymentTerms][$invoiceQ->zoneId]['receiveTodaySales'] = 0;
 
                 if ($invoiceQ->invoiceStatus == 30 || $invoiceQ->invoiceStatus == 20){
-                    // $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
-                    $paid = $invoiceQ->paid+$invoiceQ->discount_taken;
+                    $paid = $invoiceQ->paid - ( isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0 );
+                    //$paid = $invoiceQ->paid+$invoiceQ->discount_taken;
                 }else{
                     $paid = $invoiceQ->amount;
                 }
