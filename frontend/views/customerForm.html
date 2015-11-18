@@ -129,7 +129,7 @@
 						<div class="form-group">
 							<label class="col-md-2 control-label">付款方式* </label>
 							<div class="col-md-10">
-								<select ng-model="customerInfo.paymentTermId" class="form-control" data-ng-disabled="systeminfo.user.id!=8 && systeminfo.user.id!=46 && systeminfo.user.id!=9">
+								<select ng-model="customerInfo.paymentTermId" class="form-control" data-ng-disabled="systeminfo.user.id!=8 && systeminfo.user.id!=46 && systeminfo.user.id!=9 && customerInfo.customerId != ''">
 									<option value="1">Cash</option>
 									<option value="2">Credit</option>
 								</select>
