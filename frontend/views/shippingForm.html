@@ -639,12 +639,7 @@
                             </div>
                         </div>
                          <div class="row">
-                               <div class="col-md-2">
-                                    <label>船務編號</label>
-                               </div>
-                               <div class="col-md-4">
-                                    <label>{{containerCost.shippingId}}</label>
-                               </div>
+        
                                <div class="col-md-2">
                                     <label>貨櫃編號</label>
                                </div>
@@ -662,16 +657,17 @@
                                        <th>單位</th>
                                 </thead>
                                 <tbody>
+                                   <!-- <tr data-ng-repeat="i in itemlist" data-ng-if="product[i]['deleted'] == 0">-->
                                         <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">
-                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)" ng-change="calcIn()"></td>
+                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)" disabled></td>
                                             <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']" disabled></td>
-                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']" ng-change="calcIn()"></td>
+                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']"></td>
                                             <td>           
-                                                <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value" ng-change="calcIn()">
+                                                <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value">
                                                 </select>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-danger" id="deletebtn_1" data-ng-click="deleteRow(k);">刪除
+                                                <button type="button" class="btn btn-danger" id="deletebtn_1" data-ng-click="deleteProductRow(k);">刪除
                                                 </button>
                                             </td>
                                         </tr>       
@@ -683,7 +679,9 @@
                                    
                                         <div style="clear:both;"></div>
                          </div>
+                <div style="clear:both;"></div>
                    </div>
+             
                                         <div class="modal-footer" >
                                             <button type="button" class="btn default" style = "background-color:blue;color:white;" ng-click="saveProductDetails()">提交</button>
                                             <button type="button" class="btn default" data-dismiss="modal">取消</button>

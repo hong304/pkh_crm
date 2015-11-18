@@ -164,16 +164,30 @@ $scope.an = false;
                 $scope.product[i] = $.extend(true, {}, $scope.productStructure);
                 var i = 1;
                 $scope.items.forEach(function (item) {
-                    var availableunit = [];
-                    var storeUnit = [];
+                    
                     $scope.product[i].productId = item.productId;
                     $scope.product[i].productName = item.product_detail.productName_chi;
                     $scope.product[i].qty = item.productQty;
                     $scope.product[i]['good_qty'] = item.productQty;
                   //  $scope.product[i].unit = item.productQty;
-                 
+                    addUnit(item,i);
                   //  
-                  if(item.product_detail.supplierPackingInterval_carton > 0)
+                 
+                  
+                  i++;
+               });
+            }
+          
+           
+     
+     
+        });
+        
+        function addUnit(item,i)
+        {
+            var availableunit = [];
+            var storeUnit = [];
+             if(item.product_detail.supplierPackingInterval_carton > 0)
                   {
                       availableunit = availableunit.concat([{value: 'carton', label: item.product_detail.productPackingName_carton}]);
                       storeUnit[0] = 'carton';
@@ -188,17 +202,9 @@ $scope.an = false;
                   }
    
                   $scope.product[i].availableunit = availableunit;
-                   var indexNum = storeUnit.indexOf(item.productQtyUnit);
+                  var indexNum = storeUnit.indexOf(item.productQtyUnit);
                   $scope.product[i]['unit'] = availableunit[indexNum];
-                  
-                  i++;
-               });
-            }
-          
-           
-     
-     
-        });
+        }
 
 
 
@@ -391,8 +397,21 @@ $scope.an = false;
             generalError = false;
         }
 
-
-       
+        if(!checkSumCal($scope.product))
+        {
+             Metronic.alert({
+                container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
+                place: 'prepend', // append or prepent in container
+                type: 'danger',  // alert's type
+                message: '好貨,壞貨,保留貨大於原本貨品數量',  // alert's message
+                close: true, // make alert closable
+                reset: true, // close all previouse alerts first
+                focus: true, // auto scroll to the alert after shown
+                closeInSeconds: 0, // auto close after defined seconds
+               // icon: 'warning' // put icon before the message
+            });
+        }else
+        {
             $http.post(
                 endpoint + '/newReceive.json', {
                     product : $scope.product,
@@ -444,11 +463,28 @@ $scope.an = false;
                     $scope.allowSubmission = true;
 
                 });
-      
+            }
         
         
 
     }
+    
+    function checkSumCal(productObject)
+    {
+        var flag = true;
+        for(var k = 1;k<=productObject.length -1;k++)
+        {
+            if(typeof $scope.product[k]['good_qty'] != 'undefined' && typeof $scope.product[k]['damage_qty'] != 'undefined' && typeof $scope.product[k]['on_hold_qty'] != 'undefined' && typeof $scope.product[k]['qty'] != 'undefined')
+            {
+                var sum = 0;
+                sum = parseInt($scope.product[k]['good_qty']) +  parseInt($scope.product[k]['damage_qty']) +  parseInt($scope.product[k]['on_hold_qty']);
+                if(sum > parseInt($scope.product[k]['qty']))
+                    flag = false;
+            }
+        }
+        return flag;
+    }
+
     
     $scope.checkProduct = function(h,value)
     {
@@ -537,5 +573,25 @@ $scope.an = false;
     {
         $scope.product[i].deleted = 1;
     }
-
+    
+    $scope.productDetect = function(value,i)
+    {
+       if(typeof $scope.items != 'undefined')
+       {
+                $scope.product[i]['qty'] = "";
+                $scope.product[i]['unit'] = "";
+                $scope.product[i]['productName'] = "";
+                $scope.product[i]['good_qty'] = "";
+                $scope.items.forEach(function (item) {
+                    if(item.productId == value)
+                    {
+                        $scope.product[i]['qty'] = item.productQty;
+                        $scope.product[i]['unit'] = item.productQtyUnit;
+                        $scope.product[i]['productName'] = item.product_detail.productName_chi;
+                        $scope.product[i]['good_qty'] = item.productQty;
+                        addUnit(item,i);
+                    }
+                });
+       }
+    }
 });
