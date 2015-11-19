@@ -70,14 +70,14 @@ class Customer_MonthlyCreditSummary {
 
         $filter = $this->_indata['filterData'];
 
-        if ($this->_group == '' && $filter['name'] == '' && $filter['phone'] == '' && $filter['customerId'] == '') {
+      /*  if ($this->_group == '' && $filter['name'] == '' && $filter['phone'] == '' && $filter['customerId'] == '') {
             $empty = true;
             $this->data = [];
         } else {
             $empty = false;
-        }
+        }*/
 
-        if (!$empty) {
+      //  if (!$empty) {
 
             //select('Customer.customerId','customer.phone_1','account_tel','account_fax','account_contact','customer.address_chi','customerName_chi','invoiceDate','amount','paid','invoiceId','customerRef','invoiceStatus','customer_groups.name')
 
@@ -140,7 +140,7 @@ class Customer_MonthlyCreditSummary {
 
 
             $this->data = $this->_unPaid;
-        }
+       // }
         return $this->data;
     }
 

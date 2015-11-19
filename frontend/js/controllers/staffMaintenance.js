@@ -51,11 +51,11 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
 			'name'	:	'',
 			'disabled'	:	'0',
 			'permission'	:	'',
-			'group'	:	'',
+			'group'	:	''
 	};
 
     $scope.filterData = {
-        'ceritera' : '',
+        'ceritera' : ''
     };
 	
 	$scope.info = {};

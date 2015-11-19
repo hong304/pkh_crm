@@ -275,10 +275,7 @@ class UserController extends BaseController {
 	        $staff = User::select('*');
 
             if($filter['ceritera'] != '')
-            {
-                $staff->where('username', 'LIKE', '%'.$filter['ceritera'].'%')
-                      ->orwhere('name', 'LIKE', '%'.$filter['ceritera'].'%');
-            }
+                  $staff->where('name', 'LIKE', '%'.$filter['ceritera'].'%');
 
 	      //  $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 	        $staff = $staff->with('role');
