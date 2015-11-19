@@ -317,9 +317,9 @@ class financialReportController extends BaseController
         //expenses
         $expenses = expense::where('deliveryDate',date('Y-m-d',$this->_date))->get();
         foreach($expenses as $v){
-            if(!isset($expenses_amount[$v->receiveMoneyZone]))
-                $expenses_amount[$v->receiveMoneyZone] = 0;
-            $expenses_amount[$v->receiveMoneyZone] = $v->cost1+$v->cost2+$v->cost3+$v->cost4;
+            if(!isset($expenses_amount[$v->zoneId]))
+                $expenses_amount[$v->zoneId] = 0;
+            $expenses_amount[$v->zoneId] = $v->cost1+$v->cost2+$v->cost3+$v->cost4;
         }
         //expenses
 
