@@ -43,7 +43,9 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
 	var querytarget = endpoint + '/queryStaff.json';
 	var iutarget = endpoint + '/manipulateStaff.json';
     var addStaffquery = endpoint + '/UserManipulation.json';
-	
+    var fetchDataTimer;
+    var fetchDataDelay = 500;   // milliseconds
+
 	$scope.info_def = {
 			'id'		:	false,
 			'username'	:	'',
@@ -251,7 +253,10 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     }
     
     $scope.searchStaff = function(){
-        $scope.updateDataSet();
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+            $scope.updateDataSet();
+        }, fetchDataDelay);
     }
 
 

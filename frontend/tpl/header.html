@@ -216,16 +216,7 @@
                 </li>
 
 
-                <li class="menu-dropdown" data-ng-if="systemInfo.permission.add_po == true">
-                    <a href="/#/PoMain" ng-click="hardRefresh('/#/PoMain')"  class="iconify">
-                        <i class="fa fa-plus"></i>
-                        增加購單 </a>
-                </li>
-                <li class="menu-dropdown" data-ng-if="systemInfo.permission.view_po == true">
-                    <a href="/#/searchPo" class="iconify" ng-click="hardRefresh('/#/searchPo')">
-                        <i class="fa fa-search"></i>
-                        搜尋購單 </a>
-                </li>
+
 
 
 				<!--<li class="menu-dropdown">
@@ -290,8 +281,99 @@
 
 
 
+                <li class="menu-dropdown mega-menu-dropdown" data-ng-if="systemInfo.permission.view_financialReport == true" >
 
-				<li class="menu-dropdown mega-menu-dropdown ">
+
+                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
+                        <i class="fa fa-cogs"></i>
+                        財務報表 <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" style="min-width: 200px">
+                        <li>
+                            <div class="mega-menu-content">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul class="mega-menu-submenu">
+                                            <li>
+                                                <a href="/#/agingByZoneCash" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    Accounts Receivable Aging Report by zone(Cash Sales)</a>
+                                            </li>
+                                            <li>
+                                                <a href="/#/agingByCustomerCredit" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    Accounts Receivable Aging Report(Credit Sales) </a>
+                                            </li>
+                                            <li>
+                                                <a href="/#/agingByCustomerCash" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    Accounts Receivable Aging Report(Cash Sales) </a>
+                                            </li>
+                                            <li>
+                                                <a href="/#/dailySalesSummary" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    Daily sales summary </a>
+                                            </li>
+                                            <li>
+                                                <a href="/#/yearEndReport" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    Year-end report</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                </li>
+
+
+                <li class="menu-dropdown" data-ng-if="systemInfo.permission.add_po == true">
+                    <a href="/#/PoMain" ng-click="hardRefresh('/#/PoMain')"  class="iconify">
+                        <i class="fa fa-plus"></i>
+                        增加購單 </a>
+                </li>
+                <li class="menu-dropdown" data-ng-if="systemInfo.permission.view_po == true">
+                    <a href="/#/searchPo" class="iconify" ng-click="hardRefresh('/#/searchPo')">
+                        <i class="fa fa-search"></i>
+                        搜尋購單 </a>
+                </li>
+
+                <li class="menu-dropdown mega-menu-dropdown" data-ng-if="systemInfo.permission.view_financialReport == true" >
+                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
+                        <i class="fa fa-cogs"></i>
+                        庫存管理<i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" style="min-width: 200px">
+                        <li>
+                            <div class="mega-menu-content">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul class="mega-menu-submenu">
+                                            <li>
+                                                <a href="/#/inventoryListing" class="iconify">
+                                                    <i class="icon-home"></i>
+                                                    存貨列表</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+
+
+
+                            </div>
+                        </li>
+                    </ul>
+
+                </li>
+
+
+
+
+                <li class="menu-dropdown mega-menu-dropdown ">
 					<a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
 					<i class="fa fa-cogs"></i>
 					系統維護 <i class="fa fa-angle-down"></i>
@@ -440,82 +522,6 @@
 					</ul>
 				</li>
                                 
-                    <li class="menu-dropdown mega-menu-dropdown" data-ng-if="systemInfo.permission.view_financialReport == true" >
-
-
-                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
-                        <i class="fa fa-cogs"></i>
-                        財務報表 <i class="fa fa-angle-down"></i>
-                    </a>
-                    <ul class="dropdown-menu" style="min-width: 200px">
-                        <li>
-                            <div class="mega-menu-content">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <ul class="mega-menu-submenu">
-                                            <li>
-                                                <a href="/#/agingByZoneCash" class="iconify">
-                                                    <i class="icon-home"></i>
-                                                     Accounts Receivable Aging Report by zone(Cash Sales)</a>
-                                            </li>
-                                            <li>
-                                                <a href="/#/agingByCustomerCredit" class="iconify">
-                                                    <i class="icon-home"></i>
-                                                    Accounts Receivable Aging Report(Credit Sales) </a>
-                                            </li>
-                                             <li>
-                                                <a href="/#/agingByCustomerCash" class="iconify">
-                                                    <i class="icon-home"></i>
-                                                    Accounts Receivable Aging Report(Cash Sales) </a>
-                                            </li>
-                                            <li>
-                                                <a href="/#/dailySalesSummary" class="iconify">
-                                                    <i class="icon-home"></i>
-                                                    Daily sales summary </a>
-                                            </li>
-                                            <li>
-                                                <a href="/#/yearEndReport" class="iconify">
-                                                    <i class="icon-home"></i>
-                                                    Year-end report</a>
-                                            </li> 
-                                        </ul>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-
-                </li>
-
-
-
-
-                <li class="menu-dropdown mega-menu-dropdown" data-ng-if="systemInfo.permission.view_financialReport == true" >
-                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
-                        <i class="fa fa-cogs"></i>
-                        庫存管理<i class="fa fa-angle-down"></i>
-                    </a>
-                    <ul class="dropdown-menu" style="min-width: 200px">
-                        <li>
-                            <div class="mega-menu-content">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <ul class="mega-menu-submenu">
-                                            <li>
-                                                <a href="/#/inventoryListing" class="iconify">
-                                                    <i class="icon-home"></i>
-                                                    存貨列表</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-
-                </li>
 
 
 

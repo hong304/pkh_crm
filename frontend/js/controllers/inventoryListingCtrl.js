@@ -1,5 +1,7 @@
 'use strict';
 
+Metronic.unblockUI();
+
 function editProduct(id)
 {
 	var scope = angular.element(document.getElementById("queryInfo")).scope();
@@ -37,7 +39,7 @@ function delCustomer(id)
     });
 }
 
-app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval) {
+app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout) {
 	
 	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
@@ -67,7 +69,37 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 	$scope.newId = "";
 	
 	$scope.info = {};
-	
+
+
+
+    $scope.itemlist = [0];
+    $scope.repack = {
+        productId: '',
+        productName: '',
+        products: ''
+    };
+    $scope.selfdefine = [];
+    $scope.selfdefineS = {
+        'productId': '',
+        'qty': '',
+        'unit': '',
+        'productlevel': '',
+        'adjustType':'1',  //repack is 1,退貨 is 2,when " " is 3
+        'adjustId':'',
+        'receivingId':'',
+        'good_qty':'',
+        deleted : 0
+
+    }
+
+    $scope.receiveInclude = [];
+    $scope.receive = {
+        'receivingId': '',
+        'good_qty': ''
+    };
+
+    $scope.totalline = 1;
+
     $scope.$on('$viewContentLoaded', function() {   
     	
         Metronic.initAjax();        
@@ -86,57 +118,167 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
         $scope.updateDataSet();
     }, true);
 
-    $scope.delCustomer = function(id){
-        $http({
-            method: 'POST',
-            url: iutarget,
-            data: {mode:'del',customer_id:id}
-        }).success(function () {
-            $scope.del = true;
-            $scope.updateDataSet();
+
+
+
+
+
+    $scope.rePack = function(){
+
+        $scope.out = {}
+
+        $("#repackAll").modal({backdrop: 'static'});
+
+        $scope.itemlist.forEach(function(key){
+            $scope.selfdefine[key] = $.extend(true, {}, $scope.selfdefineS);
         });
 
+    }
 
 
+
+    $scope.addRows = function () {
+        var j = $scope.totalline;
+        $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
+        $scope.totalline += 1;
+    }
+
+    $scope.deleteRow = function(i)
+    {
+        $scope.selfdefine[i].deleted = 1;
 
     }
-    $scope.checkIdexist = function(){
 
-        $http.post(querytarget, {mode: "checkId", productId: $scope.info.productnewId})
-            .success(function(res, status, headers, config){
-                $scope.productIdused = res;
-                   if($scope.productIdused == 1){
-                       $scope.submit = false;
-                   }else
-                       $scope.submit = true;
+    $scope.submitRepack = function () {
+
+
+        if($scope.out.total_normalized_unit != $scope.totalAmount){
+            alert('輸出及輸入數量必需相同');
+            return false
+        }
+
+        if($scope.out.total_normalized_unit > $scope.out.available){
+            alert('Repack amount cant more than available amount');
+            return false
+        }
+
+
+        insertToAdjust($scope.selfdefine);
+
+    }
+
+
+    $scope.searchReceiving = function(){
+        var target = endpoint + '/outRepackProduct.json';
+        $http.post(target, {productId:$scope.out.productId})
+            .success(function (res, status, headers, config) {
+
+                $scope.out.productName = res.productName;
+                var availableunit = [];
+                if(res.productPackingName_carton != '')
+                    availableunit = availableunit.concat([{value: 'carton', label: res.productPackingName_carton}]);
+                if(res.productPackingName_unit != '')
+                    availableunit = availableunit.concat([{value: 'unit', label: res.productPackingName_unit}]);
+                $scope.out.unit = availableunit[0];
+                $scope.out.available = res.total;
+                $scope.out.availableunit = availableunit;
+                $scope.out.normalized_unit = res.normalized_unit;
 
             });
-
     }
 
-    $scope.getGroupPrefix = function(){
-        $http.post(querytarget, {mode: "getGroupPrefix", group: $scope.info.group})
-            .success(function(res){
-                $scope.prefix = res;
+    $scope.calc = function(){
+
+        var finalize_amount = 0;
+        if($scope.out.unit.value=='carton')
+            finalize_amount  = $scope.out.normalized_unit * $scope.out.qty;
+        else if ($scope.out.unit.value=='unit')
+            finalize_amount = $scope.out.qty;
+
+
+        $scope.out.total_normalized_unit =  finalize_amount;
+    }
+
+    $scope.calcIn = function(){
+        $scope.totalAmount = 0;
+
+        var i = 0;
+        $scope.selfdefine.forEach(function(item){
+            if(item.deleted == 0)
+            {
+                var finalize_amount = 0;
+                if(item.unit.value=='carton') {
+                    finalize_amount = item.normalized_unit * item.qty;
+                    $scope.selfdefine[i]['packing_size'] = item.normalized_unit;
+                }else if (item.unit.value=='inner'){
+                    finalize_amount = item.normalized_inner * item.qty;
+                    $scope.selfdefine[i]['packing_size'] = item.normalized_inner;
+                }else{
+                    finalize_amount = item.qty
+                    $scope.selfdefine[i]['packing_size'] = item.qty;
+                }
+                $scope.totalAmount += Number(finalize_amount);
+                $scope.selfdefine[i]['total_finalized_unit'] = finalize_amount;
+
+            }
+            i++;
+        });
+    }
+
+    $scope.searchProduct = function (value,i)
+    {
+        var target = endpoint + '/preRepackProduct.json';
+        $http.post(target, {productId:value})
+            .success(function (res, status, headers, config) {
+                if(typeof res == "object")
+                {
+                    var availableunit = [];
+                    if(res.productPackingInterval_unit > 0)
+                        availableunit = availableunit.concat([{value: 'unit', label: res.productPackingName_unit}]);
+                    if(res.productPackingInterval_inner > 0)
+                        availableunit = availableunit.concat([{value: 'inner', label: res.productPackingName_inner}]);
+                    if(res.productPackingInterval_carton > 0)
+                        availableunit = availableunit.concat([{value: 'carton', label: res.productPackingName_carton}]);
+
+                    // $scope.selfdefine[i]['availableunit'] = availableunit.reverse();
+                    $scope.selfdefine[i]['availableunit'] = availableunit;
+                    $scope.selfdefine[i]['unit'] = $scope.selfdefine[i]['availableunit'][0];
+                    $scope.selfdefine[i]['qty'] = '';
+                    $scope.selfdefine[i]['productName'] = res.productName_chi;
+                    $scope.selfdefine[i]['normalized_unit'] = res.normalized_unit;
+                    $scope.selfdefine[i]['normalized_inner'] = res.productPacking_unit;
+                }
             });
     }
 
-    $scope.getNewId = function(){
-        $http.post(iutarget, {mode: "getNewId", groupPrefix: $scope.info.groupPrefix})
-            .success(function(res){
-               if(res.length == 1)
-                    $scope.info.productnewId = $scope.info.groupPrefix+'00'+res;
-                else if(res.length == 2)
-                    $scope.info.productnewId = $scope.info.groupPrefix+'0'+res;
-                else if(res.length > 2){
-                   if(isNaN($scope.info.groupPrefix))
-                       $scope.info.productnewId = $scope.info.groupPrefix+res;
-                   else
-                       $scope.info.productnewId = res;
-               }
-                $scope.checkIdexist();
-            });
+    function insertToAdjust(items)
+    {
+        if(items != "")
+        {
+            var target = endpoint + '/addAjust.json';
+            $http.post(target, {items:items,outProduct:$scope.out})
+                .success(function (res, status, headers, config) {
+
+                        $("#repackAll").modal('hide');
+
+                        $scope.updateDataSet();
+
+                        Metronic.alert({
+                            container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                            place: 'prepend', // append or prepent in container
+                            type: 'success',  // alert's type
+                            message: '<span style="font-size:16px;">包裝成功</span>',  // alert's message
+                            close: true, // make alert closable
+                            reset: true, // close all previouse alerts first
+                            focus: true, // auto scroll to the alert after shown
+                            closeInSeconds: 0, // auto close after defined seconds
+                            icon: 'warning' // put icon before the message
+                        });
+
+                });
+        }
     }
+
 
     $scope.editProduct = function(id)
     {
@@ -151,47 +293,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
     	
     	
     }
-    
- $scope.addProduct = function()
-    {
-    	$scope.info = $.extend(true, {}, $scope.info_def);
-    	$scope.newId = "";
-    	var floorcat = [];
-    	floorcat = floorcat.concat([{value: '1', label: "1F"}]);
-    	floorcat = floorcat.concat([{value: '9', label: "9F"}]);
-    	$scope.floorcat = floorcat;
-    	
-    	var status = [];
-    	status = status.concat([{value: 'o', label: "正常"}]);
-    	status = status.concat([{value: 's', label: "暫停"}]);
-    	$scope.status = status;
-    	
-    	$scope.submitbtn = true;
-        $scope.info.productStatus = status[0];
-    	
-    	$("#productFormModal").modal({backdrop: 'static'});
-    	
-    }
-    $scope.selectCom = function(i){
-        if(i == 'yes')
-        $scope.info.hasCommission= 1;
-        else
-            $scope.info.hasCommission= 0;
-    }
 
-    $scope.selectNeg = function(i){
-        if(i == 'yes')
-            $scope.info.allowNegativePrice= 1;
-        else
-            $scope.info.allowNegativePrice= 0;
-    }
-
-    $scope.selectSep = function(i){
-        if(i == 'yes')
-            $scope.info.allowSeparate= 1;
-        else
-            $scope.info.allowSeparate= 0;
-    }
 
     $scope.submitProductForm = function()
     {
@@ -296,5 +398,8 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
         });
 
     }
-    
+
+
+
+
 });

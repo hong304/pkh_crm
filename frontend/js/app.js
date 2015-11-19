@@ -77,6 +77,7 @@ app.factory('httpPreConfig', ['$http', '$rootScope', function($http, $rootScope)
 /* Setup App Main Controller */
 app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', 'SharedService', '$timeout', function($scope, $rootScope, $http, $interval, SharedService, $timeout) {
 
+
          $scope.hardRefresh = function(link)
         {
              window.location = endpoint + link;
@@ -164,10 +165,7 @@ app.controller('AppController', ['$scope', '$rootScope', '$http', '$interval', '
 
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initComponents(); // init core components
-
-
-
-        //Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive 
+        //Layout.init(); //  Init entire layout(header, footer, sidebar, etc) on page load if the partials included in server side instead of loading with ng-include directive
     });
 }]);
 
@@ -218,7 +216,8 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
 		// display modal
 		$("#switchZoneModal").modal('toggle'); 
 	}
-	
+
+
 	$scope.switchToZone = function(id, name)
 	{
 		$scope.systemInfo.currentzone = name;
@@ -281,7 +280,11 @@ app.controller('HeaderController', ['$scope', 'SharedService', '$interval', '$ht
 	// ---------------------------------------------------------------------------------------------
 	// For Manager Approval Action End
 	// ---------------------------------------------------------------------------------------------
-    
+
+    $scope.rePack = function(){
+        $("#repackAll").modal({backdrop: 'static'});
+    }
+
     $scope.updateStatusFindReport = function(statusId)
     {
 
@@ -328,6 +331,27 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
     $urlRouterProvider.otherwise("/salesPanel");
 
     $stateProvider
+
+
+        // Repack
+        .state('repack', {
+            url: "/repack",
+            templateUrl: "views/model_repack.html",
+            data: {pageTitle: '產品包裝', pageSubTitle: ''},
+            controller: "repack",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+
+                            'js/controllers/repack.js',
+                        ]
+                    });
+                }]
+            }
+        })
 
         // Dashboard
     .state('salesPanel', {
@@ -1039,6 +1063,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                             assets + '/global/plugins/bootbox/bootbox.min.js',
 
                             'js/controllers/inventoryListingCtrl.js',
+
                         ]
                     });
                 }]
@@ -1628,7 +1653,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         assets + '/global/scripts/datatable.js',
                         
                         'js/controllers/receiveList.js',
-                        'js/controllers/repack.js',
+
                     ] 
                 });
             }]

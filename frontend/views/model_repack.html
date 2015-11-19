@@ -1,4 +1,4 @@
-<div class="modal fade bs-modal-lg" id="repackAll"  data-ng-controller="repack" tabindex="-1" role="dailog" aria-hidden="false">
+<div class="modal fade bs-modal-lg" id="repackAll" tabindex="-1" role="dailog" aria-hidden="false">
 
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="frontReceive">
@@ -16,7 +16,7 @@
                                 <div class="col-md-12">
                                          <div class="row">
                                                 <div class="col-md-12">
-                                                    <label>產品名稱:</label>
+                                                    <label>原產品名稱:</label>
                                                 </div>
                                           </div>
                                 </div>
@@ -64,7 +64,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <label>產品名稱:</label>
+                                            <label>包裝後產品名稱:</label>
                                         </div>
                                     </div>
                                 </div>
@@ -88,7 +88,7 @@
                                                                     單位 <a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default"><i class="fa fa-plus"> </i></a>
                                                                 </th>
                                                                 <th width="10%">
-                                                                   
+
                                                                 </th>
                                                             </tr>
                                                             </thead>
@@ -97,7 +97,7 @@
                                                                 <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)" ng-change="calcIn()"></td>
                                                                 <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']" disabled></td>
                                                                 <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']" ng-change="calcIn()"></td>
-                                                                <td>           
+                                                                <td>
                                                                     <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value" ng-change="calcIn()">
                                                                        </select>
                                                                 </td>
@@ -123,7 +123,7 @@
                     <div class="row">
 
                         <div class="pull-left">
-                            <label>Out amount: {{out.total_normalized_unit}}</label>,
+                            <label>Out quantity: {{out.total_normalized_unit}}</label>,
                             <label>In amount: {{totalAmount}}</label>
                         </div>
 

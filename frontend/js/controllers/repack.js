@@ -249,7 +249,19 @@ $scope.itemlist = [0];
             .success(function (res, status, headers, config) {
               if(res.result)
                 {
-                    alert("已成功包裝");
+                    $scope.updateDataSet();
+
+                    Metronic.alert({
+                        container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                        place: 'prepend', // append or prepent in container
+                        type: 'success',  // alert's type
+                        message: '<span style="font-size:16px;">包裝成功</span>',  // alert's message
+                        close: true, // make alert closable
+                        reset: true, // close all previouse alerts first
+                        focus: true, // auto scroll to the alert after shown
+                        closeInSeconds: 0, // auto close after defined seconds
+                        icon: 'warning' // put icon before the message
+                    });
                 }
             });
         }
