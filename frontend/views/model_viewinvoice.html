@@ -237,12 +237,12 @@
 
                 <!-- Edit Invoice -->
 				<!-- Condition: Invoice Status = {1, 2, 3} -->
-				<button type="button" class="btn green" data-ng-if="(invoiceinfo.invoiceStatus < 4 && invoiceinfo.printed != true) || systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
+				<button type="button" class="btn green" data-ng-if="((invoiceinfo.invoiceStatus < 4 && invoiceinfo.printed != true) || systemInfo.permission.edit_invoice_any_status) && (invoiceinfo.invoiceStatus!=20 && invoiceinfo.invoiceStatus!=30)" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
                <!-- <button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus > 3 && systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>-->
 
                 <!-- Void Invoice -->
 				<!-- Condition: Invoice Status = {1, 2, 3} && Permission = void_invoice-->
-				<button type="button" class="btn red" data-ng-if="systemInfo.permission.void_invoice" data-ng-click="voidInvoice(invoiceinfo.invoiceId);">刪除</button>
+				<button type="button" class="btn red" data-ng-if="systemInfo.permission.void_invoice && (invoiceinfo.invoiceStatus!=20 && invoiceinfo.invoiceStatus!=30)" data-ng-click="voidInvoice(invoiceinfo.invoiceId);">刪除</button>
 				
 				<!-- Unload Invoice -->
 				<!-- Condition: Invoice Status = {4} -->
