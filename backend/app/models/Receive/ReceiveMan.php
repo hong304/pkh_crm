@@ -37,8 +37,10 @@ class ReceiveMan
          return $this->newContainerCode;
      }
      
-     public function setItemss($dbid,$poCode,$shippingId,$containerId,$receivingId,$productId,$good_qty,$damage_qty,$on_hold_qty,$expiry_date,$rec_good_qty,$rec_damage_qty,$receiving_date,$unit_cost,$bin_location,$deleted)
+     public function setItemss($dbid,$poCode,$shippingId,$containerId,$receivingId,$productId,$good_qty,$damage_qty,$on_hold_qty,$expiry_date,$rec_good_qty,$rec_damage_qty,$receiving_date,$unit_cost,$bin_location,$deleted,$unit)
      {
+         $productDetails = Product :: select('productPacking_unit','productPacking_inner','productPacking_carton')->where('productId',$productId)->first()->toArray();
+         $mutiply = $this->reunit($unit,$productDetails['productPacking_unit'],$productDetails['productPacking_inner'],$productDetails['productPacking_carton']);
          $this->items[] = [
              'id' => $dbid,
              'poCode' => $poCode,
@@ -46,12 +48,12 @@ class ReceiveMan
              'containerId' => $containerId,
              'receivingId' => $receivingId,
              'productId' => $productId,
-             'good_qty' => $good_qty,
-             'damage_qty' => $damage_qty,
-             'on_hold_qty' => $on_hold_qty,
+             'good_qty' => $good_qty * $mutiply,
+             'damage_qty' => $damage_qty * $mutiply,
+             'on_hold_qty' => $on_hold_qty * $mutiply,
              'expiry_date' => $expiry_date,
-             'rec_good_qty' => $rec_good_qty,
-             'rec_damage_qty' => $rec_damage_qty,
+             'rec_good_qty' => $rec_good_qty * $mutiply,
+             'rec_damage_qty' => $rec_damage_qty * $mutiply,
              'receiving_date' => $receiving_date,
              'unit_cost' => $unit_cost,
              'bin_location' => $bin_location,
@@ -84,6 +86,22 @@ class ReceiveMan
          
          }
      }
+     
+    public function reunit($unitlevel,$productPacking_unit,$productPacking_inner,$productPacking_carton)
+    {
+        $multiply = 1;
+       if($unitlevel == 'carton')
+       {
+           $multiply *= $multiply * $productPacking_inner * $productPacking_carton * $productPacking_unit;
+       }else if($unitlevel == 'inner')
+       {
+           $multiply *= $multiply * $productPacking_inner * $productPacking_unit;
+       }else if($unitlevel == 'unit')
+       {
+           $multiply *= $multiply * $productPacking_unit;
+       }
+        return $multiply;
+    }
      
      public function save()
      {

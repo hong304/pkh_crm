@@ -85,6 +85,7 @@ class receiveController extends BaseController {
             $object = Input::get('order');
        
             $product = Input::get('product');
+
             $receiveId = isset($object['receivingId']) ? $object['receivingId'] : '';
     
                 if($location == 2)
@@ -133,15 +134,17 @@ class receiveController extends BaseController {
                 {
                     foreach($product as $k=>$v)
                     {
-                        if($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" )
-                             $this->new->setItemss($v['dbid'],$object['poCode'],$object['shippingId'],$object['containerId'],$object['receivingId'],$v['productId'],$v['good_qty'],$v['damage_qty'],$v['on_hold_qty'],$v['expiryDate'],$v['good_qty'],$v['damage_qty'],$object['receiveDate'],$v['unit_cost'],$v['bin_location'],$v['deleted']);
+                        if($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" && isset($v['unit']['value']))
+                             $this->new->setItemss($v['dbid'],$object['poCode'],$object['shippingId'],$object['containerId'],$object['receivingId'],$v['productId'],$v['good_qty'],$v['damage_qty'],$v['on_hold_qty'],$v['expiryDate'],$v['good_qty'],$v['damage_qty'],$object['receiveDate'],$v['unit_cost'],$v['bin_location'],$v['deleted'],$v['unit']['value']);
                     }
                 }else if($location == 1)
                 {
                     foreach($product as $k=>$v)
                     {
-                        if($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" )
-                             $this->new->setItemss($v['dbid'],$object['poCode'],"","",$object['receivingId'],$v['productId'],$v['good_qty'],$v['damage_qty'],$v['on_hold_qty'],$v['expiryDate'],$v['good_qty'],$v['damage_qty'],$object['receiveDate'],$v['unit_cost'],$v['bin_location'],$v['deleted']);
+                        if($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" && isset($v['unit']['value']))
+                        { 
+                             $this->new->setItemss($v['dbid'],$object['poCode'],"","",$object['receivingId'],$v['productId'],$v['good_qty'],$v['damage_qty'],$v['on_hold_qty'],$v['expiryDate'],$v['good_qty'],$v['damage_qty'],$object['receiveDate'],$v['unit_cost'],$v['bin_location'],$v['deleted'],$v['unit']['value']); 
+                        } 
                     }
                 }
                 $message = $this->new->save();
@@ -158,6 +161,8 @@ class receiveController extends BaseController {
         }
 
     }
+    
+
     
      public function getAllProducts()
     {
