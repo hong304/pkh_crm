@@ -454,7 +454,7 @@ else{
                         return false;
                     }
 
-                    if(!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)){
+                    if( (!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || inf.invoiceStatus == 30 ){
                         $scope.allowSubmission = false;
                         return false;
                     }

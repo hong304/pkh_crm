@@ -241,7 +241,7 @@ class PaymentController extends BaseController
 
             return Datatables::of($invoices)
                 ->addColumn('link', function ($payment) {
-                    if (Auth::user()->can('edit_cashCustomer') && ($payment->invoiceStatus == '20' || $payment->invoiceStatus == '30' || $payment->invoiceStatus == '2') && ($payment->manual_complete == 0) ) {
+                    if (Auth::user()->can('edit_cashCustomer') && ($payment->invoiceStatus == '20' || $payment->invoiceStatus == '2') ) {
                         return '<span onclick="editInvoicePayment(\'' . $payment->invoiceId . '\',\'' . $payment->customerId . '\',\'' . $payment->receiveMoneyZone . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 更改</span>';
                     } else
                         return '';
