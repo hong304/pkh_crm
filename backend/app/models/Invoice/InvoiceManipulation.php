@@ -228,7 +228,8 @@ class InvoiceManipulation {
 	        $this->im->created_by = Auth::user()->id;
             $this->im->updated_by = Auth::user()->id;
 	        $this->im->invoiceStatus = $this->determineStatus();
-	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount']; 
+	        $this->im->invoiceDiscount = @$this->temp_invoice_information['discount'];
+            $this->im->amount = $this->temp_invoice_information['amount'];
 	        $this->im->created_at = time();
 	        $this->im->updated_at = time();
 	    }
@@ -248,6 +249,7 @@ class InvoiceManipulation {
 	        $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
 	        $this->im->invoiceStatus = $this->determineStatus();
             $this->im->updated_by = Auth::user()->id;
+            $this->im->amount = $this->temp_invoice_information['amount'];
 
             if($this->im->version>0)
                 Invoice::where('invoiceId',$this->invoiceId)->update(['f9_picking_dl'=>0,'revised' => 1,'version'=>0]);
@@ -484,9 +486,9 @@ class InvoiceManipulation {
     	        }
     	    }
 
-            $in = Invoice::where('invoiceId',$this->invoiceId)->with('invoiceItem')->first();
-            $in->amount = $in->invoiceTotalAmount;
-            $in->save();
+           // $in = Invoice::where('invoiceId',$this->invoiceId)->with('invoiceItem')->first();
+          //  $in->amount = $in->invoiceTotalAmount;
+         //   $in->save();
 
     	    // prepare invoice image
             if($this->temp_invoice_information['print'])

@@ -66,7 +66,8 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
         update		:	false,
         invoiceId	:	'',
         print : 1,
-        shift : ''
+        shift : '',
+        amount: 0
     };
 
     var target = endpoint + '/getHoliday.json';
@@ -1177,6 +1178,7 @@ if($scope.order.invoiceNumber !='' && $scope.order.invoiceId == ''){
 
         if(!generalError)
         {
+            $scope.order.amount = $scope.totalAmount;
             $scope.order.print = v;
             $http.post(
                 endpoint + '/placeOrder.json', {
