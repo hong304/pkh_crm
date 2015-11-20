@@ -584,7 +584,7 @@ $scope.an = false;
                 $scope.product[i]['good_qty'] = "";
                 $scope.items.forEach(function (item) {
                     if(item.productId == value)
-                    {
+                    {    
                         $scope.product[i]['qty'] = item.productQty;
                         $scope.product[i]['unit'] = item.productQtyUnit;
                         $scope.product[i]['productName'] = item.product_detail.productName_chi;
