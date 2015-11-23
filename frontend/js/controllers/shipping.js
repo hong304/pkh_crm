@@ -48,30 +48,24 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
            shippingId:'',
        };
        
-       $scope.containerProduct = {
+       $scope.selfdefine = {
            containerId :'',
            productId : '',
            qty : '',
            unit :'',
            unitName :'',
+           deleted : 0
        };
        
-       $scope.containerProductProcedure = {
+       $scope.selfdefineS = {
            containerId :'',
            productId : '',
            qty : '',
            unit :'',
            unitName :'',
+           deleted : 0
        };
        
-    $scope.selfdefine = [];
-    $scope.selfdefineS = {
-        productId: '',
-        productName: '',
-        qty: '',
-        availableunit: '',
-        deleted : 0
-    }
     
     $scope.totalCost = 0;
     $scope.showOrNot = 0;
@@ -142,6 +136,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         cost : '',
         sale_method:1,
         product_details:'',
+        containerProductDetails :''
     };
 
     $scope.shippingCostStructure={
@@ -605,7 +600,7 @@ $scope.an = false;
     
     $scope.deleteProductRow = function(k)
     {
-        $scope.selfdefine[i].deleted = 1;
+        $scope.selfdefine[k].deleted = 1;
     }
 
     $scope.openRemarkPanel = function(i)
@@ -678,6 +673,7 @@ $scope.an = false;
     }
     
     var target = endpoint + '/getPurchaseAll.json';
+    
     $scope.openProductDetails = function(i)
     {
         $("#containerProduct").modal('toggle');
@@ -686,20 +682,57 @@ $scope.an = false;
         {
            $http.post(target, {poCode : $scope.shipping.poCode})
            .success(function (res, status, headers, config) {
-                console.log(res);
+               var k = 1;
+            if($scope.product[i].containerProductDetails == null)
+            {
+                 $scope.product[i].containerProductDetails = $scope.selfdefine;
+            }
+                 if(res[0]['poitem'] != undefined)
+                 {
+                     res[0]['poitem'].forEach(function(item){
+                        $scope.selfdefine[k] = $.extend(true, {}, $scope.selfdefineS);
+                        $scope.selfdefine[k]['productId'] = item.productId;
+                        $scope.selfdefine[k]['productName'] = item.product_detail.productName_chi;
+                        $scope.selfdefine[k]['qty'] = item.productQty;
+                        addUnit(item,k);
+                        k++;
+                    });
+                 }
            });
         } 
     }
+    
+    
+     function addUnit(item,i)
+        {
+            var availableunit = [];
+            var storeUnit = [];
+             if(item.product_detail.supplierPackingInterval_carton > 0)
+                  {
+                      availableunit = availableunit.concat([{value: 'carton', label: item.product_detail.productPackingName_carton}]);
+                      storeUnit[0] = 'carton';
+                  }else if(item.product_detail.supplierPackingInterval_inner > 0)
+                  {
+                       availableunit = availableunit.concat([{value: 'inner', label: item.product_detail.productPackingName_inner}]);
+                       storeUnit[1] = 'inner';
+                  }else if(item.product_detail.supplierPackingInterval_unit > 0)
+                  {
+                       availableunit = availableunit.concat([{value: 'unit', label: item.product_detail.productPackingName_unit}]);
+                       storeUnit[2] = 'unit';
+                  }
+   
+                  $scope.selfdefine[i].availableunit = availableunit;
+                  var indexNum = storeUnit.indexOf(item.productQtyUnit);
+                  $scope.selfdefine[i]['unit'] = availableunit[indexNum];
+        }
+
+    
     
     $scope.saveProductDetails = function()
     {
         $("#containerProduct").modal('hide');
     }
     
-    $scope.itemlist.forEach(function(key){
-        $scope.selfdefine[key] = $.extend(true, {}, $scope.selfdefineS);
-       // console.log( $scope.selfdefine);
-    });
 
     $scope.totalline = 1;
     
