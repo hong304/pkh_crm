@@ -455,7 +455,8 @@ else{
                         return false;
                     }
 
-                    if( (!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || inf.invoiceStatus == 30 ){
+                    if($scope.systeminfo.user.id!=9)
+                    if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || inf.invoiceStatus == 30 ){
                         $scope.allowSubmission = false;
                         return false;
                     }

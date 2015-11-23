@@ -642,7 +642,7 @@ class Invoice_CashReceiptSummary {
             $pdf->Cell(1, 0, $v['amount'], 0, 0, "R");
 
             $pdf->setXY($last1, $y);
-            $pdf->Cell(1, 0, number_format($v['accumulator'],2,',','.'), 0, 0, "R");
+            $pdf->Cell(1, 0, number_format($v['accumulator'],2,'.',','), 0, 0, "R");
 
             $y += 5;
 
@@ -824,7 +824,7 @@ class Invoice_CashReceiptSummary {
             $pdf->Cell(1, 0, $v['amount'], 0, 0, "R");
 
             $pdf->setXY($last1, $y);
-            $pdf->Cell(1, 0, number_format($v['accumulator'],2,',','.'), 0, 0, "R");
+            $pdf->Cell(1, 0, number_format($v['accumulator'],2,'.',','), 0, 0, "R");
 
             $y += 5;
 

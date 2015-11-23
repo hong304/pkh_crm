@@ -336,7 +336,7 @@ class financialReportController extends BaseController
         //B/F
 
         //補收
-        $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30])->with('payment')
+        $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30,98])->with('payment')
             ->leftJoin('invoice_payment', function ($join) {
                 $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
             })->leftJoin('payments', function ($join) {
@@ -347,7 +347,7 @@ class financialReportController extends BaseController
             foreach($invoiceQ->payment as $v1){
                 if($v1->receive_date == date('Y-m-d',$this->_date) and $invoiceQ->deliveryDate < $this->_date ){
                     $previous[$invoiceQ->receiveMoneyZone] = (isset($previous[$invoiceQ->receiveMoneyZone]))?$previous[$invoiceQ->receiveMoneyZone]:0;
-                    $previous[$invoiceQ->receiveMoneyZone] += $v1->pivot->paid;
+                    $previous[$invoiceQ->receiveMoneyZone] += ($invoiceQ->invoiceStatus == '98')? -$v1->pivot->paid:$v1->pivot->paid ;
                 }
             }
         }
