@@ -567,7 +567,6 @@ $scope.an = false;
         }, 1000);
 
     }
-
  
     $scope.deleteRow = function(i)
     {

@@ -120,7 +120,7 @@
                                     </div>
                                 </div>
                                 
-                                      <div class="col-md-3" >
+                                <div class="col-md-3" >
                                     <div class="form-group">
                                         <label class="col-md-5 control-label" style="text-align:left;">
                                             收貨日期
@@ -314,7 +314,7 @@
                                     <td style="line-height:35px;font-size:15px;">{{i}}</td>
                                     <td>
                                         <div class="input-group">                         
-                                            <input id="productId{{i}}" onClick="this.select();"  name="productId_{{i}}" class="form-control productIdField"  ng-model="product[i]['productId']" type="text" placeholder="" disabled="true"/>
+                                            <input id="productId{{i}}" onClick="this.select();"  name="productId_{{i}}" class="form-control productIdField"  ng-model="product[i]['productId']" type="text" placeholder="" ng-change="productDetect(product[i]['productId'],i)"/>
                                             <span class="input-group-btn">
                                             </span>
                                         </div>
@@ -329,11 +329,11 @@
                                                 <div class="input-group" style="width:100px;">
                                                      <input type="tel"  id="qty_{{i}}" class="spinner-input form-control" maxlength="5"
                                                      ng-model="product[i]['qty']" ng-change="updateQty(i,'qty');"
-                                                     ng-blur="" disabled="true">
-
-                                                </div>
+                                                     ng-blur="" disabled="true">  
+                                                </div>                      
                                             </div>
                                         </label>
+                                         <span style="color:red;float: right;margin-right: 19px;margin-top: 8px;display:none;" id="wrongMessage_{{i}}">W</span>
                                     </td>
                                     <td>
                                         <label>
@@ -348,14 +348,14 @@
                                      <td>
                                         <div class="">
                                             <div class="input-icon right" id="unitpricediv_{{i}}">
-                                                <input type="tel" onClick="this.select();"  id="unitprice_{{i}}" ng-model="product[i]['good_qty']" data-ng-change="" class="form-control" name="product[i]['good_qty']" maxlength="6" >
+                                                <input type="tel" onClick="this.select();"  id="unitprice_{{i}}" ng-model="product[i]['good_qty']"  class="form-control" name="product[i]['good_qty']" >
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class=" ">
                                             <div class="input-group">
-                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['damage_qty']"  data-ng-change="" class="form-control" name="product[i]['damage_qty']" maxlength="6">
+                                                <input onClick="this.select();" type="tel" id="discount_{{i}}" ng-model="product[i]['damage_qty']"   class="form-control" name="product[i]['damage_qty']" >
                                          
                                             </div>
                                         </div>
@@ -363,7 +363,7 @@
                                      <td>
                                         <div class=" ">
                                             <div class="input-group">
-                                                <input onClick="this.select();" type="tel" id="on_hold_qty{{i}}" ng-model="product[i]['on_hold_qty']" ng-change=""  data-ng-change="" class="form-control" name="product[i]['on_hold_qty']" maxlength="6">
+                                                <input onClick="this.select();" type="tel" id="on_hold_qty{{i}}" ng-model="product[i]['on_hold_qty']"   class="form-control" name="product[i]['on_hold_qty']" >
                                             </div>
                                         </div>
                                     </td>
