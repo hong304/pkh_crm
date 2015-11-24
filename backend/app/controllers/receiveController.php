@@ -55,6 +55,7 @@ class receiveController extends BaseController {
         $shipping = Shipping :: select('shippingId')->with('Shippingitem')->where('poCode',$id)->where('status','!=','99')->get();
         $formatShipping = $shipping->toArray();
         $countCount = 0;
+        $storeShip = "";
         for($g = 0;$g <count($formatShipping);$g++)
         {
             for($start = 0;$start<count($formatShipping[$g]['shippingitem']);$start++)
@@ -164,7 +165,7 @@ class receiveController extends BaseController {
     
 
     
-     public function getAllProducts()
+    public function getAllProducts()
     {
         $productId = Input :: get('productId');
         $allProduct = Receiving::where('productId',$productId)->orderby('expiry_date')->first();
@@ -176,6 +177,19 @@ class receiveController extends BaseController {
             $store = "false";
         }
         return Response::json($store); 
+    }
+    
+    public function getProductCost()
+    {
+        $containerId = Input :: get('containerId');
+        $shippingItem = Shippingitem :: where('containerId',$containerId)->first();
+        return Response::json($shippingItem); 
+    }
+    
+    public function addProductContainer()
+    {
+
+        
     }
     
    

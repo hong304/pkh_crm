@@ -164,12 +164,16 @@ $scope.an = false;
                     $scope.product[i].qty = item.productQty;
                     $scope.product[i]['good_qty'] = item.productQty;
                   //  $scope.product[i].unit = item.productQty;
+                    if(item.productQtyUnit == 'carton')
+                         $scope.product[i]['unit_cost'] = item.product_detail.productCost_unit;
+                    else if(item.productQtyUnit == 'inner')
+                         $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_inner;
+                    else if(item.productQtyUnit == 'unit')
+                         $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;
                     addUnit(item,i);
-                  //  
-                 
-                  
                   i++;
                });
+              
             }
           
            
@@ -413,22 +417,40 @@ $scope.an = false;
                     if(res.result == true)
                     {
                        if(res.action == 'create')
-             
-                           //  $('#selectclientmodel').modal({backdrop: 'static'});
-                              Metronic.alert({
-                container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
-                place: 'prepend', // append or prepent in container
-                //type: 'danger',  // alert's type
-                message: '<span style="font-size:20px;">收貨編號:'+ $scope.receiveId + '</span>',  // alert's message
-                close: true, // make alert closable
-                reset: true, // close all previouse alerts first
-                focus: true, // auto scroll to the alert after shown
-                closeInSeconds: 0, // auto close after defined seconds
-               // icon: 'warning' // put icon before the message
-            });
-             
-                        }
-                    
+                       {
+                            Metronic.alert({
+                                  container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
+                                  place: 'prepend', // append or prepent in container
+                                  message: '<span style="font-size:20px;">收貨編號:'+ $scope.receiveId + '</span>',  // alert's message
+                                  close: true, // make alert closable
+                                  reset: true, // close all previouse alerts first
+                                  focus: true, // auto scroll to the alert after shown
+                                  closeInSeconds: 0, // auto close after defined seconds
+                            });
+                            //Oversea Cost problem 
+                            if($scope.orders.location == 2)
+                            {
+                                $http.post(
+                                    endpoint + '/getProductCost.json', {
+                                    containerId : $scope.orders.containerId,   
+                                }).
+                                success(function(res, status, headers, config) {
+                                    var storeReceive = [res.cost_00,res.cost_01,res.cost_02,res.cost_03,res.cost_04,res.cost_05,res.cost_06,res.cost_07,res.cost_08,res.cost_09];
+                                    $scope.totalStore = 0;
+                                    for(var stR = 0;stR < storeReceive.length;stR++)
+                                    {
+                                        if(storeReceive[stR] != null)
+                                        {
+                                            $scope.totalStore += parseInt(storeReceive[stR]);
+                                        }
+                                    }
+                                 
+                                }). 
+                                error(function(res, status, headers, config) {
+                                });
+                            }
+                       }
+                     }
                     else if(res.result == false)
                     {
                         Metronic.alert({
@@ -569,6 +591,7 @@ $scope.an = false;
                 $scope.product[i]['unit'] = "";
                 $scope.product[i]['productName'] = "";
                 $scope.product[i]['good_qty'] = "";
+                $scope.product[i]['unit_cost'] = "";
                 $scope.items.forEach(function (item) {
                     if(item.productId == value)
                     {    
@@ -576,7 +599,14 @@ $scope.an = false;
                         $scope.product[i]['unit'] = item.productQtyUnit;
                         $scope.product[i]['productName'] = item.product_detail.productName_chi;
                         $scope.product[i]['good_qty'] = item.productQty;
+                        if(item.productQtyUnit == 'carton')
+                            $scope.product[i]['unit_cost'] = item.product_detail.productCost_unit;
+                        else if(item.productQtyUnit == 'inner')
+                            $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_inner;
+                        else if(item.productQtyUnit == 'unit')
+                            $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;
                         addUnit(item,i);
+                        
                     }
                 });
        }

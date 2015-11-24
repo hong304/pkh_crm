@@ -237,13 +237,16 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/outRepackProduct.json','rePackController@outRepackProduct');
     
     
-    
-
+ 
     //Permission Control
     Route::post('/getPermissionLists.json','permissionController@getPermissionList');
     Route::get('/getUserGroup.json','permissionController@getUserGroup');
     
     Route::post('/jqueryGetArrived.json','arrivedContainerController@jqueryGetArrived');
+    
+    //Add products into container
+    Route::post('/getProductCost.json','receiveController@getProductCost');
+    Route::post('/addProductContainer.json','receiveController@addProductContainer');
 
 });
 
@@ -337,6 +340,17 @@ $c = new SystemController();
 <?php
 
 });
+
+Route::get('/updateProduct',function(){
+    $file = fopen('C:\Users\Administrator\Desktop\Productsss.csv', 'r');
+while (($line = fgetcsv($file)) !== FALSE) {
+  //$line is an array of the csv elements
+  print_r($line);
+}
+fclose($file);
+});
+
+
 
 Route::get('/aging',function(){
 

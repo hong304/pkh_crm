@@ -12,12 +12,15 @@ app.controller('containerCost', function($rootScope, $scope, $http, $timeout, Sh
            container_size:'',
            sale_method:'',
            shippingId:'',
+           totalCost:0,
        };
        
        $scope.$on('$viewContentLoaded', function() {
         // initialize core components
             Metronic.initAjax();
        });
+       
+       
        
        //$scope.costsName = ["運費","碼頭處理費","拖運費","卸貨費","外倉費","過期櫃租","過期交吉租","稅金","雜項","其他"];
        
@@ -33,5 +36,17 @@ app.controller('containerCost', function($rootScope, $scope, $http, $timeout, Sh
                 $scope.containerCost.sale_method = "貿易部";
             $scope.containerCost.shippingId = SharedService.shippingId;
         });
+
+        $scope.costNum = function(v,i) {
+            if(isNaN(v))
+            {
+                $scope.product[i]['costNum'] = 0;
+            }
+        };
+        
+        $scope.getTotal = function()
+        {
+            var total = 0;
+        }
 
 });
