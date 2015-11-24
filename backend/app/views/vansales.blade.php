@@ -149,7 +149,7 @@
 
                 <tr>
                     <td>O029</td>
-                    <td>龍之寶</td>
+                    <td>龍之寶油</td>
                     <td><input type="text" class="form-control" name="O029"></td>
                     <td>桶</td>
                 </tr>

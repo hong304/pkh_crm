@@ -66,10 +66,23 @@ class OrderController extends BaseController
         $have_item = false;
         $i=0;
         $j=0;
+
+
         foreach ($product as $p) {
 
-             if ($p['deleted'] == 0 && $p['qty'] > 0 && $p['productLocation'] > 0)
-                    $i++;
+             if ($p['deleted'] == 0 && $p['qty'] > 0 && $p['productLocation'] > 0){
+                 $i++;
+                 $receivings = Receiving::where('productId',$p['code'])->where('good_qty','>=',$this->normalizedUnit($p))->first();
+                 if(count($receivings) == null){
+                     return [
+                         'result' => false,
+                         'status' => 0,
+                         'invoiceNumber' => '',
+                         'invoiceItemIds' => 0,
+                         'message' => $p['code'].'沒有足夠的貨量',
+                     ];
+                 }
+             }
 
                 if ($p['deleted'] == 0 && $p['qty'] < 0 && $p['productLocation'] > 0)
                     $j++;
@@ -214,18 +227,35 @@ class OrderController extends BaseController
     }
 
     public function normalizedUnit($i){
-        $inner = ($i->productDetail->productPacking['inner']) ? $$i->productDetail->productPacking['inner']:1;
-        $unit = ($i->productDetail->productPacking['unit']) ? $i->productDetail->productPacking['unit']:1;
 
+        $inner = ($i['productPacking']['inner']) ? $i['productPacking']['inner']:1;
+        $unit = ($i['productPacking']['unit']) ? $i['productPacking']['unit']:1;
 
-            if($i->productQtyUnit == 'carton')
-                $real_normalized_unit =  $i->productQty*$inner*$unit;
-            else if($i->productQtyUnit == 'inner')
-                $real_normalized_unit =   $i->productQty*$unit;
+            if($i['unit']['value'] == 'carton')
+                $real_normalized_unit =  $i['qty']*$inner*$unit;
+            else if($i['unit']['value'] == 'inner')
+                $real_normalized_unit =   $i['qty']*$unit;
             else
-                $real_normalized_unit = $i->productQty;
+                $real_normalized_unit =  $i['qty'];
 
         return $real_normalized_unit;
+    }
+
+    public function packingSize($i){
+
+        $inner = ($i['productPacking']['inner']) ? $i['productPacking']['inner']:1;
+        $unit = ($i['productPacking']['unit']) ? $i['productPacking']['unit']:1;
+
+
+            if($i['unit']['value'] == 'carton')
+                $real_normalized_unit =  $inner*$unit;
+            else if($i['unit']['value'] == 'inner')
+                $real_normalized_unit =   $unit;
+            else
+                $real_normalized_unit =  $i['qty'];
+
+        return $real_normalized_unit;
+
     }
 
     public function jsonVoidInvoice()
