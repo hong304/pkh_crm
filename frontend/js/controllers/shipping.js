@@ -49,7 +49,6 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
        };
        
        $scope.selfdefine = {
-           containerId :'',
            productId : '',
            qty : '',
            unit :'',
@@ -58,7 +57,6 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
        };
        
        $scope.selfdefineS = {
-           containerId :'',
            productId : '',
            qty : '',
            unit :'',
@@ -109,6 +107,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
     $scope.sameDayInvoice = '';
     $scope.productCode = [];
     $scope.itemlist = [1, 2, 3];
+    $scope.productRow = [1];
     $scope.retrievedProduct = [];
     $scope.product = [];
     $scope.displayName = "";
@@ -135,7 +134,6 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         receiveDate:'',
         cost : '',
         sale_method:1,
-        product_details:'',
         containerProductDetails :''
     };
 
@@ -209,6 +207,7 @@ $scope.an = false;
         $scope.product[key] = $.extend(true, {}, $scope.productStructure);
         $scope.timer.product[key] = $.extend(true, {}, $scope.timerProductStructure);
     });
+    
 
 
     $scope.$on('$viewContentLoaded', function() {
@@ -465,10 +464,6 @@ $scope.an = false;
        
     }
     
-    $scope.saveProductDetails = function()
-    {
-        $("#containerProduct").modal('hide');
-    }
 
 
     $scope.submitOrder = function(v)
@@ -677,29 +672,66 @@ $scope.an = false;
     $scope.openProductDetails = function(i)
     {
         $("#containerProduct").modal('toggle');
-        $scope.containerCost.containerId = $scope.product[i]['containerId'];
+        
+        $scope.selfdefine = $.extend(true, {}, $scope.selfdefineS);   
+     
+        if($scope.product[i].containerProductDetails == null)
+        {
+           $scope.product[i].containerProductDetails = $scope.selfdefine;
+        }
+    
+       
+         
+    
+         /*   $scope.selfdefine.productId = $scope.product[i].containerProductDetails.productId;
+            $scope.selfdefine.productName = $scope.product[i].containerProductDetails.productName;
+            $scope.selfdefine.qty = $scope.product[i].containerProductDetails.qty;
+            $scope.selfdefine.unit = $scope.product[i].containerProductDetails.unit;
+            $scope.selfdefine.unitName = $scope.product[i].containerProductDetails.unitName;*/
+        
+            console.log($scope.selfdefine);
+        
+        $scope.editable_rowProduct = i;
         if($scope.shipping.poCode != "")
         {
            $http.post(target, {poCode : $scope.shipping.poCode})
            .success(function (res, status, headers, config) {
-               var k = 1;
-            if($scope.product[i].containerProductDetails == null)
+         
+            
+           /* if(res[0]['poitem'] != undefined)
             {
-                 $scope.product[i].containerProductDetails = $scope.selfdefine;
-            }
-                 if(res[0]['poitem'] != undefined)
-                 {
-                     res[0]['poitem'].forEach(function(item){
-                        $scope.selfdefine[k] = $.extend(true, {}, $scope.selfdefineS);
-                        $scope.selfdefine[k]['productId'] = item.productId;
-                        $scope.selfdefine[k]['productName'] = item.product_detail.productName_chi;
-                        $scope.selfdefine[k]['qty'] = item.productQty;
-                        addUnit(item,k);
-                        k++;
-                    });
-                 }
+                var k = 1;
+                res[0]['poitem'].forEach(function(item){       
+                  
+                    $scope.selfdefine[k]['productId'] = item.productId;
+                    $scope.selfdefine[k]['productName'] = item.product_detail.productName_chi;
+                    $scope.selfdefine[k]['qty'] = item.productQty;
+                    addUnit(item,k);
+                    k++;
+                });
+            }*/
            });
         } 
+    }
+    
+    $scope.initLine = 0;
+    
+    $scope.addProductRow = function(){
+        $scope.selfdefine[$scope.initLine] = $.extend(true, {}, $scope.selfdefineS);
+        $scope.initLine += 1;
+    }
+    
+        
+    $scope.saveProductDetails = function()
+    {
+        $("#containerProduct").modal('hide');
+        $scope.product[$scope.editable_rowProduct].containerProductDetails = $scope.selfdefine;
+        console.log($scope.product[$scope.editable_rowProduct].containerProductDetails);
+       /* $scope.product[$scope.editable_rowProduct].containerProductDetails.productId =  $scope.selfdefine.productId;
+        $scope.product[$scope.editable_rowProduct].containerProductDetails.productName =  $scope.selfdefine.productName;
+        $scope.product[$scope.editable_rowProduct].containerProductDetails.qty =  $scope.selfdefine.qty;
+        $scope.product[$scope.editable_rowProduct].containerProductDetails.unit =  $scope.selfdefine.unit;
+        $scope.product[$scope.editable_rowProduct].containerProductDetails.unitName =  $scope.selfdefine.unitName;   */
     }
     
     
@@ -727,11 +759,7 @@ $scope.an = false;
         }
 
     
-    
-    $scope.saveProductDetails = function()
-    {
-        $("#containerProduct").modal('hide');
-    }
+
     
 
     $scope.totalline = 1;
@@ -742,6 +770,8 @@ $scope.an = false;
       
         $scope.totalline += 1;
     }
+    
+   
     
     $scope.saveCost = function(r)
     {

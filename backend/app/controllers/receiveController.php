@@ -98,7 +98,7 @@ class receiveController extends BaseController {
 
                     if(isset($input))
                     {
-                        $this->re->setOtherItems($input, $object['receiveDate'], $object['currencyId'], $object['total_cost'], $object['feight_local_cost'], $object['hk_local_cost'], $object['local_cost']);
+                        $this->re->setOtherItems($input, $object['receiveDate']);
                         $this->re->saveOtherItems($input);
                     }
                     //return Response::json($this->sh); 
