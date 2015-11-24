@@ -19,15 +19,9 @@ app.controller('receiveCtrl', function($rootScope, $scope, $http, $timeout, Shar
         poRemark:'',
         poStatus:'1',
         supplierCode:'',
-        feight_cost:0,
-        feight_local_cost:0,
-        local_cost:0,
-        total_cost:0,
-        exchangeRate:0,
         shippingId:'',
         containerId:'',
         currencyName:'',
-        hk_local_cost:0,
         shippingdbid:'',
         location:'',
     };
@@ -235,15 +229,9 @@ $scope.an = false;
 
     }
     
-    $scope.updateCost = function()
-    {
-        $scope.orders.feight_local_cost = $scope.orders.feight_cost * $scope.orders.exchangeRate;
-    }
+   
     
-    $scope.updateTotal = function()
-    {
-        $scope.orders.total_cost = parseInt($scope.orders.feight_local_cost) + parseInt($scope.orders.local_cost) + parseInt($scope.orders.hk_local_cost);
-    }
+   
     
     
     $scope.updateDiscount = function()

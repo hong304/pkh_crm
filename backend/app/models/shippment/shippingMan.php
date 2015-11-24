@@ -228,16 +228,12 @@ class shippingMan
 	    return $this->items;
     }
     
-    public function setOtherItems($dbid,$container_receiveDate,$feight_currency,$feight_amount,$feight_cost_hkd,$local_cost_hkd,$misc_cost_hkd)
+    public function setOtherItems($dbid,$container_receiveDate)
     {
         $this->itemsother[] = [
                 'id' => $dbid,
 	        'container_receiveDate' => $container_receiveDate,
-                'feight_currency' => $feight_currency,
-                'feight_amount' => $feight_amount,
-                'feight_cost_hkd' => $feight_cost_hkd,
-                'local_cost_hkd' => $local_cost_hkd,
-                'misc_cost_hkd' => $misc_cost_hkd,
+              
          ];
         
 	    return $this->itemsother;
