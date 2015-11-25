@@ -362,7 +362,8 @@ class ProductController extends BaseController {
 
             return Datatables::of($product)
                 ->addColumn('link', function ($p) {
-                    if(Auth::user()->can('edit_product'))
+                  //  if(Auth::user()->can('edit_product'))
+                    if(Auth::user()->id == 8 || Auth::user()->id == 9 || Auth::user()->id == 46)
                     return '<span onclick="editProduct(\''.$p->productId.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                         else
                     return '';

@@ -70,7 +70,9 @@
             </div>
 
 
-        </div>
+
+
+
 
         <div class="portlet-body">
             <table class="table table-bordered table-hover">
@@ -162,24 +164,25 @@
                 </tr>
                 </tbody>
             </table>
-
-
-
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-2 col-xs-2 control-label" style="text-align: left">負責人:</label>
-            <div class="col-md-3">
-                <p><input type="text" id="controller" name="pic"></p>
-            </div>
-        </div>
-
-        <div class="form-group">
-            {{Form::submit('提交')}}
-        </div>
-
-        {{ Form::close() }}
-
     </div>
+
+
+
+            <div class="form-group">
+                <label class="col-md-1 col-xs-2 control-label" style="text-align: left">備註:</label>
+                <div class="col-md-11 col-xs-11">
+                    <textarea id="remark" name="remark" maxlength="50" style="width: 400px; margin: 0px; height: 80px;"></textarea>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-md-1 col-xs-2 control-label" style="text-align: left">{{Form::submit('提交')}}</label>
+            </div>
+
+            {{ Form::close() }}
+
+           </div>
+        </div>
     <!-- END EXAMPLE TABLE PORTLET-->
 </div>

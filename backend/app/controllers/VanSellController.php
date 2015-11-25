@@ -32,9 +32,16 @@ class VanSellController extends BaseController
             $van_insert->productId = $v;
             $van_insert->van_qty = Input::get($v);
             $van_insert->productlevel = 'carton';
-            $van_insert->pic = Input::get('pic');
+            //$van_insert->pic = Input::get('pic');
             $van_insert->save();
         }
+
+        $vaninvoices = new vanInvoice();
+        $vaninvoices->deliveryDate =  Input::get('deliveryDate');
+        $vaninvoices->zoneId = Input::get('zoneId');
+        $vaninvoices->remark = Input::get('remark');
+        $vaninvoices->pic = Input::get('pic');
+        $vaninvoices->save();
 
         echo '提交成功!';
 
@@ -412,8 +419,7 @@ public function registerFilter()
     return $filterSetting;
 }
 
-public
-function registerDownload()
+public function registerDownload()
 {
     $downloadSetting = [
         [
@@ -428,8 +434,7 @@ function registerDownload()
 
 
 # PDF Section
-public
-function generateHeader($pdf)
+public function generateHeader($pdf)
 {
     if ($this->_shift == 1)
         $shift = '早班';
@@ -452,8 +457,7 @@ function generateHeader($pdf)
 
 }
 
-public
-function outputPDF()
+public function outputPDF()
 {
 
     // Update it as generated into picking list
@@ -520,7 +524,7 @@ function outputPDF()
 
     $firstF = array_chunk($new_array, 26, true);
 
-    // pd($firstF);
+
 
     foreach ($firstF as $i => $f) {
         // for first Floor
@@ -537,8 +541,11 @@ function outputPDF()
         $pdf->setXY(40, 50);
         $pdf->Cell(0, 0, "貨品說明", 0, 0, "L");
 
-        $pdf->setXY(120, 50);
-        $pdf->Cell(0, 0, "訂單貨量", 0, 0, "L");
+        $pdf->setXY(101, 50);
+        $pdf->Cell(0, 0, "預載數", 0, 0, "L");
+
+        $pdf->setXY(123, 50);
+        $pdf->Cell(0, 0, "上貨數量", 0, 0, "L");
 
         $pdf->setXY(145, 50);
         $pdf->Cell(0, 0, "上貨總數貨", 0, 0, "L");
@@ -564,7 +571,7 @@ function outputPDF()
 
 
         $first = true;
-        // pd($f);
+
         foreach ($f as $id => $u) {
 
 
@@ -572,7 +579,7 @@ function outputPDF()
                 // do something
                 $first = false;
 
-                if ($u['qty'] != 0 && $u['qty'] != -100) {
+                if ( ($u['qty'] != 0 || $u['van_qty']!=0) && $u['qty'] != -100) {
                     $pdf->setXY(10, $y);
                     $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -581,7 +588,15 @@ function outputPDF()
                     $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
-                    $pdf->setXY(120, $y);
+                    $pdf->setXY(101, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, $u['van_qty'], 0, 0, "L");
+
+                    $pdf->setXY(110, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
+
+                    $pdf->setXY(123, $y);
                     $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
 
@@ -602,7 +617,7 @@ function outputPDF()
                 }
 
             } else {
-                if ($u['qty'] != 0 && $u['qty'] != -100 && $u['qty'] != -1) {
+                if ( ($u['qty'] != 0 || $u['van_qty']!=0)&& $u['qty'] != -100 && $u['qty'] != -1) {
                     $pdf->setXY(10, $y);
                     $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
@@ -611,8 +626,15 @@ function outputPDF()
                     $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
+                    $pdf->setXY(101, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, $u['van_qty'], 0, 0, "L");
 
-                    $pdf->setXY(120, $y);
+                    $pdf->setXY(110, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
+
+                    $pdf->setXY(123, $y);
                     $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
 
@@ -655,7 +677,7 @@ function outputPDF()
 
         }
 
-        /*   $y += 10;
+       /*  $y += 10;
            // Notes part
            if ($i == 0) {
                for ($note = 0; $note <= 2; $note++) {
@@ -664,11 +686,10 @@ function outputPDF()
                    $pdf->Line(120, $y, 135, $y);
                    $pdf->Line(146, $y, 160, $y);
                    $pdf->Line(171, $y, 185, $y);
-
-
                    $y += 8;
                }
-           }*/
+           }
+        */
 
     }
 
