@@ -10,49 +10,12 @@ function editProduct(id)
     });
 }
 
-function salesReturn(id)
-{
-    var scope = angular.element(document.getElementById("queryInfo")).scope();
-    scope.$apply(function () {
-        scope.salesReturn(id);
-    });
-}
 
-
-function delCustomer(id)
-{
-    var scope = angular.element(document.getElementById("queryInfo")).scope();
-    scope.$apply(function () {
-
-        bootbox.dialog({
-            message: "刪除產品後將不能復原，確定要刪除產品嗎？",
-            title: "刪除客戶",
-            buttons: {
-                success: {
-                    label: "取消",
-                    className: "green",
-                    callback: function() {
-
-                    }
-                },
-                danger: {
-                    label: "確定刪除",
-                    className: "red",
-                    callback: function() {
-                        scope.delCustomer(id);
-                    }
-                }
-            }
-        });
-
-    });
-}
-
-app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout) {
+app.controller('inventoryAdjustmentHistoryCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout) {
 	
 	var fetchDataDelay = 250;   // milliseconds
     var fetchDataTimer;
-	var querytarget = endpoint + '/queryInventory.json';
+	var querytarget = endpoint + '/queryInventoryHistory.json';
 	var iutarget = endpoint + '/manipulateInventory.json';
 	
 	$scope.filterData = {
@@ -299,48 +262,14 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
             $scope.info.adjusted_damage_qty = res.damage_qty;
       		$("#inventoryFormModal").modal({backdrop: 'static'});
     	});
+    	
+    	
     }
-
-    $scope.salesReturn = function(id)
-    {
-        $http.post(querytarget, {mode: "single", id: id})
-            .success(function(res, status, headers, config){
-                $scope.info = $.extend(true, {}, $scope.info_def);
-                $scope.info = res;
-                $scope.info.return_good_qty = 0;
-                $scope.info.return_damage_qty = 0;
-                $("#inventorySalesReturnModal").modal({backdrop: 'static'});
-            });
-    }
-
-
-
-    $scope.submitSalesReturnForm = function()
-    {
-        $http.post(iutarget, {info: $scope.info, mode:'salesReturn'})
-    .success(function(res, status, headers, config){
-        $("#inventorySalesReturnModal").modal('hide');
-        $scope.updateDataSet();
-
-        Metronic.alert({
-            container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
-            place: 'prepend', // append or prepent in container
-            type: 'success',  // alert's type
-            message: '<span style="font-size:16px;">提交成功</span>',  // alert's message
-            close: true, // make alert closable
-            reset: true, // close all previouse alerts first
-            focus: true, // auto scroll to the alert after shown
-            closeInSeconds: 0, // auto close after defined seconds
-            icon: 'warning' // put icon before the message
-        });
-
-    });
-}
 
 
     $scope.submitProductForm = function()
     {
-    		 $http.post(iutarget, {info: $scope.info , mode:'stockTake'})
+    		 $http.post(iutarget, {info: $scope.info})
         	.success(function(res, status, headers, config){    
       			$("#inventoryFormModal").modal('hide');
         		$scope.updateDataSet();
@@ -425,14 +354,17 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
                     }
                 },
                 "columns": [
-                            { "data": "productId" },
-                            { "data": "productName_chi" },
-                            { "data": "good_qty" },
-                             { "data": "damage_qty" },
-                             { "data": "expiry_date" },
-                            { "data": "updated_at" },
-                            { "data": "link" },
-                            { "data": "sales_return" },
+                            { "data": "adjustId" },
+                            { "data": "receivingId" },
+                            { "data": "adjustType" },
+                             { "data": "productId" },
+                             { "data": "good_qty" },
+                            { "data": "damage_qty" },
+                            { "data": "adjusted_good_qty" },
+                            { "data": "adjusted_damage_qty" },
+                            { "data": "receiving.expiry_date" },
+                            { "data": "updated_by" }
+
                 ],
                 
                 "order": [

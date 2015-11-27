@@ -1050,7 +1050,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
         .state('inventoryListing', {
             url: "/inventoryListing",
             templateUrl: "views/inventoryListing.html",
-            data: {pageTitle: '產品設定', pageSubTitle: ''},
+            data: {pageTitle: '存貨列表', pageSubTitle: ''},
             controller: "inventoryListingCtrl",
             resolve: {
                 deps: ['$ocLazyLoad', function($ocLazyLoad) {
@@ -1069,7 +1069,30 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                 }]
             }
         })
-    
+
+        .state('inventoryAdjustmentHistory', {
+            url: "/inventoryAdjustmentHistory",
+            templateUrl: "views/inventoryAdjustmentHistory.html",
+            data: {pageTitle: '存貨調整記錄', pageSubTitle: ''},
+            controller: "inventoryAdjustmentHistoryCtrl",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+
+                            'js/controllers/inventoryAdjustmentHistoryCtrl.js',
+
+                        ]
+                    });
+                }]
+            }
+        })
+
     .state('productDepartment', {
         url: "/productDepartmentMaintenance",
         templateUrl: "views/productDepartmentListing.html",            
