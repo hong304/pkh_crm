@@ -322,9 +322,6 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                 $scope.order.supplierName = SharedService.supplierName;
                 $scope.order.countryName = SharedService.countryName;
                 $scope.order.address = SharedService.address;
-               // $scope.order.currencyName = SharedService.currencyName;
-              //  $scope.order.currencyId = SharedService.currencyId;
-              //  $scope.productStructure.currencyId = SharedService.currencyId;
                 $scope.order.contactPerson_1 = SharedService.contactPerson_1;
                 $scope.order.status = SharedService.status;
                 $scope.order.location = SharedService.location;
@@ -441,6 +438,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                                     success(function (res, status, headers, config) {
                                         $scope.countryData = res.aaData;
                                         $scope.countryDataList = $scope.countryData;
+                                      
                                         if ($scope.countryData !== '')
                                         {
                                             for (var t = 0; t < $scope.countryData.length; t++)
@@ -469,6 +467,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                                     success(function (res, status, headers, config) {
                                         $scope.currencyData = res.aaData;
                                         $scope.allCurrencyList = $scope.currencyData;
+                                        console.log($scope.allCurrencyList);
                                         for (var t = 0; t < $scope.allCurrencyList.length; t++)
                                         {
                                             if ($scope.allCurrencyList[t].currencyId == $scope.supplierData.currencyId)
@@ -892,8 +891,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
 
         $scope.allowSubmission = false;
 
-
-        if (!$scope.order.poDate || !$scope.order.etaDate || !$scope.order.supplierName || !$scope.order.poStatus || !$scope.order.currencyId)
+        if (!$scope.order.poDate || !$scope.order.etaDate || !$scope.order.supplierName || !$scope.order.poStatus)
         {
             Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
@@ -914,11 +912,14 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
         {
             $scope.product[k].currencyId = $scope.order.currencyId;
         }
+     
         if (!generalError)
         {
 
             SharedService.setValue('poDate', $scope.order.poDate, 'handlePoUpdate');
-            console.log($scope.order);
+           
+            console.log($scope.order.currencyEcho);
+            $scope.order.currencyId = $scope.order.currencyEcho.currencyId;
             $scope.order.print = v;
             $http.post(
                     endpoint + '/newPoOrder.json', {
