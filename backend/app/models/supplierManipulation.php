@@ -65,7 +65,7 @@ class supplierManipulation {
 	{
 	    $fields = ['address', 'address1','address2','contactPerson_1', 'contactPerson_2', 'email', 'fax_1', 'fax_2', 'phone_1', 'phone_2', 'remark'];
 	    
-            $fieldsManager = ['countryId','status','payment','creditDay','creditLimit','creditAmount','currencyId','supplierName','location'];
+            $fieldsManager = ['countryId','status','payment','creditDay','creditLimit','creditAmount','supplierName','location'];
 	    foreach($fields as $f)
 	    {
 	        $this->im->$f = $info[$f];

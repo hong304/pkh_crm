@@ -185,9 +185,9 @@
                                         </label>
                                         <div class="col-md-7">
                                        
-                                                <select class="form-control" id="currencies" ng-model="currencyData"
-                                                    ng-options="(c.currencyId + ' - ' + c.currencyName) for c in allCurrencyList track by c.currencyId">
-                                                </select>
+                                                <select class="form-control" id="currencies" ng-model="order.currencyId"
+                                                    ng-options="(c.currencyId + ' - ' + c.currencyName) for c in allCurrencyList track by c.currencyId" ng-change="changeCurrency(order.currencyId)">
+                                                </select> 
                                          
                                         </div>
                                     </div>
@@ -360,7 +360,7 @@
                                     <th width="7%">單價</th>
                                     <th width="12%">採購折扣</th>
                                     <th width="7%">現金折扣</th>
-                                    <th width="12%">金額 (HK${{totalAmount |number:2}})</th>
+                                    <th width="12%">金額 ({{moneyCount}} $ {{totalAmount |number:2}})</th>
                                     <th width="10%"></th>
                                 </tr>
                             </thead>
@@ -430,7 +430,7 @@
                                         </div>
                                     </td>
                                     <td style="line-height:35px;font-size:15px;">
-                                        HK${{(product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['discount_1'])/100 * (100-product[i]['discount_2'])/100 * (100-product[i]['discount_3'])/100) - product[i]['allowance_1'] - product[i]['allowance_2'] - product[i]['allowance_3']| number : 2}}
+                                        {{moneyCount}}${{(product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['discount_1'])/100 * (100-product[i]['discount_2'])/100 * (100-product[i]['discount_3'])/100) - product[i]['allowance_1'] - product[i]['allowance_2'] - product[i]['allowance_3']| number : 2}}
                                   
                                     </td>
                                     <td style="line-height:35px;font-size:15px;">

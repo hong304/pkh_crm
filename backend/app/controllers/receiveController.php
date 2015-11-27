@@ -10,12 +10,9 @@ class receiveController extends BaseController {
         {
             $location = Input ::get('location');
         }
-        $supplier = Supplier::select('supplierCode','supplierName','countries.countryName','countries.countryId','phone_1','status','currencies.currencyId','currencies.currencyName')->where('location',$location)->where('status',1)->take(10)
+        $supplier = Supplier::select('supplierCode','supplierName','countries.countryName','countries.countryId','phone_1','status')->where('location',$location)->where('status',1)->take(10)
                      ->leftJoin('countries', function($join) {
                         $join->on('suppliers.countryId', '=', 'countries.countryId');
-                      })
-                       ->leftJoin('currencies', function($joins) {
-                        $joins->on('suppliers.currencyId', '=', 'currencies.currencyId');
                       })
                       ->where(function ($query) use ($filterData) {
                          if(isset($filterData['supplierCode']))
@@ -188,8 +185,9 @@ class receiveController extends BaseController {
     
     public function addProductContainer()
     {
-
-        
+         $containerId = Input :: get('containerId');
+         $containerProduct = containerProduct :: where('containerId',$containerId)->with('productDetails')->get();
+         return Response::json($containerProduct); 
     }
     
    
