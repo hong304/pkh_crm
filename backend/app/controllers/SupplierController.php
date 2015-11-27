@@ -23,23 +23,17 @@ class SupplierController extends BaseController
              //select(['ipfId','from', 'to', 'size']);
             
             if(Auth::user()->can('view_local')){
-                $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','suppliers.currencyId','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
+                $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
                            ->leftJoin('countries', function($join) {
                 $join->on('countries.countryId', '=','suppliers.countryId');
-            })
-            ->leftJoin('currencies', function($joins) {
-                $joins->on('currencies.currencyId', '=','suppliers.currencyId');  
             })
             ->where('suppliers.countryId','HK')
             ->Orderby($filterId,$filterOrder);
             }else
             {
-                $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','currencies.currencyName','suppliers.currencyId','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
+                $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
                 ->leftJoin('countries', function($join) {
                     $join->on('countries.countryId', '=','suppliers.countryId');
-                })
-                ->leftJoin('currencies', function($joins) {
-                    $joins->on('currencies.currencyId', '=','suppliers.currencyId');  
                 })
             ->Orderby($filterId,$filterOrder);
             }
@@ -91,12 +85,7 @@ class SupplierController extends BaseController
                     $query->where('countryName', 'LIKE', '%' .$filter['country'] . '%');
                  });
             }
-           
-             
-              
-            
 
-      //  ,'email','countries.countryName','currencies.currencyName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by')
              return Datatables::of($supplier)
                 ->addColumn('link', function ($supplie) {
                     return '<span onclick="editSupplier(\''.$supplie->supplierCode.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
@@ -128,7 +117,7 @@ class SupplierController extends BaseController
         $keyword = Input::has('supplierCode') && Input::get('supplierCode') != '' ? Input::get('supplierCode') : 'na'; // 
 
             // $keyword = str_replace(array('?', '*'), '%', $keyword);
-        $supplier = Supplier::select('supplierCode','supplierName','address','address1','address2','phone_1','phone_2','suppliers.email','countryId','fax_1','fax_2','payment','currencyId','creditDay','creditLimit','creditAmount','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','remark','users.username','location')->where('supplierCode', Input::get('supplierCode'))
+        $supplier = Supplier::select('supplierCode','supplierName','address','address1','address2','phone_1','phone_2','suppliers.email','countryId','fax_1','fax_2','payment','creditDay','creditLimit','creditAmount','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','remark','users.username','location')->where('supplierCode', Input::get('supplierCode'))
             ->join('users', function($joinss) {
                 $joinss->on('users.id', '=','suppliers.updated_by');  
             })
@@ -180,7 +169,6 @@ class SupplierController extends BaseController
                     'creditLimit' => 'min:0',
                     'creditAmount' => 'min:0',
                     'countryId' => 'required',
-                    'currencyId' => 'required',
                     'status'=> 'required',
                     'payment' => 'required',
                     'email' => 'email',

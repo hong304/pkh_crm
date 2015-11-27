@@ -159,23 +159,22 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                     $scope.shippingContainer = res;
                 });
             }
-        
             
+         
         }else if($scope.orders.location == '1')
         {
                $("#selectShipModel").hide();
-                 var taPost = endpoint + '/getPurchaseAll.json';
+              var taPost = endpoint + '/getPurchaseAll.json';
         
-        $http.post(taPost, {poCode: $scope.storePoSecond })
-        .success(function (res, status, headers, config) {
+                $http.post(taPost, {poCode: $scope.storePoSecond })
+                .success(function (res, status, headers, config) {
 
-            if(res.length > 0)
-            {
-                 SharedService.setValue('items', res[0].poitem, 'handleShippingUpdate');
-                 
-            }
+                    if(res.length > 0)
+                    {
+                         SharedService.setValue('items', res[0].poitem, 'handleShippingUpdate');
+                    }
 
-        });
+                });
                
         }
         
@@ -188,12 +187,50 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
         SharedService.setValue('shippingId', container.shippingId, 'handleShippingUpdate');
         SharedService.setValue('containerId', container.containerId, 'handleShippingUpdate');
         SharedService.setValue('shippingdbid', container.dbid, 'handleShippingUpdate');
-          $("#selectShipModel").hide();
-
-
+          var searchContainer = endpoint + '/addProductContainer.json';
+            if(container.containerId != "")
+            {
+                var i = 1;
+                 $http.post(searchContainer, {containerId:  container.containerId })
+                .success(function (res, status, headers, config) {      
+                    for(var items in res)
+                    {
+                        console.log(res[items]);
+                        $scope.product[i].productId = res[items].productId;
+                     //   $scope.product[i].productName = item.product_detail.productName_chi;
+                        $scope.product[i].qty = res[items].qty;
+                        $scope.product[i].good_qty = res[items].qty;
+                        $scope.product[i].productName = res[items].product_details.productName_chi;
+                        addUnit(res[items],i);
+                        i++; 
+                    }
+                });
+            }
+        $("#selectShipModel").hide();
+    }
+    
+    
+    function addUnit(item,i)
+    {
+            var availableunit = [];
+            var storeUnit = [];
+             if(item.product_details.supplierPackingInterval_carton > 0)
+                  {
+                      availableunit = availableunit.concat([{value: 'carton', label: item.product_details.productPackingName_carton}]);
+                      storeUnit[0] = 'carton';
+                  }else if(item.product_details.supplierPackingInterval_inner > 0)
+                  {
+                       availableunit = availableunit.concat([{value: 'inner', label: item.product_details.productPackingName_inner}]);
+                       storeUnit[1] = 'inner';
+                  }else if(item.product_details.supplierPackingInterval_unit > 0)
+                  {
+                       availableunit = availableunit.concat([{value: 'unit', label: item.product_details.productPackingName_unit}]);
+                       storeUnit[2] = 'unit';
+                  }
+   
+                  $scope.product[i].availableunit = availableunit;
+                  var indexNum = storeUnit.indexOf(item.productQtyUnit);
+                  $scope.product[i]['unit'] = availableunit[indexNum];
     }
 
-
-   
-    
 });
