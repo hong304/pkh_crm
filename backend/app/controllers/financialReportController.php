@@ -335,7 +335,7 @@ class financialReportController extends BaseController
         }
         //B/F
 
-        //補收
+        //補收+收支票
         $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30,98])->with('payment')
             ->leftJoin('invoice_payment', function ($join) {
                 $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
@@ -345,13 +345,20 @@ class financialReportController extends BaseController
 
         foreach($invoices as $invoiceQ){
             foreach($invoiceQ->payment as $v1){
-                if($v1->receive_date == date('Y-m-d',$this->_date) and $invoiceQ->deliveryDate < $this->_date ){
-                    $previous[$invoiceQ->receiveMoneyZone] = (isset($previous[$invoiceQ->receiveMoneyZone]))?$previous[$invoiceQ->receiveMoneyZone]:0;
-                    $previous[$invoiceQ->receiveMoneyZone] += ($invoiceQ->invoiceStatus == '98')? -$v1->pivot->paid:$v1->pivot->paid ;
+                if($v1->receive_date == date('Y-m-d',$this->_date) and $v1->ref_number != 'cash' and $invoiceQ->deliveryDate < $this->_date){
+                    $previous[$invoiceQ->receiveMoneyZone]['cheque'] = (isset($previous[$invoiceQ->receiveMoneyZone]['cheque']))?$previous[$invoiceQ->receiveMoneyZone]['cheque']:0;
+                    $previous[$invoiceQ->receiveMoneyZone]['cheque'] += ($invoiceQ->invoiceStatus == '98')? -$v1->pivot->paid:$v1->pivot->paid;
+                }else if($v1->receive_date == date('Y-m-d',$this->_date) and $v1->ref_number == 'cash' and $invoiceQ->deliveryDate < $this->_date){
+                    $previous[$invoiceQ->receiveMoneyZone]['cash'] = (isset($previous[$invoiceQ->receiveMoneyZone]['cash']))?$previous[$invoiceQ->receiveMoneyZone]['cash']:0;
+                    $previous[$invoiceQ->receiveMoneyZone]['cash'] += ($invoiceQ->invoiceStatus == '98')? -$v1->pivot->paid:$v1->pivot->paid;
+                }else if($v1->receive_date == date('Y-m-d',$this->_date) and $v1->ref_number != 'cash' and $invoiceQ->deliveryDate == $this->_date){
+                    $today[$invoiceQ->receiveMoneyZone]['cheque'] = (isset($today[$invoiceQ->receiveMoneyZone]['cheque']))?$today[$invoiceQ->receiveMoneyZone]['cheque']:0;
+                    $today[$invoiceQ->receiveMoneyZone]['cheque'] += ($invoiceQ->invoiceStatus == '98')? -$v1->pivot->paid:$v1->pivot->paid;
                 }
+
             }
         }
-        //補收
+        //補收+收支票
 
         //當天單,不是當天收錢
         $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1);
@@ -402,7 +409,9 @@ class financialReportController extends BaseController
                     'noOfInvoices' => $NoOfInvoices[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone],
                     'balanceBf' => isset($balance_bf[$invoiceQ->receiveMoneyZone])?$balance_bf[$invoiceQ->receiveMoneyZone]:0,
                     'totalAmount' => $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
-                    'previous'=>isset($previous[$invoiceQ->receiveMoneyZone])?$previous[$invoiceQ->receiveMoneyZone]:0,
+                    'previous_cash'=>isset($previous[$invoiceQ->receiveMoneyZone]['cash'])?$previous[$invoiceQ->receiveMoneyZone]['cash']:0,
+                    'previous_cheque'=>isset($previous[$invoiceQ->receiveMoneyZone]['cheque'])?$previous[$invoiceQ->receiveMoneyZone]['cheque']:0,
+                    'receiveTodaySales_cheque'=>isset($today[$invoiceQ->receiveMoneyZone]['cheque'])?$today[$invoiceQ->receiveMoneyZone]['cheque']:0,
                     'receiveTodaySales' => $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['receiveTodaySales'] += (($invoiceQ->invoiceStatus == '98')? -$paid:$paid),
                     'expenses' =>  isset($expenses_amount[$invoiceQ->receiveMoneyZone])?$expenses_amount[$invoiceQ->receiveMoneyZone]:0,
                 ];
@@ -460,16 +469,18 @@ class financialReportController extends BaseController
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, 'No. of invoices');
 
         $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'Today sales');
-        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Receive for today sales');
-        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, 'Receive for previous sales');
-        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, 'Cash disbursements');
-        $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, 'Net receipt');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Receive for today sales[cash]');
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, 'Receive for today sales[cheque]');
+        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, 'Receive for previous sales [cash]');
+        $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, 'Receive for previous sales [cheque]');
+        $objPHPExcel->getActiveSheet()->setCellValue('H'.$i, 'Cash disbursements');
+        $objPHPExcel->getActiveSheet()->setCellValue('I'.$i, 'Net receipt');
 
-        $objPHPExcel->getActiveSheet()->setCellValue('H'.$i, 'Balance B/F');
-        $objPHPExcel->getActiveSheet()->setCellValue('I'.$i, 'Balance C/F');
+        $objPHPExcel->getActiveSheet()->setCellValue('J'.$i, 'Balance B/F');
+        $objPHPExcel->getActiveSheet()->setCellValue('K'.$i, 'Balance C/F');
 
-        $objPHPExcel->getActiveSheet()->setCellValue('J'.$i, 'No. of invoices');
-        $objPHPExcel->getActiveSheet()->setCellValue('K'.$i, 'Today sales');
+        $objPHPExcel->getActiveSheet()->setCellValue('L'.$i, 'No. of invoices');
+        $objPHPExcel->getActiveSheet()->setCellValue('M'.$i, 'Today sales');
 
         $j = $i+ 1;
 
@@ -479,21 +490,24 @@ class financialReportController extends BaseController
             $objPHPExcel->getActiveSheet()->setCellValue('A' . $j, $v['truck']);
             $objPHPExcel->getActiveSheet()->setCellValue('B' . $j, $v['noOfInvoices']);
             $objPHPExcel->getActiveSheet()->setCellValue('C' . $j, $v['totalAmount']);
-            $objPHPExcel->getActiveSheet()->setCellValue('D' . $j, $v['receiveTodaySales']);
-            $objPHPExcel->getActiveSheet()->setCellValue('E' . $j, $v['previous']);
-            $objPHPExcel->getActiveSheet()->setCellValue('F' . $j, $v['expenses']*-1);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $j, $v['receiveTodaySales']-$v['receiveTodaySales_cheque']);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $j, $v['receiveTodaySales_cheque']);
 
-            $objPHPExcel->getActiveSheet()->setCellValue('G' . $j, '=D'.$j.'+E'.$j.'+F'.$j);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $j, $v['previous_cash']);
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . $j, $v['previous_cheque']);
+            $objPHPExcel->getActiveSheet()->setCellValue('H' . $j, $v['expenses']*-1);
 
-            $objPHPExcel->getActiveSheet()->setCellValue('H' . $j, $v['balanceBf']);
-            $objPHPExcel->getActiveSheet()->setCellValue('I' . $j, '=H'.$j.'+C'.$j.'-E'.$j.'-D'.$j);
+            $objPHPExcel->getActiveSheet()->setCellValue('I' . $j, '=D'.$j.'+E'.$j.'+F'.$j);
+
+            $objPHPExcel->getActiveSheet()->setCellValue('J' . $j, $v['balanceBf']);
+            $objPHPExcel->getActiveSheet()->setCellValue('K' . $j, '=H'.$j.'+C'.$j.'-E'.$j.'-D'.$j);
             $j++;
         }
 
         $j = $i+ 1;
         foreach($info[2] as $k => $v){
-            $objPHPExcel->getActiveSheet()->setCellValue('J' . $j, $v['noOfInvoices']);
-            $objPHPExcel->getActiveSheet()->setCellValue('K' . $j, $v['totalAmount']);
+            $objPHPExcel->getActiveSheet()->setCellValue('L' . $j, $v['noOfInvoices']);
+            $objPHPExcel->getActiveSheet()->setCellValue('M' . $j, $v['totalAmount']);
             $j++;
         }
 
@@ -507,20 +521,20 @@ class financialReportController extends BaseController
 
         $k = $i+1;
         $objPHPExcel->getActiveSheet()
-            ->getStyle('C'.$k.':I35')
+            ->getStyle('C'.$k.':J35')
             ->getNumberFormat()
             ->setFormatCode(
                 '$#,##0.00;[Red]$#,##0.00'
             );
 
         $objPHPExcel->getActiveSheet()
-            ->getStyle('K'.$k.':K35')
+            ->getStyle('M'.$k.':M35')
             ->getNumberFormat()
             ->setFormatCode(
                 '$#,##0.00;[Red]$#,##0.00'
             );
 
-        $l = ['B','C','D','E','F','G','H','I','J','K'];
+        $l = ['B','C','D','E','F','G','H','I','J','K','L','M'];
         foreach($l as $zz){
             $objPHPExcel->getActiveSheet()->setCellValue($zz.'31','=SUM('.$zz.$k.':'.$zz.'29)');
         }

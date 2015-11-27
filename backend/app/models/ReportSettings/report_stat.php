@@ -69,6 +69,11 @@ if(Auth::user()->id == 46 || Auth::user()->id == 23){
                 'id1' => 'deliveryDate2',
                 'model1' => 'deliveryDate2',
             ],
+            [
+                'id' => 'submit',
+                'type' => 'submit',
+                'label' => '提交',
+            ],
         ];
 
         return $filterSetting;
