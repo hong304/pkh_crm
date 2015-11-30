@@ -391,7 +391,6 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
             $http.post(target, {poCode: $location.search().poCode})
                     .success(function (data, status, headers, config) {
                         if (data.count > 0) {
-
                             $scope.poData = data.pos[0];
 
 
@@ -408,7 +407,8 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                             $scope.order.poDate = $scope.poData.poDate;
                             $scope.order.location = $scope.poData.location;
                             $scope.order.poStatus = $scope.poData.poStatus;
-
+                            $scope.order.currencyEcho = data.pos[0].currencyId;
+                            console.log($scope.order.currencyEcho);
                             $scope.order.contactPerson_1 = $scope.supplierData.contactPerson_1;
 
                             $scope.order.discount_1 = $scope.poData.discount_1;
@@ -467,12 +467,13 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                                     success(function (res, status, headers, config) {
                                         $scope.currencyData = res.aaData;
                                         $scope.allCurrencyList = $scope.currencyData;
-                                        console.log($scope.allCurrencyList);
+
                                         for (var t = 0; t < $scope.allCurrencyList.length; t++)
                                         {
                                             if ($scope.allCurrencyList[t].currencyId == $scope.supplierData.currencyId)
                                             {
-                                                $scope.currencyData = $scope.allCurrencyList[t];
+                                                $scope.order.currencyEcho = $scope.allCurrencyList[t];
+                                                $scope.moneyCount = $scope.allCurrencyList[t].currencyId;
                                             }
                                         }
                                         $scope.order.currencyId = $scope.currencyData.currencyId;
@@ -882,12 +883,6 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
         var generalError = false;
 
         $scope.timer.submit = Date.now();
-
-        if (!$scope.allowSubmission)
-        {
-            Alert('submission Disabled');
-            generalError = true;
-        }
 
         $scope.allowSubmission = false;
 

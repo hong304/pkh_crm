@@ -32,10 +32,10 @@ class currencyController extends BaseController {
         if($mode == 'collection')
         {
             if(Auth::user()->can('view_local')){
-                $currency = Currency :: select( '*' )->where('currencyId','HKD')->orwhere('currencyId','CNY');
+                $currency = Currency :: select( 'currencyId','currencyName' )->where('currencyId','HKD')->orwhere('currencyId','CNY');
             }else
             {
-                $currency = Currency :: select('*');
+                $currency = Currency :: select( 'currencyId','currencyName' );
             }
             
             return Datatables::of($currency)
