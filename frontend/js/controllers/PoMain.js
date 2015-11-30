@@ -407,8 +407,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                             $scope.order.poDate = $scope.poData.poDate;
                             $scope.order.location = $scope.poData.location;
                             $scope.order.poStatus = $scope.poData.poStatus;
-                            $scope.order.currencyEcho = data.pos[0].currencyId;
-                            console.log($scope.order.currencyEcho);
+          
                             $scope.order.contactPerson_1 = $scope.supplierData.contactPerson_1;
 
                             $scope.order.discount_1 = $scope.poData.discount_1;
@@ -467,10 +466,10 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                                     success(function (res, status, headers, config) {
                                         $scope.currencyData = res.aaData;
                                         $scope.allCurrencyList = $scope.currencyData;
-
+                                        console.log(data.pos[0].currencyId);
                                         for (var t = 0; t < $scope.allCurrencyList.length; t++)
                                         {
-                                            if ($scope.allCurrencyList[t].currencyId == $scope.supplierData.currencyId)
+                                            if ($scope.allCurrencyList[t].currencyId == data.pos[0].currencyId)
                                             {
                                                 $scope.order.currencyEcho = $scope.allCurrencyList[t];
                                                 $scope.moneyCount = $scope.allCurrencyList[t].currencyId;
@@ -886,7 +885,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
 
         $scope.allowSubmission = false;
 
-        if (!$scope.order.poDate || !$scope.order.etaDate || !$scope.order.supplierName || !$scope.order.poStatus)
+        if (!$scope.order.poDate || !$scope.order.etaDate || !$scope.order.supplierName || !$scope.order.poStatus|| !$scope.order.currencyEcho)
         {
             Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
@@ -907,7 +906,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
         {
             $scope.product[k].currencyId = $scope.order.currencyId;
         }
-     
+
         if (!generalError)
         {
 

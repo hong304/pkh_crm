@@ -130,7 +130,7 @@ class VanSellController extends BaseController
             // $debug->content = 'zoneId:'.$this->_zone."shift:".$this->_shift;
             // $debug->content .= json_encode(Input::get('data'));
             //  $debug->save();
-
+            pd(Input::get('data'));
             foreach (Input::get('data') as $v) {
                 //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define', false)->where('id', $v['id'])->first();
@@ -601,7 +601,7 @@ public function outputPDF()
                     $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
 
 
-                    $pdf->setXY(131, $y);
+                    $pdf->setXY(136, $y);
                     $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
 
