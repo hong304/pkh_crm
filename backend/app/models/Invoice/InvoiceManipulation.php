@@ -308,10 +308,8 @@ class InvoiceManipulation
                 if ($i['dbid']) {
                     $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
                     // pd($item);
-                    $item->updated_at = time();
                 } else {
                     $item = new InvoiceItem();
-                    $item->created_at = time();
                 }
 
                 $productMap = ProductSearchCustomerMap::where('productId', $i['productId'])->where('customerId', $this->im->customerId)->first();
@@ -400,7 +398,6 @@ class InvoiceManipulation
                                 $item->productStandardPrice = $i['productStandardPrice'];
                                 $item->productUnitName = trim($i['productUnitName']);
                                 $item->approvedSupervisorId = $i['approvedSupervisorId'];
-                                $item->created_at = time();
                             }
                         }
                     }

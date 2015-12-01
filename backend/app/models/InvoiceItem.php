@@ -13,7 +13,6 @@ class InvoiceItem extends Eloquent  {
 	 */
 	protected $table = 'invoiceitem';
 	protected $primaryKey = 'invoiceItemId';
-	public $timestamps = false;
     protected $dates = ['deleted_at'];
 
 	public static function boot()
