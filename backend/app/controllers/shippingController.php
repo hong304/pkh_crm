@@ -88,7 +88,7 @@ class shippingController extends BaseController {
 
         if ($mode == 'collection') {
 
-            $ship = Shipping::select(['shippingId', 'shippings.supplierCode', 'suppliers.supplierName', 'etaDate', 'shippings.status', 'carrier', 'bl_number', 'users.username', 'shippings.updated_at', 'shippings.poCode'])
+            $ship = Shipping::select(['shippingId', 'shippings.supplierCode', 'suppliers.supplierName', 'etaDate', 'shippings.status', 'carrier', 'bl_number', 'users.username', 'shippings.updated_at', 'shippings.poCode','shippings.shipCompany'])
                     ->leftJoin('suppliers', function($join) {
                         $join->on('suppliers.supplierCode', '=', 'shippings.supplierCode');
                     })

@@ -60,6 +60,7 @@ class shippingMan
             $this->sh->remark = $this->temp_ship_information['remark'];
             $this->sh->status = 1;
             $this->sh->feight_payment = $this->temp_ship_information['feight_payment'];
+            $this->sh->shipCompany = $this->temp_ship_information['shipCompany'];
             $this->sh->created_by = Auth::user()->id;
             $this->sh->updated_by = Auth::user()->id;
 	    $this->sh->created_at = time();
@@ -82,6 +83,7 @@ class shippingMan
             $this->sh->fsp = $this->temp_ship_information['fsp'];
             $this->sh->remark = $this->temp_ship_information['remark'];
             $this->sh->status = $this->temp_ship_information['status'];
+            $this->sh->shipCompany = $this->temp_ship_information['shipCompany'];
             $this->sh->feight_payment = $this->temp_ship_information['feight_payment'];
               $this->sh->updated_by = Auth::user()->id;
                 $this->sh->updated_at = time();

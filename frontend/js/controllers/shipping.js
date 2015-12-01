@@ -38,6 +38,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         status:1,
         feight_payment:'',
         supplierName:'',
+        shipCompany:'',
     };
     
        $scope.containerCost = {

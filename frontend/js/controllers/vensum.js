@@ -2,43 +2,38 @@
 
 Metronic.unblockUI();
 
+app.controller('vensum', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
 
-
-app.controller('arrivedContainer', function($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state,$stateParams) {
- 
- 
-   $scope.arriveData={
-       containerId:'',
-       actualDateStart :'',
-       actualDateEnd :'',
-   };
     var querytarget = endpoint + '/jqueryGetArrived.json';
-
-   
-   $scope.$on('$viewContentLoaded', function () {
+      
+    $scope.filterVen = {
+        bl_number :'',
+        etaDateStart:'',
+        etaDateEnd:'',
+    };
+    
+    $scope.$on('$viewContentLoaded', function () {
         // initialize core components
         Metronic.initAjax();
-        $scope.systeminfo = $rootScope.systeminfo;
+        $scope.systeminfo = $rootScope.systeminfo; 
         $scope.updateDataSet();
-        
     });
-     $('#actualDateStart,#actualDateEnd').datepicker({
+    
+    $("#etaDateStart,#etaDateEnd").datepicker({
           rtl: Metronic.isRTL(),
           orientation: "left",
           autoclose: true
      });
      
-     $scope.searchContainer = function()
+     $scope.searchVensum = function()
      {
-            $http.post(querytarget, {filterData:$scope.arriveData})
+          $http.post(querytarget, {filterData:$scope.filterVen})
                 .success(function (res, status, headers, config) {
                  console.log(res);
                  $scope.updateDataSet();
                 });
      }
      
-     
-    
        $scope.updateDataSet = function () {
         $(document).ready(function () {
 
@@ -59,7 +54,7 @@ app.controller('arrivedContainer', function($rootScope, $scope, $http, $timeout,
                 "ajax": {
                     "url": querytarget, // ajax source
                     "type": 'POST',
-                    "data": {mode: "arrivedContainer", filterData: $scope.arriveData},
+                    "data": {mode: "vensum", filterData: $scope.filterVen},
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 50,
@@ -83,16 +78,18 @@ app.controller('arrivedContainer', function($rootScope, $scope, $http, $timeout,
                     }
                 },
                 "columns": [
-                    {"data": "shipCompany", "width": "10%"},
-                    {"data": "container_size", "width": "10%"},
-                    {"data": "supplierName", "width": "10%"},
+                    {"data": "bl_number", "width": "10%"},
                     {"data": "vessel", "width": "10%"},
+                    {"data": "shipCompany", "width": "10%"},
+                    {"data": "etaDate", "width": "10%"},
                     {"data": "containerId", "width": "10%"},
                     {"data": "productName_chi", "width": "10%"},
-                    {"data": "rec_receiveQty", "width": "10%"},
+                    {"data": "brand", "width": "10%"},
                     {"data": "actualDate", "width": "10%"},
-                    {"data": "fspDate", "width": "10%"},
-                    {"data": "container_receiveDate", "width": "10%"},
+                    {"data": "rec_receiveQty", "width": "10%"},
+                    {"data": "unitprice", "width": "10%"},
+                    {"data": "multiple", "width": "10%"},
+                    {"data": "totalPrice", "width": "10%"},
                 ]
 
             });
@@ -100,5 +97,9 @@ app.controller('arrivedContainer', function($rootScope, $scope, $http, $timeout,
            
         });
     };
-   
+ 
 });
+    
+
+ 
+

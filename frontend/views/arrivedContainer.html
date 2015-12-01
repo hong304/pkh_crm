@@ -1,3 +1,9 @@
+<style>
+    #datatable_ajax_filter
+    {
+        display:none;
+    }
+</style>
 <form class="form-horizontal" role="form" id="queryInfo">
     <div class="col-md-2">
         <!-- Separate Client -->
@@ -67,12 +73,12 @@
                             <thead>
                             <tr role="row" class="heading">
                                 <th  id="shipCompany" ng-click="click($event);">船公司 </th>
-                                <th  id="container_size" ng-click="click($event);"></th>
+                                <th  id="container_size" ng-click="click($event);">貨櫃大小</th>
                                 <th  id="suppliers.supplierName" ng-click="click($event);">客戶</th>
                                 <th  id="vessel" ng-click="click($event);">船名</th>
                                 <th  id="shippingitems.containerId" ng-click="click($event);">貨櫃編號</th>
                                 <th  id="productName" ng-click="click($event);">貨品</th>
-                                <th  id="contactPerson_2" ng-click="click($event);">Qty</th>
+                                <th  id="rec_receiveQty" ng-click="click($event);">數量</th>
                                 <th  id="actualDate" ng-click="click($event);">到港期</th>
                                 <th  id="" ng-click="click($event);">尾期</th>
                                 <th  id="" ng-click="click($event);">櫃期</th>
@@ -92,8 +98,4 @@
 
 </div>
 </form>
-<!-- Customer Maintenance Form -->
-<div ng-include="'/views/supplierForm.html'"></div>
 
-<!-- Select Client Modal -->
-<!--<div ng-include="'/views/model_selectgroup.html'"></div>-->
