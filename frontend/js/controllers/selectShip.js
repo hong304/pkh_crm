@@ -195,12 +195,11 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                 .success(function (res, status, headers, config) {      
                     for(var items in res)
                     {
-                        console.log(res[items]);
                         $scope.product[i].productId = res[items].productId;
                      //   $scope.product[i].productName = item.product_detail.productName_chi;
                         $scope.product[i].qty = res[items].qty;
                         $scope.product[i].good_qty = res[items].qty;
-                        $scope.product[i].productName = res[items].product_details.productName_chi;
+                        $scope.product[i].productName = res[items].productName_chi;
                         addUnit(res[items],i);
                         i++; 
                     }
@@ -212,24 +211,26 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
     
     function addUnit(item,i)
     {
+        console.log(item);
             var availableunit = [];
             var storeUnit = [];
-             if(item.product_details.supplierPackingInterval_carton > 0)
+             if(item.supplierPackingInterval_carton > 0)
                   {
-                      availableunit = availableunit.concat([{value: 'carton', label: item.product_details.productPackingName_carton}]);
+                      availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
                       storeUnit[0] = 'carton';
-                  }else if(item.product_details.supplierPackingInterval_inner > 0)
+                  }else if(item.supplierPackingInterval_inner > 0)
                   {
-                       availableunit = availableunit.concat([{value: 'inner', label: item.product_details.productPackingName_inner}]);
+                       availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
                        storeUnit[1] = 'inner';
-                  }else if(item.product_details.supplierPackingInterval_unit > 0)
+                  }else if(item.supplierPackingInterval_unit > 0)
                   {
-                       availableunit = availableunit.concat([{value: 'unit', label: item.product_details.productPackingName_unit}]);
+                       availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
                        storeUnit[2] = 'unit';
                   }
    
                   $scope.product[i].availableunit = availableunit;
-                  var indexNum = storeUnit.indexOf(item.productQtyUnit);
+                  var indexNum = storeUnit.indexOf(item.unit);
+                  console.log(storeUnit);
                   $scope.product[i]['unit'] = availableunit[indexNum];
     }
 

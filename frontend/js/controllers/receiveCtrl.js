@@ -364,9 +364,7 @@ $scope.an = false;
                 icon: 'warning' // put icon before the message
             });
     }
-    
-
-
+   
 
     $scope.submitOrder = function(v)
     {
@@ -389,6 +387,7 @@ $scope.an = false;
             generalError = false;
         }
 
+        
         if(!checkSumCal($scope.product))
         {
              Metronic.alert({
@@ -585,6 +584,7 @@ $scope.an = false;
     
     $scope.productDetect = function(value,i)
     {
+        console.log($scope.items);
        if(typeof $scope.items != 'undefined')
        {
                 $scope.product[i]['qty'] = "";

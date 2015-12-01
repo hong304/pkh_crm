@@ -45,7 +45,7 @@ class newPoController extends BaseController {
             foreach ($product as $p) {
                 $store = trim(str_replace('/n/r','',$p['remark']));
              
-                $this->po->setItem($p['dbid'],$p['code'], $p['unitprice'], $p['unit'], $p['qty'], $p['discount_1'], $p['discount_2'], $p['discount_3'], $p['allowance_1'], $p['allowance_2'], $p['allowance_3'], $p['deleted'], $p['currencyId'], $store);
+                $this->po->setItem($p['dbid'],$p['code'], $p['unitprice'], $p['unit'], $p['qty'], $p['discount_1'], $p['discount_2'], $p['discount_3'], $p['allowance_1'], $p['allowance_2'], $p['allowance_3'], $p['deleted'], $order['currencyId'], $store);
             }
         $message = $this->doValidation($order); 
         if($message == "")
