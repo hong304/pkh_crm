@@ -308,7 +308,7 @@ class InvoiceManipulation
                 if ($i['dbid']) {
                     $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
                     // pd($item);
-                    //$item->updated_at = time();
+                    $item->updated_at = time();
                 } else {
                     $item = new InvoiceItem();
                     $item->created_at = time();
