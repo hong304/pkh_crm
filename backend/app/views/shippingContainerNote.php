@@ -15,8 +15,13 @@
     }
 </style>
 <table>
+
 <tr>
     <td></td><td colspan="29"><?php echo $startToEnd[0]. "     To     ". $startToEnd[1]; ?></td>
+</tr>
+<tr>
+    <td>每天總數:</td>
+    <td>ggg</td>
 </tr>
 <tr>
     <td>
@@ -39,5 +44,8 @@
     }
     
 ?>
+</tr>
+<tr>
+   
 </tr>
 </table>

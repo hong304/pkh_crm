@@ -460,11 +460,15 @@ class shippingController extends BaseController {
         $etaDate = shipping:: where('etaDate','!=','')->with('shippingitem')->where('status','!=',99)->get()->toArray();
         $initial = strtotime($range[0]);
         $dateRange[] = date('Y-m-d',$initial);
+        $actualContent = [];
         while($initial < strtotime($range[1]))
         {
             $initial = $initial + 1 * 24 * 60 * 60;
             $dateRange[] = date('Y-m-d',$initial);
-         
+            for($start = 0;count($actualDate['shippingitem']);$start++)
+            {
+                
+            }
         }
         return View::make('shippingContainerNote')->with(['daterange' => $dateRange,'startToEnd' => $range])->render();
     }

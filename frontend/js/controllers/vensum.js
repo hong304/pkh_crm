@@ -85,7 +85,6 @@ app.controller('vensum', function($rootScope, $scope, $http, $timeout, SharedSer
                     {"data": "containerId", "width": "10%"},
                     {"data": "productName_chi", "width": "10%"},
                     {"data": "brand", "width": "10%"},
-                    {"data": "actualDate", "width": "10%"},
                     {"data": "rec_receiveQty", "width": "10%"},
                     {"data": "unitprice", "width": "10%"},
                     {"data": "multiple", "width": "10%"},
