@@ -470,7 +470,6 @@ class shippingController extends BaseController {
                            }
                        }         
                        $actualContent[$v['shippingId']][date('Y-m-d',$initial)]['container'] = $inside;
-                      
                    }
                 }
             }

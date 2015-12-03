@@ -55,7 +55,7 @@
     }
     
 ?>
-</tr>
+
 
    <?php 
        foreach($actualContent as $shippingId=>$content)
@@ -76,11 +76,16 @@
                 }*/
                 if(count($containerContent['container']) > 0)
                 {
-                    foreach($containerContent['container'] as $containerId=>$productContent)
+                    foreach($containerContent['container'] as $containerId=>$containerProduct)
                     {
-                       echo "<tr><td>".$store."</td>";
-                       echo "<td>".$containerId."</td>";
-                     
+                         if(count($containerProduct) > 0 && isset($containerProduct))
+                         {
+                            for($counts = 0;$counts < count($containerProduct);$counts++)
+                            {
+                                 //pd($containerProduct);
+                                // echo "<tr></td>".$containerProduct[$counts]['productId']."</td></tr>";
+                            }
+                         }
                     }
                 }
                 pd("");
