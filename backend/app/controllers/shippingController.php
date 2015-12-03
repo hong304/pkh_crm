@@ -51,23 +51,22 @@ class shippingController extends BaseController {
                 Shippingitem::whereNotIn('id', $itemIds)->where('shippingId', $shipment['shippingId'])->delete();
             //If there is no shippingId, not only the records deleted in ui but also records in db will be deleted.
         }
-      
+
         foreach ($shipItem as $k) {
-            if($k['deleted'] == 0)
-            {    
-                 $cost_00 = (isset($k['cost']['cost_00'])) ? $k['cost']['cost_00'] : 0;
-                 $cost_01 = (isset($k['cost']['cost_01'])) ? $k['cost']['cost_01'] : 0;
-                 $cost_02 = (isset($k['cost']['cost_02'])) ? $k['cost']['cost_02'] : 0;
-                 $cost_03 = (isset($k['cost']['cost_03'])) ? $k['cost']['cost_03'] : 0;
-                 $cost_04 = (isset($k['cost']['cost_04'])) ? $k['cost']['cost_04'] : 0;
-                 $cost_05 = (isset($k['cost']['cost_05'])) ? $k['cost']['cost_05'] : 0;
-                 $cost_06 = (isset($k['cost']['cost_06'])) ? $k['cost']['cost_06'] : 0;
-                 $cost_07 = (isset($k['cost']['cost_07'])) ? $k['cost']['cost_07'] : 0;
-                 $cost_08 = (isset($k['cost']['cost_08'])) ? $k['cost']['cost_08'] : 0;
-                 $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
-   
-                 
-                 $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'],$k['sale_method'],$cost_00,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09);
+            if ($k['deleted'] == 0) {
+                $cost_00 = (isset($k['cost']['cost_00'])) ? $k['cost']['cost_00'] : 0;
+                $cost_01 = (isset($k['cost']['cost_01'])) ? $k['cost']['cost_01'] : 0;
+                $cost_02 = (isset($k['cost']['cost_02'])) ? $k['cost']['cost_02'] : 0;
+                $cost_03 = (isset($k['cost']['cost_03'])) ? $k['cost']['cost_03'] : 0;
+                $cost_04 = (isset($k['cost']['cost_04'])) ? $k['cost']['cost_04'] : 0;
+                $cost_05 = (isset($k['cost']['cost_05'])) ? $k['cost']['cost_05'] : 0;
+                $cost_06 = (isset($k['cost']['cost_06'])) ? $k['cost']['cost_06'] : 0;
+                $cost_07 = (isset($k['cost']['cost_07'])) ? $k['cost']['cost_07'] : 0;
+                $cost_08 = (isset($k['cost']['cost_08'])) ? $k['cost']['cost_08'] : 0;
+                $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
+
+
+                $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'], $k['sale_method'], $cost_00, $cost_01, $cost_02, $cost_03, $cost_04, $cost_05, $cost_06, $cost_07, $cost_08, $cost_09);
             }// clear the deleted record      
         }
 
@@ -88,7 +87,7 @@ class shippingController extends BaseController {
 
         if ($mode == 'collection') {
 
-            $ship = Shipping::select(['shippingId', 'shippings.supplierCode', 'suppliers.supplierName', 'etaDate', 'shippings.status', 'carrier', 'bl_number', 'users.username', 'shippings.updated_at', 'shippings.poCode','shippings.shipCompany'])
+            $ship = Shipping::select(['shippingId', 'shippings.supplierCode', 'suppliers.supplierName', 'etaDate', 'shippings.status', 'carrier', 'bl_number', 'users.username', 'shippings.updated_at', 'shippings.poCode', 'shippings.shipCompany'])
                     ->leftJoin('suppliers', function($join) {
                         $join->on('suppliers.supplierCode', '=', 'shippings.supplierCode');
                     })
@@ -168,12 +167,12 @@ class shippingController extends BaseController {
 
         $first_date = date("Y/m/d");
 
-        $s = shipping::where('actualDate', '!=', '')->with('Supplier', 'Shippingitem')->where('status','!=',99)->get();
+        $s = shipping::where('actualDate', '!=', '')->with('Supplier', 'Shippingitem')->where('status', '!=', 99)->get();
 
-        $eta = shipping::whereNull('actualDate')->with('Supplier', 'Shippingitem')->where('status','!=',99)->get();
+        $eta = shipping::whereNull('actualDate')->with('Supplier', 'Shippingitem')->where('status', '!=', 99)->get();
 
-        $sfsp = shipping::Select('fsp', 'actualDate', 'shippingId','supplierCode','poCode')->with('Supplier')->where('actualDate', '!=', '')->where('fsp', '>', 0)->where('status','!=',99)->get();
- 
+        $sfsp = shipping::Select('fsp', 'actualDate', 'shippingId', 'supplierCode', 'poCode')->with('Supplier')->where('actualDate', '!=', '')->where('fsp', '>', 0)->where('status', '!=', 99)->get();
+
         //sql that can accummulate the number of containers each day
 
 
@@ -181,13 +180,13 @@ class shippingController extends BaseController {
         //$date3 = $date1 - 24 * 60 * 60 * 7; // other day range
 
         $sDate = $date1 + 24 * 60 * 60 * 14;  //Total days
-      //  $sDate3 = $date3 + 24 * 60 * 60 * 14; //end  day
+        //  $sDate3 = $date3 + 24 * 60 * 60 * 14; //end  day
         //  $sDate2 = $sDate - 24*60*60*7;
 
-      /*  while ($date3 <= $sDate3) {
-            $date2[] = date('Y-m-d', $date3);
-            $date3 = $date3 + 24 * 60 * 60;  //Add one more date
-        }*/
+        /*  while ($date3 <= $sDate3) {
+          $date2[] = date('Y-m-d', $date3);
+          $date3 = $date3 + 24 * 60 * 60;  //Add one more date
+          } */
 
         foreach ($sfsp as $key => $value) {
             $fspValue = $value['fsp'];
@@ -196,11 +195,11 @@ class shippingController extends BaseController {
                 $dateAdd = $dateAdd + 60 * 60 * 24;
                 $daterange[$value['shippingId']]['actualDate'] = $value['actualDate'];
                 $supplierWord = (isset($value['Supplier']->toArray()[0]['supplierName'])) ? $value['Supplier']->toArray()[0]['supplierName'] : "";
-                $daterange[$value['shippingId']]['supplier'] = "採購單編號:".$value['poCode'] ."<br/>供應商名稱:". $supplierWord;
+                $daterange[$value['shippingId']]['supplier'] = "採購單編號:" . $value['poCode'] . "<br/>供應商名稱:" . $supplierWord;
                 $daterange[$value['shippingId']][$h] = date('Y-m-d', $dateAdd);
             }
         }
-       
+
 
 
         while ($date1 <= $sDate) {
@@ -214,9 +213,9 @@ class shippingController extends BaseController {
                     $sarr[$v->shippingId][date('Y-m-d', $date1)]['no'] = count($v->Shippingitem->toArray());
 
                     $storeAllData = $storeAllData + count($v->Shippingitem->toArray());
-    
+
                     $supplierWord = (isset($v->supplier->toArray()[0]['supplierName'])) ? $v->supplier->toArray()[0]['supplierName'] : "";
-                    $sarr[$v->shippingId][date('Y-m-d', $date1)]['supplier'] = "採購單編號:".$v->poCode ."<br/>供應商名稱:". $supplierWord;
+                    $sarr[$v->shippingId][date('Y-m-d', $date1)]['supplier'] = "採購單編號:" . $v->poCode . "<br/>供應商名稱:" . $supplierWord;
 
                     $sarr[$v->shippingId][date('Y-m-d', $date1)]['fsp'] = $v->fsp;
 
@@ -227,25 +226,22 @@ class shippingController extends BaseController {
                     foreach ($v->shippingitem as $k => $v) {
                         if (isset($v->container_receiveDate)) {
                             $store++;
-                            if($v->sale_method == 1)
-                            {
+                            if ($v->sale_method == 1) {
                                 $wholestore++;
-                            }else if($v->sale_method == 2)
-                            {
+                            } else if ($v->sale_method == 2) {
                                 $tradestore++;
                             }
                         }
                     }
-                    
-                    
-                    $sarr[$v->shippingId][date('Y-m-d', $date1)]['receive'] = $wholestore ."+".$tradestore;
+
+
+                    $sarr[$v->shippingId][date('Y-m-d', $date1)]['receive'] = $wholestore . "+" . $tradestore;
 
                     $wstoreAll = $wstoreAll + $wholestore;
                     $tstoreAll = $tstoreAll + $tradestore;
 
-                    $other[date('Y-m-d', $date1)]['storeAll'] = $wstoreAll . "+". $tstoreAll;
+                    $other[date('Y-m-d', $date1)]['storeAll'] = $wstoreAll . "+" . $tstoreAll;
                     $other[date('Y-m-d', $date1)]['storeAllData'] = $storeAllData;
-   
                 }
             }
 
@@ -254,143 +250,126 @@ class shippingController extends BaseController {
                     $sarr[$v->shippingId][date('Y-m-d', $date1)]['no'] = count($v->Shippingitem->toArray());
                     $sarr[$v->shippingId][date('Y-m-d', $date1)]['mode'] = 'eta';
                     $supplierWord = (isset($v->supplier->toArray()[0]['supplierName'])) ? $v->supplier->toArray()[0]['supplierName'] : "";
-                        $sarr[$v->shippingId][date('Y-m-d', $date1)]['supplier'] = "採購單編號:".$v->poCode ."<br/>供應商名稱:". $supplierWord;
+                    $sarr[$v->shippingId][date('Y-m-d', $date1)]['supplier'] = "採購單編號:" . $v->poCode . "<br/>供應商名稱:" . $supplierWord;
                     $storeAllData = $storeAllData + count($v->Shippingitem->toArray());
-                    $other[date('Y-m-d', $date1)]['storeAll'] = $wstoreAll . "+". $tstoreAll;
+                    $other[date('Y-m-d', $date1)]['storeAll'] = $wstoreAll . "+" . $tstoreAll;
                     $other[date('Y-m-d', $date1)]['storeAllData'] = $storeAllData;
                     $sarr[$v->shippingId][date('Y-m-d', $date1)]['fsp'] = $v->fsp;
-                   
                 }
             }
 
             $date1 = $date1 + 24 * 60 * 60;  //Add one more date
         }
-  
+
         if (isset($sarr)) {
             $this->data = $sarr;
             return View::make('shippingTable')->with(['data' => $this->data, 'date' => $date, 'other' => $other, 'daterange' => $daterange])->render();
-        } else if(isset($daterange)){
-            return View::make('shippingTable')->with(['date' => $date,'daterange' => $daterange])->render();
-        }else{
-            return View::make('shippingTable')->with(['date' => $date,'daterange'])->render();
+        } else if (isset($daterange)) {
+            return View::make('shippingTable')->with(['date' => $date, 'daterange' => $daterange])->render();
+        } else {
+            return View::make('shippingTable')->with(['date' => $date, 'daterange'])->render();
         }
     }
-    
-    public function outputShipNote()
-    {
+
+    public function outputShipNote() {
         $aad = "";
-        $outputAad ="";
-        $outputEta ="";
+        $outputAad = "";
+        $outputEta = "";
         $today = strtotime(date("Y/m/d"));
         $weekArray = $this->createWeek($today);
-        foreach($weekArray as $k=>$v)
-        {
-            if($k !== "last_last_week")
-            {
-                 $s[$k] = shipping::where('actualDate', '!=', '')->whereBetween('actualDate',array($v[1],$v[0]))->with('Shippingitem')->where('status','!=',99)->get()->toArray();
-                 $eta[$k] = shipping::whereNull('actualDate')->whereBetween('etaDate',array($v[1],$v[0]))->with('Shippingitem')->where('status','!=',99)->get()->toArray();
-            }else
-            {
-                 $s[$k] = shipping::where('actualDate', '!=', '')->where('actualDate','<=',$v[0])->with('Shippingitem')->where('status','!=',99)->get()->toArray();
-                 
-                 $eta[$k] = shipping::whereNull('actualDate')->where('etaDate','<=',$v[0])->with('Shippingitem')->where('status','!=',99)->get()->toArray();
-                 
+        foreach ($weekArray as $k => $v) {
+            if ($k !== "last_last_week") {
+                $s[$k] = shipping::where('actualDate', '!=', '')->whereBetween('actualDate', array($v[1], $v[0]))->with('Shippingitem')->where('status', '!=', 99)->get()->toArray();
+                $eta[$k] = shipping::whereNull('actualDate')->whereBetween('etaDate', array($v[1], $v[0]))->with('Shippingitem')->where('status', '!=', 99)->get()->toArray();
+            } else {
+                $s[$k] = shipping::where('actualDate', '!=', '')->where('actualDate', '<=', $v[0])->with('Shippingitem')->where('status', '!=', 99)->get()->toArray();
+
+                $eta[$k] = shipping::whereNull('actualDate')->where('etaDate', '<=', $v[0])->with('Shippingitem')->where('status', '!=', 99)->get()->toArray();
             }
-            
-        }      
-        
-        foreach($eta as $etaKey=>$etaValue)
-        {
+        }
+
+        foreach ($eta as $etaKey => $etaValue) {
             $containerNum = 0;
-            foreach($etaValue as $k=>$v)
-            {
+            foreach ($etaValue as $k => $v) {
                 $containerNum += count($v['shippingitem']);
             }
-            $outputEta[$etaKey] = count($etaValue) . "(".$containerNum .")";
+            $outputEta[$etaKey] = count($etaValue) . "(" . $containerNum . ")";
         }
-     
-        foreach($s as $key=>$value)
-        {
-      
+
+        foreach ($s as $key => $value) {
+
             $count = 0;
             $cargoCount = 0;
-            foreach($value as $ele=>$items)
-            {
+            foreach ($value as $ele => $items) {
                 $cargoCount += count($items['shippingitem']);
             }
-            if(count($value) > 0)
-            {
-                $outputAad[$key] = count($value)."(".$cargoCount.")";
-            
-            /* if(count($value) > 0)
-            {
-                for($p = 0;$p<count($value);$p++) //level of shiipingId
-                {
-                    $countCargo = 1;
-                    $countRecive = 1;
-                    for($g = 0;$g<count($value[$p]['shippingitem']);$g++) //level of shippingitem
-                    {
-                         $aad[$key][$value[$p]['shippingId']] = $countCargo++;
-                        if(isset($value[$p]['shippingitem'][$g]['container_receiveDate']))
-                        {
-                            $countReceive[$key][$value[$p]['shippingId']] = $countRecive++;
-                        }else
-                        {
-                            $countReceive[$key][$value[$p]['shippingId']] = 0;
-                        }
-                    }
-                } 
+            if (count($value) > 0) {
+                $outputAad[$key] = count($value) . "(" . $cargoCount . ")";
+
+                /* if(count($value) > 0)
+                  {
+                  for($p = 0;$p<count($value);$p++) //level of shiipingId
+                  {
+                  $countCargo = 1;
+                  $countRecive = 1;
+                  for($g = 0;$g<count($value[$p]['shippingitem']);$g++) //level of shippingitem
+                  {
+                  $aad[$key][$value[$p]['shippingId']] = $countCargo++;
+                  if(isset($value[$p]['shippingitem'][$g]['container_receiveDate']))
+                  {
+                  $countReceive[$key][$value[$p]['shippingId']] = $countRecive++;
+                  }else
+                  {
+                  $countReceive[$key][$value[$p]['shippingId']] = 0;
+                  }
+                  }
+                  }
+                  }
+                  if(isset($aad[$key]))
+                  {
+
+                  $weekCount = 0;
+                  $aadCount = $aad[$key];
+
+                  $weekCount = count($aadCount);
+                  $outputAad[$key] = $weekCount;
+                  if(isset($countReceive[$key]))
+                  {
+                  $countReceiveCount = $countReceive[$key];
+                  }
+                  foreach($aadCount as $shipid=>$num)
+                  {
+                  if($aadCount[$shipid] != $countReceiveCount[$shipid])
+                  {
+                  $outputAad[$key] = ++$weekCount;
+                  }else
+                  {
+                  $outputAad[$key] = 0;
+                  }
+                  } */
+            } else {
+                $outputAad[$key] = 0 . "(" . $cargoCount . ")";
             }
-                    if(isset($aad[$key]))
-                    {
-                        
-                        $weekCount = 0;
-                        $aadCount = $aad[$key];
-                   
-                        $weekCount = count($aadCount);
-                        $outputAad[$key] = $weekCount;
-                       if(isset($countReceive[$key]))
-                        {
-                        $countReceiveCount = $countReceive[$key];
-                        } 
-                        foreach($aadCount as $shipid=>$num)
-                        {
-                            if($aadCount[$shipid] != $countReceiveCount[$shipid])
-                            {
-                                $outputAad[$key] = ++$weekCount; 
-                            }else
-                            {
-                                $outputAad[$key] = 0;
-                            }
-                        }*/
-                    }else
-                    {
-                        $outputAad[$key] = 0 ."(".$cargoCount.")";
-                    }
-
         }
-            if(isset($aad))
-                return View::make('shippingNote')->with(['shipTable' =>$aad,'outputAad'=>$outputAad,'eta'=>$outputEta,'createweek'=>$weekArray])->render();
-                
+        if (isset($aad))
+            return View::make('shippingNote')->with(['shipTable' => $aad, 'outputAad' => $outputAad, 'eta' => $outputEta, 'createweek' => $weekArray])->render();
     }
-    
-    public function createWeek($startDate)
-    {
-        $this_week[0] = date('Y-m-d',$startDate); //latest
-        $this_week[1] = date('Y-m-d',$startDate - 6 * 24 * 60 * 60);
-        
-        $next_week[0] = date('Y-m-d',$startDate + 7 * 24 * 60 * 60);
-        $next_week[1] = date('Y-m-d',$startDate +  24 * 60 * 60);
-        
-        $last_week[0] = date('Y-m-d',$startDate - 7 * 24 * 60 * 60);
-        $last_week[1] = date('Y-m-d',$startDate - 13 * 24 * 60 * 60);
-        
-        $last_last_week[0] = date('Y-m-d',$startDate - 14 * 24 * 60 * 60);
-        $last_last_week[1] = date('Y-m-d',$startDate - 20 * 24 * 60 * 60);
 
-        return ['last_last_week'=>$last_last_week,'last_week'=>$last_week,'this_week'=>$this_week,'next_week'=>$next_week];
+    public function createWeek($startDate) {
+        $this_week[0] = date('Y-m-d', $startDate); //latest
+        $this_week[1] = date('Y-m-d', $startDate - 6 * 24 * 60 * 60);
+
+        $next_week[0] = date('Y-m-d', $startDate + 7 * 24 * 60 * 60);
+        $next_week[1] = date('Y-m-d', $startDate + 24 * 60 * 60);
+
+        $last_week[0] = date('Y-m-d', $startDate - 7 * 24 * 60 * 60);
+        $last_week[1] = date('Y-m-d', $startDate - 13 * 24 * 60 * 60);
+
+        $last_last_week[0] = date('Y-m-d', $startDate - 14 * 24 * 60 * 60);
+        $last_last_week[1] = date('Y-m-d', $startDate - 20 * 24 * 60 * 60);
+
+        return ['last_last_week' => $last_last_week, 'last_week' => $last_week, 'this_week' => $this_week, 'next_week' => $next_week];
     }
-    
 
     public function outputPo() {
         $deliverydate5 = Input ::get('filterData')['deliverydate6'];
@@ -432,46 +411,77 @@ class shippingController extends BaseController {
             return View::make('poTable')->with(['data' => $this->data, 'date' => $date])->render();
         }
     }
-    
-    public function jsonSearchSupplier()
-    {
+
+    public function jsonSearchSupplier() {
         $supplier = Input::get('filterAll');
-        $querySupplier = Supplier :: where('supplierCode', 'LIKE', '%' . $supplier['supplierCode'] . '%')->where('location',2)->with('country')->get();
+        $querySupplier = Supplier :: where('supplierCode', 'LIKE', '%' . $supplier['supplierCode'] . '%')->where('location', 2)->with('country')->get();
         return Response::json($querySupplier);
     }
-    
-    
-    public function jsonSearchPo()
-    {
+
+    public function jsonSearchPo() {
         $supplierCode = Input::get('supplierCode');
-        $queryPo = Purchaseorder :: where('supplierCode',$supplierCode)->where('location',2)->with('supplier')->get();
+        $queryPo = Purchaseorder :: where('supplierCode', $supplierCode)->where('location', 2)->with('supplier')->get();
         return Response::json($queryPo);
     }
-    
-    public function outputShipContainer()
-    {
-        $param = Input :: get('filterData');
-        
+
+    public function outputShipContainer() {
+        $param = Input :: get('filters');
+
         $today = strtotime(date("Y-m-d"));
 
-        $range[0] = date('Y-m-d',$today - 14 * 24 * 60 * 60);
-        $range[1] = date('Y-m-d',$today + 14 * 24 * 60 * 60);
-        $actualDate = shipping::where('actualDate', '!=' ,'')->with('Shippingitem')->where('status','!=',99)->get()->toArray();
-        $etaDate = shipping:: where('etaDate','!=','')->with('shippingitem')->where('status','!=',99)->get()->toArray();
-        $initial = strtotime($range[0]);
-        $dateRange[] = date('Y-m-d',$initial);
+        $range[0] = date('Y-m-d', $today - 14 * 24 * 60 * 60);
+        $range[1] = date('Y-m-d', $today + 14 * 24 * 60 * 60);
+        $actualDate = shipping::where('actualDate', '!=', '')->with(['Shippingitem' => function($query) {
+                        $query->with('receive');
+                    }])->where('status', '!=', 99)->get()->toArray();
+
+        $etaDate = shipping:: where('etaDate', '!=', '')->with(['Shippingitem' => function($query) {
+                        $query->with('receive');
+                    }])->where('status', '!=', 99)->get()->toArray();
+        $initial = ($param != "") ? strtotime($param): strtotime($range[0]);
         $actualContent = [];
-        while($initial < strtotime($range[1]))
-        {
-            $initial = $initial + 1 * 24 * 60 * 60;
-            $dateRange[] = date('Y-m-d',$initial);
-            for($start = 0;count($actualDate['shippingitem']);$start++)
-            {
-                
+        while ($initial <= strtotime($range[1])) {
+           
+            $dateRange[] = date('Y-m-d', $initial);
+            
+          //  pd($actualDate);
+            if (isset($actualDate)) {
+                foreach ($actualDate as $k => $v) {
+                    // $actualContent[$v['shippingId']] = $v['shippingitem']['containerId'];
+                   if($v['actualDate'] == date('Y-m-d',$initial))
+                   {
+                       $inside = [];
+                       $actualContent[$v['shippingId']][date('Y-m-d',$initial)]['fsp'] = $v['fsp'];
+                       $actualContent[$v['shippingId']][date('Y-m-d',$initial)]['mode'] = 'actual';
+                       foreach($v['shippingitem'] as $a=>$b)
+                       {
+                           $countReceive = 0;
+                           if(count($b['receive']) > 0)
+                           {
+                               foreach($b['receive'] as $receiveKey=>$receiveContent)
+                               {
+                                   $inside[$b['containerId']][$countReceive]['productId'] = $receiveContent['productId'];
+                                   $inside[$b['containerId']][$countReceive]['productName'] = $receiveContent['productName_chi'];
+                                   $countReceive++;
+                               }
+                           }else
+                           {
+                                 $inside[$b['containerId']] = 0;
+                           }
+                       }         
+                       $actualContent[$v['shippingId']][date('Y-m-d',$initial)]['container'] = $inside;
+                      
+                   }
+                }
             }
+           
+             $initial = $initial + 1 * 24 * 60 * 60;
         }
-        return View::make('shippingContainerNote')->with(['daterange' => $dateRange,'startToEnd' => $range])->render();
+        
+       
+
+       
+        return View::make('shippingContainerNote')->with(['daterange' => $dateRange, 'startToEnd' => $range,'actualContent'=> $actualContent])->render();
     }
-    
 
 }

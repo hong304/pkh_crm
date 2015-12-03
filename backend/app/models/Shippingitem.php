@@ -6,4 +6,10 @@ class Shippingitem extends Eloquent  {
     {
         return $this->hasOne('Product', 'productId', 'productId');
     }
+    
+    public function receive()
+    {
+        return $this->hasMany('Receiving', 'containerId', 'containerId')
+            ->join('Product', 'receivings.productId','=', 'product.productId');
+    }
 }

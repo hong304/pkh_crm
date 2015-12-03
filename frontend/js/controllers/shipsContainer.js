@@ -21,7 +21,7 @@ app.controller('shipsContainer', function ($scope, $rootScope, $http, SharedServ
     });
     
     $scope.shippingContainerReport = function(){
-         $http.post($scope.endpoint + "/outputShipContainer.json",{filterData: $scope.filterData.shippingDeliverDate
+         $http.post($scope.endpoint + "/outputShipContainer.json",{filters: $scope.filterData.shippingDeliverDate
             }).success(function (data) {
                 //if(data !== "")
                // {
@@ -32,6 +32,7 @@ app.controller('shipsContainer', function ($scope, $rootScope, $http, SharedServ
               //  }
             });     
     }
+    
     
 
 });
