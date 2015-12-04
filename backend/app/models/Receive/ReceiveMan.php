@@ -39,6 +39,7 @@ class ReceiveMan
      
      public function setItemss($dbid,$poCode,$shippingId,$containerId,$receivingId,$productId,$good_qty,$damage_qty,$on_hold_qty,$expiry_date,$rec_good_qty,$rec_damage_qty,$receiving_date,$unit_cost,$bin_location,$deleted,$unit,$rec_qty,$unitName)
      {
+        
          $productDetails = Product :: select('productPacking_unit','productPacking_inner','productPacking_carton')->where('productId',$productId)->first()->toArray();
          $mutiply = $this->reunit($unit,$productDetails['productPacking_unit'],$productDetails['productPacking_inner'],$productDetails['productPacking_carton']);
          $unitCost = $this->unitProductCost($unit_cost,$unit,$productDetails['productPacking_unit'],$productDetails['productPacking_inner'],$productDetails['productPacking_carton']);

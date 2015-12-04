@@ -200,8 +200,26 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                         $scope.product[i].qty = res[items].qty;
                         $scope.product[i].good_qty = res[items].qty;
                         $scope.product[i].productName = res[items].productName_chi;
+                        $scope.unit_cost = 0;
+                        if(res[items].unit == 'carton')
+                        {
+                            $scope.unit_cost = res[items].productCost_unit;
+                        }else if(res[items].unit == 'inner')
+                        {
+                            $scope.unit_cost = res[items].supplierStdPrice_inner;
+                        }else if(res[items].unit == 'unit')
+                        {
+                            $scope.unit_cost = res[items].supplierStdPrice_unit;
+                        }
+                        $scope.product[i].unit_cost = $scope.unit_cost;
                         addUnit(res[items],i);
+                     
                         i++; 
+                    }
+                    console.log(res);
+                    if(res.length > 0)
+                    {
+                         SharedService.setValue('items', res, 'handleShippingUpdate');
                     }
                 });
             }
@@ -211,7 +229,7 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
     
     function addUnit(item,i)
     {
-        console.log(item);
+
             var availableunit = [];
             var storeUnit = [];
              if(item.supplierPackingInterval_carton > 0)
@@ -230,7 +248,7 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
    
                   $scope.product[i].availableunit = availableunit;
                   var indexNum = storeUnit.indexOf(item.unit);
-                  console.log(storeUnit);
+
                   $scope.product[i]['unit'] = availableunit[indexNum];
     }
 
