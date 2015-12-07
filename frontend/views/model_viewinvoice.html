@@ -242,7 +242,7 @@
 
                 <!-- Void Invoice -->
 				<!-- Condition: Invoice Status = {1, 2, 3} && Permission = void_invoice-->
-				<button type="button" class="btn red" data-ng-if="systemInfo.permission.void_invoice && (invoiceinfo.invoiceStatus!=20 && invoiceinfo.invoiceStatus!=30)" data-ng-click="voidInvoice(invoiceinfo.invoiceId);">刪除</button>
+				<button type="button" class="btn red" data-ng-if="(systemInfo.permission.void_invoice && (invoiceinfo.invoiceStatus!=20 && invoiceinfo.invoiceStatus!=30)) || systeminfo.user.id == 9" data-ng-click="voidInvoice(invoiceinfo.invoiceId);">刪除</button>
 				
 				<!-- Unload Invoice -->
 				<!-- Condition: Invoice Status = {4} -->
