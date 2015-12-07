@@ -456,10 +456,16 @@ else{
                     }
 
                     if($scope.systeminfo.user.id!=9)
-                    if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || inf.invoiceStatus == 30 ){
-                        $scope.allowSubmission = false;
-                        return false;
-                    }
+                        if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || inf.invoiceStatus == 30 ){
+
+                            Metronic.blockUI({
+                                boxed: true,
+                                message: '下載資料中...'
+                            });
+
+                            $scope.allowSubmission = false;
+                            return false;
+                        }
 
                     $scope.order.clientId = res.customerId;
                     $scope.order.clientName = res.customerName_chi;
