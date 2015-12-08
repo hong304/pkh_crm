@@ -92,7 +92,7 @@ class PrintQueueController extends BaseController
         // list jobs that are created since 3 days ago. 
 
 
-        $job = PrintQueue::select('job_id', 'Invoice.invoiceId', 'customerName_chi', 'zoneId', 'Invoice.routePlanningPriority', 'PrintQueue.updated_at', 'deliveryDate', 'users.name', 'PrintQueue.status')
+        $job = PrintQueue::select('job_id', 'Invoice.invoiceId', 'customerName_chi', 'zoneId', 'Invoice.routePlanningPriority', 'PrintQueue.updated_at', 'deliveryDate', 'users.name', 'PrintQueue.status','PrintQueue.invoiceStatus')
             ->wherein('target_path', explode(',', $this->zone))
             ->where('PrintQueue.status', '!=', 'dead:regenerated')
             ->where('PrintQueue.status', '!=', 'downloaded;passive');
@@ -259,9 +259,9 @@ class PrintQueueController extends BaseController
             $groupIds = [];
 
             foreach ($jobs as $vv) {
-                if ($vv->invoiceStatus == 2 || $vv->invoiceStatus == 1 || $vv->invoiceStatus == 20 || $vv->invoiceStatus == 30)
+                if ($vv->invoiceStatus == 2 || $vv->invoiceStatus == 20 || $vv->invoiceStatus == 30)
                     $groupIds[2][$vv->target_path][] = $vv->invoiceId;
-                else
+                else if($vv->invoiceStatus == 96 || $vv->invoiceStatus == 97 || $vv->invoiceStatus == 98)
                     $groupIds[1][$vv->target_path][] = $vv->invoiceId;
             }
 

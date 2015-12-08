@@ -256,6 +256,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
             data: {zone:$scope.zone,shift:$scope.shift,group:$scope.group}
         }).success(function(res){
     		$scope.queue = res['queued'];
+            console.log($scope.queue);
             $scope.job9698 = res['queued9698'];
             Metronic.unblockUI('#printArea');
             });
