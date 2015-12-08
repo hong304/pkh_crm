@@ -308,7 +308,7 @@ if($action== 'yearend')
         $column = ['B','C','D','F','G','H'];
 
         foreach($column as $v)
-            $objPHPExcel->getActiveSheet()->setCellValue($v.'18', "=SUM(".$v."6:".$v."16)");
+            $objPHPExcel->getActiveSheet()->setCellValue($v.'18', "=SUM(".$v."5:".$v."16)");
 
         $objPHPExcel->getActiveSheet()
             ->getStyle('B5:B18')

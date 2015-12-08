@@ -459,8 +459,9 @@ else{
                         if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || inf.invoiceStatus == 30 ){
 
                             Metronic.blockUI({
+                                target: '#orderportletbody',
                                 boxed: true,
-                                message: '下載資料中...'
+                                message: '你沒有權限修改此訂單'
                             });
 
                             $scope.allowSubmission = false;
