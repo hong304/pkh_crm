@@ -100,6 +100,10 @@ class Analysis_product {
             'highest_qty' => $maxqty,
             'highest_single' => $maxsingle,
         ];
+
+
+
+
         $accu[13][$last_year]=$a_data[13][$last_year];
 
         $max = -9999999; //will hold max val
@@ -171,6 +175,9 @@ for($i=0;$i<=12;$i++){
 
         }
        $action =  isset($input['action'])?$input['action']:'';
+
+
+
 
 if($action== 'yearend')
     $this->data = $accu;

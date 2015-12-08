@@ -65,9 +65,9 @@ if ($data[13] == null){
                 <td>
                     <?php
                     if($data[13][$last_year]['highest_qty'] == $ff[$last_year]['qty'])
-                        echo "<span style='color:red'>".number_format($ff[$last_year]['qty'])."</span>";
+                        echo "<span style='color:red'>".$ff[$last_year]['qty']."</span>";
                     else
-                        echo number_format($ff[$last_year]['qty']);?>
+                        echo $ff[$last_year]['qty'];?>
                 </td>
                 <td>     <?php
                     if($data[13][$last_year]['highest_single'] == $ff[$last_year]['amount']/$ff[$last_year]['qty'])
@@ -93,9 +93,9 @@ if ($data[13] == null){
                 <td>
                     <?php
                     if($data[13][$current_year]['highest_qty'] == $ff[$current_year]['qty'] and $k !=13)
-                        echo "<span style='color:red'>".number_format($ff[$current_year]['qty'])."</span>";
+                        echo "<span style='color:red'>".$ff[$current_year]['qty']."</span>";
                     else
-                        echo number_format($ff[$current_year]['qty']);?>
+                        echo $ff[$current_year]['qty'];?>
                 </td>
                 <td>       <?php
                     if($data[13][$current_year]['highest_single'] == $ff[$current_year]['amount']/$ff[$current_year]['qty'] and $k !=13)
