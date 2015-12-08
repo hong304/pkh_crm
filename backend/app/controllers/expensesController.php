@@ -22,8 +22,10 @@ class expensesController extends BaseController {
         $expenses->cost2 = $filter['cost2'];
         $expenses->cost3 = $filter['cost3'];
         $expenses->cost4 = $filter['cost4'];
+        $expenses->cost5 = $filter['cost5'];
         $expenses->cost3_remark = $filter['cost3_remark'];
         $expenses->cost4_remark = $filter['cost4_remark'];
+        $expenses->cost5_remark = $filter['cost5_remark'];
         $expenses->save();
     }
 

@@ -23,8 +23,10 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
         'cost2' :'',
         'cost3' :'',
         'cost4' :'',
+        'cost5' : '',
         'cost3_remark' :'',
         'cost4_remark' :'',
+        'cost5_remark' :'',
         'deliveryDate' :'',
         'zone' : ''
     }
@@ -204,8 +206,10 @@ $scope.submitExpensesForm = function(){
                     { "data": "cost3_remark", "width":"20%" },
                     { "data": "cost4", "width":"6%" },
                     { "data": "cost4_remark", "width":"20%" },
+                    { "data": "cost5", "width":"6%" },
+                    { "data": "cost5_remark", "width":"20%" },
                     { "data": "updated_by_text", "width":"5%" },
-                    { "data": "link", "width":"5%" }
+                    { "data": "link", "width":"3%" }
 
                 ],
 

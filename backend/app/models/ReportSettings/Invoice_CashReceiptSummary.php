@@ -253,7 +253,7 @@ class Invoice_CashReceiptSummary {
         $this->_expenses = expense::select('*')->where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
         if(isset($this->_expenses))
         {
-            $this->_expenses->amount = $this->_expenses->cost1+$this->_expenses->cost2+$this->_expenses->cost3+$this->_expenses->cost4;
+            $this->_expenses->amount = $this->_expenses->cost1+$this->_expenses->cost2+$this->_expenses->cost3+$this->_expenses->cost4+$this->_expenses->cost5;
         }
         $this->data = $this->_account;
         return $this->data;
@@ -556,7 +556,7 @@ class Invoice_CashReceiptSummary {
         $pdf->Cell(0, 0, '應收現金:', 0, 0, "L");
 
         $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf("$%s + $%s - $%s = $%s",number_format(end($this->_account)['accumulator'],2,'.',','),number_format(end($this->_paidInvoice)['accumulator'],2,'.',','),number_format($this->_expenses['amount'],2,'.',','), number_format(end($this->_paidInvoice)['accumulator']+end($this->_account)['accumulator']-$this->_expenses['amount'],2,'.',',')) , 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf("$%s + $%s - $%s = $%s",number_format(end($this->_account)['accumulator'],2,'.',','),number_format(end($this->_paidInvoice)['accumulator'],2,'.',','), ($this->_expenses['amount']<0)?"(".number_format($this->_expenses['amount']*-1,2,'.',',').")":$this->_expenses['amount'] , number_format(end($this->_paidInvoice)['accumulator']+end($this->_account)['accumulator']-$this->_expenses['amount'],2,'.',',')) , 0, 0, "L");
 
         $y+=5;
         $pdf->setXY(10, $y);
@@ -678,11 +678,17 @@ class Invoice_CashReceiptSummary {
         $pdf->setXY(70, $y);
         $pdf->Cell(0, 0, "採購貨品註解", 0, 0, "L");
 
-        $pdf->setXY(130, $y);
+        $pdf->setXY(110, $y);
         $pdf->Cell(0, 0, "雜費", 0, 0, "L");
 
-        $pdf->setXY(150, $y);
+        $pdf->setXY(120, $y);
         $pdf->Cell(0, 0, "雜費註解", 0, 0, "L");
+
+        $pdf->setXY(160, $y);
+        $pdf->Cell(0, 0, "司機", 0, 0, "L");
+
+        $pdf->setXY(175, $y);
+        $pdf->Cell(0, 0, "司機支出類型", 0, 0, "L");
 
         $pdf->Line(10, $y+4, 200, $y+4);
 
@@ -702,11 +708,22 @@ class Invoice_CashReceiptSummary {
         $pdf->setXY(70, $y);
         $pdf->Cell(0, 0, $this->_expenses['cost3_remark'], 0, 0, "L");
 
-        $pdf->setXY(130, $y);
+        $pdf->setXY(110, $y);
         $pdf->Cell(0, 0, '$'.$this->_expenses['cost4'], 0, 0, "L");
 
-        $pdf->setXY(150, $y);
+        $pdf->setXY(120, $y);
         $pdf->Cell(0, 0, $this->_expenses['cost4_remark'], 0, 0, "L");
+
+        $pdf->setXY(160, $y);
+        $pdf->Cell(0, 0, '$'.$this->_expenses['cost5'], 0, 0, "L");
+
+
+        $pdf->setXY(175, $y);
+        $pdf->Cell(0, 0, $this->_expenses['cost5_remark'], 0, 0, "L");
+
+
+
+
 
         $y+=5;
         $pdf->Line(10, $y, 200, $y);
