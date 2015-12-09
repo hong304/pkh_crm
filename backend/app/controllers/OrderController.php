@@ -538,6 +538,9 @@ class OrderController extends BaseController
 
     public function jsonGetSingleInvoice()
     {
+
+
+
         $invoiceId = Input::get('invoiceId');
 
         $base = Invoice::where('invoiceId', $invoiceId);
@@ -547,6 +550,7 @@ class OrderController extends BaseController
         $returnInformation = [
             'invoice' => array_values($invoice['categorized'])[0]['invoices'][0],
             'entrieinfo' => array_values($invoice['categorized'])[0]['zoneName'],
+            'workingDay' => SystemController::getPreviousDay(5),
         ];
         return Response::json($returnInformation);
     }

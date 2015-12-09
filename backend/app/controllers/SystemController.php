@@ -224,4 +224,48 @@ class SystemController extends BaseController {
 
         return $return;
     }
+
+    public static function getPreviousDay($day){
+        $holidays =  holiday::where('year',date("Y"))->first();
+
+        $h_array = explode(",", $holidays->date);
+        foreach($h_array as &$v){
+            $md = explode("-",$v);
+            $m = str_pad($md[0], 2, '0', STR_PAD_LEFT);
+            $d = str_pad($md[1], 2, '0', STR_PAD_LEFT);
+            $v = date("Y"). '-'. $m.'-'.$d;
+        }
+
+            $days_ago = date('Y-m-d', strtotime('-'.$day.' days', strtotime(date('Y-m-d'))));
+
+        $count = 0;
+
+        for ($i=0; $i<=$day; $i++){
+            $weekday = date('w', strtotime('-'.$i.' days', strtotime(date('Y-m-d'))));
+            if($weekday==0){
+                $count++;
+            }
+        }
+
+        function check_in_range($start_date, $end_date, $date_from_user)
+        {
+            // Convert to timestamp
+            $start_ts = strtotime($start_date);
+            $end_ts = strtotime($end_date);
+            $user_ts = strtotime($date_from_user);
+
+            // Check that user date is between start & end
+            return (($user_ts >= $start_ts) && ($user_ts <= $end_ts));
+        }
+
+
+        foreach($h_array as $g){
+            if(check_in_range($days_ago, date('Y-m-d'), $g))
+                $count++;
+        }
+
+        $accurage_date = date('Y-m-d', strtotime('-'.$count.' days', strtotime($days_ago)));
+
+        return($accurage_date);
+    }
 }

@@ -439,8 +439,15 @@ else{
             $http.post(target, {invoiceId: $location.search().invoiceId})
                 .success(function(data, status, headers, config){
 
+                   var date1 = new Date(data.workingDay);
+
+
+
                     var res = data.invoice.client;
                     var inf = data.invoice;
+
+                    if (Date.parse(date1)/1000 > inf.deliveryDate)
+                        $scope.disAllowsubmit = true;
 
                     // set client information
                     $scope.order.zoneId = inf.zoneId;
@@ -456,7 +463,7 @@ else{
                     }
 
                     if($scope.systeminfo.user.id!=9)
-                        if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || inf.invoiceStatus == 30 ){
+                        if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || (inf.invoiceStatus == 30 && $scope.disAllowsubmit) ){
 
                             Metronic.blockUI({
                                 target: '#orderportletbody',
