@@ -39,9 +39,14 @@ class financeCashController extends BaseController {
         $this->_status = $filter['status'];
 
         $invoice = Invoice::select('invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms')
-            ->whereBetween('invoice.deliverydate', [$this->_date, $this->_date1])
-            ->where('invoiceStatus',$this->_status)
-            ->where('paymentTerms','=',1)->with('payment','client')->get()->toArray();
+            ->whereBetween('invoice.deliverydate', [$this->_date, $this->_date1]);
+
+
+        if($this->_status == 30){
+            $invoice->where('invoiceStatus',$this->_status)->where('manual_complete',1);
+        }            else
+            $invoice->where('invoiceStatus',$this->_status);
+        $invoice=$invoice->where('paymentTerms','=',1)->with('payment','client')->get()->toArray();
      //  pd($invoice);
 
 
