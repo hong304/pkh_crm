@@ -353,9 +353,9 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
                         var discount_taken = 0;
                         if($scope.filterData.cashAmount>0)
-                            discount_taken = $scope.paymentDetails[0]['owe'] - $scope.filterData.cashAmount;
+                            discount_taken = owe - $scope.filterData.cashAmount;
                         else if ($scope.filterData.paid>0)
-                            discount_taken = $scope.paymentDetails[0]['owe'] - $scope.filterData.paid;
+                            discount_taken = owe - $scope.filterData.paid;
 
                         $http({
                             method: 'POST',

@@ -104,10 +104,12 @@ class PaymentController extends BaseController
     public function querryCashCustomer()
     {
 
+
+
         $mode = Input::get('mode');
 
         if ($mode == 'posting') {
-
+            //pd(Input::all());
             $paidinfo = Input::get('paidinfo');
             $discount_taken = Input::get('discount');
 
