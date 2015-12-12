@@ -92,7 +92,7 @@ class PrintQueueController extends BaseController
         // list jobs that are created since 3 days ago. 
 
 
-        $job = PrintQueue::select('job_id', 'Invoice.invoiceId', 'customerName_chi', 'zoneId', 'Invoice.routePlanningPriority', 'PrintQueue.updated_at', 'deliveryDate', 'users.name', 'PrintQueue.status','PrintQueue.invoiceStatus')
+        $job = PrintQueue::select('job_id', 'Invoice.invoiceId', 'customerName_chi', 'zoneId', 'Invoice.routePlanningPriority', 'PrintQueue.updated_at', 'deliveryDate', 'users.name', 'PrintQueue.status','Invoice.invoiceStatus')
             ->wherein('target_path', explode(',', $this->zone))
             ->where('PrintQueue.status', '!=', 'dead:regenerated')
             ->where('PrintQueue.status', '!=', 'downloaded;passive');
