@@ -204,15 +204,15 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
     {
         var availableunit = [];
         var storeUnit = [];
-        if (item.product_detail.supplierPackingInterval_carton > 0)
+        if (item.product_detail.productPackingInterval_carton > 0)
         {
             availableunit = availableunit.concat([{value: 'carton', label: item.product_detail.productPackingName_carton}]);
             storeUnit[0] = 'carton';
-        } else if (item.product_detail.supplierPackingInterval_inner > 0)
+        } else if (item.product_detail.productPackingInterval_inner > 0)
         {
             availableunit = availableunit.concat([{value: 'inner', label: item.product_detail.productPackingName_inner}]);
             storeUnit[1] = 'inner';
-        } else if (item.product_detail.supplierPackingInterval_unit > 0)
+        } else if (item.product_detail.productPackingInterval_unit > 0)
         {
             availableunit = availableunit.concat([{value: 'unit', label: item.product_detail.productPackingName_unit}]);
             storeUnit[2] = 'unit';
@@ -227,15 +227,15 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
     {
         var availableunit = [];
         var storeUnit = [];
-        if (item.supplierPackingInterval_carton > 0)
+        if (item.productPackingInterval_carton > 0)
         {
             availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
             storeUnit[0] = 'carton';
-        } else if (item.supplierPackingInterval_inner > 0)
+        } else if (item.productPackingInterval_inner > 0)
         {
             availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
             storeUnit[1] = 'inner';
-        } else if (item.supplierPackingInterval_unit > 0)
+        } else if (item.productPackingInterval_unit > 0)
         {
             availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
             storeUnit[2] = 'unit';
