@@ -351,6 +351,7 @@ class InvoiceManipulation
                     $lastitem->deliveryDate = $this->temp_invoice_information['deliveryDate'];
                     $lastitem->save();
                 }
+                // end of update last item price
 
                 $item->invoiceId = $this->invoiceId;
                 $item->productId = $i['productId'];
@@ -370,20 +371,22 @@ class InvoiceManipulation
                  }
                  else
                 */
-                if ($i['dbid'])
+
+
+                if ($i['dbid']) {
                     if ($item->isDirty()) {
                         foreach ($item->getDirty() as $attribute => $value) {
                             if (!in_array($attribute, array('backgroundcode'))) {
 
-
-                                $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
-                                if (count($invoiceitembatchs) > 0)
-                                    foreach ($invoiceitembatchs as $k1 => $v1) {
-                                        $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
-                                        $receivings->good_qty += $v1->unit;
-                                        $receivings->save();
-                                    }
-
+                                if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97') {
+                                    $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
+                                    if (count($invoiceitembatchs) > 0)
+                                        foreach ($invoiceitembatchs as $k1 => $v1) {
+                                            $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
+                                            $receivings->good_qty += $v1->unit;
+                                            $receivings->save();
+                                        }
+                                }
 
                                 $item->delete();
                                 $item = new InvoiceItem();
@@ -401,51 +404,57 @@ class InvoiceManipulation
                             }
                         }
                     }
+                }
+
 
                 if ($i['deleted'] == '0' && $i['productQty'] != 0) {
                     $item->save();
 
 
-                    $normalizedUnit = $this->normalizedUnit($i);
-                    $packingSize = $this->packingSize($i);
-                    $undeductUnit = $normalizedUnit;
+                    if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97'){
+                            $normalizedUnit = $this->normalizedUnit($i);
+                            $packingSize = $this->packingSize($i);
+                            $undeductUnit = $normalizedUnit;
 
-                    if ($undeductUnit < 0) {
-                        $receivings = Receiving::where('productId', $i['productId'])->orderBy('expiry_date', 'desc')->first();
-                        $receivings->good_qty -= $undeductUnit;
-                        $receivings->save();
-                        $invoiceitembatchs = new invoiceitemBatch();
-                        $invoiceitembatchs->invoiceItemId = $item->invoiceItemId;
-                        $invoiceitembatchs->unit = $undeductUnit;
-                        $invoiceitembatchs->productId = $i['productId'];
-                        $invoiceitembatchs->receivingId = $receivings->receivingId;
-                        $invoiceitembatchs->save();
+                            if ($undeductUnit < 0) {
+                                $receivings = Receiving::where('productId', $i['productId'])->orderBy('expiry_date', 'desc')->first();
+                                $receivings->good_qty -= $undeductUnit;
+                                $receivings->save();
+                                $invoiceitembatchs = new invoiceitemBatch();
+                                $invoiceitembatchs->invoiceItemId = $item->invoiceItemId;
+                                $invoiceitembatchs->unit = $undeductUnit;
+                                $invoiceitembatchs->productId = $i['productId'];
+                                $invoiceitembatchs->receivingId = $receivings->receivingId;
+                                $invoiceitembatchs->save();
+                            }
+
+
+                            while ($undeductUnit > 0) {
+                                $receivings = Receiving::where('productId', $i['productId'])->where('good_qty', '>=', $packingSize)->orderBy('expiry_date', 'asc')->first();
+
+                                if ($undeductUnit > $receivings->good_qty) {
+                                    $ava_qty = ($receivings->good_qty - ($receivings->good_qty % $packingSize));
+                                    $undeductUnit -= $ava_qty;
+                                } else {
+                                    $ava_qty = $undeductUnit;
+                                    $undeductUnit = 0;
+                                }
+
+                                $receivings->good_qty -= $ava_qty;
+                                $receivings->save();
+
+                                $invoiceitembatchs = new invoiceitemBatch();
+                                $invoiceitembatchs->invoiceItemId = $item->invoiceItemId;
+                                $invoiceitembatchs->unit = $ava_qty;
+                                $invoiceitembatchs->productId = $i['productId'];
+                                $invoiceitembatchs->receivingId = $receivings->receivingId;
+                                $invoiceitembatchs->save();
+                            }
                     }
-
-
-                    while ($undeductUnit > 0) {
-                        $receivings = Receiving::where('productId', $i['productId'])->where('good_qty', '>=', $packingSize)->orderBy('expiry_date', 'asc')->first();
-
-                        if ($undeductUnit > $receivings->good_qty) {
-                            $ava_qty = ($receivings->good_qty - ($receivings->good_qty % $packingSize));
-                            $undeductUnit -= $ava_qty;
-                        } else {
-                            $ava_qty = $undeductUnit;
-                            $undeductUnit = 0;
-                        }
-
-                        $receivings->good_qty -= $ava_qty;
-                        $receivings->save();
-
-                        $invoiceitembatchs = new invoiceitemBatch();
-                        $invoiceitembatchs->invoiceItemId = $item->invoiceItemId;
-                        $invoiceitembatchs->unit = $ava_qty;
-                        $invoiceitembatchs->productId = $i['productId'];
-                        $invoiceitembatchs->receivingId = $receivings->receivingId;
-                        $invoiceitembatchs->save();
-                    }
-
                 }
+
+
+
             }
 
             // $in = Invoice::where('invoiceId',$this->invoiceId)->with('invoiceItem')->first();
