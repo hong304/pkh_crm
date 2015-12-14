@@ -636,14 +636,12 @@ class OrderController extends BaseController
 
     public function backToStock($invoiceItems){
         foreach($invoiceItems as $k => $v){
-            if($v->productId == 218){
                 $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId',$v->invoiceItemId)->where('productId',$v->productId)->get();
                 foreach($invoiceitembatchs as $k1 => $v1){
                     $receivings = Receiving::where('productId',$v1->productId)->where('receivingId',$v1->receivingId)->first();
                     $receivings->good_qty += $v1->unit;
                     $receivings->save();
                 }
-            }
         }
     }
 }
