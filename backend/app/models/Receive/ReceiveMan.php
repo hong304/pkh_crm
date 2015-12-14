@@ -71,13 +71,14 @@ class ReceiveMan
      //Use to filter the unwanted message
      public function prepare_items()
      {
-         
+       //  pd($this->items);
+
          if(!isset($this->items))
          {
                return [
                     'result' => false,
                    'status'=>0,
-                    'message' => '無貨物輸入',
+                    'message' => '無貨物輸入1',
                 ];
          }else
          {
@@ -122,6 +123,8 @@ class ReceiveMan
      
      public function save()
      {
+
+
          $this->prepare_items();
          if(isset($this->items))
          {
@@ -162,7 +165,7 @@ class ReceiveMan
               return [
                     'result' => false,
                      'status' => 0,
-                    'message' => '無貨物輸入',
+                    'message' => '無貨物輸入2',
                 ];
          }
       

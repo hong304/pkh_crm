@@ -31,7 +31,7 @@ class ReceiveRepackMain
              return [
                     'result' => false,
                    'status'=>0,
-                    'message' => '無貨物輸入',
+                    'message' => '無貨物輸入3',
               ];
         }else
         {
@@ -78,7 +78,7 @@ class ReceiveRepackMain
               return [
                     'result' => false,
                      'status' => 0,
-                    'message' => '無貨物輸入',
+                    'message' => '無貨物輸入4',
                 ];
          }
      }

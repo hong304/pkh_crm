@@ -248,11 +248,10 @@
                                     <td>
                                         <label>
                                             {{$scope.items[i].productUnitName}}
-                                             <select class="form-control"
+                                             <input class="form-control"
                                                     id="unit_{{i}}"
-                                                    ng-model="product[i]['unit']"
-                                                    data-ng-options="x.label for x in product[i].availableunit track by x.value" disabled="true">
-                                            </select>
+                                                    ng-model="product[i]['unit']['label']" disabled="true"
+                                                   />
                                         </label>
                                     </td>
                                      <td>

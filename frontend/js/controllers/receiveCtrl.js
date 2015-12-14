@@ -73,7 +73,11 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
         productId: '',
         productName: '',
         qty: '',
-        unit: '',
+
+        unit: {
+            value: '',
+            label: ''
+        },
         receive_qty: 0,
         good_qty: 0,
         damage_qty: 0,
@@ -155,7 +159,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
 
         if (typeof $scope.items != 'undefined')
         {
-            $scope.product[i] = $.extend(true, {}, $scope.productStructure);
+           // $scope.product[i] = $.extend(true, {}, $scope.productStructure);
             var i = 1;
             if ($scope.orders.location == 2)
             {
@@ -181,15 +185,26 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                     $scope.product[i].productName = item.product_detail.productName_chi;
                     $scope.product[i].qty = item.productQty;
                     $scope.product[i]['good_qty'] = item.productQty;
+                    $scope.product[i]['unit']['label'] = item.productUnitName;
+                    $scope.product[i]['unit']['value'] = item.productQtyUnit;
+
                     if (item.productQtyUnit == 'carton')
                         $scope.product[i]['unit_cost'] = item.product_detail.productCost_unit;
                     else if (item.productQtyUnit == 'inner')
                         $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_inner;
                     else if (item.productQtyUnit == 'unit')
                         $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;
-                    addUnit(item, i);
+                   // addUnit(item, i);
                     i++;
+                    if(typeof $scope.product[i] == 'undefined')
+                    {
+                        $scope.newkey = $scope.itemlist.length + 1;
+                        $scope.itemlist.push($scope.newkey);
+                        $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
+                        $scope.timer.product[$scope.newkey] = $.extend(true, {}, $scope.timerProductStructure);
+                    }
                 });
+                //console.log($scope.product);
             }
 
 
@@ -200,8 +215,10 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
 
     });
 
-    function addUnit(item, i)
+  /* function addUnit(item, i)
     {
+        console.log(item);
+
         var availableunit = [];
         var storeUnit = [];
         if (item.product_detail.productPackingInterval_carton > 0)
@@ -221,7 +238,8 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
         $scope.product[i].availableunit = availableunit;
         var indexNum = storeUnit.indexOf(item.productQtyUnit);
         $scope.product[i]['unit'] = availableunit[indexNum];
-    }
+
+    }*/
 
     function addUnitTwo(item, i)
     {
