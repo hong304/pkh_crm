@@ -624,6 +624,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
 
     $scope.productDetect = function (value, i)
     {
+        $scope.product[i]['productId'] = value.toUpperCase();
         if (typeof $scope.items != 'undefined')
         {
             $scope.product[i]['qty'] = "";
