@@ -110,7 +110,7 @@ class inventoryController extends BaseController {
             if($filter['productLocation'])
                 $receivings->where('productLocation', $filter['productLocation']);
 
-            $receivings = $receivings->orderBy('expiry_date','asc')->orderBy('good_qty','asc');
+            $receivings = $receivings->orderBy('good_qty','asc')->orderBy('expiry_date','asc');
 
           /*  $product = Product::where('deleted',false);
 
