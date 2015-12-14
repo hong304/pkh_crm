@@ -248,7 +248,6 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
 
     $scope.updateDiscount = function ()
     {
-
         $scope.reCalculateTotalAmount();
     }
 
@@ -620,17 +619,17 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
             // set product unit
             var availableunit = [];
 
-            if (item.supplierPackingInterval_unit > 0)
+            if (item.productPackingInterval_unit > 0)
             {
                 //$("#unit_" + i).prepend('<option value="unit">Unit</option>');
                 availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
             }
-            if (item.supplierPackingInterval_inner > 0)
+            if (item.productPackingInterval_inner > 0)
             {
                 //$("#unit_" + i).prepend('<option value="inner">Inner</option>');
                 availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
             }
-            if (item.supplierPackingInterval_carton > 0)
+            if (item.productPackingInterval_carton > 0)
             {
                 //$("#unit_" + i).prepend('<option value="0">Carton</option>');
                 availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
