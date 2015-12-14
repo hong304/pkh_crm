@@ -372,7 +372,7 @@ class InvoiceManipulation
                  else
                 */
 
-
+                $dirty = false;
                 if ($i['dbid']) {
                     if ($item->isDirty()) {
                         foreach ($item->getDirty() as $attribute => $value) {
@@ -401,6 +401,9 @@ class InvoiceManipulation
                                 $item->productStandardPrice = $i['productStandardPrice'];
                                 $item->productUnitName = trim($i['productUnitName']);
                                 $item->approvedSupervisorId = $i['approvedSupervisorId'];
+
+                                $dirty = true;
+
                             }
                         }
                     }
@@ -411,7 +414,7 @@ class InvoiceManipulation
                     $item->save();
 
 
-                    if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97'){
+                    if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97' && ($dirty||!$i['dbid']) ){
                             $normalizedUnit = $this->normalizedUnit($i);
                             $packingSize = $this->packingSize($i);
                             $undeductUnit = $normalizedUnit;
