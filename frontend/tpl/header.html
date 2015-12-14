@@ -353,13 +353,13 @@
                                     <div class="col-md-12">
                                         <ul class="mega-menu-submenu">
                                             <li>
-                                                <a href="/#/inventoryListing" class="iconify">
+                                                <a href="/#/inventoryListing" class="iconify" data-ng-if="systemInfo.permission.view_inventory == true">
                                                     <i class="icon-home"></i>
                                                     存貨列表</a>
                                             </li>
 
                                             <li>
-                                                <a href="/#/inventoryAdjustmentHistory" class="iconify">
+                                                <a href="/#/inventoryAdjustmentHistory" class="iconify" data-ng-if="systemInfo.permission.view_inventoryHistory == true">
                                                     <i class="icon-home"></i>
                                                     存貨調整記錄</a>
                                             </li>
