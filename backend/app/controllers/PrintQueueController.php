@@ -259,7 +259,7 @@ class PrintQueueController extends BaseController
             $groupIds = [];
 
             foreach ($jobs as $vv) {
-                if ($vv->invoiceStatus == 2 || $vv->invoiceStatus == 20 || $vv->invoiceStatus == 30)
+                if ($vv->invoiceStatus == 2 || $vv->invoiceStatus == 1 || $vv->invoiceStatus == 20 || $vv->invoiceStatus == 30)
                     $groupIds[2][$vv->target_path][] = $vv->invoiceId;
                 else if($vv->invoiceStatus == 96 || $vv->invoiceStatus == 97 || $vv->invoiceStatus == 98)
                     $groupIds[1][$vv->target_path][] = $vv->invoiceId;
