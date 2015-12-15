@@ -11,6 +11,10 @@ class inventoryController extends BaseController {
         $mode = Input::get('mode');
 
         if($mode == 'stockTake'){
+
+            $date = date('Y-m-d', strtotime($info['expiry_date']));
+
+
             $adjusts = new adjust();
             $adjusts->poCode =$info['poCode'];
             $adjusts->receivingId =$info['receivingId'];
@@ -26,6 +30,7 @@ class inventoryController extends BaseController {
             $receivings = Receiving::where('id',$info['id'])->first();
             $receivings->good_qty =$info['adjusted_good_qty'];
             $receivings->damage_qty =$info['adjusted_damage_qty'];
+            $receivings->expiry_date = $date;
             $receivings->save();
         }else if ($mode == 'salesReturn'){
 

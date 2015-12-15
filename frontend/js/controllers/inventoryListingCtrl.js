@@ -109,11 +109,17 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 
     $scope.totalline = 1;
 
-    $scope.$on('$viewContentLoaded', function() {   
-    	
-        Metronic.initAjax();        
-        $scope.systeminfo = $rootScope.systeminfo;   
+    $scope.open = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        console.log('hi');
+        return $scope.opened = true;
+    };
 
+    $scope.$on('$viewContentLoaded', function() {
+
+        Metronic.initAjax();        
+        $scope.systeminfo = $rootScope.systeminfo;
     });
     
     $scope.$watch(function() {
@@ -338,7 +344,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 }
 
 
-    $scope.submitProductForm = function()
+    $scope.submitStockTake = function()
     {
     		 $http.post(iutarget, {info: $scope.info , mode:'stockTake'})
         	.success(function(res, status, headers, config){    
