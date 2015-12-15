@@ -37,14 +37,14 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
     var yday = start_date.getDate();
 
 
-    $("#deliverydate").datepicker({
+  /*  $("#deliverydate").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
 
     $("#deliverydate").datepicker("setDate", yyear + '-' + ymonth + '-' + yday);
-
+*/
 
     $scope.orders.receiveDate = yyear + '-' + ymonth + '-' + yday;
 
@@ -328,19 +328,20 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                 icon: '' // put icon before the message
             });
         }
+
         if (!$location.search().receivingId)
         {
             $timeout(function () {
-                // $('#selectShipModel').modal('show');
+                 $('#selectShipModel').modal('show');
 
                 //  $('#selectShipModel').on('shown.bs.modal', function () {
                 //     $('#keyword').focus();
                 //  })
 
-                $("#selectShipModel").modal({backdrop: 'static'});
+               // $("#selectShipModel").modal({backdrop: 'static'});
 
                 //$('#selectclientmodel').modal({backdrop: 'static'});
-            }, 1000);
+            }, 500);
 
 
         } else if ($location.search().receivingId != "undefined")
