@@ -469,7 +469,7 @@ class financialReportController extends BaseController
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, 'No. of invoices');
 
         $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'Today sales');
-        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Receive for today sales[cash]');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Supposed to receive today sales[cash]');
         $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, 'Receive for today sales[cheque]');
         $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, 'Receive for previous sales [cash]');
         $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, 'Receive for previous sales [cheque]');
@@ -482,9 +482,15 @@ class financialReportController extends BaseController
         $objPHPExcel->getActiveSheet()->setCellValue('L'.$i, 'No. of invoices');
         $objPHPExcel->getActiveSheet()->setCellValue('M'.$i, 'Today sales');
 
+        $objPHPExcel->getActiveSheet()->setCellValue('N'.$i, 'Real income');
+
         $j = $i+ 1;
 
-
+        $incomes = income::where('deliveryDate',date('Y-m-d',$this->_date))->get();
+        $in = [];
+        foreach($incomes as $k1 => $v1){
+            $in[$v1->zoneId]=$v1->conins+$v1->notes;
+        }
 
         foreach ($info[1] as $k => $v) {
             $objPHPExcel->getActiveSheet()->setCellValue('A' . $j, $v['truck']);
@@ -501,6 +507,9 @@ class financialReportController extends BaseController
 
             $objPHPExcel->getActiveSheet()->setCellValue('J' . $j, $v['balanceBf']);
             $objPHPExcel->getActiveSheet()->setCellValue('K' . $j, '=H'.$j.'+C'.$j.'-E'.$j.'-D'.$j);
+
+            $objPHPExcel->getActiveSheet()->setCellValue('N' . $j, (isset($in[$v['truck']]))?$in[$v['truck']]:0);
+
             $j++;
         }
 
