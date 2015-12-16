@@ -489,7 +489,7 @@ class financialReportController extends BaseController
         $incomes = income::where('deliveryDate',date('Y-m-d',$this->_date))->get();
         $in = [];
         foreach($incomes as $k1 => $v1){
-            $in[$v1->zoneId]=$v1->conins+$v1->notes;
+            $in[$v1->zoneId]=$v1->coins+$v1->notes;
         }
 
         foreach ($info[1] as $k => $v) {
