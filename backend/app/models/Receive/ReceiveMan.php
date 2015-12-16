@@ -41,7 +41,7 @@ class ReceiveMan
      {
         
          $productDetails = Product :: select('productPacking_unit','productPacking_inner','productPacking_carton')->where('productId',$productId)->first()->toArray();
-         $mutiply = $this->reunit($unit,$productDetails['productPacking_unit'],$productDetails['productPacking_inner'],$productDetails['productPacking_carton']);
+         $mutiply = $this->reunit($unit,$productDetails['productPacking_unit'],$productDetails['productPacking_inner']);
          $unitCost = $this->unitProductCost($unit_cost,$unit,$productDetails['productPacking_unit'],$productDetails['productPacking_inner'],$productDetails['productPacking_carton']);
          $this->items[] = [
              'id' => $dbid,
@@ -62,9 +62,10 @@ class ReceiveMan
              'deleted' => $deleted,
              'rec_receiveQty'=> $rec_qty,
              'supplier_interval'=>$unit,
-             'supplier_unitName'=>$unitName
+             'supplier_unitName'=>$unitName,
+             'receivedQty' => $good_qty+$damage_qty+$on_hold_qty
          ];
-         
+
          return $this->items;
      }
      
@@ -93,18 +94,18 @@ class ReceiveMan
          }
      }
      
-    public function reunit($unitlevel,$productPacking_unit,$productPacking_inner,$productPacking_carton)
+    public function reunit($unitlevel,$productPacking_unit,$productPacking_inner)
     {
        $multiply = 1;
        if($unitlevel == 'carton')
        {
-           $multiply *= $multiply * $productPacking_inner * $productPacking_carton * $productPacking_unit;
+           $multiply *= $multiply * $productPacking_inner * $productPacking_unit;
        }else if($unitlevel == 'inner')
        {
-           $multiply *= $multiply * $productPacking_inner * $productPacking_unit;
+           $multiply *= $multiply * $productPacking_unit;
        }else if($unitlevel == 'unit')
        {
-           $multiply *= $multiply * $productPacking_unit;
+           $multiply *= $multiply;
        }
         return $multiply;
     }
@@ -123,6 +124,7 @@ class ReceiveMan
      
      public function save()
      {
+
 
 
          $this->prepare_items();
@@ -149,11 +151,15 @@ class ReceiveMan
                       
                        foreach($i as $k=>$v)
                        {
-                           if($k !=='id' && $k !== 'deleted' && $k !== 'receivingId') 
+                           if($k !=='id' && $k !== 'deleted' && $k !== 'receivingId' && $k !== 'receivedQty')
                                $item->$k = $v;
                        }
 
-                    $item->save();
+                 $poitems = poItem::where('poCode',$i['poCode'])->where('productId',$i['productId'])->where('productQtyUnit',$i['supplier_interval'])->first();
+                 $poitems->receivedQty += $i['receivedQty'];
+                 $poitems->save();
+
+                 $item->save();
                }
                 return[
                     'result' => true,

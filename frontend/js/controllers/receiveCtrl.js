@@ -179,12 +179,13 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                 });
             } else if ($scope.orders.location == 1)
             {
-                console.log($scope.items);
+
                 $scope.items.forEach(function (item) {
                     $scope.product[i].productId = item.productId;
                     $scope.product[i].productName = item.product_detail.productName_chi;
                     $scope.product[i].qty = item.productQty;
-                    $scope.product[i]['good_qty'] = item.productQty;
+                    $scope.product[i].maxqty = item.productQty-item.receivedQty;
+                    $scope.product[i]['good_qty'] = item.productQty-item.receivedQty;
                     $scope.product[i]['unit']['label'] = item.productUnitName;
                     $scope.product[i]['unit']['value'] = item.productQtyUnit;
 
@@ -264,38 +265,6 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
         $scope.product[i]['unit'] = availableunit[indexNum];
         console.log($scope.product[i]['unit']);
     }
-
-
-
-    $scope.getLastItem = function (productId, clientId, i, q) {
-
-        var target = endpoint + '/getLastItem.json';
-        $http.post(target, {productId: productId, customerId: clientId})
-                .success(function (res, status, headers, config) {
-                    $scope.lastitem = res;
-
-                    if (res.productQty > 0) {
-                        $scope.product[i].unitprice = res.productPrice;
-                        var pos = $scope.product[i]['availableunit'].map(function (e) {
-
-                            return e.value;
-                        }).indexOf(res.productQtyUnit);
-                        $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
-                        $scope.checkPrice(i);
-                    }
-                    if (q == 0 && $("#productCode_" + i).val() != productId) {
-                        $scope.getLastItem($("#productCode_" + i).val(), $scope.orders.clientId, i, 1);
-                        // $scope.updateStandardPrice(i);
-                        if (typeof res[0] == 'undefined') {
-                            $scope.updateStandardPrice(i);
-                        }
-                    }
-                });
-
-    }
-
-
-
 
 
 
@@ -454,7 +423,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
                 place: 'prepend', // append or prepent in container
                 type: 'danger', // alert's type
-                message: '好貨,壞貨,保留貨大於原本貨品數量', // alert's message
+                message: '好貨+壞貨+保留貨不能大於未收貨品總量', // alert's message
                 close: true, // make alert closable
                 reset: true, // close all previouse alerts first
                 focus: true, // auto scroll to the alert after shown
@@ -547,7 +516,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
             {
                 var sum = 0;
                 sum = parseInt($scope.product[k]['good_qty']) + parseInt($scope.product[k]['damage_qty']) + parseInt($scope.product[k]['on_hold_qty']);
-                if (sum > parseInt($scope.product[k]['qty']))
+                if (sum > parseInt($scope.product[k]['maxqty']))
                     flag = false;
             }
         }
