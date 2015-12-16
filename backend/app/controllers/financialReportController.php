@@ -537,13 +537,13 @@ class financialReportController extends BaseController
             );
 
         $objPHPExcel->getActiveSheet()
-            ->getStyle('M'.$k.':M35')
+            ->getStyle('N'.$k.':N35')
             ->getNumberFormat()
             ->setFormatCode(
                 '$#,##0.00;[Red]$#,##0.00'
             );
 
-        $l = ['B','C','D','E','F','G','H','I','J','K','L','M'];
+        $l = ['B','C','D','E','F','G','H','I','J','K','L','M','N'];
         foreach($l as $zz){
             $objPHPExcel->getActiveSheet()->setCellValue($zz.'31','=SUM('.$zz.$k.':'.$zz.'29)');
         }
