@@ -59,7 +59,9 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 			'group'	:	'',
 			'keyword'	:	'',
             'status' : '',
-            'productLocation' : ''
+            'productLocation' : '',
+            'sorting' : '',
+        'current_sorting': 'asc'
 		};
 
     $scope.hasCommission = '';
@@ -134,7 +136,20 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 
 
 
+    $scope.click = function(event)
+    {
+        //  alert(event.target.id);
+        $scope.filterData.sorting = event.target.id;
 
+        if ($scope.filterData.current_sorting == 'asc'){
+            // $scope.filterData.sorting_method = 'desc';
+            $scope.filterData.current_sorting = 'desc';
+        }else{
+            $scope.filterData.current_sorting = 'asc';
+        }
+
+        $scope.updateDataSet();
+    }
 
 
     $scope.rePack = function(){
@@ -430,15 +445,15 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
                     }
                 },
                 "columns": [
-                            { "data": "productId" },
-                            { "data": "productName_chi" },
-                            { "data": "good_qty" },
-                            { "data": "damage_qty" },
-                            { "data": "expiry_date" },
-                            { "data": "updated_at" },
-                            { "data": "updated_by" },
-                            { "data": "link" },
-                            { "data": "sales_return" },
+                            { "data": "productId" ,"width": "5%" },
+                            { "data": "productName_chi","width": "15%" },
+                            { "data": "good_qty" ,"width": "10%"},
+                            { "data": "damage_qty" ,"width": "5%"},
+                            { "data": "expiry_date","width": "10%" },
+                            { "data": "updated_at","width": "10%" },
+                            { "data": "updated_by","width": "5%" },
+                            { "data": "link" ,"width": "5%"},
+                            { "data": "sales_return","width": "5%" },
                 ],
                 
                 "order": [
