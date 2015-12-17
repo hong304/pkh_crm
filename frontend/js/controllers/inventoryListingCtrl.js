@@ -112,7 +112,6 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
     $scope.open = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
-        console.log('hi');
         return $scope.opened = true;
     };
 
