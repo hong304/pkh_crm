@@ -122,6 +122,7 @@ class PaymentController extends BaseController
                 $payment->end_date = $paidinfo['receiveDate'];
                 $payment->receive_date = $paidinfo['receiveDate'];
                 $payment->amount = $paidinfo['amount'];
+                $payment->paymentReceiveMoneyZone = $paidinfo['zoneId']['zoneId'];
 
 
                 if ($paidinfo['amount'] <= $paidinfo['paid'])
@@ -164,6 +165,7 @@ class PaymentController extends BaseController
                 $payment1->receive_date = $paidinfo['receiveDate'];
                 $payment1->amount = $paidinfo['cashAmount'];
                 $payment1->customerId = $paidinfo['clientId'];
+                $payment1->paymentReceiveMoneyZone = $paidinfo['zoneId']['zoneId'];
                 $payment1->save();
 
                 $i = Invoice::where('invoiceId', $paidinfo['invoiceId'])->first();
@@ -396,7 +398,7 @@ class PaymentController extends BaseController
             $filter = Input::get('filterData');
 
 
-            $payments = Payment::select('payments.id as id', 'ref_number', 'receive_date', 'start_date', 'end_date', 'customerId', 'groupId', 'amount', 'remain')->where('paymentType', Input::get('action'));
+            $payments = Payment::select('payments.id as id', 'ref_number', 'receive_date', 'start_date', 'end_date', 'customerId', 'groupId', 'amount', 'remain','paymentReceiveMoneyZone')->where('paymentType', Input::get('action'));
             //cheque status
             /*  if($filter['status'] != 2)
               {

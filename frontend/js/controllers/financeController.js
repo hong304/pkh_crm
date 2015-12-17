@@ -437,7 +437,7 @@ $scope.updateDiscount = function(){
                 "bServerSide": true,
 
                 "ajax": {
-                    "url": query, // ajax source
+                    "url": query, // getClientClearance
                     "type": 'POST',
                     "data": {mode: "getChequeList",action: $location.search().action,filterData: $scope.filterData},
                     "xhrFields": {withCredentials: true}
@@ -461,9 +461,10 @@ $scope.updateDiscount = function(){
                 },
                 "columns": [
                     { "data": "customID","width":"10%" },
-                    { "data": "customName","width":"30%" },
+                    { "data": "customName","width":"25%" },
+                    { "data": "paymentReceiveMoneyZone","width":"8%" },
                     { "data": "customGroup","width":"10%" },
-                    { "data": "ref_number","width":"10%" },
+                    { "data": "ref_number","width":"8%" },
                     { "data": "amount","width":"8%" },
                     { "data": "receive_date","width":"8%" },
                     { "data": "start_date","width":"8%" },

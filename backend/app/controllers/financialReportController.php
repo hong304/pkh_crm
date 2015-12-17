@@ -336,27 +336,25 @@ class financialReportController extends BaseController
         //B/F
 
         //補收+收支票
-        $invoices = Invoice::where('paymentTerms',1)->whereIn('invoiceStatus',[20,30,98])->with('payment')
-            ->leftJoin('invoice_payment', function ($join) {
+        $invoices = Invoice::leftJoin('invoice_payment', function ($join) {
                 $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
             })->leftJoin('payments', function ($join) {
                 $join->on('invoice_payment.payment_id', '=', 'payments.id');
-            })->where('receive_date', date('Y-m-d',$this->_date))->get();
+            })->where('paymentTerms',1)->whereIn('invoiceStatus',[20,30,98])->where('receive_date', date('Y-m-d',$this->_date))->get();
+
 
         foreach($invoices as $invoiceQ){
-            foreach($invoiceQ->payment as $v1){
-                if($v1->receive_date == date('Y-m-d',$this->_date) and $v1->ref_number != 'cash' and $invoiceQ->deliveryDate < $this->_date){
-                    $previous[$invoiceQ->receiveMoneyZone]['cheque'] = (isset($previous[$invoiceQ->receiveMoneyZone]['cheque']))?$previous[$invoiceQ->receiveMoneyZone]['cheque']:0;
-                    $previous[$invoiceQ->receiveMoneyZone]['cheque'] += ($invoiceQ->invoiceStatus == '98')? -$v1->pivot->paid:$v1->pivot->paid;
-                }else if($v1->receive_date == date('Y-m-d',$this->_date) and $v1->ref_number == 'cash' and $invoiceQ->deliveryDate < $this->_date){
-                    $previous[$invoiceQ->receiveMoneyZone]['cash'] = (isset($previous[$invoiceQ->receiveMoneyZone]['cash']))?$previous[$invoiceQ->receiveMoneyZone]['cash']:0;
-                    $previous[$invoiceQ->receiveMoneyZone]['cash'] += ($invoiceQ->invoiceStatus == '98')? -$v1->pivot->paid:$v1->pivot->paid;
-                }else if($v1->receive_date == date('Y-m-d',$this->_date) and $v1->ref_number != 'cash' and $invoiceQ->deliveryDate == $this->_date){
-                    $today[$invoiceQ->receiveMoneyZone]['cheque'] = (isset($today[$invoiceQ->receiveMoneyZone]['cheque']))?$today[$invoiceQ->receiveMoneyZone]['cheque']:0;
-                    $today[$invoiceQ->receiveMoneyZone]['cheque'] += ($invoiceQ->invoiceStatus == '98')? -$v1->pivot->paid:$v1->pivot->paid;
-                }
 
-            }
+                if($invoiceQ->receive_date == date('Y-m-d',$this->_date) and $invoiceQ->ref_number != 'cash' and $invoiceQ->deliveryDate < $this->_date){
+                    $previous[$invoiceQ->receiveMoneyZone]['cheque'] = (isset($previous[$invoiceQ->receiveMoneyZone]['cheque']))?$previous[$invoiceQ->receiveMoneyZone]['cheque']:0;
+                    $previous[$invoiceQ->receiveMoneyZone]['cheque'] += ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
+                }else if($invoiceQ->receive_date == date('Y-m-d',$this->_date) and $invoiceQ->ref_number == 'cash' and $invoiceQ->deliveryDate < $this->_date){
+                    $previous[$invoiceQ->receiveMoneyZone]['cash'] = (isset($previous[$invoiceQ->receiveMoneyZone]['cash']))?$previous[$invoiceQ->receiveMoneyZone]['cash']:0;
+                    $previous[$invoiceQ->receiveMoneyZone]['cash'] += ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
+                }else if($invoiceQ->receive_date == date('Y-m-d',$this->_date) and $invoiceQ->ref_number != 'cash' and $invoiceQ->deliveryDate == $this->_date){
+                    $today[$invoiceQ->receiveMoneyZone]['cheque'] = (isset($today[$invoiceQ->receiveMoneyZone]['cheque']))?$today[$invoiceQ->receiveMoneyZone]['cheque']:0;
+                    $today[$invoiceQ->receiveMoneyZone]['cheque'] += ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
+                }
         }
         //補收+收支票
 
