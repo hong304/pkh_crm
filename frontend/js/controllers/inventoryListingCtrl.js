@@ -449,6 +449,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
                             { "data": "productName_chi","width": "15%" },
                             { "data": "good_qty" ,"width": "10%"},
                             { "data": "damage_qty" ,"width": "5%"},
+                            { "data": "total_qty" ,"width": "5%"},
                             { "data": "expiry_date","width": "10%" },
                             { "data": "updated_at","width": "10%" },
                             { "data": "updated_by","width": "5%" },

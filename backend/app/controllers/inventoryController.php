@@ -84,7 +84,7 @@ class inventoryController extends BaseController {
         {
             $filter = Input::get('filterData');
 
-            $receivings = Receiving::select('id','receivings.productId','productName_chi','good_qty','damage_qty','expiry_date','receivings.updated_by','receivings.updated_at')->leftJoin('product','receivings.productId','=','product.productId');
+            $receivings = Receiving::select('id','receivings.productId','productName_chi','good_qty','total_qty','damage_qty','expiry_date','receivings.updated_by','receivings.updated_at')->leftJoin('product','receivings.productId','=','product.productId');
 
 
             if($filter['keyword'] != '')
@@ -115,7 +115,7 @@ class inventoryController extends BaseController {
                 $receivings->where('productLocation', $filter['productLocation']);
 
 
-            $filterId = "good_qty";
+            $filterId = "total_qty";
             $filterOrder = "";
             if($filter["sorting"] != "")
                 $filterId = $filter["sorting"];
