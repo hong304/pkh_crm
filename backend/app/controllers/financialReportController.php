@@ -483,6 +483,7 @@ class financialReportController extends BaseController
         $objPHPExcel->getActiveSheet()->setCellValue('M'.$i, 'Today sales');
 
         $objPHPExcel->getActiveSheet()->setCellValue('N'.$i, 'Real income');
+        $objPHPExcel->getActiveSheet()->setCellValue('O'.$i, 'Cash receive difference');
 
         $j = $i+ 1;
 
@@ -503,12 +504,13 @@ class financialReportController extends BaseController
             $objPHPExcel->getActiveSheet()->setCellValue('G' . $j, $v['previous_cheque']);
             $objPHPExcel->getActiveSheet()->setCellValue('H' . $j, $v['expenses']*-1);
 
-            $objPHPExcel->getActiveSheet()->setCellValue('I' . $j, '=D'.$j.'+E'.$j.'+F'.$j);
+            $objPHPExcel->getActiveSheet()->setCellValue('I' . $j, '=D'.$j.'+H'.$j.'+F'.$j);
 
             $objPHPExcel->getActiveSheet()->setCellValue('J' . $j, $v['balanceBf']);
             $objPHPExcel->getActiveSheet()->setCellValue('K' . $j, '=H'.$j.'+C'.$j.'-E'.$j.'-D'.$j);
 
             $objPHPExcel->getActiveSheet()->setCellValue('N' . $j, (isset($in[$v['truck']]))?$in[$v['truck']]:0);
+            $objPHPExcel->getActiveSheet()->setCellValue('O' . $j, '=I'.$j.'-N'.$j);
 
             $j++;
         }
@@ -543,7 +545,7 @@ class financialReportController extends BaseController
                 '$#,##0.00;[Red]$#,##0.00'
             );
 
-        $l = ['B','C','D','E','F','G','H','I','J','K','L','M','N'];
+        $l = ['B','C','D','E','F','G','H','I','J','K','L','M','N','O'];
         foreach($l as $zz){
             $objPHPExcel->getActiveSheet()->setCellValue($zz.'31','=SUM('.$zz.$k.':'.$zz.'29)');
         }
