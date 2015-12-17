@@ -532,14 +532,14 @@ class financialReportController extends BaseController
 
         $k = $i+1;
         $objPHPExcel->getActiveSheet()
-            ->getStyle('C'.$k.':J35')
+            ->getStyle('C'.$k.':K35')
             ->getNumberFormat()
             ->setFormatCode(
                 '$#,##0.00;[Red]$#,##0.00'
             );
 
         $objPHPExcel->getActiveSheet()
-            ->getStyle('N'.$k.':N35')
+            ->getStyle('M'.$k.':O35')
             ->getNumberFormat()
             ->setFormatCode(
                 '$#,##0.00;[Red]$#,##0.00'
