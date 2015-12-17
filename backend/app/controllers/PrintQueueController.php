@@ -77,7 +77,6 @@ class PrintQueueController extends BaseController
         $job = PrintQueue::where('job_id', $jobId)->first();
         $job->target_time = time();
         $job->status = "downloaded;passive";
-        // $job->status = "fast-track";
         $job->save();
 
         $jobs = PrintQueue::where('job_id', $jobId)->lists('invoiceId');
@@ -259,7 +258,7 @@ class PrintQueueController extends BaseController
             $groupIds = [];
 
             foreach ($jobs as $vv) {
-                if ($vv->invoiceStatus == 2 || $vv->invoiceStatus == 1 || $vv->invoiceStatus == 20 || $vv->invoiceStatus == 30)
+                if ($vv->invoiceStatus == 2 || $vv->invoiceStatus == 20 || $vv->invoiceStatus == 30)
                     $groupIds[2][$vv->target_path][] = $vv->invoiceId;
                 else if($vv->invoiceStatus == 96 || $vv->invoiceStatus == 97 || $vv->invoiceStatus == 98)
                     $groupIds[1][$vv->target_path][] = $vv->invoiceId;
