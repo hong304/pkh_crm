@@ -23,13 +23,13 @@ class inventoryController extends BaseController {
             $adjusts->good_qty =$info['good_qty'];
             $adjusts->damage_qty =$info['damage_qty'];
             $adjusts->adjustType = '2';
-            $adjusts->updated_by = Auth::user()->id;
             $adjusts->save();
 
             $receivings = Receiving::where('id',$info['id'])->first();
             $receivings->good_qty =$info['adjusted_good_qty'];
             $receivings->damage_qty =$info['adjusted_damage_qty'];
             $receivings->expiry_date = $date;
+            $receivings->updated_by = Auth::user()->id;
             $receivings->save();
         }else if ($mode == 'salesReturn'){
 
@@ -44,11 +44,11 @@ class inventoryController extends BaseController {
             $adjusts->good_qty =$info['good_qty'];
             $adjusts->damage_qty =$info['damage_qty'];
             $adjusts->adjustType = '3';
-            $adjusts->updated_by = Auth::user()->id;
             $adjusts->save();
 
             $receivings->good_qty += $info['return_good_qty'];
             $receivings->damage_qty += $info['return_damage_qty'];
+            $receivings->updated_by = Auth::user()->id;
             $receivings->save();
 
         }
