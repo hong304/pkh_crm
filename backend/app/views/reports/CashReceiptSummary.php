@@ -8,7 +8,8 @@
     <thead>
         <tr role="row" class="heading">
             <th width="20%">訂單</th>
-            <th width="50%">客戶</th>
+            <th width="40%">客戶</th>
+            <th width="10%">車區</th>
             <th width="15%">已收金額</th>
             <th width="15%">累計</th>
         </tr>
@@ -18,6 +19,7 @@
             <tr>
                 <td><?php echo $row['invoiceNumber']; ?></td>
                 <td><?php echo $row['name']; ?></td>
+                <td><?php echo $row['zoneId']; ?></td>
                 <td>HK$ <?php echo $row['amount']; ?></td>
                 <td>HK$ <?php echo $row['accumulator']; ?></td>
             </tr>  

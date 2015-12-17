@@ -158,6 +158,7 @@ class Invoice_CashReceiptSummary {
 
             //已收
             $this->_account[] = [
+                'zoneId' =>$invoiceQ->zoneId,
                 'customerId' => $client->customerId,
                 'name' => $client->customerName_chi,
                 'invoiceNumber' => $invoiceId,
