@@ -9,7 +9,8 @@
         <tr role="row" class="heading">
             <th width="20%">訂單</th>
             <th width="40%">客戶</th>
-            <th width="10%">車區</th>
+            <th width="5%">訂單車區</th>
+            <th width="5%">收款車區</th>
             <th width="15%">已收金額</th>
             <th width="15%">累計</th>
         </tr>
@@ -20,6 +21,7 @@
                 <td><?php echo $row['invoiceNumber']; ?></td>
                 <td><?php echo $row['name']; ?></td>
                 <td><?php echo $row['zoneId']; ?></td>
+                <td><?php echo $row['receiveMoneyZone']; ?></td>
                 <td>HK$ <?php echo $row['amount']; ?></td>
                 <td>HK$ <?php echo $row['accumulator']; ?></td>
             </tr>  
