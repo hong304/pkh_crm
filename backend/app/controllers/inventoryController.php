@@ -14,7 +14,6 @@ class inventoryController extends BaseController {
 
             $date = date('Y-m-d', strtotime($info['expiry_date']));
 
-
             $adjusts = new adjust();
             $adjusts->poCode =$info['poCode'];
             $adjusts->receivingId =$info['receivingId'];
