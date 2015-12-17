@@ -82,6 +82,13 @@ class inventoryController extends BaseController {
 
         if($mode == 'collection')
         {
+
+            DB::statement('UPDATE receivings AS t
+                INNER JOIN
+                (SELECT productId,SUM(good_qty) tqty FROM receivings GROUP BY productId) t1
+                ON t.productId = t1.productId
+                SET total_qty=tqty');
+
             $filter = Input::get('filterData');
 
             $receivings = Receiving::select('id','receivings.productId','productName_chi','good_qty','total_qty','damage_qty','expiry_date','receivings.updated_by','receivings.updated_at')->leftJoin('product','receivings.productId','=','product.productId');
@@ -116,7 +123,6 @@ class inventoryController extends BaseController {
 
 
             $filterId = "total_qty";
-            $filterOrder = "";
             if($filter["sorting"] != "")
                 $filterId = $filter["sorting"];
             $filterOrder = $filter["current_sorting"];
