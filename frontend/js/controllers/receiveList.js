@@ -40,29 +40,41 @@ app.controller('receiveList', function($rootScope, $scope, $http, $timeout, Shar
         productId:'',
         products:''
     };
- 
 
- //Sunday is not allowed
+
     var today = new Date();
-    var start_date = new Date(new Date().getTime());
-    //- 24 * 60 * 60 * 1000
+    var plus = today.getDay() == 6 ? 2 : 1;
+
+    var min = today.getDay() == 1 ? 3 : 2;
+
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * min);
 
     var ymonth = start_date.getMonth() + 1;
     var yyear = start_date.getFullYear();
     var yday = start_date.getDate();
-    
+
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+
 
     $("#startReceiveDate").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
+    $("#startReceiveDate").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
 
     $("#endReceiveDate").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
+    $("#endReceiveDate").datepicker( "setDate", year + '-' + month + '-' + day );
+
+    $scope.filterData.startReceiveDate = yyear+'-'+ymonth+'-'+yday;
+    $scope.filterData.endReceiveDate = year+'-'+month+'-'+day;
 
 $scope.findDate = function(){
     $scope.updateDataSet();
@@ -129,16 +141,16 @@ $scope.findDate = function(){
                     "columns": [
 
 
-                        { "data": "receivingId" ,"width": "8%"},
-                        { "data": "purchaseorder.supplier.supplierName","width": "8%" },
+                        { "data": "receivingId" ,"width": "5%"},
+                        { "data": "purchaseorder.supplier.supplierName","width": "10%" },
                         { "data": "purchaseorder.supplier.countryId" ,"width": "5%"},
                         { "data": "poCode","width": "20%" },
                         { "data": "shippingId","width": "8%" },
                         { "data": "containerId" ,"width": "15%"},
-                        { "data": "receiving_date","width": "5%" },
+                        { "data": "receiving_date","width": "8%" },
                         { "data": "productId","width": "5%" },
                         { "data": "good_qty","width": "5%" },
-                        { "data": "expiry_date","width": "5%" },
+                        { "data": "expiry_date","width": "8%" },
 
                     ],
 
