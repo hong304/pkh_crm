@@ -354,16 +354,17 @@ app.controller('inventoryAdjustmentHistoryCtrl', function($scope, $rootScope, $h
                     }
                 },
                 "columns": [
-                            { "data": "adjustId" },
-                            { "data": "receivingId" },
-                            { "data": "adjustType" },
+                            { "data": "adjustId", "width": "5%" },
+                            { "data": "receivingId", "width": "8%" },
+                            { "data": "adjustType","width": "8%" },
                              { "data": "productId" },
                              { "data": "good_qty" },
                             { "data": "damage_qty" },
                             { "data": "adjusted_good_qty" },
                             { "data": "adjusted_damage_qty" },
                             { "data": "receiving.expiry_date" },
-                            { "data": "updated_by" }
+                            { "data": "updated_by" },
+                            { "data": "updated_at" }
 
                 ],
                 
