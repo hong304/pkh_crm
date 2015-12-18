@@ -76,6 +76,11 @@ app.controller('receiveList', function($rootScope, $scope, $http, $timeout, Shar
     $scope.filterData.startReceiveDate = yyear+'-'+ymonth+'-'+yday;
     $scope.filterData.endReceiveDate = year+'-'+month+'-'+day;
 
+
+    $scope.$on('$viewContentLoaded', function () {
+        $scope.updateDataSet();
+    });
+
 $scope.findDate = function(){
     $scope.updateDataSet();
 }
@@ -142,9 +147,9 @@ $scope.findDate = function(){
 
 
                         { "data": "receivingId" ,"width": "5%"},
-                        { "data": "purchaseorder.supplier.supplierName","width": "10%" },
+                        { "data": "purchaseorder.supplier.supplierName","width": "15%" },
                         { "data": "purchaseorder.supplier.countryId" ,"width": "5%"},
-                        { "data": "poCode","width": "20%" },
+                        { "data": "poCode","width": "5%" },
                         { "data": "shippingId","width": "8%" },
                         { "data": "containerId" ,"width": "15%"},
                         { "data": "receiving_date","width": "8%" },
