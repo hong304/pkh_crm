@@ -30,6 +30,7 @@ class inventoryController extends BaseController {
             $receivings->damage_qty =$info['adjusted_damage_qty'];
             $receivings->expiry_date = $date;
             $receivings->updated_by = Auth::user()->id;
+            $receivings->updated_at = date("Y-m-d H:i:s");
             $receivings->save();
         }else if ($mode == 'salesReturn'){
 
@@ -49,6 +50,7 @@ class inventoryController extends BaseController {
             $receivings->good_qty += $info['return_good_qty'];
             $receivings->damage_qty += $info['return_damage_qty'];
             $receivings->updated_by = Auth::user()->id;
+            $receivings->updated_at = date("Y-m-d H:i:s");
             $receivings->save();
 
         }

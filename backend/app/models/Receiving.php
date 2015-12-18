@@ -2,6 +2,8 @@
 
 class Receiving extends Eloquent {
 
+    public $timestamps = false;
+
     public function adjust()
     {
         return $this->hasMany('adjust', 'receivingId', 'receivingId');
