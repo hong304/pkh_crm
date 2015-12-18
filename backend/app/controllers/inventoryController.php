@@ -104,6 +104,8 @@ class inventoryController extends BaseController {
                             ->orwhere('receivings.productId', 'LIKE', '%' . $keyword . '%');
                     })->wherein('productStatus', ['o','s']);
 
+            }else{
+                $receivings->where('good_qty','>',0);
             }
             if ($filter['status']) {
                 $receivings->where('productStatus', $filter['status']);
