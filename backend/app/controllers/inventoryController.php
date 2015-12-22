@@ -93,7 +93,7 @@ class inventoryController extends BaseController {
 
             $filter = Input::get('filterData');
 
-            $receivings = Receiving::select('id','receivings.productId','productName_chi','good_qty','total_qty','damage_qty','expiry_date','receivings.updated_by','receivings.updated_at')->leftJoin('product','receivings.productId','=','product.productId');
+            $receivings = Receiving::select('productPackingName_carton','productPacking_unit','productPacking_inner','productPackingName_unit','id','receivings.productId','productName_chi','good_qty','total_qty','damage_qty','expiry_date','receivings.updated_by','receivings.updated_at')->leftJoin('product','receivings.productId','=','product.productId');
 
 
             if($filter['keyword'] != '')
@@ -165,6 +165,10 @@ class inventoryController extends BaseController {
                         // if(Auth::user()->can('edit_product'))
                         return '<span onclick="salesReturn(\''.$p->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i>回貨</span>';
 
+                })->editColumn('total_qty', function ($p){
+                        return $p->total_qty.$p->productPackingName_unit;
+                })->addColumn('total_qty_carton', function ($p) {
+                    return number_format($p->total_qty/$p->productPacking_unit/$p->productPacking_inner).$p->productPackingName_carton;
                 })->make(true);
 
         }
