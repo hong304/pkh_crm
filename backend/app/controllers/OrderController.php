@@ -641,6 +641,7 @@ class OrderController extends BaseController
                     $receivings = Receiving::where('productId',$v1->productId)->where('receivingId',$v1->receivingId)->first();
                     $receivings->good_qty += $v1->unit;
                     $receivings->save();
+                    $v1->delete();
                 }
         }
     }
