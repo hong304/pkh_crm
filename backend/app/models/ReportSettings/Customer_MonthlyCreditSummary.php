@@ -132,8 +132,8 @@ class Customer_MonthlyCreditSummary {
                         'invoice' => $invoice->invoiceId,
                         'customerRef' => $invoice->customerRef,
                         'invoiceAmount' => ($invoice->invoiceStatus == '98') ? 0 : $invoice->amount,
-                        'paid' => ($invoice->invoiceStatus == '98') ? $invoice->amount : $invoice->paid,
-                        'accumulator' => $this->_acc[$customerId] += (($invoice->invoiceStatus == '98') ? -$invoice->amount : $invoice->amount - ($invoice->paid + $invoice->discount_taken)),
+                        'paid' => ($invoice->invoiceStatus == '98') ? $invoice->amount*-1 : $invoice->paid,
+                        'accumulator' => $this->_acc[$customerId] += ($invoice->amount - ($invoice->paid + $invoice->discount_taken)),
                     ];
                 }
             }

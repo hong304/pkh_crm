@@ -649,26 +649,26 @@ Route::get('/cron/resetOrderTrace', function(){
     // update datawarehouse_custoemr table.
     foreach($times as $k=>$v){
 
-        $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
-        $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
+        $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
+       /* $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
 
         foreach($info_return as $v){
             $arr[$v->customerId]['total'] = $v->total;
             $arr[$v->customerId]['amount'] = $v->amount;
-        }
+        }*/
         if(count($info)>0){
             datawarehouse_customer::where('month',$k)->where('year',$current_year)->delete();
             foreach($info as $v1){
                 $save = new datawarehouse_customer();
                 $save->customer_id = $v1->customerId;
 
-                if(isset($arr[$v1->customerId])){
+              /*  if(isset($arr[$v1->customerId])){
                     $save->amount = $v1->amount-$arr[$v1->customerId]['amount'];
                     $save->qty = $v1->total-$arr[$v1->customerId]['total'];
-                }else{
+                }else{*/
                     $save->amount = $v1->amount;
                     $save->qty = $v1->total;
-                }
+               // }
 
                 $save->month = $k;
                 $save->year = $current_year;
@@ -714,7 +714,7 @@ Route::get('/cron/resetOrderTrace', function(){
 
         foreach($invoiceitems as $k2 => $v){
             $invoiceQ[$v->productId]['productId'] = $v->productId;
-            $invoiceQ[$v->productId]['amount'] = (isset($invoiceQ[$v->productId]['amount'])?$invoiceQ[$v->productId]['amount']:0) + $v->productPrice* (($v->invoiceStatus==98)?-1:1) * $v->productQty;
+            $invoiceQ[$v->productId]['amount'] = (isset($invoiceQ[$v->productId]['amount'])?$invoiceQ[$v->productId]['amount']:0) + $v->productPrice * $v->productQty;
 
             if(!isset($invoiceQ[$v->productId]['normalizedQty'])){
                 $invoiceQ[$v->productId]['normalizedQty'] = 0;
@@ -724,21 +724,14 @@ Route::get('/cron/resetOrderTrace', function(){
             $inner = ($v->productPacking_inner) ? $v->productPacking_inner:1;
             $unit = ($v->productPacking_unit) ? $v->productPacking_unit:1;
 
-            if($v->invoiceStatus == 98){
-                if($v->productQtyUnit == 'carton')
-                    $real_normalized_unit =  $v->productQty*$inner*$unit*-1;
-                else if($v->productQtyUnit == 'inner')
-                    $real_normalized_unit =  $v->productQty*$unit*-1;
-                else
-                    $real_normalized_unit =  $v->productQty * -1;
-            }else{
+
                 if($v->productQtyUnit == 'carton')
                     $real_normalized_unit =  $v->productQty*$inner*$unit;
                 else if($v->productQtyUnit == 'inner')
                     $real_normalized_unit =  $v->productQty*$unit;
                 else
                     $real_normalized_unit =  $v->productQty;
-            }
+
 
             $invoiceQ[$v->productId]['normalizedQty'] +=  $real_normalized_unit;
             $invoiceQ[$v->productId]['normalizedUnitName'] = $v->productPackingName_unit;

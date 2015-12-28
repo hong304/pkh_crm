@@ -126,7 +126,7 @@ class DataWarehouseController extends BaseController {
 
      foreach($invoiceitems as $k2 => $v){
          $invoiceQ[$v->productId]['productId'] = $v->productId;
-         $invoiceQ[$v->productId]['amount'] = (isset($invoiceQ[$v->productId]['amount'])?$invoiceQ[$v->productId]['amount']:0) + $v->productPrice* (($v->invoiceStatus==98)?-1:1) * $v->productQty;
+         $invoiceQ[$v->productId]['amount'] = (isset($invoiceQ[$v->productId]['amount'])?$invoiceQ[$v->productId]['amount']:0) + $v->productPrice* $v->productQty;
 
          if(!isset($invoiceQ[$v->productId]['normalizedQty'])){
              $invoiceQ[$v->productId]['normalizedQty'] = 0;
@@ -136,21 +136,14 @@ class DataWarehouseController extends BaseController {
          $inner = ($v->productPacking_inner) ? $v->productPacking_inner:1;
          $unit = ($v->productPacking_unit) ? $v->productPacking_unit:1;
 
-         if($v->invoiceStatus == 98){
-             if($v->productQtyUnit == 'carton')
-                 $real_normalized_unit =  $v->productQty*$inner*$unit*-1;
-             else if($v->productQtyUnit == 'inner')
-                 $real_normalized_unit =  $v->productQty*$unit*-1;
-             else
-                 $real_normalized_unit =  $v->productQty * -1;
-         }else{
+
              if($v->productQtyUnit == 'carton')
                  $real_normalized_unit =  $v->productQty*$inner*$unit;
             else if($v->productQtyUnit == 'inner')
                  $real_normalized_unit =  $v->productQty*$unit;
              else
                  $real_normalized_unit =  $v->productQty;
-         }
+
 
          $invoiceQ[$v->productId]['normalizedQty'] +=  $real_normalized_unit;
          $invoiceQ[$v->productId]['normalizedUnitName'] = $v->productPackingName_unit;

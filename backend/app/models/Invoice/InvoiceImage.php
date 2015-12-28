@@ -327,9 +327,6 @@ class InvoiceImage
                 /*
                  * Add Qty
                 */
-                if ($i['invoiceStatus'] == 98) {
-                    $item['productQty'] *= -1;
-                }
 
                 $qty_text = number_format($item['productQty'], 1, '.', ',') . ' ' . str_replace(' ', '', $item['productInfo']['productPackingName_' . $item['productQtyUnit']]);
                 $this->image[$p]->text($qty_text, 1170, $position['y'], function ($font) use ($font_file) {
@@ -393,11 +390,6 @@ class InvoiceImage
         }
 
         
-        if ($i['invoiceStatus'] == 98){
-            $i['invoiceTotalAmount'] *= -1;
-            $i['amount'] *= -1;
-        }
-
         //      $total_amount = "合計  HKD " . $english_format_number = number_format(round($i['totalAmount']*$i['invoiceDiscount'],1), 2, '.', ',');;
         // $total_amount = "合計  HKD " . $i['invoiceTotalAmount'];
 

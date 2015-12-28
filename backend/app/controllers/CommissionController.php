@@ -124,15 +124,7 @@ class CommissionController extends BaseController
 
             $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->where('zoneId', $this->zone)->get();
             foreach ($invoice as $invoiceQ1) {
-                if ($invoiceQ1->invoiceStatus == '98') {
-                    if ($invoiceQ1->paymentTerms == 2) {
-                        $this->_sumcredit -= $invoiceQ1->amount;
-                    } else {
-                        $this->_sumcod -= $invoiceQ1->amount;
-                        $this->_countcodreturn += 1;
-                    }
-                }else{
-                    if ($invoiceQ1->paymentTerms == 2) {
+                   if ($invoiceQ1->paymentTerms == 2) {
                         $this->_sumcredit += $invoiceQ1->amount;
                         $this->_countcredit += 1;
                     } else {
@@ -141,10 +133,12 @@ class CommissionController extends BaseController
                             $this->_countcodreplace += 1;
                         else if($invoiceQ1->invoiceStatus == '97')
                             $this->_countcodreplenishment += 1;
+                        else if($invoiceQ1->invoiceStatus == '98')
+                            $this->_countcodreturn += 1;
                         else
                             $this->_countcod += 1;
                     }
-                }
+
             }
 
             $this->data['sumcredit'] = $this->_sumcredit;

@@ -125,7 +125,7 @@ class Invoice_CashReceiptSummary {
                 $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
 
                 // not yet receive
-                $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->remain:$invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ;
+                $acc1 +=  $invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ;
                 $this->_backaccount[] = [
                     'customerId' => $client->customerId,
                     'name' => $client->customerName_chi,
@@ -154,7 +154,7 @@ class Invoice_CashReceiptSummary {
                 $paid = $invoiceQ->remain;
             }
 
-            $acc +=  ($invoiceQ->invoiceStatus == '98')? -$paid:$paid;
+            $acc +=  $paid;
 
             //已收
             $this->_account[] = [
@@ -163,9 +163,9 @@ class Invoice_CashReceiptSummary {
                 'customerId' => $client->customerId,
                 'name' => $client->customerName_chi,
                 'invoiceNumber' => $invoiceId,
-                'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98')? -$paid:$paid ,
+                'invoiceTotalAmount' => $paid ,
                 'accumulator' =>$acc,
-                'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$paid:$paid,2,'.',','),
+                'amount' => number_format($paid,2,'.',','),
             ];
             //end of 已收
         }
@@ -202,7 +202,7 @@ class Invoice_CashReceiptSummary {
 
 
             if($invoiceQ->ref_number == 'cash' and $invoiceQ->receive_date == date('Y-m-d',$date) and ($invoiceQ->deliveryDate < $date || $invoiceQ->receiveMoneyZone != $invoiceQ->zoneId)){
-                $acc +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
+                $acc +=  $invoiceQ->paid;
                 $this->_invoices[] = $invoiceQ->invoiceId;
                 $this->_zoneName = $invoiceQ->zone->zoneName;
 
@@ -217,14 +217,14 @@ class Invoice_CashReceiptSummary {
                     'name' => $client->customerName_chi,
                     'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                     'invoiceNumber' => $invoiceId,
-                    'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid ,
+                    'invoiceTotalAmount' => $invoiceQ->paid ,
                     'accumulator' =>$acc,
-                    'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,2,'.',','),
+                    'amount' => number_format($invoiceQ->paid,2,'.',','),
                 ];
                 //END OF 補收+代收
 
             }else if ($invoiceQ->receive_date == date('Y-m-d',$date) and $invoiceQ->ref_number != 'cash'){
-                $acc1 +=  ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid;
+                $acc1 +=  $invoiceQ->paid;
                 $this->_invoices[] = $invoiceQ->invoiceId;
                 $this->_zoneName = $invoiceQ->zone->zoneName;
 
@@ -239,9 +239,9 @@ class Invoice_CashReceiptSummary {
                     'name' => $client->customerName_chi,
                     'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                     'invoiceNumber' => $invoiceId,
-                    'invoiceTotalAmount' => ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid ,
+                    'invoiceTotalAmount' => $invoiceQ->paid ,
                     'accumulator' =>$acc1,
-                    'amount' => number_format(($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,2,'.',','),
+                    'amount' => number_format($invoiceQ->paid,2,'.',','),
                     'bankCode' => $invoiceQ->bankCode,
                     'chequeNo' => $invoiceQ->ref_number,
                 ];
@@ -317,9 +317,9 @@ class Invoice_CashReceiptSummary {
                 $info[$d] = [
                     'noOfInvoices' => $NoOfInvoices[$d],
                     'balanceBf' => isset($balance_bf[$d])?$balance_bf[$d]:0,
-                    'totalAmount' => $info[$d]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
+                    'totalAmount' => $info[$d]['totalAmount'] += $invoiceQ->amount,
                     'previous'=>isset($previous[$d])?$previous[$d]:0,
-                    'paid' => $info[$d]['paid'] += ($invoiceQ->invoiceStatus == '98')? -$invoiceQ->paid:$invoiceQ->paid,
+                    'paid' => $info[$d]['paid'] += $invoiceQ->paid,
                 ];
             }
             ksort($info);
@@ -578,7 +578,7 @@ class Invoice_CashReceiptSummary {
         $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($cash,2,'.',','),number_format($coins,2,'.',','), number_format($coins+$cash,2,'.',',')), 0, 0, "L");
 
 
-        $sql = 'select count(CASE WHEN paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 2 THEN amount END) - SUM(CASE WHEN invoiceStatus = 98 and paymentTerms = 2 THEN amount ELSE 0 END) AS amount_credit, count(CASE WHEN paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN invoiceStatus NOT IN(98) and paymentTerms = 1 THEN amount END) - SUM(CASE WHEN invoiceStatus = 98 and paymentTerms = 1 THEN amount ELSE 0 END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30,1,97,96) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
+        $sql = 'select count(CASE WHEN paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN paymentTerms = 2 THEN amount END) AS amount_credit, count(CASE WHEN paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN paymentTerms = 1 THEN amount END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30,1,97,96) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
         $cod = DB::select(DB::raw($sql));
         foreach($cod as $v)
         $summary =  (array) $v;

@@ -21,7 +21,6 @@ class OrderController extends BaseController
     public function checkInvoiceIdExist(){
 
         $customer = Invoice::select('InvoiceId')->where('InvoiceId', Input::get('invoiceId'))->first();
-
         $customer = count($customer);
         return Response::json($customer);
     }
@@ -67,11 +66,10 @@ class OrderController extends BaseController
         $i=0;
         $j=0;
 
-
         foreach ($product as $p) {
 
-             if ($p['deleted'] == 0 && $p['qty'] > 0 && $p['productLocation'] > 0){
-                 $i++;
+
+             if ($p['deleted'] == 0 && $p['qty'] != 0 && $p['productLocation'] > 0){
                  $receivings = Receiving::where('productId',$p['code'])->where('good_qty','>=',$this->normalizedUnit($p))->first();
                  if(count($receivings) == null){
                      return [
@@ -84,34 +82,49 @@ class OrderController extends BaseController
                  }
              }
 
+
+                if ($p['deleted'] == 0 && $p['qty'] > 0 && $p['productLocation'] > 0)
+                    $i++;
+
                 if ($p['deleted'] == 0 && $p['qty'] < 0 && $p['productLocation'] > 0)
                     $j++;
 
 
 
-            if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] > 0)
+            if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] != 0)
                 $itemIds[] = $p['dbid'];
          //   else if ($p['dbid'] && $p['deleted'])
           //      $deletedItems[]=$p;
 
-            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] > 0){
+            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] != 0){
                 $have_item = true;
             }
 
         }
 
-        if($order['status'] == 97){
-            if($i < 1 || $j < 1){
+        if($order['status'] == 98){
+            if($i > 0){
                 return [
                     'result' => false,
                     'status' => 0,
                     'invoiceNumber' => '',
                     'invoiceItemIds' => 0,
-                    'message' => '此單未完成',
+                    'message' => '退貨單不能有正數貨品',
                 ];
             }
         }
 
+            if($order['status'] == 97){
+                if($i < 1 || $j < 1){
+                    return [
+                        'result' => false,
+                        'status' => 0,
+                        'invoiceNumber' => '',
+                        'invoiceItemIds' => 0,
+                        'message' => '此單未完成',
+                    ];
+                }
+            }
 
         if ($order['invoiceId'] != '') {
 

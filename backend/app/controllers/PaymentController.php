@@ -44,9 +44,6 @@ class PaymentController extends BaseController
 
             $i = Invoice::where('invoiceId', $v['id'])->first();
 
-            if($i->invoiceStatus == 98)
-                $v['settle'] = $v['settle']*-1;
-
             $i->paid += $v['settle'];
             $set_amount += $v['settle'];
 
@@ -336,15 +333,11 @@ class PaymentController extends BaseController
 
             $discount = Customer::select('discount')->whereIn('customerId', $customerId)->first();
             foreach ($invoice_info as $v) {
-                if ($v['paid'] > 0) {
-                    if ($v['invoiceStatus'] == 98)
-                        $v['amount'] = ($v['amount'] * -1) - $v['paid'];
-                    else
-                        $v['amount'] -= $v['paid'];
-                }
+                if ($v['paid'] != 0)
+                          $v['amount'] -= $v['paid'];
                 $v['realAmount'] = $v['realAmount'] - $v['paid'];
                 $v['customer_name'] = $v['customer_name'];
-                $sum += ($v['invoiceStatus'] == 98) ? $v['amount'] * -1 : $v['amount'];
+                $sum += $v['amount'];
             }
             $invoice['data'] = $invoice_info;
             $invoice['sum'] = $sum;

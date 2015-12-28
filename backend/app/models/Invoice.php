@@ -238,10 +238,7 @@ class Invoice extends Eloquent  {
             $model->zoneText = Config::get('zoneName.'.$model->zoneId);
             $model->paymentTermsText = ($model->paymentTerms==2)?'CREDIT':'COD';
 
-            if($model->invoiceStatus == 98)
-                $model->realAmount = $model->amount * -1;
-            else
-                $model->realAmount = $model->amount;
+            $model->realAmount = $model->amount;
 
             $model->remain = $model->amount-($model->discount_taken+$model->paid);
 	        // calculate invoice total

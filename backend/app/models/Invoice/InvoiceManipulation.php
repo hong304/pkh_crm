@@ -599,21 +599,13 @@ class InvoiceManipulation
         $inner = ($i['productPacking']['inner']) ? $i['productPacking']['inner'] : 1;
         $unit = ($i['productPacking']['unit']) ? $i['productPacking']['unit'] : 1;
 
-        if ($this->temp_invoice_information['status'] == 98) {
-            if ($i['productQtyUnit']['value'] == 'carton')
-                $real_normalized_unit = $i['productQty'] * $inner * $unit * -1;
-            else if ($i['productQtyUnit']['value'] == 'inner')
-                $real_normalized_unit = $i['productQty'] * $unit * -1;
-            else
-                $real_normalized_unit = $i['productQty'] * -1;
-        } else {
             if ($i['productQtyUnit']['value'] == 'carton')
                 $real_normalized_unit = $i['productQty'] * $inner * $unit;
             else if ($i['productQtyUnit']['value'] == 'inner')
                 $real_normalized_unit = $i['productQty'] * $unit;
             else
                 $real_normalized_unit = $i['productQty'];
-        }
+
         return $real_normalized_unit;
     }
 
@@ -623,21 +615,14 @@ class InvoiceManipulation
         $inner = ($i['productPacking']['inner']) ? $i['productPacking']['inner'] : 1;
         $unit = ($i['productPacking']['unit']) ? $i['productPacking']['unit'] : 1;
 
-        if ($this->temp_invoice_information['status'] == 98) {
-            if ($i['productQtyUnit']['value'] == 'carton')
-                $real_normalized_unit = $inner * $unit * -1;
-            else if ($i['productQtyUnit']['value'] == 'inner')
-                $real_normalized_unit = $unit * -1;
-            else
-                $real_normalized_unit = $i['productQty'] * -1;
-        } else {
+
             if ($i['productQtyUnit']['value'] == 'carton')
                 $real_normalized_unit = $inner * $unit;
             else if ($i['productQtyUnit']['value'] == 'inner')
                 $real_normalized_unit = $unit;
             else
                 $real_normalized_unit = $i['productQty'];
-        }
+
         return $real_normalized_unit;
 
     }

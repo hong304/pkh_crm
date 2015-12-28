@@ -170,15 +170,12 @@ class financeCashController extends BaseController {
 
 
             foreach ($invoice_info as $v){
-                if($v['paid']>0){
-                    if($v['invoiceStatus']==98)
-                        $v['amount'] = ($v['amount']*-1) - $v['paid'];
-                    else
+                if($v['paid']!=0)
                         $v['amount'] -= $v['paid'];
-                }
+
                 $v['realAmount'] = $v['realAmount'] - $v['paid'];
                 $v['customer_name'] = $v['customer_name'];
-                $sum += ($v['invoiceStatus']==98)?$v['amount']*-1:$v['amount'];
+                $sum += $v['amount'];
             }
             $invoice['data'] = $invoice_info;
             $invoice['sum'] = $sum;
@@ -222,9 +219,6 @@ class financeCashController extends BaseController {
         foreach ($paid as $k=>$v){
             if($v['settle']!=0){
                 $i = Invoice::where('invoiceId',$v['id'])->first();
-
-                if($i->invoiceStatus == 98)
-                    $v['settle'] = $v['settle']*-1;
 
                 $i->paid += $v['settle'];
                 $set_amount += $v['settle'];
@@ -277,10 +271,7 @@ class financeCashController extends BaseController {
         foreach ($paid as $k=>$v){
 
             $iq = Invoice::where('invoiceId', $v['id'])->first();
-            if($iq->invoiceStatus == 98)
-                $v['settle'] = $v['settle']*-1;
-
-            if($v['settle']>0) {
+            if($v['settle']!=0) {
                 $iq->payment()->attach($info->id, ['amount' => $iq->amount, 'paid' => $v['settle']]);
                 $iq->save();
             }

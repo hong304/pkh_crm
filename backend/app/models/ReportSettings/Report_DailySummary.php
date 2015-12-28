@@ -100,10 +100,10 @@ class Report_DailySummary
                     if ($invoiceQ->invoiceStatus == '98') {
 
                         if ($invoiceQ['client']->paymentTermId == 2 && $invoiceQ->paymentTerms == 2) {
-                            $this->_sumcredit -= $invoiceQ->amount;
+                            $this->_sumcredit += $invoiceQ->amount;
                             //$this->_countcredit += 1;
                         } else {
-                            $this->_sumcod -= $invoiceQ->amount;
+                            $this->_sumcod += $invoiceQ->amount;
                             $this->_countcodreturn += 1;
                         }
 

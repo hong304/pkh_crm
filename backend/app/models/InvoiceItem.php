@@ -132,8 +132,7 @@ class InvoiceItem extends Eloquent  {
 
     public function getRealQtyAttribute()
     {
-        if($this->invoice->invoiceStatus == 98)
-            return $this->productQty * -1;
+            return $this->productQty;
     }
 
     public function getRealNormalizedUnitAttribute()
@@ -142,21 +141,14 @@ class InvoiceItem extends Eloquent  {
         $inner = ($this->productDetail->productPacking_inner>0) ? $this->productDetail->productPacking_inner:1;
         $unit = ($this->productDetail->productPacking_unit>0) ? $this->productDetail->productPacking_unit:1;
 
-        if($this->invoice->invoiceStatus == 98){
-            if($this->productQtyUnit == 'carton')
-                return $this->productQty*$inner*$unit*-1;
-            else if($this->productQtyUnit == 'inner')
-                return $this->productQty*$unit*-1;
-            else
-                return $this->productQty * -1;
-        }else{
+
             if($this->productQtyUnit == 'carton')
                 return $this->productQty*$inner*$unit;
             else if($this->productQtyUnit == 'inner')
                 return $this->productQty*$unit;
             else
                 return $this->productQty;
-        }
+
 
     }
 	
