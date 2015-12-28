@@ -189,12 +189,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
     $scope.editInvoicePayment = function(invoiceId,customerId,zoneId)
     {
 
-        var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 1);
-
-        var ymonth = start_date.getMonth() + 1;
-        var yyear = start_date.getFullYear();
-        var yday = start_date.getDate();
-
         $scope.filterData.cashAmount = '0';
         $scope.filterData.amount = '0';
         $scope.filterData.paid = '0';
@@ -224,7 +218,8 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                 orientation: "left",
                 autoclose: true
             });
-            $("#date-picker").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
+            $("#date-picker").datepicker( "setDate", year + '-' + month + '-' + day);
+            $scope.filterData.receiveDate = year+'-'+month+'-'+day;
         })
 
     }
