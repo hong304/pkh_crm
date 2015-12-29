@@ -143,13 +143,7 @@ class ProductController extends BaseController {
                 return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">'.$invoice->invoiceId.'</a>';})
             ->addColumn('customerName_chi', function ($invoice) use($customers) {
                 return $customers[$invoice->customerId];
-            })->editColumn('productQty', function ($invoice){
-                if($invoice->invoiceStatus == '98')
-                    return $invoice->productQty*-1;
-                else
-                    return $invoice->productQty*1;
-            })
-                    ->make(true);
+            })->make(true);
 
                 //  return Response::json($invoices);
 

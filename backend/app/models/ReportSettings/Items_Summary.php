@@ -68,21 +68,19 @@ class Items_Summary {
                 $join->on('customer_groups.id', '=', 'Customer.customer_group_id');
             })->whereBetween('Invoice.deliveryDate', [$this->_date1,$this->_date2]);
 
-        if($this->_group != '')
-            $invoicesQuery->where('customer_groups.name','LIKE','%'.$this->_group.'%');
+            if($this->_group != '')
+                $invoicesQuery->where('customer_groups.name','LIKE','%'.$this->_group.'%');
 
-        $invoicesQuery->where(function ($query) use ($filter) {
-            $query
-                ->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%')
-                ->orwhere('Customer.phone_1', 'LIKE', '%' . $filter['phone'] . '%')
-                ->orwhere('Invoice.customerId',$filter['customerId']);
-        });
+            if($filter['customerId'] != '')
+                $invoicesQuery->where('Invoice.customerId',$filter['customerId']);
+            
+            if($filter['name'] !='')
+                $invoicesQuery->where('customerName_chi', 'LIKE', '%' . $filter['name'] . '%');
 
             if($this->productId!='')
-            $invoicesQuery->where(function ($query){
-                $query->where('InvoiceItem.productId', 'LIKE', '%' . $this->productId . '%');
-
-            });
+                $invoicesQuery->where(function ($query){
+                    $query->where('InvoiceItem.productId', 'LIKE', '%' . $this->productId . '%');
+                });
 
             if($this->productName!='')
                 $invoicesQuery->where('productName_chi', 'LIKE','%' . $this->productName. '%');
@@ -119,8 +117,8 @@ class Items_Summary {
                              {
                                  foreach($invoiceitems_return as $g){
                                      if($g->productId == $invoiceQ['productId'] && $g->productQtyUnit == $invoiceQ['productQtyUnit'] ){
-                                         $invoiceQ['productQtys'] -= $g->productQtys;
-                                         $invoiceQ['productAmount'] -= $g->productAmount;
+                                         $invoiceQ['productQtys'] += $g->productQtys;
+                                         $invoiceQ['productAmount'] += $g->productAmount;
                                      }
                                  }
                                 }
