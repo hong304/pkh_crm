@@ -6,6 +6,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     var checkstatus = endpoint + "/getInvoiceStatusMatchPrint.json";
     var printSelect = endpoint + "/printSelectedJobsWithinMyZone.json";
 
+    $scope.allowSubmission = true;
 
     $scope.prints = {
         'collect' : ''
@@ -83,6 +84,9 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
     $scope.printToday = function(){
 
+        if(!$scope.allowSubmission)
+            return false;
+        $scope.allowSubmission= false;
 
         $http({
             method: 'POST',
@@ -153,6 +157,10 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
     }
 
     $scope.printSelect = function(){
+
+        if(!$scope.allowSubmission)
+            return false;
+        $scope.allowSubmission= false;
 
         bootbox.dialog({
             message: "列印發票後將不能復原，確定要列印發票嗎？",
@@ -238,6 +246,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
     $scope.updateZone = function(){
         $scope.updatePrintQueue();
+        $scope.allowSubmission = true;
     }
 
  /*   $scope.updateGroup = function(){
@@ -246,6 +255,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
     $scope.updateShift = function(){
         $scope.updatePrintQueue();
+        $scope.allowSubmission = true;
     }
 
     $scope.updatePrintQueue = function()
