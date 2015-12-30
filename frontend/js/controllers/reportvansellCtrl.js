@@ -3,7 +3,7 @@
 app.controller('reportvansellCtrl', function($scope, $http, SharedService, $timeout, $location, $sce) {
 
 	var querytarget = endpoint + "/getVansellreport.json";
-
+    $scope.allowSubmission = true;
 
 	$scope.report = "";
 	$scope.filterData = {
@@ -103,9 +103,13 @@ $scope.totalline = 0;
 
     $scope.reset = function(){
         $scope.prepareforreport = false;
+        $scope.allowSubmission = true;
     }
     $scope.loadReport = function()
     {
+        if(!$scope.allowSubmission)
+            return false;
+        $scope.allowSubmission=false;
 
         $scope.prepareforreport = true;
     	$http.post(querytarget, {reportId: 'vanselllist', output: "preview", filterData: $scope.filterData})

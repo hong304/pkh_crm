@@ -268,7 +268,7 @@ class VanSellController extends BaseController
         $van_query = van::select('productId', 'productlevel','van_qty')->where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->get()->toArray();
 
         // pd($vansell_query);
-        //  pd($this->_data);
+      //  pd($this->_data);
 
         $allIds = [];
         $create = [];
@@ -311,6 +311,9 @@ class VanSellController extends BaseController
                     $create[$index]['date'] = $this->_date;
                     $create[$index]['zoneId'] = $this->_zone;
                     $create[$index]['shift'] = $this->_shift;
+                    $create[$index]['created_at'] = date('Y-m-d H:i:s');
+                    $create[$index]['updated_at'] = date('Y-m-d H:i:s');
+
                 }
 
 
