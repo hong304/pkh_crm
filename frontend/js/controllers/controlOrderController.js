@@ -1155,7 +1155,7 @@ if($scope.order.invoiceNumber !='' && $scope.order.invoiceId == ''){
 
     $scope.submitOrder = function(v)
     {
-        console.log($scope.product);
+      //  console.log($scope.product);
      //   return false;
         var generalError = false;
 
