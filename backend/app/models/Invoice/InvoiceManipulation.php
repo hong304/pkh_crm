@@ -300,6 +300,7 @@ class InvoiceManipulation
             $client->save();
 
 
+
             // then, save all items one by one
             foreach ($this->items as $i) {
 
@@ -378,7 +379,9 @@ class InvoiceManipulation
                         foreach ($item->getDirty() as $attribute => $value) {
                             if (!in_array($attribute, array('backgroundcode'))) {
 
-                                if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97') {
+
+
+                              /*  if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97') {
                                     $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
                                     if (count($invoiceitembatchs) > 0)
                                         foreach ($invoiceitembatchs as $k1 => $v1) {
@@ -387,7 +390,7 @@ class InvoiceManipulation
                                             $receivings->save();
                                             $v1->delete();
                                         }
-                                }
+                                }*/
 
                                 $item->delete();
                                 $item = new InvoiceItem();

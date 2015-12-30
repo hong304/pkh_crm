@@ -34,12 +34,11 @@ class OrderController extends BaseController
 
         $product = Input::get('product');
 
-        // pd($product);
 
         $order = Input::get('order');
      //   $timer = Input::get('timer');
 
-        if(isset($order['invoiceNumber']) and $order['invoiceId'] == ''){
+       /* if(isset($order['invoiceNumber']) and $order['invoiceId'] == ''){
 
             $invoiceId = invoice::where('invoiceId',$order['invoiceNumber'])->first();
             if($invoiceId === null){
@@ -53,7 +52,7 @@ class OrderController extends BaseController
                     'message' => 'Invoice no. exist, please re-enter!',
                 ];
             }
-        }
+        }*/
 
 
 
@@ -66,65 +65,21 @@ class OrderController extends BaseController
         $i=0;
         $j=0;
 
-        foreach ($product as $p) {
 
+        foreach ($product as $k => &$p) {
+            if($p['productLocation'] == ''){
+                unset($product[$k]);
+            }else{
 
-             if ($p['deleted'] == 0 && $p['qty'] != 0 && $p['productLocation'] > 0){
-                 $receivings = Receiving::where('productId',$p['code'])->where('good_qty','>=',$this->normalizedUnit($p))->first();
-                 if(count($receivings) == null){
-                     return [
-                         'result' => false,
-                         'status' => 0,
-                         'invoiceNumber' => '',
-                         'invoiceItemIds' => 0,
-                         'message' => $p['code'].'沒有足夠的貨量',
-                     ];
-                 }
-             }
+                if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] != 0)
+                    $itemIds[] = $p['dbid'];
 
-
-                if ($p['deleted'] == 0 && $p['qty'] > 0 && $p['productLocation'] > 0)
-                    $i++;
-
-                if ($p['deleted'] == 0 && $p['qty'] < 0 && $p['productLocation'] > 0)
-                    $j++;
-
-
-
-            if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] != 0)
-                $itemIds[] = $p['dbid'];
-         //   else if ($p['dbid'] && $p['deleted'])
-          //      $deletedItems[]=$p;
-
-            if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] != 0){
-                $have_item = true;
-            }
-
-        }
-
-        if($order['status'] == 98){
-            if($i > 0){
-                return [
-                    'result' => false,
-                    'status' => 0,
-                    'invoiceNumber' => '',
-                    'invoiceItemIds' => 0,
-                    'message' => '退貨單不能有正數貨品',
-                ];
-            }
-        }
-
-            if($order['status'] == 97){
-                if($i < 1 || $j < 1){
-                    return [
-                        'result' => false,
-                        'status' => 0,
-                        'invoiceNumber' => '',
-                        'invoiceItemIds' => 0,
-                        'message' => '此單未完成',
-                    ];
+                if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] != 0){
+                    $have_item = true;
                 }
             }
+        }
+
 
         if ($order['invoiceId'] != '') {
 
@@ -139,7 +94,7 @@ class OrderController extends BaseController
             else if (count($itemIds) == 0){
                 $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail');
                 $deletedItemFromDB = $i->get();
-               $i->delete();
+                $i->delete();
             }else{
                 $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail');
                 $deletedItemFromDB = $i->get();
@@ -177,6 +132,104 @@ class OrderController extends BaseController
                     'message' => '未有下單貨品',
                 ];
         }
+
+
+      foreach ($product as $p) {
+
+            if($p['qty'] == 0)
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => $order['invoiceId'],
+                    'invoiceItemIds' => 0,
+                    'message' => $p['code'].':貨品數量不能等於零',
+                ];
+
+
+             if ($p['deleted'] == 0 && $p['qty'] != 0){
+
+                 $dirty = false;
+
+                     if ($p['dbid']) {
+
+                         $item = InvoiceItem::where('invoiceItemId', $p['dbid'])->first();
+
+                         $item->productId = $p['code'];
+                         $item->productUnitName = trim($p['unit']['label']);
+                         $item->productQty = $p['qty'];
+
+                         if ($item->isDirty()) {
+
+                             foreach ($item->getDirty() as $attribute => $value) {
+                                 if (!in_array($attribute, array('backgroundcode'))) {
+
+                                   if ($order['status'] != '96' && $order['status'] != '97') {
+                                         $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
+                                         if (count($invoiceitembatchs) > 0)
+                                             foreach ($invoiceitembatchs as $k1 => $v1) {
+                                                 $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
+                                                 $receivings->good_qty += $v1->unit;
+                                                 $receivings->save();
+                                                 $v1->delete();
+                                             }
+                                     }
+
+                                     $dirty = true;
+                                 }
+                             }
+                         }
+                     }
+
+
+                     if ($dirty || !$p['dbid']) {
+                         $receivings = Receiving::where('productId', $p['code'])->where('good_qty', '>=', $this->normalizedUnit($p))->first();
+                         if (count($receivings) == null) {
+                             return [
+                                 'result' => false,
+                                 'status' => 0,
+                                 'invoiceNumber' => '',
+                                 'invoiceItemIds' => 0,
+                                 'message' => $p['code'] . '沒有足夠的貨量',
+                             ];
+                         }
+                     }
+
+             }
+
+
+                if ($p['deleted'] == 0 && $p['qty'] > 0)
+                    $i++;
+
+                if ($p['deleted'] == 0 && $p['qty'] < 0)
+                    $j++;
+
+
+        }
+
+        if($order['status'] == 98){
+            if($i > 0){
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => '',
+                    'invoiceItemIds' => 0,
+                    'message' => '退貨單不能有正數貨品',
+                ];
+            }
+        }
+
+            if($order['status'] == 97){
+                if($i < 1 || $j < 1){
+                    return [
+                        'result' => false,
+                        'status' => 0,
+                        'invoiceNumber' => '',
+                        'invoiceItemIds' => 0,
+                        'message' => '此單未完成',
+                    ];
+                }
+            }
+
 
 
         foreach ($product as $p) {
