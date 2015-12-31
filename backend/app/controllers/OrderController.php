@@ -80,6 +80,7 @@ class OrderController extends BaseController
 
                 if ($p['deleted'] == 0 && $p['qty'] > 0)
                     $ii++;
+
             }
         }
 
@@ -96,7 +97,6 @@ class OrderController extends BaseController
             }
         }
 
-
         if ($order['invoiceId'] != '') {
 
             if (count($itemIds) == 0 && !$have_item)
@@ -105,7 +105,7 @@ class OrderController extends BaseController
                     'status' => 0,
                     'invoiceNumber' => $order['invoiceId'],
                     'invoiceItemIds' => 0,
-                    'message' => '未有下單貨品',
+                    'message' => '未有下單貨品(Error:001)',
                 ];
             else if (count($itemIds) == 0){
                 $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail');
@@ -145,9 +145,10 @@ class OrderController extends BaseController
                     'status' => 0,
                     'invoiceNumber' => 0,
                     'invoiceItemIds' => 0,
-                    'message' => '未有下單貨品',
+                    'message' => '未有下單貨品(Error:002)',
                 ];
         }
+
 
 
       foreach ($product as $p) {
@@ -212,13 +213,11 @@ class OrderController extends BaseController
 
              }
 
-
                 if ($p['deleted'] == 0 && $p['qty'] < 0)
                     $j++;
 
 
         }
-
 
             if($order['status'] == 97){
                 if($i < 1 || $j < 1){
