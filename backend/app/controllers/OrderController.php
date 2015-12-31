@@ -81,6 +81,10 @@ class OrderController extends BaseController
                 if ($p['deleted'] == 0 && $p['qty'] > 0)
                     $ii++;
 
+
+                if ($p['deleted'] == 0 && $p['qty'] < 0)
+                    $j++;
+
             }
         }
 
@@ -97,6 +101,19 @@ class OrderController extends BaseController
             }
         }
 
+
+        if($order['status'] == 97){
+            if($ii < 1 || $j < 1){
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => '',
+                    'invoiceItemIds' => 0,
+                    'message' => '此單未完成',
+                ];
+            }
+        }
+        
         if ($order['invoiceId'] != '') {
 
             if (count($itemIds) == 0 && !$have_item)
@@ -213,23 +230,10 @@ class OrderController extends BaseController
 
              }
 
-                if ($p['deleted'] == 0 && $p['qty'] < 0)
-                    $j++;
 
 
         }
 
-            if($order['status'] == 97){
-                if($i < 1 || $j < 1){
-                    return [
-                        'result' => false,
-                        'status' => 0,
-                        'invoiceNumber' => '',
-                        'invoiceItemIds' => 0,
-                        'message' => '此單未完成',
-                    ];
-                }
-            }
 
 
 
