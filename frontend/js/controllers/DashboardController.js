@@ -39,31 +39,58 @@ app.controller('DashboardController', function($rootScope, $scope, $http, $timeo
 
     $scope.generalPickingStatus = function(){
 
-        var today = new Date();
-        var plus = today.getDay() == 6 ? 2 : 1;
+        var target = endpoint + '/getHoliday.json';
 
-        var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-        if(today.getHours() < 12)
-        {
-            var nextDay = today;
-        }
-        else
-        {
-            var nextDay = currentDate;
-        }
-        var day = nextDay.getDate();
-        var month = nextDay.getMonth() + 1;
-        var year = nextDay.getFullYear();
+        $http.get(target)
+            .success(function(res){
 
-        $('.date-picker').datepicker({
-            rtl: Metronic.isRTL(),
-            orientation: "left",
-            autoclose: true
-        });
+                var today = new Date();
+                var plus = today.getDay() == 6 ? 2 : 1;
 
-        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
+                var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+                if(today.getHours() > 11 || today.getDay() == 0)
+                {
+                    var nextDay = currentDate;
+                }
+                else
+                {
+                    var nextDay = today;
+                }
 
-        $("#generalPickingModal").modal({backdrop: 'static'});
+                var flag = true;
+                var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+                do{
+                    flag= true;
+                    $.each( res, function( key, value ) {
+                        if(value == working_date){
+                            flag = false;
+                            var today = new Date(nextDay.getFullYear()+'-'+working_date);
+                            nextDay = new Date(today);
+                            nextDay.setDate(today.getDate()+1);
+
+                            if(nextDay.getDay() == 0)
+                                nextDay.setDate(today.getDate()+2);
+
+                            working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+                        }
+                    });
+                }while(flag == false);
+
+                var day = ("0" + (nextDay.getDate())).slice(-2);
+                var month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
+                var year = nextDay.getFullYear();
+
+                $('.date-picker').datepicker({
+                    rtl: Metronic.isRTL(),
+                    orientation: "left",
+                    autoclose: true
+                });
+
+                $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
+
+                $("#generalPickingModal").modal({backdrop: 'static'});
+            });
+
 
     }
 
