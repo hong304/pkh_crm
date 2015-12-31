@@ -62,7 +62,7 @@ class OrderController extends BaseController
 
 
         $have_item = false;
-        $i=0;
+        $ii=0;
         $j=0;
 
 
@@ -77,6 +77,22 @@ class OrderController extends BaseController
                 if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] != 0){
                     $have_item = true;
                 }
+
+                if ($p['deleted'] == 0 && $p['qty'] > 0)
+                    $ii++;
+            }
+        }
+
+
+        if($order['status'] == 98){
+            if($ii > 0){
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => '',
+                    'invoiceItemIds' => 0,
+                    'message' => '退貨單不能有正數貨品',
+                ];
             }
         }
 
@@ -197,26 +213,12 @@ class OrderController extends BaseController
              }
 
 
-                if ($p['deleted'] == 0 && $p['qty'] > 0)
-                    $i++;
-
                 if ($p['deleted'] == 0 && $p['qty'] < 0)
                     $j++;
 
 
         }
 
-        if($order['status'] == 98){
-            if($i > 0){
-                return [
-                    'result' => false,
-                    'status' => 0,
-                    'invoiceNumber' => '',
-                    'invoiceItemIds' => 0,
-                    'message' => '退貨單不能有正數貨品',
-                ];
-            }
-        }
 
             if($order['status'] == 97){
                 if($i < 1 || $j < 1){
