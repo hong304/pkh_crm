@@ -5,7 +5,12 @@ class OrderController extends BaseController
 
     public function jsonHoliday()
     {
-        $holidays = holiday::where('year', date("Y"))->first();
+        if(checkdate(12, 31, date("Y")))
+            $current_year = date('Y', strtotime('+1 year'));
+        else
+            $current_year = date("Y");
+
+        $holidays = holiday::where('year', $current_year)->first();
 
         $h_array = explode(",", $holidays->date);
         foreach ($h_array as &$v) {
