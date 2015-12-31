@@ -100,26 +100,44 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
 
 
 
+
     $scope.updateDataSet = function () {
-        $(document).ready(function() {
-
-            if(!$scope.firstload)
-            {
-                $("#datatable_ajax").dataTable().fnDestroy();
-            }
-            else
-            {
-                $scope.firstload = false;
-            }
+        Metronic.blockUI();
+        var grid = new Datatable();
 
 
-            $('#datatable_ajax').dataTable({
+        //var info = grid.page.info();
+        if(!$scope.firstload)
+        {
+            $("#datatable_ajax").dataTable().fnDestroy();
+        }
+        else
+        {
+            $scope.firstload = false;
+        }
+        grid.init({
+            src: $("#datatable_ajax"),
+            onSuccess: function (grid) {
+                // execute some code after table records loaded
+                Metronic.unblockUI();
+            },
+            onError: function (grid) {
+                // execute some code on network or other general error
+                Metronic.unblockUI();
+            },
+            loadingMessage: 'Loading...',
 
-                // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
+            // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
 
-                "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
+            dataTable: {
+                "bStateSave": false, // save datatable state(pagination, sort, etc) in cookie.
 
-              //  "bServerSide": true,
+
+                "lengthMenu": [
+                    [20, 50],
+                    [20, 50] // change per page values here
+                ],
+                "pageLength": 20, // default record count per page
 
                 "ajax": {
                     "url": querytarget, // ajax source
@@ -127,8 +145,7 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
                     "data": {mode: "collection"},
                     "xhrFields": {withCredentials: true}
                 },
-                "iDisplayLength": 25,
-                "pagingType": "full_numbers",
+
                 "language": {
                     "lengthMenu": "顯示 _MENU_ 項結果",
                     "zeroRecords": "沒有匹配結果",
@@ -149,18 +166,13 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
                     { "data": "to" },
                     { "data": "size" },
                     { "data": "link" },
-
-                ],
-                "order": [
-                    [0, "desc"],
                 ]
 
-            });
-
-
-
+            }
         });
-    };
+
+    }
+
 
 
 });

@@ -20,7 +20,7 @@ class IPFController extends BaseController {
         if($mode == 'collection')
         {
 
-            $ipf = InvoicePrintFormat:: select(['ipfId','from', 'to', 'size']);
+            $ipf = InvoicePrintFormat:: select(['ipfId','from', 'to', 'size'])->orderBy('from','desc');
             return Datatables::of($ipf)
                 ->addColumn('link', function ($ip) {
                     if(Auth::user()->can('edit_adv'))
