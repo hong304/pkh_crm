@@ -634,12 +634,11 @@ for($start = 0;$start < count($dateRange);$start++)
                 $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
                 $first = false;
             } else {
-                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
-                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-t", strtotime("-" . $v[1] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1]*31 . " days "))][0] = date("Y-m-01", strtotime("-" . $v[0]*31 . " days"));
+                $time[date("Y-m", strtotime("-" . $v[1]*31 . " days"))][1] = date("Y-m-t", strtotime("-" . $v[1]*31 . " days"));
             }
         }
 
-        //  pd($time);
         $month[0] = key(array_slice($time, -6, 1, true));
         $month[1] = key(array_slice($time, -5, 1, true));
         $month[2] = key(array_slice($time, -4, 1, true));

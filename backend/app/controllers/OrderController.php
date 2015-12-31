@@ -113,7 +113,7 @@ class OrderController extends BaseController
                 ];
             }
         }
-        
+
         if ($order['invoiceId'] != '') {
 
             if (count($itemIds) == 0 && !$have_item)
