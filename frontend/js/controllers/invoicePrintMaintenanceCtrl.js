@@ -162,10 +162,11 @@ app.controller('invoicePrintMaintenanceCtrl', function($scope, $rootScope, $http
                     }
                 },
                 "columns": [
-                    { "data": "from" },
-                    { "data": "to" },
-                    { "data": "size" },
-                    { "data": "link" },
+                    { "data": "from", "width":'10%' },
+                    { "data": "to" , "width":'10%'},
+                    { "data": "size", "width":'5%' },
+                    { "data": "advertisement", "width":'70%' },
+                    { "data": "link", "width":'5%' },
                 ]
 
             }

@@ -20,7 +20,7 @@ class IPFController extends BaseController {
         if($mode == 'collection')
         {
 
-            $ipf = InvoicePrintFormat:: select(['ipfId','from', 'to', 'size'])->orderBy('from','desc');
+            $ipf = InvoicePrintFormat:: select(['ipfId','from', 'to','advertisement', 'size'])->orderBy('from','desc');
             return Datatables::of($ipf)
                 ->addColumn('link', function ($ip) {
                     if(Auth::user()->can('edit_adv'))
@@ -30,6 +30,9 @@ class IPFController extends BaseController {
                 })
                 ->editColumn('from', function ($ip) {
                     return  date("Y-m-d", $ip->from);
+                })
+                ->editColumn('advertisement', function ($ip) {
+                    return  str_replace("\n","<br>",$ip->advertisement);
                 })
                 ->editColumn('to', function ($ip) {
                     return  date("Y-m-d", $ip->to);
