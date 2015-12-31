@@ -84,9 +84,7 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
 
     $scope.printToday = function(){
 
-        if(!$scope.allowSubmission)
-            return false;
-        $scope.allowSubmission= false;
+
 
         $http({
             method: 'POST',
@@ -131,6 +129,10 @@ app.controller('pushToPrintCtrl', function($scope, $http, SharedService, $timeou
                             label: "確定",
                             className: "red",
                             callback: function() {
+
+                                if(!$scope.allowSubmission)
+                                    return false;
+                                $scope.allowSubmission= false;
 
                                 Metronic.blockUI({
                                     target : '#printArea',
