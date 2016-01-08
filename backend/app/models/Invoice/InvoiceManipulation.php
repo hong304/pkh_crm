@@ -269,6 +269,9 @@ class InvoiceManipulation
         try {
             $this->im->save();
         } catch (Illuminate\Database\QueryException $e) {
+            $debugs = new debug();
+            $debugs->content = $this->temp_invoice_information['clientId'];
+            $debugs->save();
             $this->generateInvoiceId();
             $this->im->invoiceId = $this->invoiceId;
             $this->saveInvoice();
