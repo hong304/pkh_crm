@@ -136,7 +136,8 @@ class OrderController extends BaseController
                 $i->delete();
             }
 
-            $this->backToStock($deletedItemFromDB);
+            if($order['status'] != 97 && $order['status'] != 96)
+                $this->backToStock($deletedItemFromDB);
 
             foreach ($deletedItemFromDB as $v) {
                 $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $order['clientId'] . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
@@ -337,6 +338,10 @@ class OrderController extends BaseController
         $invoiceId = Input::get('invoiceId');
 
         $i = Invoice::where('invoiceId', $invoiceId)->with('invoiceitem')->first();
+
+        if($i->invoiceStatus != '97' && $i->invoiceStatus != '96')
+            $this->backToStock($i->invoiceitem);
+
         $i->previous_status = $i->invoiceStatus;
         $i->invoiceStatus = 99;
         $i->save();
@@ -345,7 +350,7 @@ class OrderController extends BaseController
         invoiceitem::where('invoiceId', $invoiceId)->update(['itemStatus'=>99]);
         invoiceitem::where('invoiceId', $invoiceId)->delete();
 
-        $this->backToStock($i->invoiceitem);
+
 
         foreach ($i->invoiceitem as $v) {
             $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $i->customerId . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
