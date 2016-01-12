@@ -445,6 +445,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
                     }
                 },
                 "columns": [
+                    { "data": "poCode" ,"width": "5%" },
                             { "data": "productId" ,"width": "5%" },
                             { "data": "productName_chi","width": "15%" },
                             { "data": "good_qty" ,"width": "5%"},
@@ -456,7 +457,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
                             { "data": "bin_location","width": "5%" },
                             { "data": "updated_at","width": "10%" },
                             { "data": "link" ,"width": "5%"},
-                            { "data": "sales_return","width": "5%" },
+
                 ],
                 
                 "order": [

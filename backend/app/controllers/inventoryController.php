@@ -93,7 +93,7 @@ class inventoryController extends BaseController {
 
             $filter = Input::get('filterData');
 
-            $receivings = Receiving::select('productPackingName_carton','productPacking_unit','productPacking_inner','productPackingName_unit','id','receivings.productId','productName_chi','good_qty','total_qty','damage_qty','expiry_date','receivings.updated_by','receivings.updated_at','bin_location','on_hold_qty')->leftJoin('product','receivings.productId','=','product.productId');
+            $receivings = Receiving::select('poCode','productPackingName_carton','productPacking_unit','productPacking_inner','productPackingName_unit','id','receivings.productId','productName_chi','good_qty','total_qty','damage_qty','expiry_date','receivings.updated_by','receivings.updated_at','bin_location','on_hold_qty')->leftJoin('product','receivings.productId','=','product.productId');
 
 
             if($filter['keyword'] != '')
