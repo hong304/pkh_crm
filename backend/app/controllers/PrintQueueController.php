@@ -269,7 +269,14 @@ class PrintQueueController extends BaseController
                     $this->mergeImage($gg);
                     Invoice::wherein('invoiceId', $gg)->update(['printed' => 1]);
                 }
-                PrintQueue::wherein('job_id', $jobId)->update(['target_time' => time(), 'status' => 'downloaded;passive']);
+                $updatepqs = PrintQueue::wherein('job_id', $jobId)->get();
+
+                foreach ($updatepqs as $updatepq) {
+                    $updatepq->target_time = time();
+                    $updatepq->status = 'downloaded;passive';
+                    $updatepq->save();
+                }
+
             } else if (isset($groupIds[1])) {
                 foreach ($groupIds[1] as $gg)
                     $this->mergeImageOthers($gg);
@@ -434,7 +441,13 @@ class PrintQueueController extends BaseController
 
         Invoice::wherein('invoiceId', $Ids)->update(['printed' => 1]);
 
-        PrintQueue::wherein('invoiceId', $Ids)->update(['target_time' => time(), 'status' => 'downloaded;passive']);
+        $updatepqs = PrintQueue::wherein('invoiceId', $Ids)->get();
+
+        foreach ($updatepqs as $updatepq) {
+            $updatepq->target_time = time();
+            $updatepq->status = 'downloaded;passive';
+            $updatepq->save();
+        }
 
         $print_log = new Printlog();
         $print_log->file_path = $filename;
