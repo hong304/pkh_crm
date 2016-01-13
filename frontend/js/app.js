@@ -1685,10 +1685,36 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                 });
             }]
         }
-    }) 
-    
-    
-    
+    })
+
+        .state('salesReturn', {
+            url: "/salesReturn",
+            templateUrl: "views/salesReturn.html",
+            data: {pageTitle: '產品回貨', pageSubTitle: ''},
+
+            controller: "salesReturnController",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                            assets + '/global/plugins/fuelux/js/spinner.min.js',
+                            assets + '/dependencies/jquery.cookie.min.js',
+                            assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
+                            assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+
+                            'js/controllers/salesReturnController.js',
+                            'js/controllers/selectProductCtrl.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
 
 
 
