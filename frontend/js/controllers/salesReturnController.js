@@ -149,9 +149,11 @@ app.controller('salesReturnController', function($rootScope, $scope, $http, $tim
         dbid		:	'',
         code		:	'',
         qty			:	1,
+        damage_qty	:	0,
         productLocation : '',
         availableunit	:	[],
         unit		:	'',
+        damage_unit : '',
         unitprice	:	0,
         unitpricerk	:	false,
         name		:	'',
@@ -380,6 +382,21 @@ else{
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
+
+        if($stateParams.action != '') {
+            Metronic.alert({
+                container: '#salesReturn', // alerts parent container(by default placed after the page breadcrumbs)
+                place: 'prepend', // append or prepent in container
+                type: 'success',  // alert's type
+                message: '<span style="font-size:16px;">車號:'+$stateParams.action+':提交成功</span>',  // alert's message
+                close: true, // make alert closable
+                reset: true, // close all previouse alerts first
+                focus: true, // auto scroll to the alert after shown
+                closeInSeconds: 0, // auto close after defined seconds
+                icon: '' // put icon before the message
+            });
+        }
+
         $scope.loadProduct($location.search().clientId);
     });
 
@@ -473,6 +490,7 @@ else{
             //$scope.product[i].availableunit = availableunit.reverse();
             $scope.product[i].availableunit = availableunit;
             $scope.product[i].unit = $scope.product[i].availableunit[0];
+            $scope.product[i].damage_unit = $scope.product[i].availableunit[0];
             $scope.updateStandardPrice(i);
 
             // UX Auto Add Next COlumn
@@ -517,28 +535,6 @@ else{
 
 
             }
-            // console.log($scope.lastitem);
-
-            // $scope.lastItemUnit = '5';
-
-            //--  check if last time invoice
-
-
-            // -- check if last time invoice
-
-
-
-
-
-
-            //	console.log(i);
-            // Focus to the qty input box
-
-            // $("#qty_" + i).focus().select();
-
-
-
-
 
         }
         else
@@ -751,96 +747,6 @@ else{
         }
     }
 
-    $scope.checkIdexist = function(){
-
-
-
-
-        var target = endpoint + '/getHoliday.json';
-
-        $http.get(target)
-            .success(function(res){
-
-                var today = new Date();
-                var plus = today.getDay() == 6 ? 2 : 1;
-
-                var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
-                if(today.getHours() > 11 || today.getDay() == 0)
-                {
-                    var nextDay = currentDate;
-                }
-                else
-                {
-                    var nextDay = today;
-                }
-
-                if($scope.order.invoiceNumber != '' && $scope.order.invoiceId ==''){
-                    var nextDay = today;
-                }
-
-                var flag = true;
-                var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-                do{
-                    flag= true;
-                    $.each( res, function( key, value ) {
-                        if(value == working_date){
-                            flag = false;
-                            var today = new Date(nextDay.getFullYear()+'-'+working_date);
-                            nextDay = new Date(today);
-                            nextDay.setDate(today.getDate()+1);
-
-                            if(nextDay.getDay() == 0)
-                                nextDay.setDate(today.getDate()+2);
-
-                            working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
-                        }
-                    });
-                }while(flag == false);
-
-                var day = ("0" + (nextDay.getDate())).slice(-2);
-                var month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
-                var year = nextDay.getFullYear();
-
-                $('.date-picker').datepicker({
-                    rtl: Metronic.isRTL(),
-                    orientation: "left",
-                    autoclose: true
-                });
-
-                $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
-
-
-                $scope.order.deliveryDate = year + '-' + month + '-' + day;
-                $scope.order.dueDate = year + '-' + month + '-' + day;
-                $scope.order.invoiceDate = $scope.order.deliveryDate;
-            });
-
-
-        if($scope.order.invoiceId == ''){
-            var target = endpoint + '/checkInvoiceIdExist.json';
-            $http.post(target, {invoiceId: $scope.order.invoiceNumber})
-                .success(function(res, status, headers, config){
-                    if(res == 1){
-                        $scope.allowSubmission = false;
-                        $scope.Idused = true;
-                    }else{
-                        $scope.allowSubmission = true;
-                        $scope.Idused = false;
-
-                        if($scope.order.invoiceNumber != ''){
-                            var inn = $scope.order.invoiceNumber;
-                           // console.log(inn.length);
-                            if(inn.length != 12){
-                                $scope.allowSubmission = false;
-                            }else
-                                $scope.allowSubmission = true;
-                      }
-                    }
-
-                });
-        }
-    }
-
     $scope.submitOrder = function(v)
     {
       //  console.log($scope.product);
@@ -858,13 +764,13 @@ else{
             generalError = true;
         }
 
-        $scope.allowSubmission = false;
+       // $scope.allowSubmission = false;
 
 
-        if(!$scope.order.invoiceDate || !$scope.order.deliveryDate || !$scope.order.dueDate || !$scope.order.status || !$scope.order.address || !$scope.order.clientId)
+        if(!$scope.order.zone || !$scope.order.deliveryDate)
         {
             Metronic.alert({
-                container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
+                container: '#salesReturn', // alerts parent container(by default placed after the page breadcrumbs)
                 place: 'prepend', // append or prepent in container
                 type: 'danger',  // alert's type
                 message: '請輸入所有欄位',  // alert's message
@@ -886,27 +792,23 @@ else{
             $http.post(
                 endpoint + '/placeReturnOrder.json', {
                     product : $scope.product,
-                    order : $scope.order,
-                    timer	:	$scope.timer,
+                    order : $scope.order
                 }).
                 success(function(res, status, headers, config) {
 
                     if(res.result == true)
                     {
-                        $scope.an=false;
-                        // $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
+                        //  $scope.an=false;
+                        //  $scope.statustext = $scope.systeminfo.invoiceStatus[res.status].descriptionChinese;
 
-                        if(res.action == 'update'){
-                            $state.go("queryInvoice", {}, {reload: true});
-                        }else{
-                            $state.go("newOrder",{action:'success',instatus:res.status ,invoiceNumber:res.invoiceNumber},{ reload: true, inherit: false, notify: true });
 
-                        }
+                            $state.go("salesReturn",{action:res.zoneId},{ reload: true, inherit: false, notify: true });
+
                     }
                     else if(res.result == false)
                     {
                         Metronic.alert({
-                            container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
+                            container: '#salesReturn', // alerts parent container(by default placed after the page breadcrumbs)
                             place: 'prepend', // append or prepent in container
                             type: 'danger',  // alert's type
                             message: '<span style="font-size:16px;">' + res.message + '</span>',  // alert's message

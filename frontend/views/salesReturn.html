@@ -25,7 +25,7 @@
 
                                             <div class="col-md-6">
                                                 <select class="form-control"
-                                                        ng-model="picking.zone"
+                                                        ng-model="order.zone"
                                                         data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
                                                         data-ng-change="updateZone();">
                                                     <option value=''>選擇車號</option>
@@ -137,10 +137,10 @@
                                 <th width="5%">貨品</th>
                                 <th width="15%">編號</th>
                                 <th width="15%">貨品名稱</th>
-                                <th width="2%">數量</th>
+                                <th width="2%">好貨數量</th>
                                 <th width="8%">單位</th>
-                                <th width="8%">單價</th>
-                                <th width="10%">金額 (HK${{totalAmount}})</th>
+                                <th width="8%">壞貨數量</th>
+                                <th width="10%">單位</th>
                                 <th width="10%"></th>
                             </tr>
                             </thead>
@@ -189,20 +189,31 @@
 
                                 </td>
                                 <td>
-                                    <div class="">
-                                        <div class="input-icon right" id="unitpricediv_{{i}}">
-                                            <input type="tel" onClick="this.select();" id="unitprice_{{i}}"
-                                                   ng-model="product[i]['unitprice']" data-ng-change="checkPrice(i)"
-                                                   class="form-control" name="product[i]['unitprice']"
-                                                   value="{{product[i]['unitprice']}}" disabled>
+                                    <label>
+                                        <div id="spinner1_{{i}}">
+                                            <div class="input-group" style="width:100px;">
+                                                <input type="tel" onClick="this.select();" id="damage_qty_{{i}}"
+                                                       class="spinner-input form-control" maxlength="5"
+                                                       ng-model="product[i]['damage_qty']"
+                                                       ng-blur="checkQtyInterval(i);">
+
+                                            </div>
                                         </div>
-                                    </div>
+                                    </label>
                                 </td>
 
-                                <td style="line-height:35px;font-size:15px;">
-                                    HK${{product[i]['qty'] * product[i]['unitprice'] *
-                                    (100-product[i]['itemdiscount'])/100 | number : 2}}
-                                    <!--HK${{product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['itemdiscount'])/100 | number:0}}-->
+                                <td>
+
+                                    <label>
+                                        <select class="form-control"
+                                                id="unit1_{{i}}"
+                                                ng-model="product[i]['damage_unit']"
+                                                data-ng-options="x.label for x in product[i]['availableunit'] track by x.value"
+                                                data-ng-change="updateUnit(i);">
+                                        </select>
+                                    </label>
+
+
                                 </td>
                                 <td style="line-height:35px;font-size:15px;">
                                     <button type="button" class="btn btn-primary" id="remarkbtn_{{i}}"

@@ -189,7 +189,7 @@ class SystemController extends BaseController {
 
     }
 
-    public function NormalizedUnit($productId,$qty,$unit){
+    public static function NormalizedUnit($productId,$qty,$unit){
 
             $v = Product::where('productId',$productId)->first();
 

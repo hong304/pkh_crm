@@ -63,7 +63,7 @@ class inventoryController extends BaseController {
         if($mode == 'collection')
         {
 
-            $adjusts = Adjust::with('receiving');
+            $adjusts = Adjust::with('receiving')->orderby('updated_at','desc');
 
             return Datatables::of($adjusts)->editColumn('adjustType', function ($p) {
                 if($p->adjustType == 1){

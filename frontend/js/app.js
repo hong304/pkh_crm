@@ -1688,7 +1688,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
     })
 
         .state('salesReturn', {
-            url: "/salesReturn",
+            url: "/salesReturn/:action",
             templateUrl: "views/salesReturn.html",
             data: {pageTitle: '產品回貨', pageSubTitle: ''},
 

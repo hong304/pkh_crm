@@ -68,7 +68,7 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/checkInvoiceIdExist.json','OrderController@checkInvoiceIdExist');
 
     //Sales return order
-    Route::post('/placeReturnOrder.json', 'SalesReturnController@placeReturnOrder');
+    Route::post('/placeReturnOrder.json', 'SalesreturnController@placeReturnOrder');
 
 
 
