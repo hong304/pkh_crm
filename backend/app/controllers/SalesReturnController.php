@@ -17,14 +17,6 @@ class SalesreturnController extends Controller {
                 if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] != 0){
                     $have_item = true;
                 }
-
-               /* if ($p['deleted'] == 0 && $p['qty'] > 0)
-                    $ii++;
-
-
-                if ($p['deleted'] == 0 && $p['qty'] < 0)
-                    $j++;*/
-
             }
         }
 
