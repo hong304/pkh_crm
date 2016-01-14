@@ -608,7 +608,23 @@ else{
 
         $http.post(target, {zoneId: $scope.order.zone, deliveryDate:$scope.order.deliveryDate})
             .success(function(res, status, headers, config){
-                $scope.sameDayReturn = res;
+               // $scope.sameDayReturn = res;
+if(res==1)
+                Metronic.alert({
+                    container: '#secondSection', // alerts parent container(by default placed after the page breadcrumbs)
+                    place: 'prepend', // append or prepent in container
+                    type: 'danger',  // alert's type
+                    message: '回貨日期:'+$scope.order.deliveryDate+' 車號:'+$scope.order.zone.zoneId,  // alert's message
+                    close: true, // make alert closable
+                    reset: true, // close all previouse alerts first
+                    focus: true, // auto scroll to the alert after shown
+                    closeInSeconds: 0, // auto close after defined seconds
+                    icon: 'warning' // put icon before the message
+                });
+else
+    Metronic.alert({
+        reset: true // close all previouse alerts first
+    });
             });
     }
 
