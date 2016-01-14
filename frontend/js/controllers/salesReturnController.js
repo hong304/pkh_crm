@@ -754,10 +754,6 @@ else{
         var generalError = false;
 
 
-        $scope.timer.submit = Date.now();
-
-
-
         if(!$scope.allowSubmission)
         {
             Alert('submission Disabled');
@@ -831,40 +827,6 @@ else{
         }
 
 
-    }
-
-    $scope.showRecentPurchases = function()
-    {
-        if(!$scope.recentProduct || $scope.recentProductClient != $scope.order.clientId)
-        {
-            $http.post(
-                endpoint + '/findRecentProductsByCustomerId.json', {
-                    customerId	:	$scope.order.clientId
-                }).
-                success(function(res, status, headers, config) {
-                    $scope.recentProduct = res;
-                    $scope.recentProductClient = $scope.order.clientId;
-                }).
-                error(function(res, status, headers, config) {
-                    // called asynchronously if an error occurs
-                    // or server returns response with an error status.
-                });
-        }
-        $("#recentProductModal").modal('toggle');
-    }
-
-    $scope.selectRecentProduct = function(productId)
-    {
-        console.log($scope.product.length);
-        for(var i = 1; i<= $scope.product.length-1; i++)
-        {
-            if($scope.product[i].code == '')
-            {
-                $scope.searchProduct(i, productId);
-                $("#recentProductModal").modal('toggle');
-                break;
-            }
-        }
     }
 
 
