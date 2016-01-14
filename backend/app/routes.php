@@ -69,7 +69,7 @@ Route::group(array('before' => 'auth'), function()
 
     //Sales return order
     Route::post('/placeReturnOrder.json', 'SalesreturnController@placeReturnOrder');
-
+    Route::post('/getZoneSameDayReturn.json', 'SalesreturnController@getZoneSameDayReturn');
 
 
 

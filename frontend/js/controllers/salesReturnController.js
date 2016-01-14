@@ -420,6 +420,8 @@ else{
             });
     }
 
+
+
     $scope.selectProduct = function(i) {
         $scope.timer.product[i]['openPanel'] = Date.now();
 
@@ -592,85 +594,22 @@ else{
         }
     }
 
-    $scope.checkPrice = function(i)
-    {
-
-        var code = $scope.product[i]['code'];
-        var item = $scope.retrievedProduct[code];
-
-        var unit = $scope.product[i]['unit']['value'];
-
-
-        $scope.submitButtonText = '提交 (F10)';
-        $scope.submitButtonColor = 'blue';
-
-        /*
-         if(unit == 'carton')
-         var stdprice = Number(item.productStdPrice_carton);
-         else if(unit == 'inner')
-         var stdprice = Number(item.productStdPrice_inner);
-         else if(unit == 'unit')
-         var stdprice = Number(item.productStdPrice_unit);
-         */
-
-        var stdprice = Number(item.productStdPrice[unit]);
-        //var minprice = Number(item.productMinPrice[unit]);
-
-        //  if(Number(item.allowNegativePrice != 1))
-
-
-        // check if number
-        if((isNaN($scope.product[i]['unitprice']) || $scope.product[i]['unitprice'] < 0 ) && item.allowNegativePrice != '1')
-        {
-            $scope.product[i]['unitprice'] = stdprice;
-        }
-
-        $("#requireapprove_" + i).remove();
-
-        var saleprice = $scope.product[i]['unitprice'] * (100-$scope.product[i]['itemdiscount'])/100;
-
-        // if saleprice < std price, need approval
-        if(saleprice < stdprice && $scope.product[i].approverid == 0 && $scope.product[i].deleted == 0)
-        {
-            $("#unitpricediv_" + i).prepend('<i id="requireapprove_'+i+'" class="fa fa-info-circle" style="color:red;"></i>');
-            $scope.submitButtonText = '提交 (需批核) (F10)';
-            $scope.submitButtonColor = 'green';
-        }
-
-        // if saleprice < min price, deny submission
-        /*
-         if(saleprice < minprice && minprice > 0)
-         {
-         $("#unitpricediv_" + i).prepend('<i id="requireapprove_'+i+'" class="" style="color:red;">X</i>');
-         $scope.allowSubmission = false;
-         }
-         */
-
-        // if he got permission of bypassing approval, eventually display no approval button
-        if($scope.systeminfo.permission.allow_by_pass_invoice_approval == true)
-        {
-            $scope.submitButtonText = '提交';
-            $scope.submitButtonColor = 'blue';
-        }
+    $scope.updateZone = function(){
+        $scope.getSameDayReturn();
     }
 
-    $scope.updateDiscount = function()
+    $scope.updateDeliveryDate = function()
     {
-
-        $scope.reCalculateTotalAmount();
+        $scope.getSameDayReturn();
     }
+    $scope.getSameDayReturn = function(){
 
-    $scope.updateQty = function(i)
-    {
-//var org_qty = $scope.product[i]['qty'];
-        // check if number
-        var qty = $scope.product[i]['qty'];
+        var target = endpoint + '/getZoneSameDayReturn.json';
 
-        if( ( isNaN(qty) || qty < 0 ) && $scope.order.status != 97 && $scope.order.status != 98)
-        {
-            $scope.product[i]['qty'] = 1;
-        }
-
+        $http.post(target, {zoneId: $scope.order.zone, deliveryDate:$scope.order.deliveryDate})
+            .success(function(res, status, headers, config){
+                $scope.sameDayReturn = res;
+            });
     }
 
     $scope.updateUnit = function(i)
@@ -700,43 +639,7 @@ else{
         }
     }
 
-    $scope.statusChange = function(){
 
-        if($scope.order.status == '98')
-            $scope.order.invoiceRemark = '退貨單'
-
-        if($scope.order.status == '97' || $scope.order.status == '96') {
-
-            if($scope.order.status == '97')
-                $scope.order.invoiceRemark = '換貨單';
-            else
-                $scope.order.invoiceRemark = '補貨單';
-
-            var i = 1;
-            $scope.product.forEach(function(item){
-                if(item.deleted == 0)
-                {
-                    $scope.product[i].unitprice = 0;
-                }
-                $("#unitprice_" + i).attr('disabled', 'true');
-                i++;
-            });
-
-        }else{
-            var i = 1;
-            $scope.product.forEach(function(){
-                $("#unitprice_" + i).removeAttr('disabled');
-                i++;
-            });
-
-        }
-
-        if($scope.order.status == '2')
-            $scope.order.invoiceRemark = ''
-
-
-
-    }
 
 
     $scope.preSubmitOrder = function(v){
@@ -896,14 +799,6 @@ else{
         }
     }
 
-    $scope.updateDeliveryDate = function()
-    {
-        if($scope.order.paymentTerms == '1')
-        {
-            $scope.order.dueDate = $scope.order.deliveryDate
-        }
-        $scope.getSameDayInvoice();
-    }
 
 
     $scope.openRemarkPanel = function(i)

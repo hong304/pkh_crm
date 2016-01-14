@@ -76,6 +76,20 @@ class SalesreturnController extends Controller {
 
     }
 
+    public function getZoneSameDayReturn(){
+
+        $zoneId = Input::get('zoneId.zoneId');
+        $deliveryDate = Input::get('deliveryDate');
+
+        $salesreturns = salesreturn::where('zoneId',$zoneId)->where('deliveryDate',$deliveryDate)->first();
+        if (count($salesreturns)>0){
+            return 1;
+        }else{
+            return 0;
+        }
+
+
+    }
 }
 
 //Testing
