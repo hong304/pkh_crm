@@ -107,10 +107,7 @@ class Invoice_CashReceiptSummary {
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
 
-        $invoicesQuery = $invoicesQuery ->leftJoin('customer', 'invoice.customerId', '=', 'customer.customerId')
-            ->leftJoin('invoice_payment', function ($join) {
-            $join->on( 'Invoice.invoiceId', '=','invoice_payment.invoice_id');
-        })->whereNull('payment_id')->get();
+        $invoicesQuery = $invoicesQuery ->leftJoin('customer', 'invoice.customerId', '=', 'customer.customerId')->get();
 
 
 

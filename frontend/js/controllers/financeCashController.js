@@ -194,12 +194,19 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         $scope.filterData.paid = '0';
         $scope.filterData.no = '';
 
+
+        document.getElementById('no').readOnly=false;
+        document.getElementById('amount').readOnly=false;
+        document.getElementById('cashAmount').readOnly=false;
+        document.getElementById('paid').readOnly=false;
+
         var zoneDB = $scope.systeminfo.availableZone;
         var pos = zoneDB.map(function(e) {
             return e.zoneId;
         }).indexOf(parseInt(zoneId));
 
         $scope.filterData.zoneId = zoneDB[pos];
+        $scope.filterData.orgZoneId = zoneDB[pos];
         $scope.filterData.invoiceId = invoiceId;
         $scope.filterData.clientId = customerId;
 
@@ -222,6 +229,22 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
             $scope.filterData.receiveDate = year+'-'+month+'-'+day;
         })
 
+    }
+
+    $scope.changeZone = function(){
+
+
+        if($scope.filterData.zoneId != $scope.filterData.orgZoneId){
+            document.getElementById('no').readOnly=true;
+            document.getElementById('amount').readOnly=true;
+            document.getElementById('cashAmount').readOnly=true;
+            document.getElementById('paid').readOnly=true;
+        }else{
+            document.getElementById('no').readOnly=false;
+            document.getElementById('amount').readOnly=false;
+            document.getElementById('cashAmount').readOnly=false;
+            document.getElementById('paid').readOnly=false;
+        }
     }
 
     $scope.viewInvoicePayment = function(invoiceId)
@@ -276,7 +299,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     }
 
-    $scope.autoPost = function(){
+    $scope.autoPostCod = function(){
 
 
 
@@ -417,13 +440,21 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         method: 'POST',
         url: query,
         data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'20'}
-    }).success(function () {
+    }).success(function (res) {
         $('#invoicePayment').modal('hide');
+        var msg = '';
+        if (res.msg == "zoneChanged"){
+            msg = '已成功更改收款車區';
+        }else{
+            msg = '訂單已轉為未付款';
+        }
+
+
         Metronic.alert({
             container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
             place: 'prepend', // append or prepent in container
             type: 'success',  // alert's type
-            message: '<span style="font-size:16px;">訂單已轉為未付款</span>',  // alert's message
+            message: '<span style="font-size:16px;">'+msg+'</span>',  // alert's message
             close: true, // make alert closable
             reset: true, // close all previouse alerts first
             focus: true, // auto scroll to the alert after shown
@@ -493,7 +524,6 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     $scope.updateDataSet = function()
     {
-
         $scope.invoicepaid[0] = $.extend(true, {}, $scope.invoiceStructure);
         $scope.invoicepaid[0]['paid'] = 0;
 

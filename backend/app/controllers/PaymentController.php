@@ -110,6 +110,14 @@ class PaymentController extends BaseController
             $paidinfo = Input::get('paidinfo');
             $discount_taken = Input::get('discount');
 
+            if($paidinfo['orgZoneId']['zoneId'] != $paidinfo['zoneId']['zoneId']){
+                $i = Invoice::where('invoiceId', $paidinfo['invoiceId'])->first();
+                $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
+                $i->save();
+                return Response::json(['msg'=>'zoneChanged']);
+            }else{
+
+
             if ($paidinfo['no'] != '') {
                 $payment = new Payment();
                 $payment->paymentType = 'COD';
@@ -192,7 +200,7 @@ class PaymentController extends BaseController
                     $i->paid = 0;
                 $i->save();
             }
-
+            }
         }
 
         if ($mode == 'collection') {

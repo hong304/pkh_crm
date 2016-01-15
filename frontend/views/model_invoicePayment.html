@@ -84,7 +84,8 @@
                             <div class="col-md-3">
                                 <select class="form-control"
                                         ng-model="filterData.zoneId"
-                                        data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId">
+                                        data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
+                                        data-ng-change="changeZone();">
                                 </select> </div>
                         </div>
 
@@ -105,7 +106,7 @@
                             <label class="col-md-2 control-label">支票/收據號碼:
                             </label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" data-ng-model="filterData.no" placeholder="" onClick="this.select();" ng-disabled="filterData.cashAmount != 0">
+                                <input type="text" class="form-control" id="no" data-ng-model="filterData.no" placeholder="" onClick="this.select();" ng-disabled="filterData.cashAmount != 0">
                             </div>
                         </div>
 
@@ -113,7 +114,7 @@
                             <label class="col-md-2 control-label">支票/收據金額:
                             </label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" data-ng-model="filterData.amount" placeholder="" onClick="this.select();" ng-disabled="cheque.amount > 0 || filterData.cashAmount != 0">
+                                <input type="text" class="form-control" id="amount" data-ng-model="filterData.amount" placeholder="" onClick="this.select();" ng-disabled="cheque.amount > 0 || filterData.cashAmount != 0">
 
                             </div>
                         </div>
@@ -122,7 +123,7 @@
                             <label class="col-md-2 control-label">支付數目:
                             </label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" data-ng-model="filterData.paid" placeholder="" onClick="this.select();" ng-disabled="filterData.cashAmount != 0">
+                                <input type="text" class="form-control" id="paid" data-ng-model="filterData.paid" placeholder="" onClick="this.select();" ng-disabled="filterData.cashAmount != 0">
 
                             </div>
                         </div>
@@ -131,7 +132,7 @@
                             <label class="col-md-2 control-label">現金:
                             </label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" data-ng-model="filterData.cashAmount" placeholder="" onClick="this.select();" ng-disabled="filterData.paid != 0 || filterData.no != ''">
+                                <input type="text" class="form-control" id="cashAmount" data-ng-model="filterData.cashAmount" placeholder="" onClick="this.select();" ng-disabled="filterData.paid != 0 || filterData.no != ''">
 
                             </div>
                         </div>
@@ -147,7 +148,7 @@
                     <div class="form-group">
 
                         <div class="col-md-12">
-                            <div class="pull-right"> <button type="button" ng-click="autoPost();" id="submitbutton" class="btn blue">提交</button></div>
+                            <div class="pull-right"> <button type="button" ng-click="autoPostCod();" id="submitbutton" class="btn blue">提交</button></div>
                         </div>
                     </div>
 
