@@ -9,6 +9,7 @@ class InvoiceManipulation
     public $action = "";
     public $im = "";
     public $approval = false;
+    public $product = [];
 
     public function __construct($invoiceId = false, $timer = false)
     {
@@ -116,7 +117,7 @@ class InvoiceManipulation
         foreach ($raw as $p) {
             $products[$p->productId] = $p;
         }
-
+        $this->product = $products;
         // prepare existing items information
         $dbids = array_pluck($this->items, 'dbid');
         $raw = InvoiceItem::wherein('invoiceItemId', $dbids)->get();
@@ -304,6 +305,7 @@ class InvoiceManipulation
 
 
 
+
             // then, save all items one by one
             foreach ($this->items as $i) {
 
@@ -423,7 +425,7 @@ class InvoiceManipulation
 
                     if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97' && ($dirty||!$i['dbid']) ){
                             $normalizedUnit = $this->normalizedUnit($i);
-                            $packingSize = $this->packingSize($i);
+                            $packingSize = $this->packingSize($i,$this->product[$i['productId']]['productPackingInterval_carton']);
                             $undeductUnit = $normalizedUnit;
 
                             if ($undeductUnit < 0) {
@@ -442,23 +444,34 @@ class InvoiceManipulation
                             while ($undeductUnit > 0) {
                                 $receivings = Receiving::where('productId', $i['productId'])->where('good_qty', '>=', $packingSize)->orderBy('expiry_date', 'asc')->first();
 
-                                if ($undeductUnit > $receivings->good_qty) {
-                                    $ava_qty = ($receivings->good_qty - ($receivings->good_qty % $packingSize));
-                                    $undeductUnit -= $ava_qty;
-                                } else {
-                                    $ava_qty = $undeductUnit;
-                                    $undeductUnit = 0;
+                                if($receivings){
+                                    if ($undeductUnit > $receivings->good_qty) {
+                                        $ava_qty = ($receivings->good_qty - ($receivings->good_qty % $packingSize));
+                                        $undeductUnit -= $ava_qty;
+                                    } else {
+                                        $ava_qty = $undeductUnit;
+                                        $undeductUnit = 0;
+                                    }
+
+                                    $receivings->good_qty -= $ava_qty;
+                                    $receivings->save();
+
+                                    $invoiceitembatchs = new invoiceitemBatch();
+                                    $invoiceitembatchs->invoiceItemId = $item->invoiceItemId;
+                                    $invoiceitembatchs->unit = $ava_qty;
+                                    $invoiceitembatchs->productId = $i['productId'];
+                                    $invoiceitembatchs->receivingId = $receivings->receivingId;
+                                    $invoiceitembatchs->save();
+                                }else{
+                                    return [
+                                        'result' => false,
+                                        'status' => 0,
+                                        'invoiceNumber' => 0,
+                                        'invoiceItemIds' => 0,
+                                        'message' => 'Product ID:'.$i['productId'].' - Unknown Error Code:098',
+                                    ];
+
                                 }
-
-                                $receivings->good_qty -= $ava_qty;
-                                $receivings->save();
-
-                                $invoiceitembatchs = new invoiceitemBatch();
-                                $invoiceitembatchs->invoiceItemId = $item->invoiceItemId;
-                                $invoiceitembatchs->unit = $ava_qty;
-                                $invoiceitembatchs->productId = $i['productId'];
-                                $invoiceitembatchs->receivingId = $receivings->receivingId;
-                                $invoiceitembatchs->save();
                             }
                     }
                 }
@@ -615,7 +628,7 @@ class InvoiceManipulation
         return $real_normalized_unit;
     }
 
-    public function packingSize($i)
+    public function packingSize($i,$carton_interval)
     {
 
         $inner = ($i['productPacking']['inner']) ? $i['productPacking']['inner'] : 1;
@@ -623,7 +636,7 @@ class InvoiceManipulation
 
 
             if ($i['productQtyUnit']['value'] == 'carton')
-                $real_normalized_unit = $inner * $unit;
+                $real_normalized_unit = $inner * $unit * $carton_interval;
             else if ($i['productQtyUnit']['value'] == 'inner')
                 $real_normalized_unit = $unit;
             else

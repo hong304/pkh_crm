@@ -1233,9 +1233,10 @@ if($scope.order.invoiceNumber !='' && $scope.order.invoiceId == ''){
                     //$("#selectProduct").animate({ scrollTop: 0 }, "slow");
                 }).
                 error(function(res, status, headers, config) {
+                    console.log(res);
                     // called asynchronously if an error occurs
                     // or server returns response with an error status.
-                    $scope.allowSubmission = true;
+                    //$scope.allowSubmission = true;
 
                 });
         }
