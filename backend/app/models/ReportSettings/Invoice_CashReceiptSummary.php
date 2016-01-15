@@ -103,23 +103,29 @@ class Invoice_CashReceiptSummary {
         }
         //當天單,收支票
 
-        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::select('invoice.invoiceId','invoice.amount','customerName_chi','zoneId')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone)->where('deliveryDate', $date);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
 
-        $invoicesQuery = $invoicesQuery->with('client')->get();
+        $invoicesQuery = $invoicesQuery ->leftJoin('customer', 'invoice.customerId', '=', 'customer.customerId')
+            ->leftJoin('invoice_payment', function ($join) {
+            $join->on( 'Invoice.invoiceId', '=','invoice_payment.invoice_id');
+        })->whereNull('payment_id')->get();
+
+
+
         $acc = 0;
         $acc1 = 0;
         foreach($invoicesQuery as $invoiceQ)
         {
 
             $this->_invoices[] = $invoiceQ->invoiceId;
-            $this->_zoneName = $invoiceQ->zone->zoneName;
+           // $this->_zoneName = $invoiceQ->zone->zoneName;
 
             // first, store all invoices
             $invoiceId = $invoiceQ->invoiceId;
             $invoices[$invoiceId] = $invoiceQ;
-            $client = $invoiceQ['client'];
+           // $client = $invoiceQ['client'];
 
             if($invoiceQ->invoiceStatus == 20 || $invoiceQ->invoiceStatus == 30){
                 $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
@@ -127,8 +133,8 @@ class Invoice_CashReceiptSummary {
                 // not yet receive
                 $acc1 +=  $invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ;
                 $this->_backaccount[] = [
-                    'customerId' => $client->customerId,
-                    'name' => $client->customerName_chi,
+                    'customerId' => $invoiceQ->customerId,
+                    'name' => $invoiceQ->customerName_chi,
                     'invoiceNumber' => $invoiceId,
                     'accumulator' =>$acc1,
                     'amount' => number_format($invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ,2,'.',','),
@@ -159,9 +165,9 @@ class Invoice_CashReceiptSummary {
             //已收
             $this->_account[] = [
                 'zoneId' =>$invoiceQ->zoneId,
-                'receiveMoneyZone' =>$invoiceQ->receiveMoneyZone,
-                'customerId' => $client->customerId,
-                'name' => $client->customerName_chi,
+
+                'customerId' => $invoiceQ->customerId,
+                'name' => $invoiceQ->customerName_chi,
                 'invoiceNumber' => $invoiceId,
                 'invoiceTotalAmount' => $paid ,
                 'accumulator' =>$acc,
@@ -215,6 +221,7 @@ class Invoice_CashReceiptSummary {
                 $this->_paidInvoice[] = [
                     'customerId' => $client->customerId,
                     'name' => $client->customerName_chi,
+                    'zoneId' => $invoiceQ->zoneId ,
                     'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                     'invoiceNumber' => $invoiceId,
                     'invoiceTotalAmount' => $invoiceQ->paid ,
