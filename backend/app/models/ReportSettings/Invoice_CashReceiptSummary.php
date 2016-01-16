@@ -214,6 +214,7 @@ class Invoice_CashReceiptSummary {
                 //補收+代收
                 $this->_paidInvoice[] = [
                     'customerId' => $client->customerId,
+                    'zoneId' =>$invoiceQ->zoneId,
                     'name' => $client->customerName_chi,
                     'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                     'invoiceNumber' => $invoiceId,
