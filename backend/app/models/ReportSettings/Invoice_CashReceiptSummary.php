@@ -2,7 +2,7 @@
 
 
 class Invoice_CashReceiptSummary {
-    
+
     private $_reportTitle = "";
     private $_date = "";
     private $_zone = "";
@@ -15,7 +15,7 @@ class Invoice_CashReceiptSummary {
     private $_paidInvoice_cheque =[];
     private $_expenses = [];
     private $_uniqueid = "";
-    
+
     public function __construct($indata)
     {
 
@@ -23,15 +23,15 @@ class Invoice_CashReceiptSummary {
 
         if(!Auth::user()->can('view_cashreceiptsummary'))
             pd('Permission Denied');
-        
+
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
-        
-        
+
+
         $permittedZone = explode(',', Auth::user()->temp_zone);
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
-       // $this->_date1 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
+        // $this->_date1 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
         $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift']['value'] : '-1');
         // check if user has clearance to view this zone        
@@ -39,23 +39,23 @@ class Invoice_CashReceiptSummary {
         {
             App::abort(401, "Unauthorized Zone");
         }
-        
+
         $this->_uniqueid = microtime(true);
     }
-    
-    public function registerTitle() 
+
+    public function registerTitle()
     {
         return $this->_reportTitle;
     }
-    
+
     public function compileResults()
     {
 
 
 
 
-    if(Input::get('output') == 'excel')
-        return '';
+        if(Input::get('output') == 'excel')
+            return '';
 
         $date = $this->_date;
         $zone = $this->_zone;
@@ -103,26 +103,23 @@ class Invoice_CashReceiptSummary {
         }
         //當天單,收支票
 
-        $invoicesQuery = Invoice::select('invoice.invoiceId','invoice.amount','customerName_chi','zoneId','invoiceStatus')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone)->where('deliveryDate', $date);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
 
-        $invoicesQuery = $invoicesQuery ->leftJoin('customer', 'invoice.customerId', '=', 'customer.customerId')->get();
-
-
-
+        $invoicesQuery = $invoicesQuery->with('client')->get();
         $acc = 0;
         $acc1 = 0;
         foreach($invoicesQuery as $invoiceQ)
         {
 
             $this->_invoices[] = $invoiceQ->invoiceId;
-           // $this->_zoneName = $invoiceQ->zone->zoneName;
+            $this->_zoneName = $invoiceQ->zone->zoneName;
 
             // first, store all invoices
             $invoiceId = $invoiceQ->invoiceId;
             $invoices[$invoiceId] = $invoiceQ;
-           // $client = $invoiceQ['client'];
+            $client = $invoiceQ['client'];
 
             if($invoiceQ->invoiceStatus == 20 || $invoiceQ->invoiceStatus == 30){
                 $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
@@ -130,8 +127,8 @@ class Invoice_CashReceiptSummary {
                 // not yet receive
                 $acc1 +=  $invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ;
                 $this->_backaccount[] = [
-                    'customerId' => $invoiceQ->customerId,
-                    'name' => $invoiceQ->customerName_chi,
+                    'customerId' => $client->customerId,
+                    'name' => $client->customerName_chi,
                     'invoiceNumber' => $invoiceId,
                     'accumulator' =>$acc1,
                     'amount' => number_format($invoiceQ->remain+(isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) ,2,'.',','),
@@ -162,9 +159,9 @@ class Invoice_CashReceiptSummary {
             //已收
             $this->_account[] = [
                 'zoneId' =>$invoiceQ->zoneId,
-
-                'customerId' => $invoiceQ->customerId,
-                'name' => $invoiceQ->customerName_chi,
+                'receiveMoneyZone' =>$invoiceQ->receiveMoneyZone,
+                'customerId' => $client->customerId,
+                'name' => $client->customerName_chi,
                 'invoiceNumber' => $invoiceId,
                 'invoiceTotalAmount' => $paid ,
                 'accumulator' =>$acc,
@@ -189,7 +186,7 @@ class Invoice_CashReceiptSummary {
         })->leftJoin('payments', function ($join) {
             $join->on('invoice_payment.payment_id', '=', 'payments.id');
         })->where('receive_date', '=', date('Y-m-d',$date))->get();
-      //  pd($invoicesQuery);
+        //  pd($invoicesQuery);
         //->WhereHas('payment', function($q) use($date)
         // {
         //     $q->where('receive_date', '=', date('Y-m-d',$date));
@@ -218,7 +215,6 @@ class Invoice_CashReceiptSummary {
                 $this->_paidInvoice[] = [
                     'customerId' => $client->customerId,
                     'name' => $client->customerName_chi,
-                    'zoneId' => $invoiceQ->zoneId ,
                     'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
                     'invoiceNumber' => $invoiceId,
                     'invoiceTotalAmount' => $invoiceQ->paid ,
@@ -255,7 +251,7 @@ class Invoice_CashReceiptSummary {
         }
         //補收+代收+所有當天支票
 
-        
+
         $this->_expenses = expense::select('*')->where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
         if(isset($this->_expenses))
         {
@@ -363,10 +359,10 @@ class Invoice_CashReceiptSummary {
             $i++;
         }
 
-         foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+        foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
             // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
-             $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-         }
+            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
 
 //        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
 
@@ -420,16 +416,16 @@ class Invoice_CashReceiptSummary {
     }
 
     public function registerFilter()
-    {       
-       /*
-        * Type:
-        * single-dropdown
-        * date-picker
-        * date-range
-        * single-selection
-        * multiple-selection
-        * text
-        */ 
+    {
+        /*
+         * Type:
+         * single-dropdown
+         * date-picker
+         * date-range
+         * single-selection
+         * multiple-selection
+         * text
+         */
         $zones = Zone::wherein('zoneId', explode(',', Auth::user()->temp_zone))->get();
         foreach($zones as $zone)
         {
@@ -466,21 +462,21 @@ class Invoice_CashReceiptSummary {
                 'label' => '提交',
             ],
         ];
-        
+
         return $filterSetting;
     }
-    
-    
-    public function beforeCompilingResults() 
+
+
+    public function beforeCompilingResults()
     {
         // executes codes before compiling results function is executed
     }
-    
+
     public function afterCompilingResults()
     {
         // executes codes after compiling results function is executed
     }
-    
+
     public function registerDownload()
     {
         $downloadSetting = [
@@ -507,20 +503,20 @@ class Invoice_CashReceiptSummary {
 
 
         ];
-        
+
         return $downloadSetting;
     }
-    
+
     public function outputPreview()
     {
         return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->with('backaccount',$this->_backaccount)->with('expenses',$this->_expenses)->render();
     }
-    
-    
+
+
     # PDF Section
     public function generateHeader($pdf)
     {
-    
+
         $pdf->SetFont('chi','',18);
         $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
@@ -534,7 +530,7 @@ class Invoice_CashReceiptSummary {
         $pdf->Cell(0, 10, sprintf("報告編號: %s", $this->_uniqueid), 0, 2, "R");
 
     }
-    
+
     public function outputPDF()
     {
 
@@ -548,7 +544,7 @@ class Invoice_CashReceiptSummary {
 
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
 
-       // $datamart = array_chunk($this->data, 30, true);
+        // $datamart = array_chunk($this->data, 30, true);
 
 
         $pdf->AddPage();
@@ -585,7 +581,7 @@ class Invoice_CashReceiptSummary {
         $sql = 'select count(CASE WHEN paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN paymentTerms = 2 THEN amount END) AS amount_credit, count(CASE WHEN paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN paymentTerms = 1 THEN amount END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30,1,97,96) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
         $cod = DB::select(DB::raw($sql));
         foreach($cod as $v)
-        $summary =  (array) $v;
+            $summary =  (array) $v;
 
 
 
@@ -741,7 +737,7 @@ class Invoice_CashReceiptSummary {
 //支出
 
 
-               //未收款項
+        //未收款項
         $y+=5;
         $pdf->SetFont('chi','',12);
         $pdf->setXY(10, $y);
@@ -886,9 +882,9 @@ class Invoice_CashReceiptSummary {
 
          }*/
 
-      //  $pdf->Line(10, $y, 190, $y);
-      //  $pdf->setXY(152, $y+6);
-      //  $pdf->Cell(0, 0, sprintf("總數 HK$ %s", $lt), 0, 0, "L");
+        //  $pdf->Line(10, $y, 190, $y);
+        //  $pdf->setXY(152, $y+6);
+        //  $pdf->Cell(0, 0, sprintf("總數 HK$ %s", $lt), 0, 0, "L");
         // output
         return [
             'pdf' => $pdf,
