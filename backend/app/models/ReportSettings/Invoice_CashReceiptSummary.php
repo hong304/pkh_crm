@@ -103,7 +103,7 @@ class Invoice_CashReceiptSummary {
         }
         //當天單,收支票
 
-        $invoicesQuery = Invoice::select('invoice.invoiceId','invoice.amount','customerName_chi','zoneId')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::select('invoice.invoiceId','invoice.amount','customerName_chi','zoneId','invoiceStatus')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone)->where('deliveryDate', $date);
         if($this->_shift != '-1')
             $invoicesQuery->where('shift',$this->_shift);
 
