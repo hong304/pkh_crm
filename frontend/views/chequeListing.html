@@ -149,7 +149,7 @@
     <div class="col-md-10">
         <div class="row">
             <div class="col-md-12">
-                  <p class="alert alert-success" style="font-size: 20px" ng-if="success == true" >成功新增支票!</p>
+
                 <p class="alert alert-success" style="font-size: 20px" ng-if="psuccess == true" >找數成功!!</p>
                 <p class="alert alert-success" style="font-size: 20px" ng-if="del == true" >刪除成功!!</p>
 
@@ -159,8 +159,8 @@
                             <i class="fa fa-cogs font-green-sharp"></i>
                             <span class="caption-subject font-green-sharp bold uppercase">支票列表</span>
                         </div>
-                        <div class="actions" ng-if="systemInfo.permission.add_cheque == true && action=='credit'">
-                            <a href="javascript:;" ng-click="addCheque();" class="btn btn-default btn-circle">
+                        <div class="actions" ng-if="systemInfo.permission.add_cheque == true && action!='cod'">
+                            <a href="/#/paymentCreditNewCheque" class="btn btn-default btn-circle">
                                 <i class="fa fa-plus"></i>
                                 <span class="hidden-480"> 新增支票 </span> </a>
                         </div>

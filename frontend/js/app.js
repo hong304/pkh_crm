@@ -1201,11 +1201,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
     })
 
         // Finance:
-        .state('newCheque', {
-            url: "/finance-newCheque",
+        .state('paymentCreditNewChequeController', {
+            url: "/paymentCreditNewCheque",
             templateUrl: "views/cheque_form.html",
             data: {pageTitle: '支票入帳', pageSubTitle: ''},
-            controller: "financeController",
+            controller: "paymentCreditNewChequeController",
 
             resolve: {
                 deps: ['$ocLazyLoad', function($ocLazyLoad) {
@@ -1223,7 +1223,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                             assets + '/global/plugins/datatables/all.min.js',
                             assets + '/global/scripts/datatable.js',
 
-                            'js/controllers/financeController.js',
+                            'js/controllers/paymentCreditNewChequeController.js',
                             'js/controllers/selectClientCtrl.js',
                             'js/controllers/selectGroupCtrl.js',
                         ]

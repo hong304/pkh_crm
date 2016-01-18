@@ -49,14 +49,14 @@ function delCheque(id)
 
 
 
-app.controller('financeController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state,$stateParams) {
+app.controller('paymentCreditNewChequeController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state,$stateParams) {
 
 
 
     var intarget = endpoint + '/addCheque.json';
-    var query = endpoint + '/querryClientClearance.json';
+
     var getClearance = endpoint + '/getClearance.json';
-    var genPDF = endpoint + '/generalFinanceReport.json';
+
 
 var fetchDataTimer = '';
     $scope.invoice = [];
@@ -138,26 +138,14 @@ var fetchDataTimer = '';
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
-        $scope.action = $location.search().action;
 
-        if ($location.search().payment == 'success') {
-            $scope.psuccess = true;
-        }
+        $('.date-picker').datepicker({
+            rtl: Metronic.isRTL(),
+            orientation: "left",
+            autoclose: true
+        });
 
-        else if($location.search().action == 'process'){
-            $scope.getPaymentInfo('invoice');
-        }else if($location.search().action == 'newCheque'){
-              $('.date-picker').datepicker({
-                    rtl: Metronic.isRTL(),
-                    orientation: "left",
-                    autoclose: true
-                });
-
-                $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
-        }else
-             $scope.getChequeList();
-
-
+        $('.date-picker').datepicker( "setDate" , year + '-' + month + '-' + day );
 
 
     });
@@ -194,20 +182,7 @@ var fetchDataTimer = '';
         Metronic.unblockUI();
     });
 
-    $scope.viewCheque = function(cheque_id)
-    {
-        Metronic.blockUI();
-        $http.post(query, {mode: "single", cheque_id: cheque_id})
-            .success(function(res, status, headers, config){
-                $scope.chequeDetails = res.payment;
-                $scope.receiveDate = res.payment.receive_date;
-                $scope.chequeCustomers = res.customer;
 
-                Metronic.unblockUI();
-                $("#chequeDetails").modal({backdrop: 'static'});
-
-            });
-    }
 
     $scope.clearGroup = function(){
         $scope.filterData.customer_group_id = '';
@@ -256,14 +231,6 @@ var fetchDataTimer = '';
                 $scope.updatePaidTotal();
                 }
             });
-     //   $location.url("/finance-clientClearance?action=processCustomer");
-
-          /*  $scope.cheque.clientId = $scope.filterData.clientId;
-
-            $http.post(intarget, {info: $scope.cheque})
-                .success(function(res, status, headers, config){
-                   $location.url("/chequeListing?action=success");
-                 });*/
 
 
     }
@@ -334,29 +301,6 @@ $scope.updateDiscount = function(){
 
 
 
-    $scope.delCheque = function(id){
-
-
-
-
-
-                $http({
-                    method: 'POST',
-                    url: query,
-                    data: {mode:'del',cheque_id:id}
-                }).success(function () {
-                    $scope.del = true;
-
-
-                   // $state.go('chequeListing',{action:'del'},{ reload: true, inherit: false, notify: true });
-
-                    $scope.getChequeList();
-                });
-
-
-
-
-    }
 
 
     $scope.updateDeliveryDate = function()
@@ -400,71 +344,7 @@ $scope.updateDiscount = function(){
         $scope.getChequeList();
     }
 
-    $scope.getChequeList = function()
-    {
 
-
-        $(document).ready(function() {
-
-            if(!$scope.firstload)
-            {
-                $("#datatable_ajax").dataTable().fnDestroy();
-            }
-            else
-            {
-                $scope.firstload = false;
-            }
-
-
-            $('#datatable_ajax').dataTable({
-
-                // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
-
-                "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
-
-                "bServerSide": true,
-
-                "ajax": {
-                    "url": query, // getClientClearance
-                    "type": 'POST',
-                    "data": {mode: "getChequeList",action: $location.search().action,filterData: $scope.filterData},
-                    "xhrFields": {withCredentials: true}
-                    },
-                "iDisplayLength": 25,
-                "pagingType": "full_numbers",
-                "language": {
-                    "lengthMenu": "顯示 _MENU_ 項結果",
-                    "zeroRecords": "沒有匹配結果",
-                    "sEmptyTable":     "沒有匹配結果",
-                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
-                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
-                    "infoFiltered": "(filtered from _MAX_ total records)",
-                    "Processing":   "處理中...",
-                    "Paginate": {
-                        "First":    "首頁",
-                        "Previous": "上頁",
-                        "Next":     "下頁",
-                        "Last":     "尾頁"
-                    }
-                },
-                "columns": [
-                    { "data": "customID","width":"10%" },
-                    { "data": "customName","width":"25%" },
-                    { "data": "paymentReceiveMoneyZone","width":"8%" },
-                    { "data": "customGroup","width":"10%" },
-                    { "data": "ref_number","width":"8%" },
-                    { "data": "amount","width":"8%" },
-                    { "data": "receive_date","width":"8%" },
-                    { "data": "start_date","width":"8%" },
-                    { "data": "end_date","width":"8%" },
-                    { "data": "link","width":"8%" },
-
-
-                ]
-
-            });
-        });
-    }
 /*
     $scope.updateDataSet1 = function($mode)
     {
