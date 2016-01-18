@@ -707,9 +707,11 @@ class OrderController extends BaseController
 
         $unlock = Customer::select('unlock')->where('customerId',$customerId)->first();
         if($unlock->unlock)
-            return Response::json(3);
+            return Response::json(0);
+        else if($count>2)
+            return Response::json(1);
         else
-            return Response::json($count);
+            return Response::json(0);
     }
 
     public function backToStock($invoiceItems){

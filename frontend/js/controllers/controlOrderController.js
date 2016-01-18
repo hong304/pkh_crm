@@ -266,11 +266,11 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
 if(!$scope.systeminfo.permission.sa_up)
         $http.post(endpoint + '/getNoOfOweInvoices.json', {customerId: $scope.order.clientId})
             .success(function(res){
-                if(res > 5){
+                if(res == 1){
                     Metronic.blockUI({
                         target: '#orderportletbody',
                         boxed: true,
-                        message: '此客戶的欠單數量已超過5張,不能開單'
+                        message: '此客戶的欠單數量已超過兩張,不能開單'
                     });
                 }else{
                     $scope.getSameDayInvoice();
