@@ -125,8 +125,6 @@ class ReceiveMan
      public function save()
      {
 
-
-
          $this->prepare_items();
          if(isset($this->items))
          {
@@ -161,6 +159,11 @@ class ReceiveMan
 
                  $item->save();
                }
+
+                $po = Purchaseorder::where('poCode',$this->items[0]['poCode'])->first();
+                $po->poStatus = 20;
+                $po->save();
+
                 return[
                     'result' => true,
                     'action' => 'create',

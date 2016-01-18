@@ -130,6 +130,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
         approverid: 0,
         deleted: '0',
         currencyId: '',
+        location: ''
     };
     $scope.productTimerStructure = {
         openPanel: '',
@@ -323,21 +324,28 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                 $scope.order.supplierName = SharedService.supplierName;
                 $scope.order.countryName = SharedService.countryName;
 
-                if(SharedService.countryId == 'HK')
-                    $scope.order.currencyEcho = 'HKD';
+
+
+
+                if(SharedService.location == '1'){
+                    var pos = $scope.allCurrencyList.map(function(e) {
+                        return e.currencyId;
+                    }).indexOf('HKD');
+                    $scope.order.currencyEcho = $scope.allCurrencyList[pos];
+                }
 
                 $scope.order.address = SharedService.address;
                 $scope.order.contactPerson_1 = SharedService.contactPerson_1;
                 $scope.order.status = SharedService.status;
                 $scope.order.location = SharedService.location;
                 $scope.order.payment = SharedService.payment;
-                $scope.order.location = SharedService.location;
                 $scope.displayName = $scope.order.supplierCode + " (" + $scope.order.supplierName + ")";
                 if ($scope.order.supplierCode === undefined)
                 {
                     $scope.displayName = "";
                 }
-               
+
+
 
                 for (var t = 0; t < $scope.countryDataList.length; t++)
                 {

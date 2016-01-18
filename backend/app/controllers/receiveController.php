@@ -33,7 +33,7 @@ class receiveController extends BaseController {
         if (Input ::get('location') != '') {
             $location = Input ::get('location');
         }
-        $po = Purchaseorder::select('poCode', 'suppliers.supplierName', 'poDate', 'etaDate', 'phone_1', 'suppliers.status')->where('suppliers.supplierCode', $id)->where('suppliers.location', $location)->where('poStatus', '!=', '99')
+        $po = Purchaseorder::select('poCode', 'suppliers.supplierName', 'poDate', 'etaDate', 'phone_1', 'suppliers.status')->where('suppliers.supplierCode', $id)->where('suppliers.location', $location)->where('poStatus', '=','1')
                 ->leftJoin('suppliers', function($join) {
                     $join->on('suppliers.supplierCode', '=', 'purchaseorders.supplierCode');
                 })

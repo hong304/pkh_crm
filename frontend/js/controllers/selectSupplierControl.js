@@ -91,7 +91,7 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
         SharedService.setValue('status', c.status, 'handleSupplierUpdate');
         SharedService.setValue('payment', c.payment, 'handleSupplierUpdate');
         SharedService.setValue('location', c.location, 'handleSupplierUpdate');
-        SharedService.setValue('location', c.countryId, 'handleSupplierUpdate');
+        SharedService.setValue('country', c.countryId, 'handleSupplierUpdate');
 
          
     	
@@ -192,6 +192,7 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
 	        ).
 	        success(function(res, status, headers, config) {
 	        	$scope.clientSuggestion = res.aaData;
+                console.log($scope.clientSuggestion);
                   csuggestion = -1;
              
 

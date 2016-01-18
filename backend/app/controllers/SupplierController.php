@@ -23,7 +23,7 @@ class SupplierController extends BaseController
              //select(['ipfId','from', 'to', 'size']);
             
             if(Auth::user()->can('view_local')){
-                $supplier = Supplier::select(['countryId','supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
+                $supplier = Supplier::select(['suppliers.countryId','supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
                            ->leftJoin('countries', function($join) {
                 $join->on('countries.countryId', '=','suppliers.countryId');
             })
@@ -31,7 +31,7 @@ class SupplierController extends BaseController
             ->Orderby($filterId,$filterOrder);
             }else
             {
-                $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
+                $supplier = Supplier::select(['suppliers.countryId','supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
                 ->leftJoin('countries', function($join) {
                     $join->on('countries.countryId', '=','suppliers.countryId');
                 })
