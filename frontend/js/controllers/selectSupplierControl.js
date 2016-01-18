@@ -15,8 +15,8 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
         laodCountry();
       loadCurrency();
     if(customerTableKeyDownExist == false) {
-    $("#selectclientmodel").keydown(function (e) {
-        if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true) {
+    $("#selectSuppliermodel").keydown(function (e) {
+        if(($("#selectSuppliermodel").data('bs.modal') || {}).isShown == true) {
             if (e.keyCode == 38) // up
             {
                 e.preventDefault();
@@ -34,7 +34,7 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
             } else if (e.keyCode == 39) {
                 e.preventDefault();
                 $("#suggestion_row1_" + csuggestion).css('background', '');
-                if(($("#selectclientmodel").data('bs.modal') || {}).isShown == true)
+                if(($("#selectSuppliermodel").data('bs.modal') || {}).isShown == true)
                     $("#suggestion_row1_" + csuggestion).click();
                 console.log(csuggestion);
                 csuggestion = -1;
@@ -91,6 +91,8 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
         SharedService.setValue('status', c.status, 'handleSupplierUpdate');
         SharedService.setValue('payment', c.payment, 'handleSupplierUpdate');
         SharedService.setValue('location', c.location, 'handleSupplierUpdate');
+        SharedService.setValue('location', c.countryId, 'handleSupplierUpdate');
+
          
     	
     	//SharedService.setValue('clientSelectionCompleted', true, 'doneCustomerUpdate');

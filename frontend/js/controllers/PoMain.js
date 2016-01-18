@@ -314,12 +314,18 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
 
             $scope.$on('handleSupplierUpdate', function () {
                 // received client selection broadcast. update to the invoice portlet
+
+
                 $scope.an = true;
                 $scope.countryDataList = SharedService.allCountry;
                 $scope.allCurrencyList = SharedService.allCurrency;
                 $scope.order.supplierCode = SharedService.supplierCode;
                 $scope.order.supplierName = SharedService.supplierName;
                 $scope.order.countryName = SharedService.countryName;
+
+                if(SharedService.countryId == 'HK')
+                    $scope.order.currencyEcho = 'HKD';
+
                 $scope.order.address = SharedService.address;
                 $scope.order.contactPerson_1 = SharedService.contactPerson_1;
                 $scope.order.status = SharedService.status;

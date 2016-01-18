@@ -23,7 +23,7 @@ class SupplierController extends BaseController
              //select(['ipfId','from', 'to', 'size']);
             
             if(Auth::user()->can('view_local')){
-                $supplier = Supplier::select(['supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
+                $supplier = Supplier::select(['countryId','supplierCode','supplierName','address','phone_1','phone_2','email','countries.countryName','creditDay','creditLimit','status','contactPerson_1','contactPerson_2','suppliers.updated_at','suppliers.updated_by','payment','location'])
                            ->leftJoin('countries', function($join) {
                 $join->on('countries.countryId', '=','suppliers.countryId');
             })
@@ -51,19 +51,13 @@ class SupplierController extends BaseController
          //To query all together , use >where(function ($query)
 
              $supplier->where(function ($query) use ($filter) {
-                $query
-                    ->where('supplierName', 'LIKE', '%' . $filter['name'] . '%')
+                $query->where('supplierName', 'LIKE', '%' . $filter['name'] . '%')
                     ->where(function ($query) use ($filter) 
                      {
-                        $query->orwhere('phone_1', 'LIKE', '%' . $filter['phone'] . '%')
-                              ->orwhere('phone_2', 'LIKE', '%' . $filter['phone'] . '%');
+                        $query->orwhere('phone_1', 'LIKE', $filter['phone'] . '%')
+                              ->orwhere('phone_2', 'LIKE', $filter['phone'] . '%');
                      })
-                    ->where(function ($query) use ($filter) 
-                     {
-                        $query->orwhere('contactPerson_1', 'LIKE', '%' . $filter['contact'] . '%')
-                               ->orwhere('contactPerson_2', 'LIKE', '%' . $filter['contact'] . '%');
-                     })
-                    ->where('supplierCode', 'LIKE', '%' . $filter['id'] . '%');
+                    ->where('supplierCode', 'LIKE', $filter['id'] . '%');
                     
             });
             
