@@ -1,11 +1,11 @@
 'use strict';
 
 
-function editCountry(id)
+function delPayment(id)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
     scope.$apply(function () {
-        scope.editCountry(id);
+        scope.delPayment(id);
     });
 }
 
@@ -165,7 +165,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
         }
 
-    $scope.editCountry = function(id){
+    $scope.delPayment = function(id){
         $http.post(endpoint + "/delPayment.json", { id: id})
             .success(function(res, status, headers, config){
                 $scope.del = res;
