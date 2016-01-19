@@ -46,17 +46,6 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
     });
 }
 
-/* var isCtrl = false;$(document).keyup(function (e) {
-     if(e.which == 17) isCtrl=false;
- }).keydown(function (e) {
-     if(e.which == 17) isCtrl=true;
-     if(e.which == 83 && isCtrl == true) {
-         alert('Keyboard shortcuts + JQuery are even more cool!');
-         return false;
-     }
- });*/
-
-
 
 
     $scope.$on('$viewContentLoaded', function() {   
