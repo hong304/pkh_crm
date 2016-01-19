@@ -33,7 +33,7 @@ class OrderController extends BaseController
 
 
         $itemIds = [];
-
+        $dirtyItem = [];
         $product = Input::get('product');
 
 
@@ -116,6 +116,89 @@ class OrderController extends BaseController
             }
         }
 
+
+      foreach ($product as $p) {
+
+            if($p['qty'] == 0)
+                return [
+                    'result' => false,
+                    'status' => 0,
+                    'invoiceNumber' => $order['invoiceId'],
+                    'invoiceItemIds' => 0,
+                    'message' => $p['code'].':貨品數量不能等於零',
+                ];
+
+
+             if ($p['deleted'] == 0 && $p['qty'] != 0){
+
+                 $dirty = false;
+
+                     if ($p['dbid']) {
+
+                         $item = InvoiceItem::where('invoiceItemId', $p['dbid'])->first();
+
+                         $item->productId = $p['code'];
+                         $item->productUnitName = trim($p['unit']['label']);
+                         $item->productQty = $p['qty'];
+
+                         if ($item->isDirty()) {
+
+                             foreach ($item->getDirty() as $attribute => $value) {
+                                 if (!in_array($attribute, array('backgroundcode'))) {
+                                     $dirtyItem[] = [
+                                        'invoiceItemId'=> $item->getOriginal('invoiceItemId'),
+                                        'productId' => $item->getOriginal('productId')
+                                     ];
+
+                                     if ($order['status'] != '96' && $order['status'] != '97') {
+                                         $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId',$item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
+                                         if (count($invoiceitembatchs) > 0)
+                                             foreach ($invoiceitembatchs as $k1 => $v1) {
+                                                 $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
+                                                 $receivings->good_qty += $v1->unit;
+                                                 $receivings->save();
+                                                 $v1->delete();
+                                             }
+                                     }
+
+                                    $dirty = true;
+                                 }
+                             }
+                         }
+                     }
+
+
+                     if ($dirty || !$p['dbid']) {
+                         $receivings = Receiving::where('productId', $p['code'])->where('good_qty', '>=', $this->normalizedUnit($p))->first();
+                         if (count($receivings) == null) {
+
+                             if ($order['status'] != '96' && $order['status'] != '97') {
+                                 if(count($dirtyItem)>0)
+                                     foreach($dirtyItem as $v){
+                                         $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $v['invoiceItemId'])->where('productId', $v['productId'])->onlyTrashed()->get();
+                                         if (count($invoiceitembatchs) > 0)
+                                             foreach ($invoiceitembatchs as $k1 => $v1) {
+                                                 $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
+                                                 $receivings->good_qty -= $v1->unit;
+                                                 $receivings->save();
+                                                 $v1->restore();
+                                             }
+                                     }
+                             }
+
+                             return [
+                                 'result' => false,
+                                 'status' => 0,
+                                 'invoiceNumber' => '',
+                                 'invoiceItemIds' => 0,
+                                 'message' => $p['code'] . '沒有足夠的貨量',
+                             ];
+                         }
+                     }
+
+             }
+        }
+
         if ($order['invoiceId'] != '') {
 
             if (count($itemIds) == 0 && !$have_item)
@@ -169,117 +252,7 @@ class OrderController extends BaseController
                 ];
         }
 
-
-
-      foreach ($product as $p) {
-
-            if($p['qty'] == 0)
-                return [
-                    'result' => false,
-                    'status' => 0,
-                    'invoiceNumber' => $order['invoiceId'],
-                    'invoiceItemIds' => 0,
-                    'message' => $p['code'].':貨品數量不能等於零',
-                ];
-
-
-             if ($p['deleted'] == 0 && $p['qty'] != 0){
-
-                 $dirty = false;
-
-                     if ($p['dbid']) {
-
-                         $item = InvoiceItem::where('invoiceItemId', $p['dbid'])->first();
-
-                         $item->productId = $p['code'];
-                         $item->productUnitName = trim($p['unit']['label']);
-                         $item->productQty = $p['qty'];
-
-                         if ($item->isDirty()) {
-
-                             foreach ($item->getDirty() as $attribute => $value) {
-                                 if (!in_array($attribute, array('backgroundcode'))) {
-
-                                   if ($order['status'] != '96' && $order['status'] != '97') {
-                                         $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
-                                         if (count($invoiceitembatchs) > 0)
-                                             foreach ($invoiceitembatchs as $k1 => $v1) {
-                                                 $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
-                                                 $receivings->good_qty += $v1->unit;
-                                                 $receivings->save();
-                                                 $v1->delete();
-                                             }
-                                     }
-
-                                     $dirty = true;
-                                 }
-                             }
-                         }
-                     }
-
-
-                     if ($dirty || !$p['dbid']) {
-                         $receivings = Receiving::where('productId', $p['code'])->where('good_qty', '>=', $this->normalizedUnit($p))->first();
-                         if (count($receivings) == null) {
-                             return [
-                                 'result' => false,
-                                 'status' => 0,
-                                 'invoiceNumber' => '',
-                                 'invoiceItemIds' => 0,
-                                 'message' => $p['code'] . '沒有足夠的貨量',
-                             ];
-                         }
-                     }
-
-             }
-
-
-
-        }
-
-
-
-
         foreach ($product as $p) {
-            /*  if($p!=0){
-
-                  $overflow = false;
-                  $getQty = invoiceitem::leftJoin('invoice','invoice.invoiceId','=','invoiceitem.invoiceId')->leftJoin('customer','invoice.customerId','=','customer.customerId')->where('invoice.customerId',$order['clientId'])->where('deliveryDate',strtotime($order['deliveryDate']))->where('productId',$p['code'])->get();//sum('productQty');
-                  $maxQty = product::select('maxSellingQty')->where('productId',$p['code'])->first();
-  pd('s');
-                  $carton = ($maxQty['productPacking_carton'] == false) ? 1:$maxQty['productPacking_carton'];
-                  $inner = ($maxQty['productPacking_inner']==false) ? 1:$maxQty['productPacking_inner'];
-                  $unit = ($maxQty['productPacking_unit'] == false) ? 1 : $maxQty['productPacking_unit'];
-
-                  if ($p['unit'] == 'carton') {
-                      if($p['qty']*$inner*$unit > $maxQty['maxSellingQty']-$getQty)
-                          $overflow = true;
-                  }
-
-                  if ($p['unit'] == 'inner') {
-                      if($carton*$p['qty']*$unit > $maxQty['maxSellingQty']-$getQty)
-                          $overflow = true;
-                  }
-
-                  if ($p['unit'] == 'unit') {
-                      if($carton*$inner*$p['qty'] > $maxQty['maxSellingQty']-$getQty)
-                          $overflow = true;
-                  }
-
-                  if($overflow)
-                      return [
-                          'result' => false,
-                          'status' => 0,
-                          'invoiceNumber' => 0,
-                          'invoiceItemIds' => 0,
-                          'message' => $p['code'].'超過每日下單數量,限制為:'.$maxQty['maxSellingQty'],
-                      ];
-
-                  if(!$overflow)
-                      pd($getQty);
-              } */
-
-
             $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'], $p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted'],$p['productPacking']);
         }
         $result = $ci->save();
