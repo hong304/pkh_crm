@@ -1,5 +1,15 @@
 'use strict';
 
+function editPo(poId,location)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.viewPurchaseOrder(poId,location);
+        scope.viewUpdateRecord(poId,location);
+    });
+}
+
+
 app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state) {
 
 
@@ -86,6 +96,48 @@ app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService,
         $scope.updateDataSet();
     }
 
+
+    $scope.viewPurchaseOrder = function (poId,location)
+    {
+        $http.post($scope.endpoint + "/queryPo.json", {
+            poCode: poId, mode: 'single'
+        }).success(function (data) {
+            console.log(data);
+            $scope.order = data.po[0];
+            $scope.invoiceinfo.location = data.po[0].location;
+            $scope.invoiceinfo.poCode = data.po[0].poCode;
+            $scope.invoiceinfo.poDate = data.po[0].poDate;
+            $scope.invoiceinfo.etaDate = data.po[0].etaDate;
+            $scope.invoiceinfo.actualDate = data.po[0].actualDate;
+            $scope.invoiceinfo.receiveDate = data.po[0].receiveDate;
+            $scope.invoiceinfo.remark = data.po[0].poRemark;
+            $scope.invoiceinfo.poReference = data.po[0].poReference;
+            $scope.invoiceinfo.poStatus = data.po[0].poStatus;
+            $scope.invoiceinfo.poAmount = data.po[0].poAmount;
+            $scope.invoiceinfo.supplierName = data.po[0].supplierName;
+            $scope.invoiceinfo.currencyName = data[0].currencyName;
+            $scope.invoiceinfo.invoice_item = data.items;
+            $scope.invoiceinfo.invoice = data.po[0];
+            //    $scope.invoiceinfo.unitprice = data.items[0].unitprice;
+
+            $scope.invoiceinfo.allowance_1 = data.po[0].allowance_1;
+            $scope.invoiceinfo.allowance_2 = data.po[0].allowance_2;
+            $scope.invoiceinfo.discount_1 = data.po[0].discount_1;
+            $scope.invoiceinfo.discount_2 = data.po[0].discount_2;
+            $scope.invoiceinfo.poAmount = data.po[0].poAmount;
+            $scope.invoiceinfo.totalsAmount = 0;
+            for(var i = 0;i<data.items.length;i++)
+            {
+                $scope.invoiceinfo.totalsAmount += (data.items[i].productQty * data.items[i].unitprice * (100-data.items[i].discount_1)/100 * (100-data.items[i].discount_2)/100 * (100-data.items[i].discount_3)/100) - data.items[i].allowance_1 - data.items[i].allowance_2 - data.items[i].allowance_3;
+            }
+        })
+        if(location == 1)
+            $scope.locationShow = true;
+        else if(location == 2)
+            $scope.locationShow = false;
+        $("#poDetails").modal({backdrop: 'static'});
+
+    }
     $scope.updateDataSet = function()
     {
 

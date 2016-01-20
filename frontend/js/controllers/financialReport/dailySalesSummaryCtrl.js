@@ -34,6 +34,14 @@ app.controller('dailySalesSummaryCtrl', function($scope, $http, SharedService, $
             autoclose: true
         });
         $(".date").datepicker( "setDate", year + '-' + month + '-' + day );
+
+        $(".date").datepicker({
+            rtl: Metronic.isRTL(),
+            orientation: "left",
+            autoclose: true
+        });
+        $(".date").datepicker( "setDate", year + '-' + month + '-' + day );
+
         $scope.updateDataSet();
     });
 
