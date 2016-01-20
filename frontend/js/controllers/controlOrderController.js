@@ -1008,9 +1008,7 @@ else{
 
         //   var currentDate = new Date(new Date().getTime());
         //    var day = currentDate.getDate();
-if($scope.order.invoiceNumber !='' && $scope.order.invoiceId == ''){
-    $scope.submitOrder(v);
-}else{
+
         var currentDate = new Date(new Date().getTime());
         var day = currentDate.getDate();
         day = ("0" + day).slice(-2);
@@ -1060,7 +1058,6 @@ if($scope.order.invoiceNumber !='' && $scope.order.invoiceId == ''){
         else
             $scope.submitOrder(v);
 
-}
     }
 
     $scope.checkIdexist = function(){
