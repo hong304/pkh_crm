@@ -564,7 +564,7 @@ class financialReportController extends BaseController
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
     }else{
-
+            ini_set('memory_limit', '-1');
             $invoices = Invoice::whereIn('invoiceStatus',['2','20','30','98'])->whereBetween('deliveryDate',[$this->_date, $this->_date2])->get();
 
 
