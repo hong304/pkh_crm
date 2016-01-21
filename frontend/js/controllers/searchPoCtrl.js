@@ -242,39 +242,7 @@ app.controller('searchPoCtrl', function ($scope, $rootScope, $http, SharedServic
        window.open(endpoint + "/printPo.json?poCode=" + poCode + "&lang=" + lang); //window open is a new tab 
     }
 
-    $scope.goEdit = function (invoiceId)
-    {
-        $(document).ready(function () {
-            if ($scope.invoiceinfo.poStatus == 99)
-            {
-                alert("此記錄無法修改");
 
-            } else
-            {
-                $location.url("/PoMain?poCode=" + invoiceId);
-            }
-        });
-        
-    }
-
-    $scope.voidPo = function (poCode)
-    {
-        if ($scope.invoiceinfo.poStatus == 1)
-        {
-            $http.post($scope.endpoint + "/voidPo.json", {
-                poCode: poCode,
-                updateStatus: 'delete'
-            }).success(function (data) {
-                $scope.updateDataSet();
-                $scope.invoiceinfo.poStatus = 99;
-                alert("這個記錄被刪除");
-            });
-        } else
-        {
-            alert("此記錄無法刪除");
-        }
-
-    }
     
 
 

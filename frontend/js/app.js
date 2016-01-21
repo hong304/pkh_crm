@@ -561,6 +561,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 
                             'js/controllers/queryPO.js',
                             'js/controllers/selectSupplierControl.js',
+                            'js/controllers/selectProductCtrl.js',
                         ]
                     });
                 }]

@@ -32,6 +32,20 @@ app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService,
         startPodate:'',
     };
 
+    $scope.invoiceinfo = {
+        poCode: '',
+        poDate: '',
+        etaDate: '',
+        actualDate: '',
+        receiveDate: '',
+        remark: '',
+        poStatus: '',
+        poAmount: '',
+        invoice_item: '',
+        invoice: '',
+        location:'',
+    };
+
     var today = new Date();
     var plus = today.getDay() == 6 ? 3 : 2;
     var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
@@ -96,7 +110,48 @@ app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService,
         $scope.updateDataSet();
     }
 
+    $scope.viewUpdateRecord = function(poId)
+    {
+        $http.post($scope.endpoint + "/queryPoUpdate.json", {
+            poCode: poId
+        }).success(function (data) {
+            $scope.poaduit = data;
+        });
+    }
 
+    $scope.goEdit = function (invoiceId)
+    {
+        $(document).ready(function () {
+            if ($scope.invoiceinfo.poStatus == 99)
+            {
+                alert("此記錄無法修改");
+
+            } else
+            {
+                $location.url("/PoMain?poCode=" + invoiceId);
+            }
+        });
+
+    }
+
+    $scope.voidPo = function (poCode)
+    {
+        if ($scope.invoiceinfo.poStatus == 1)
+        {
+            $http.post($scope.endpoint + "/voidPo.json", {
+                poCode: poCode,
+                updateStatus: 'delete'
+            }).success(function (data) {
+                $scope.updateDataSet();
+                $scope.invoiceinfo.poStatus = 99;
+                alert("這個記錄被刪除");
+            });
+        } else
+        {
+            alert("此記錄無法刪除");
+        }
+
+    }
     $scope.viewPurchaseOrder = function (poId,location)
     {
         $http.post($scope.endpoint + "/queryPo.json", {
