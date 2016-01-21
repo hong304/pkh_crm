@@ -77,6 +77,25 @@
             </div>
         </div>
 
+        <!-- Status -->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">折扣</span>
+                </div>
+
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="radio-list">
+                        <label><input ng-model="filterData.discountStatus" data-ng-change="updateStatus();" type="radio" name="discountStatus"  value="" checked> Normal</label>
+                        <label><input ng-model="filterData.discountStatus" data-ng-change="updateStatus();" type="radio" name="discountStatus"  value="overpaid"> OverPaid</label>
+                        <label><input ng-model="filterData.discountStatus" data-ng-change="updateStatus();" type="radio" name="discountStatus"  value="underpaid"> UnderPaid</label>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <!-- Zone -->
