@@ -146,11 +146,15 @@ class PaymentController extends BaseController
                 $i->paid += $paidinfo['paid'];
                 $i->invoiceStatus = Input::get('paymentStatus');
 
+                if($paidinfo['paid'] > $i->paid){
+
+                }
+
                 if(Input::get('paymentStatus') == 30)
                     $i->manual_complete = 1;
 
                 $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
-                if ($discount_taken > 0) {
+                if ($discount_taken != 0) {
                     $i->discount = 1;
                     $i->discount_taken += $discount_taken;
                 }
@@ -181,7 +185,7 @@ class PaymentController extends BaseController
                     $i->manual_complete = 1;
 
                 $i->receiveMoneyZone = $paidinfo['zoneId']['zoneId'];
-                if ($discount_taken > 0) {
+                if ($discount_taken != 0) {
                     $i->discount = 1;
                     $i->discount_taken += $discount_taken;
                 }

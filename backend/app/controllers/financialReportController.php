@@ -714,15 +714,15 @@ class financialReportController extends BaseController
         $this->_date2 = (isset($filter['datepicker2'])) ? strtotime($filter['datepicker2']) : strtotime("today");
 
 
-            if ($filter['groupName'] == '' && $filter['name'] == '' && $filter['phone'] == '' && $filter['customerId'] == '') {
-            $empty = true;
-            $this->data = [];
+           /* if ($filter['groupName'] == '' && $filter['name'] == '' && $filter['phone'] == '' && $filter['customerId'] == '') {
+                $empty = true;
+                $this->data = [];
             } else {
-            $empty = false;
+                $empty = false;
             }
  
         
-        if (!$empty) {
+        if (!$empty) {*/
               $invoices = Invoice::leftJoin('Customer', function($join) {
                     $join->on('Customer.customerId', '=', 'Invoice.customerId');
                })->leftJoin('customer_groups', function($join) {
@@ -754,14 +754,14 @@ class financialReportController extends BaseController
                     ];
 
               }
-              $this->data = $this->_unPaid;
-             $this->outputSalesSummaryExcel($this->data,$filter['paymentTerm'],$filter['datepicker2']);
-        }else echo "這查詢沒有資料";
+             // $this->data = $this->_unPaid;
+             $this->outputSalesSummaryExcel($this->_unPaid,$filter['paymentTerm'],$filter['datepicker2']);
+       // }else echo "這查詢沒有資料";
     }
     
     
     public function outputSalesSummaryExcel($dataInput,$paymentTerms,$date) {
-        
+
         $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
         $dateRange = ['F', 'G', 'H', 'I', 'J', 'K'];
 
@@ -774,32 +774,39 @@ class financialReportController extends BaseController
 
         foreach ($time_interval as $v) {
             if ($first) {
-                $time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime($ymd . "-" . $v[0] . " month"));
-                $time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime($ymd . "-" . $v[1] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
+                $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
                 $first = false;
             } else {
-                $time[date("Y-m", mktime(0, 0, 0, $m-$v[1], 1, $y))][0] = date("Y-m-01", mktime(0, 0, 0, $m-$v[0], 1, $y));
-                $time[date("Y-m", mktime(0, 0, 0, $m-$v[1], 1, $y))][1] = date("Y-m-t", mktime(0, 0, 0, $m-$v[1], 1, $y));
+                $time[date("Y-m", strtotime("-" . $v[1]*31 . " days "))][0] = date("Y-m-01", strtotime("-" . $v[0]*31 . " days"));
+                $time[date("Y-m", strtotime("-" . $v[1]*31 . " days"))][1] = date("Y-m-t", strtotime("-" . $v[1]*31 . " days"));
             }
         }
 
 
 
-        $month[0] = substr($time[key(array_slice($time, -6, 1, true))][0],0,7);
+        /*$month[0] = substr($time[key(array_slice($time, -6, 1, true))][0],0,7);
         $month[1] = substr($time[key(array_slice($time, -5, 1, true))][0],0,7);
         $month[2] = substr($time[key(array_slice($time, -4, 1, true))][0],0,7);
         $month[3] = substr($time[key(array_slice($time, -3, 1, true))][0],0,7). ' to '. substr($time[key(array_slice($time, -3, 1, true))][1],0,7);
         $month[4] = substr($time[key(array_slice($time, -2, 1, true))][0],0,7). ' to '. substr($time[key(array_slice($time, -2, 1, true))][1],0,7);
-        $month[5] = key(array_slice($time, -1, 1, true)) .' or over';
+        $month[5] = key(array_slice($time, -1, 1, true)) .' or over';*/
+        $month[0] = key(array_slice($time, -6, 1, true));
+        $month[1] = key(array_slice($time, -5, 1, true));
+        $month[2] = key(array_slice($time, -4, 1, true));
+        $month[3] = key(array_slice($time, -3, 1, true));
+        $month[4] = key(array_slice($time, -2, 1, true));
+        $month[5] = key(array_slice($time, -1, 1, true));
 
        // pd($month);
 
         if($dataInput !== ""){
         foreach ($dataInput as $i => $v) {
-            $storeDate[$i] = $v['customer']; 
+            $storeDate[$i] = $v['customer'];
         }
-            if(isset($storeDate))
-        {
+
+
+        if(isset($storeDate)){
         $total = 0;
         foreach ($storeDate as $kk => $client) {
 
@@ -807,10 +814,13 @@ class financialReportController extends BaseController
             $data = [];
 
             foreach ($time as $k => $v) {
-                if($paymentTerms == 1)
+                if($paymentTerms == 1) //COD
                    $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('invoiceStatus',20)->where('paymentTerms', $paymentTerms)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $kk)->OrderBy('deliveryDate')->get();
                 else
                    $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('invoiceStatus','!=',30)->where('paymentTerms', $paymentTerms)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $kk)->OrderBy('deliveryDate')->get();
+
+                if(count($data[$k])==null)
+                    $this->_monthly[$k]['byCustomer'][$kk] = 0;
 
                 foreach ($data[$k] as $invoice) {
                     $customerId = $invoice->customerId;
@@ -821,7 +831,7 @@ class financialReportController extends BaseController
                         $this->_monthly[$k]['byCustomer'][$customerId] = 0;
 
                     $this->_monthly[$k]['byCustomer'][$customerId] += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
-                    $total += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
+                   // $total += ($invoice->realAmount - ($invoice->paid + $invoice->discount_taken));
                     $this->_monthly['id'][$customerId] = $customerId;
                     $this->_monthly['name'][$customerId] = $customerName;
                     $this->_monthly['diliveryZone'][$customerId] = $deliveryZone;
@@ -829,7 +839,7 @@ class financialReportController extends BaseController
             }
         }
         
-     //   pd($this->_monthly);
+      // pd($this->_monthly);
 
         $i = 5;
         require_once './Classes/PHPExcel/IOFactory.php';
@@ -857,7 +867,7 @@ class financialReportController extends BaseController
         $c = $j;
         $d = $j;
         
-      //  pd($this->_monthly);
+
         
         foreach ($this->_monthly as $ks => $vs) {
                 

@@ -325,10 +325,17 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                         label: "仍需處理",
                         className: "btn-primary",
                         callback: function() {
+
+                            var discount_taken = 0;
+                            if($scope.filterData.cashAmount>0)
+                                discount_taken = owe - $scope.filterData.cashAmount;
+                            else if ($scope.filterData.paid>0)
+                                discount_taken = owe - $scope.filterData.paid;
+
                            $http({
                                 method: 'POST',
                                 url: query,
-                                data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'30'}
+                                data: {paidinfo:$scope.filterData,mode:'posting',discount:discount_taken,paymentStatus:'30'}
                             }).success(function () {
                                 $('#invoicePayment').modal('hide');
                                 Metronic.alert({
