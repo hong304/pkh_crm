@@ -93,6 +93,7 @@ class rePackController extends BaseController {
 
             $items = Input::get('items');
             $outProduct = Input::get('outProduct');
+            $totalQty = 0;
 
         foreach ($items as $k => $v){
             if($v['deleted'] == 0){
@@ -116,7 +117,7 @@ class rePackController extends BaseController {
                         $ava_qty = $undeductUnit;
                         $undeductUnit = 0;
                     }
-
+                    $totalQty += $actual_deduct_qty;
                     $receiving->good_qty -= $actual_deduct_qty;
                     $receiving->save();
 
@@ -131,7 +132,8 @@ class rePackController extends BaseController {
                         }
                     $adjusts->receivingId = 'Re'.$id;
                     $adjusts->adjustType = 1;
-                    $adjusts->adjust_qty = $ava_qty;
+                    $adjusts->good_qty = 0;
+                    $adjusts->adjusted_good_qty = $ava_qty;
                     $adjusts->productId = $v['productId'];
                     $adjusts->save();
 
