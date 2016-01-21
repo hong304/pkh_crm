@@ -250,9 +250,9 @@ class PaymentController extends BaseController
 
             if($filter['discountStatus'] !=''){
                 if($filter['discountStatus'] == 'overpaid')
-                    $invoice->where('discount_taken','>',0);
-                elseif($filter['discountStatus'] == 'underpaid')
                     $invoice->where('discount_taken','<',0);
+                elseif($filter['discountStatus'] == 'underpaid')
+                    $invoice->where('discount_taken','>',0);
             }
 
             $invoices = $invoice->orderby('deliveryDate', 'asc');

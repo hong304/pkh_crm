@@ -598,6 +598,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
                     { "data": "customerName",  "width":"15%"},
                     { "data": "amount", "width":"5%" },
                     { "data": "remain", "width":"7%" },
+                    { "data": "discount_taken", "width":"7%" },
                     { "data": "invoiceStatusText", "width":"6%" },
                      { "data": "link", "width":"5%" },
                     { "data": "details", "width":"5%" }
