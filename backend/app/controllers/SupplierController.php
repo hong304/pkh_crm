@@ -160,8 +160,6 @@ class SupplierController extends BaseController
          $rules = [
 	            'supplierName' => 'required',
 	            'creditDay' => 'min:0',
-                    'creditLimit' => 'min:0',
-                    'creditAmount' => 'min:0',
                     'countryId' => 'required',
                     'status'=> 'required',
                     'payment' => 'required',

@@ -61,7 +61,7 @@ app.controller('supplierMain', function($scope, $rootScope, $http, SharedService
                         {
                             $("#creditDay,#creditLimit,#creditAmount").hide();
                             $scope.customerInfo_def.creditDay = 0;
-                            $scope.customerInfo_def.creditLimit = 0;
+                            $scope.customerInfo_def.creditLimit = '';
                              $scope.customerInfo_def.creditAmount = 0;
                         }
                   });
