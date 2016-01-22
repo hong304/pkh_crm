@@ -108,6 +108,10 @@ class Customer_MonthlyCreditSummary {
             //  pd($queries);
 
             foreach ($invoices as $invoice) {
+
+                if(!isset($acc[$invoice->customerId]))
+                    $acc[$invoice->customerId] = 0;
+
                 if (!isset($this->_acc[$invoice->customerId]))
                     $this->_acc[$invoice->customerId] = 0;
 
@@ -126,6 +130,7 @@ class Customer_MonthlyCreditSummary {
                         'account_fax' => $invoice['client']->account_fax,
                         'account_contact' => $invoice['client']->account_contact,
                     ];
+                    $acc[$customerId] += $invoice->amount;
 
                     $this->_unPaid[$customerId]['breakdown'][] = [
                         'invoiceDate' => $invoice->invoiceDate,
@@ -133,11 +138,29 @@ class Customer_MonthlyCreditSummary {
                         'customerRef' => $invoice->customerRef,
                         'invoiceAmount' => ($invoice->invoiceStatus == '98') ? 0 : $invoice->amount,
                         'paid' => ($invoice->invoiceStatus == '98') ? $invoice->amount*-1 : $invoice->paid,
+                        'accInvoiceAmount' => $acc[$customerId],
                         'accumulator' => $this->_acc[$customerId] += ($invoice->amount - ($invoice->paid + $invoice->discount_taken)),
                     ];
                 }
+
+                $store[]=$invoice->customerId;
             }
 
+                $this->cusomterList = array_unique($store);
+
+        foreach ($this->cusomterList as $client) {
+            foreach ($this->time as $k => $v) {
+                $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client)->OrderBy('deliveryDate')->get();
+                foreach ($data[$k] as $invoice) {
+                    $customerId = $invoice->customerId;
+                    $this->_monthly[$k][$customerId][] = [
+                        'accumulator' => (isset($this->_monthly[$k][$customerId]) ? end($this->_monthly[$k][$customerId])['accumulator'] : 0) + $invoice->realAmount - ($invoice->paid + $invoice->discount_taken)
+                    ];
+                }
+            }
+        }
+
+      //  pd($this->_monthly);
 
             $this->data = $this->_unPaid;
        // }
@@ -216,7 +239,7 @@ class Customer_MonthlyCreditSummary {
             [
                 'type' => 'pdf',
                 'name' => '列印 PDF 版本',
-                'warning' => false,
+                'warning' => '匯出PDF後不能修改訂單',
             ],
             [
                 'type' => 'excel1',
@@ -517,7 +540,8 @@ for($start = 0;$start < count($dateRange);$start++)
 
     public function outputPreview() {
 
-        return View::make('reports/MonthlyCreditSummary')->with('data', $this->data)->render();
+
+        return View::make('reports/MonthlyCreditSummary')->with('data', $this->data)->with('month',$this->month)->with('monthly',$this->_monthly)->with('date',date('Y-m-d', $this->_date2))->render();
     }
 
     /* public function outputCsv(){
@@ -1020,6 +1044,8 @@ for($start = 0;$start < count($dateRange);$start++)
                 }
 
                 foreach ($g as $v) {
+
+                    Invoice::where('invoiceId',$v['invoice'])->update(['lock'=>1]);
 
                     $pdf->SetFont('chi', '', 10);
 
