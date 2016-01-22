@@ -4,6 +4,7 @@ class ProductController extends BaseController {
 
     public $_shift = '';
     public $message = "";
+    private $invoice,$customer,$_date1,$_date2;
     public function jsonGetAllProduct()
     {
         // $time_start = microtime(true);
@@ -61,8 +62,8 @@ class ProductController extends BaseController {
       //  Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
 
         $zone = (isset($filter['zone']['zoneId']))?$filter['zone']['zoneId']:'-1';
-        $data1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
-        $data2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
+        $this->_date1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
+        $this->_date2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
         $this->_shift = (isset($filter['shift']) ? $filter['shift'] : '-1');
 
 
@@ -112,7 +113,9 @@ class ProductController extends BaseController {
                 ->where('productName_chi', 'LIKE', $filter['product_name'] . '%');
         });
 
-        $invoices->whereBetween('Invoice.deliveryDate', [$data1,$data2]);
+        $invoices->whereBetween('Invoice.deliveryDate', [$this->_date1,$this->_date2]);
+
+
       //  $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
 
         /*    foreach($invoices->get()->toArray() as $v){
@@ -147,6 +150,143 @@ class ProductController extends BaseController {
 
                 //  return Response::json($invoices);
 
+    }
+
+
+    public function queryProductExcel(){
+
+
+
+        $filter = Input::get('filterData');
+
+
+        //  Paginator::setCurrentPage(Input::get('start') / Input::get('length') + 1);
+
+        $zone = (isset($filter['zone']['zoneId']))?$filter['zone']['zoneId']:'-1';
+        $this->_date1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
+        $this->_date2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
+        $this->_shift = (isset($filter['shift']) ? $filter['shift'] : '-1');
+
+
+
+        if($filter['name'] =='' && $filter['phone'] == ''&& $filter['customerId'] == ''){
+            $empty = true;
+            $this->data=[];
+        }else{
+            $empty = false;
+        }
+
+        $customers = Customer::where(function ($query) use ($filter) {
+            $query
+                ->where('customerName_chi', 'LIKE', $filter['name'] . '%')
+                ->where('phone_1', 'LIKE', $filter['phone'] . '%')
+                ->where('customerId', 'LIKE', $filter['customerId'] . '%');
+        })->lists('customerName_chi','customerId');
+
+        $invoices =  Invoice::select('invoice.invoiceId','deliveryDate','zoneId','customerId','productName_chi','invoiceitem.productId','productPrice','productQty','productUnitName','invoiceStatus')
+            ->leftJoin('InvoiceItem', function($join) {
+                $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
+            })
+            //  ->leftJoin('Customer', 'Invoice.customerId', '=', 'Customer.customerId')
+
+
+            ->leftJoin('Product', function($join) {
+                $join->on('InvoiceItem.productId', '=', 'Product.productId');
+            });
+
+        if(!$empty){
+            $invoices->wherein('customerId',array_keys($customers));
+        }
+
+        if($zone != '-1')
+            $invoices-> where('zoneId', $zone);
+        else
+            $invoices-> wherein('zoneId', explode(',', Auth::user()->temp_zone));
+
+        if($this->_shift != '-1')
+            $invoices->where('Invoice.shift',$this->_shift);
+
+        $invoices->whereNull('InvoiceItem.deleted_at');
+
+        $invoices->where(function ($query) use ($filter) {
+            $query
+                ->where('InvoiceItem.productId', 'LIKE', $filter['product'] . '%')
+                ->where('productName_chi', 'LIKE', $filter['product_name'] . '%');
+        });
+
+        $invoices->whereBetween('Invoice.deliveryDate', [$this->_date1,$this->_date2]);
+
+
+        $this->invoice = $invoices->get();
+        $this->customer = $customers;
+
+
+        require_once './Classes/PHPExcel/IOFactory.php';
+        require_once './Classes/PHPExcel.php';
+
+        $i=4;
+        $objPHPExcel = new PHPExcel ();
+
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:E1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '鎖售產品');
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->applyFromArray(
+            array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
+        );
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A2', 'Delivery Date');
+        $objPHPExcel->getActiveSheet()->setCellValue('B2', date('Y-m-d',$this->_date1));
+        $objPHPExcel->getActiveSheet()->setCellValue('C2', 'To');
+        $objPHPExcel->getActiveSheet()->setCellValue('D2', date('Y-m-d',$this->_date2));
+
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '訂單編號');
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, '送貨日期');
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '車線');
+        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '客戶名稱');
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, '產品編號');
+        $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, '品產名稱');
+        $objPHPExcel->getActiveSheet()->setCellValue('G'.$i, '價錢');
+        $objPHPExcel->getActiveSheet()->setCellValue('H'.$i, '數量');
+        $objPHPExcel->getActiveSheet()->setCellValue('I'.$i, '單位');
+
+
+
+        $i += 1;
+        foreach ($this->invoice as $k => $v) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['invoiceId']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['deliveryDate']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['zoneId']);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $this->customer[$v['customerId']]);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v['productId']);
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $i, $v['productName_chi']);
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . $i, $v['productPrice']);
+            $objPHPExcel->getActiveSheet()->setCellValue('H' . $i, $v['productQty']);
+            $objPHPExcel->getActiveSheet()->setCellValue('I' . $i, $v['productUnitName']);
+            $i++;
+
+            $longest[] = strlen($this->customer[$v['customerId']]);
+            $longestF[] = strlen($v['productName_chi']);
+        }
+
+       // $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '總計:');
+       // $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, sprintf("HK$ %s",end($this->data)['accumulator']));
+
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(max($longest));
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(max($longestF));
+
+        foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+            // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
+            if($col != 'D' && $col != 'F')
+                $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.date('Ymd',$this->_date1).'.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
     }
 
     public function jsonGetProductsfromGroup()

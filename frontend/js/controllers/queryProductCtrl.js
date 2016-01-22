@@ -97,6 +97,17 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
         $location.url("/editOrder?invoiceId=" + invoiceId);
     }
 
+    $scope.sendRealFile = function()
+    {
+        var queryObject = {
+            filterData	:	$scope.filterData,
+            mode	:	"csv"
+        };
+
+        var queryString = $.param( queryObject );
+        window.open(endpoint + "/queryProduct.json?" + queryString);
+    }
+
     $scope.updateDataSet = function()
     {
         $timeout.cancel(fetchDataTimer);
