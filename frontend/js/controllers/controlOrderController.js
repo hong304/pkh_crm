@@ -462,6 +462,16 @@ else{
                         return false;
                     }
 
+                    if(inf.lock == 1){
+                        Metronic.blockUI({
+                            target: '#orderportletbody',
+                            boxed: true,
+                            message: '你沒有權限修改此訂單'
+                        });
+                        $scope.allowSubmission = false;
+                        return false;
+                    }
+
                     if($scope.systeminfo.user.id!=9)
                         if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || (inf.invoiceStatus == 30 && $scope.disAllowsubmit) ){
 

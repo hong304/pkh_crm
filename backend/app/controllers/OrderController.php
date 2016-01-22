@@ -561,7 +561,10 @@ class OrderController extends BaseController
                 ->addColumn('link', function ($invoice) {
                     return '<span onclick="viewInvoice(\'' . $invoice->invoiceId . '\',\''.$invoice->invoiceStatus.'\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
                 })->addColumn('id', function ($invoice) {
-                    return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">' . $invoice->invoiceId . '</a>';
+                    if($invoice->lock)
+                        return $invoice->invoiceId;
+                    else
+                        return '<a onclick="goEdit(\'' . $invoice->invoiceId . '\')">' . $invoice->invoiceId . '</a>';
                 })->setRowClass(function ($invoice) {
                     return $invoice->invoiceStatus == 99 ? 'del-row' : '';
                 })
