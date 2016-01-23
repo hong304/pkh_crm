@@ -91,6 +91,13 @@ class receiveController extends BaseController {
         if (isset($location)) {
             $object = Input::get('order');
             $product = Input::get('product');
+
+            foreach ($product as $k => &$p) {
+                if ($p['deleted'] == 1) {
+                    unset($product[$k]);
+                }
+            }
+
             if ($this->doValidation($product)) {
                 $receiveId = isset($object['receivingId']) ? $object['receivingId'] : '';
 
