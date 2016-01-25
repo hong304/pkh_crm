@@ -105,7 +105,7 @@ app.controller('queryProductCtrl', function($scope, $rootScope, $http, SharedSer
         };
 
         var queryString = $.param( queryObject );
-        window.open(endpoint + "/queryProduct.json?" + queryString);
+        window.open(endpoint + "/queryProductExcel.json?" + queryString);
     }
 
     $scope.updateDataSet = function()

@@ -254,7 +254,7 @@ class ProductController extends BaseController {
         $i += 1;
         foreach ($this->invoice as $k => $v) {
             $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['invoiceId']);
-            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['deliveryDate']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, date('Y-m-d',$v['deliveryDate']));
             $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['zoneId']);
             $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $this->customer[$v['customerId']]);
             $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $v['productId']);
@@ -270,15 +270,17 @@ class ProductController extends BaseController {
 
        // $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, '總計:');
        // $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, sprintf("HK$ %s",end($this->data)['accumulator']));
-
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(13);
         $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(max($longest));
         $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(max($longestF));
 
-        foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
+      /*  foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
             // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
             if($col != 'D' && $col != 'F')
                 $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-        }
+        }*/
 
 
 
