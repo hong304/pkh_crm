@@ -495,11 +495,11 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
 
                                     });
 
-                            if ($scope.order.poStatus != 99)
+                           /* if ($scope.order.poStatus != 99)
                             {
                                 $("#statusField").attr('disabled', false);
                             }
-
+*/
                             if ($scope.order.poStatus == 99)
                             {
                                 //$scope.allowSubmission = false;

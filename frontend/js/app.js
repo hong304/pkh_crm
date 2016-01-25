@@ -1711,8 +1711,9 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         assets + '/global/scripts/datatable.js',
                         
                         'js/controllers/receiveList.js',
+                        'js/controllers/selectSupplierControl.js',
 
-                    ] 
+                    ]
                 });
             }]
         }

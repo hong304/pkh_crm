@@ -20,7 +20,8 @@ app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService,
     $scope.invoiceStructure = {
         'paid' : ''
     }
-
+    var fetchDataDelay = 500;   // milliseconds
+    var fetchDataTimer;
     $scope.keywordpo = {
         supplier: '',
         poCode: '',
@@ -101,6 +102,14 @@ app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService,
             $scope.keywordpo.poStatus = '';
         }
         $scope.updateDataSet();
+    }
+
+    $scope.updateByDelay = function()
+    {
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+            $scope.updateDataSet();
+        }, fetchDataDelay);
     }
 
     $scope.clearPoSearch = function()
@@ -238,7 +247,7 @@ app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService,
                 "pageLength": 50, // default record count per page
 
                 "ajax": {
-                    "url": query, // ajax source
+                    "url": query, // queryPo.json
                     "type": 'POST',
                     "data": {mode: "collection", filterData: $scope.keywordpo},
                     "xhrFields": {withCredentials: true}

@@ -151,7 +151,7 @@ class newPoController extends BaseController {
                             ->make(true);
         } else if ($mode == 'single') {
             $poCode = Input::get('poCode');
-             $purchaseOrder = Purchaseorder :: select('poCode','poDate','etaDate','actualDate','poStatus','suppliers.supplierName','suppliers.countryId','discount_1','discount_2','allowance_1','allowance_2','purchaseorders.supplierCode','suppliers.contactPerson_1','currencies.currencyName','poAmount','poReference','poRemark','receiveDate','purchaseorders.location')
+             $purchaseOrder = Purchaseorder :: select('poStatus','poCode','poDate','etaDate','actualDate','poStatus','suppliers.supplierName','suppliers.countryId','discount_1','discount_2','allowance_1','allowance_2','purchaseorders.supplierCode','suppliers.contactPerson_1','currencies.currencyName','poAmount','poReference','poRemark','receiveDate','purchaseorders.location')
                      ->where('poCode',$poCode)
                       ->leftJoin('suppliers', function($join) {
                         $join->on('suppliers.supplierCode', '=', 'purchaseorders.supplierCode');

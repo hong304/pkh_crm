@@ -64,9 +64,19 @@ class rePackController extends BaseController {
         $mode = Input::get('mode');
 
         if($mode=='collection'){
-            $receivings = Receiving::whereBetween('receiving_date',[$filter['startReceiveDate'],$filter['endReceiveDate']])->with(['purchaseorder'=>function($q){
+            $receivings = Receiving::whereBetween('receiving_date',[$filter['startReceiveDate'],$filter['endReceiveDate']])
+                ->leftJoin('purchaseorders', function($join) {
+                    $join->on('purchaseorders.poCode', '=', 'receivings.poCode');
+                })->with(['purchaseorder'=>function($q){
                 $q->with('supplier');
             }]);
+
+            if($filter['supplier']!='')
+                $receivings->where('purchaseorders.supplierCode', '=', $filter['supplier']);
+
+                if($filter['poCode']!='')
+                    $receivings->where('receivings.poCode', 'LIKE', $filter['poCode'] . '%');
+
             return Datatables::of($receivings)->make(true);
         }
     }

@@ -18,7 +18,7 @@ app.controller('receiveList', function($rootScope, $scope, $http, $timeout, Shar
         status:'',
         poRemark:'',
         poStatus:'1',
-        supplierCode:'',
+        supplier:'',
         feight_cost:0,
         feight_local_cost:0,
         local_cost:0,
@@ -36,11 +36,14 @@ app.controller('receiveList', function($rootScope, $scope, $http, $timeout, Shar
         startReceiveDate:'',
         endReceiveDate:'',
         location:'',
-        supplierCode:'',
+        supplier:'',
         productId:'',
-        products:''
+        products:'',
+        poCode : '',
     };
 
+    var fetchDataDelay = 500;   // milliseconds
+    var fetchDataTimer;
 
     var today = new Date();
     var plus = today.getDay() == 6 ? 2 : 1;
@@ -78,12 +81,33 @@ app.controller('receiveList', function($rootScope, $scope, $http, $timeout, Shar
 
 
     $scope.$on('$viewContentLoaded', function () {
+
+    });
+
+    $scope.$on('handleSupplierUpdate', function(){
+        $scope.filterData.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
+        $scope.filterData.supplierCode = SharedService.supplierName;
         $scope.updateDataSet();
     });
 
 $scope.findDate = function(){
     $scope.updateDataSet();
 }
+
+    $scope.clearSearch = function()
+    {
+        $scope.filterData.supplier = "";
+        $scope.filterData.supplierCode = '';
+        $scope.updateDataSet();
+    }
+
+    $scope.updateByDelay = function()
+    {
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+            $scope.updateDataSet();
+        }, fetchDataDelay);
+    }
 
     $scope.updateDataSet = function()
     {
@@ -123,7 +147,7 @@ $scope.findDate = function(){
                     ],
                     "pageLength": 50, // default record count per page
                     "ajax": {
-                        "url": querytarget, // ajax source
+                        "url": querytarget, // queryReceiving.json
                         "type": 'POST',
                         "data": {filterData: $scope.filterData, mode: "collection"},
                         "xhrFields": {withCredentials: true}

@@ -232,7 +232,7 @@
                                             <button type="button" class="btn default" data-dismiss="modal">取消</button>
 
   
-                                            <button type="button" class="btn green"  data-ng-click="goEdit(invoiceinfo.poCode);">修改</button>
+                                            <button type="button" class="btn green"  data-ng-click="goEdit(invoiceinfo.poCode);" data-ng-if="invoiceinfo.poStatus == 1">修改</button>
                                             <!-- <button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus > 3 && systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>-->
 
                                             <!-- Void Invoice -->
