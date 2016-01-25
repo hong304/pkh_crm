@@ -929,12 +929,6 @@ else{
         }
     }
 
-    $scope.updateDiscount = function()
-    {
-
-        $scope.reCalculateTotalAmount();
-    }
-
     $scope.updateQty = function(i)
     {
 //var org_qty = $scope.product[i]['qty'];
@@ -1200,6 +1194,7 @@ else{
 
         if(!generalError)
         {
+            $scope.reCalculateTotalAmount();
             $scope.order.amount = $scope.totalAmount;
             $scope.order.print = v;
             $http.post(
