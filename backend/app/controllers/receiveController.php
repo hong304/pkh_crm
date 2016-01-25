@@ -92,11 +92,16 @@ class receiveController extends BaseController {
             $object = Input::get('order');
             $product = Input::get('product');
 
+
+
+
             foreach ($product as $k => &$p) {
-                if ($p['deleted'] == 1) {
+                if ($p['deleted'] == 1 || $p['productId'] == '') {
                     unset($product[$k]);
                 }
             }
+
+         //   pd($product);
 
             if ($this->doValidation($product)) {
                 $receiveId = isset($object['receivingId']) ? $object['receivingId'] : '';
@@ -163,7 +168,7 @@ class receiveController extends BaseController {
                  return [
                 'result' => false,
                 'status' => 0,
-                'message' => '有效日期不能空置',
+                'message' => '有效日期不能空置或格式錯誤',
                 ];
             }
         } else {

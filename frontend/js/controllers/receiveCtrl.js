@@ -7,7 +7,8 @@ Metronic.unblockUI();
 app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state, $stateParams) {
     /* Register shortcut key */
 
-
+    $scope.orgqty = [];
+    $scope.totalqty = [];
     $scope.orders = {
         receivingId: '',
         receiveDate: '',
@@ -196,6 +197,11 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                     else if (item.productQtyUnit == 'unit')
                         $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;
                    // addUnit(item, i);
+if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
+    $scope.orgqty[$scope.product[i].productId]=0;
+
+                    $scope.orgqty[$scope.product[i].productId] += $scope.product[i]['good_qty'];
+
                     i++;
                     if(typeof $scope.product[i] == 'undefined')
                     {
@@ -204,6 +210,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                         $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
                         $scope.timer.product[$scope.newkey] = $.extend(true, {}, $scope.timerProductStructure);
                     }
+
                 });
                 //console.log($scope.product);
             }
@@ -216,7 +223,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
 
     });
 
-  /* function addUnit(item, i)
+   function addUnit(item, i)
     {
         console.log(item);
 
@@ -240,7 +247,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
         var indexNum = storeUnit.indexOf(item.productQtyUnit);
         $scope.product[i]['unit'] = availableunit[indexNum];
 
-    }*/
+    }
 
     function addUnitTwo(item, i)
     {
@@ -510,16 +517,35 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
     function checkSumCal(productObject)
     {
         var flag = true;
+
         for (var k = 1; k <= productObject.length - 1; k++)
         {
-            if (typeof $scope.product[k]['good_qty'] != 'undefined' && typeof $scope.product[k]['damage_qty'] != 'undefined' && typeof $scope.product[k]['on_hold_qty'] != 'undefined' && typeof $scope.product[k]['qty'] != 'undefined')
+            $scope.totalqty[$scope.product[k]['productId']] = 0;
+        }
+
+        for (var k = 1; k <= productObject.length - 1; k++)
+        {
+
+            if (typeof $scope.product[k]['good_qty'] != 'undefined' && typeof $scope.product[k]['damage_qty'] != 'undefined' && typeof $scope.product[k]['on_hold_qty'] != 'undefined' && typeof $scope.product[k]['qty'] != 'undefined' && $scope.product[k]['deleted'] == 0)
             {
                 var sum = 0;
                 sum = parseInt($scope.product[k]['good_qty']) + parseInt($scope.product[k]['damage_qty']) + parseInt($scope.product[k]['on_hold_qty']);
-                if (sum > parseInt($scope.product[k]['maxqty']))
-                    flag = false;
+                $scope.totalqty[$scope.product[k]['productId']] += sum;
+                //if (sum > parseInt($scope.product[k]['maxqty']))
+                    //flag = false;
             }
         }
+        $scope.orgqty.sort();
+        $scope.totalqty.sort();
+
+        console.log($scope.totalqty);
+        console.log($scope.orgqty);
+
+        for (var k in $scope.totalqty){
+            if($scope.totalqty[k]>$scope.orgqty[k])
+                flag = false;
+        }
+
         return flag;
     }
 
@@ -593,6 +619,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
         $scope.itemlist.push($scope.newkey);
         $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
         $scope.timer.product[$scope.newkey] = $.extend(true, {}, $scope.timerProductStructure);
+
 
         // if it is the fifth row, make the portlets to be full screen
         if ($scope.newkey == 5)
