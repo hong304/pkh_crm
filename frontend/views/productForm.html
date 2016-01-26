@@ -106,7 +106,7 @@
 						<div class="form-group">
 							<label class="col-md-2 control-label">成本</label>
 							<div class="col-md-10">
-								<input type="text" ng-model="info.productCost_unit" class="form-control" placeholder="Enter value" select-on-click>
+								<label class="control-label">${{info.productCost_unit}}/{{info.productPackingName_carton}}, ${{info.productCost_unit/info.productPacking_inner|number:2}}/{{info.productPackingName_inner}}, ${{info.productCost_unit/info.productPacking_inner/info.productPacking_unit|number:2}}/{{info.productPackingName_unit}}</label>
 							</div>
 						</div>
 
