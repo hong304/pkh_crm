@@ -164,7 +164,7 @@ class ReceiveMan
                       
                        foreach($i as $k=>$v)
                        {
-                           if($k !=='id' && $k !== 'deleted' && $k !== 'receivingId' && $k !== 'receivedQty')
+                           if($k !=='id' && $k !== 'deleted' && $k !== 'receivingId' && $k !== 'receivedQty' && $k !== 'carton_cost')
                                $item->$k = $v;
                        }
 
