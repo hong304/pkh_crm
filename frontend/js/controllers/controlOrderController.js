@@ -1195,7 +1195,24 @@ else{
         if(!generalError)
         {
             $scope.reCalculateTotalAmount();
+
             $scope.order.amount = $scope.totalAmount;
+            if(isNaN(parseFloat($scope.order.amount))){
+                Metronic.alert({
+                    container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
+                    place: 'prepend', // append or prepent in container
+                    type: 'danger',  // alert's type
+                    message: '沒有效的訂單總數',  // alert's message
+                    close: true, // make alert closable
+                    reset: true, // close all previouse alerts first
+                    focus: true, // auto scroll to the alert after shown
+                    closeInSeconds: 0, // auto close after defined seconds
+                    icon: 'warning' // put icon before the message
+                });
+                $scope.allowSubmission = true;
+                return false;
+            }
+
             $scope.order.print = v;
             $http.post(
                 endpoint + '/placeOrder.json', {
