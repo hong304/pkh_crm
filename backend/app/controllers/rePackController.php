@@ -133,28 +133,34 @@ class rePackController extends BaseController {
 
                     $adjusts = new adjust();
                     $adjusts->adjustId = $receiving->id;
-                        $reId = Receiving::where('receivingId','LIKE','Re%')->orderBy('receivingId','desc')->first();
-                        if(count($reId)>0){
-                            $id = substr($reId->receivingId,2);
-                            $id += 1;
-                        }else{
-                            $id = 1;
-                        }
+                    $reId = Receiving::where('receivingId','LIKE','Re%')->orderBy('receivingId','desc')->first();
+                    if(count($reId)>0){
+                        $id = substr($reId->receivingId,2);
+                        $id += 1;
+                    }else{
+                        $id = 1;
+                    }
                     $adjusts->receivingId = 'Re'.$id;
                     $adjusts->adjustType = 1;
                     $adjusts->good_qty = 0;
                     $adjusts->adjusted_good_qty = $ava_qty;
-                    $adjusts->productId = $v['productId'];
-                    $adjusts->save();
+                    $adjusts->productId = ucwords($v['productId']);
 
                     $new_receiving = new Receiving();
-                    $new_receiving->receivingId = $adjusts->receivingId;
-                    $new_receiving->adjustId = $adjusts->adjustId;
-                    $new_receiving->good_qty = $adjusts->adjust_qty;
-                    $new_receiving->productId = $v['productId'];
+                    $new_receiving->receivingId = 'Re'.$id;
+                    $new_receiving->adjustId = $receiving->id;
+                    $new_receiving->good_qty = $ava_qty;
+                    $new_receiving->productId = ucwords($v['productId']);
+                    $new_receiving->rec_good_qty = $ava_qty;
+                    $new_receiving->rec_damage_qty = 0;
+                    $new_receiving->damage_qty = 0;
+                    $new_receiving->on_hold_qty = 0;
                     $new_receiving->expiry_date = $receiving->expiry_date;
+                    $new_receiving->unit_cost = $receiving->unit_cost;
+                    $new_receiving->created_by = Auth::user()->id;
                     $new_receiving->save();
 
+                    $adjusts->save();
                 }
             }
         }
