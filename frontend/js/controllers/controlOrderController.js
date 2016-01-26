@@ -1202,7 +1202,7 @@ else{
                     container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
                     place: 'prepend', // append or prepent in container
                     type: 'danger',  // alert's type
-                    message: '沒有效的訂單總數',  // alert's message
+                    message: '沒有效的訂單金額',  // alert's message
                     close: true, // make alert closable
                     reset: true, // close all previouse alerts first
                     focus: true, // auto scroll to the alert after shown

@@ -143,6 +143,8 @@ class ReceiveMan
          $this->prepare_items();
          if(isset($this->items))
          {
+             pd($this->items);
+
              foreach($this->items as $i)
              {
                       if($i['id'] !== "")

@@ -170,12 +170,13 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                     $scope.product[i].productName = item.productName_chi;
                     $scope.product[i].qty = item.qty;
                     $scope.product[i]['good_qty'] = item.qty;
-                    if (item.unit == 'carton')
+                   /* if (item.unit == 'carton')
                         $scope.product[i]['unit_cost'] = item.productCost_unit;
                     else if (item.unit == 'inner')
                         $scope.product[i]['unit_cost'] = item.supplierStdPrice_inner;
                     else if (item.unit == 'unit')
-                        $scope.product[i]['unit_cost'] = item.supplierStdPrice_unit;
+                        $scope.product[i]['unit_cost'] = item.supplierStdPrice_unit; */
+                    $scope.product[i]['unit_cost'] = item.unitprice;
                     addUnitTwo(item, i);
                     i++;
                 });
@@ -662,12 +663,13 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
                         $scope.product[i]['unit'] = item.productQtyUnit;
                         $scope.product[i]['productName'] = item.product_detail.productName_chi;
                         $scope.product[i]['good_qty'] = item.productQty;
-                        if (item.productQtyUnit == 'carton')
+                       /* if (item.productQtyUnit == 'carton')
                             $scope.product[i]['unit_cost'] = item.product_detail.productCost_unit;
                         else if (item.productQtyUnit == 'inner')
                             $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_inner;
                         else if (item.productQtyUnit == 'unit')
-                            $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;
+                            $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;*/
+                        $scope.product[i]['unit_cost']=item.unitprice;
                         addUnit(item, i);
                     }
                 });
@@ -680,12 +682,13 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
                         $scope.product[i]['unit'] = item.unit;
                         $scope.product[i]['productName'] = item.productName_chi;
                         $scope.product[i]['good_qty'] = item.qty;
-                        if (item.unit == 'carton')
+                       /* if (item.unit == 'carton')
                             $scope.product[i]['unit_cost'] = item.productCost_unit;
                         else if (item.unit == 'inner')
                             $scope.product[i]['unit_cost'] = item.supplierStdPrice_inner;
                         else if (item.unit == 'unit')
-                            $scope.product[i]['unit_cost'] = item.supplierStdPrice_unit;
+                            $scope.product[i]['unit_cost'] = item.supplierStdPrice_unit;*/
+                        $scope.product[i]['unit_cost']=item.unitprice;
                         addUnitTwo(item, i);
                     }
                 });
