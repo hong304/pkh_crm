@@ -207,6 +207,24 @@ class SystemController extends BaseController {
         return $return;
     }
 
+    public static function NormalizedPrice($productId,$price,$qty,$unitLevel){
+
+        $v = Product::where('productId',$productId)->first();
+
+        $inner = ($v['productPacking_inner']==false) ? 1:$v['productPacking_inner'];
+        $unit_packing = ($v['productPacking_unit'] == false) ? 1 : $v['productPacking_unit'];
+
+        if ($unitLevel == 'carton') {
+            $unit_price = $price/($qty*$inner*$unit_packing);
+        }elseif($unitLevel == 'inner') {
+            $unit_price = $price/($qty*$unit_packing);
+        }elseif($unitLevel == 'unit') {
+            $unit_price = $price/$qty;
+        }
+
+        return $unit_price;
+    }
+
     public function finalUnit($productId,$qty,$unit){
 
         $v = Product::where('productId',$productId)->first();

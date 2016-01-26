@@ -43,6 +43,8 @@ class ReceiveMan
          $productDetails = Product :: select('productPacking_unit','productPacking_inner','productPacking_carton')->where('productId',$productId)->first()->toArray();
          $mutiply = $this->reunit($unitlevel,$productDetails['productPacking_unit'],$productDetails['productPacking_inner']);
          $unitCost = $this->unitProductCost($unit_cost,$unitlevel,$productDetails['productPacking_unit'],$productDetails['productPacking_inner']);
+         $cartonCost = $this->cartonProductCost($unit_cost,$unitlevel,$productDetails['productPacking_unit'],$productDetails['productPacking_inner']);
+
          $this->items[] = [
              'id' => $dbid,
              'poCode' => $poCode,
@@ -58,6 +60,7 @@ class ReceiveMan
              'rec_damage_qty' => $rec_damage_qty * $mutiply,
              'receiving_date' => $receiving_date,
              'unit_cost' => $unitCost,
+             'carton_cost' => $cartonCost,
              'bin_location' => $bin_location,
              'deleted' => $deleted,
              'rec_receiveQty'=> $rec_qty,
@@ -121,7 +124,19 @@ class ReceiveMan
             $miniCost = $unitCost;
         return $miniCost;
     }
-     
+
+    public function cartonProductCost($unitCost,$unitlevel,$unit,$inner)
+    {
+        $miniCost = 0;
+        if($unitlevel == 'carton')
+            $miniCost = $unitCost;
+        else if($unitlevel == 'inner')
+            $miniCost = $unitCost * $inner;
+        else if($unitlevel == 'unit')
+            $miniCost = $unitCost *  $inner * $unit;
+        return $miniCost;
+    }
+
      public function save()
      {
 
@@ -158,6 +173,10 @@ class ReceiveMan
                  $poitems->save();
 
                  $item->save();
+
+                 $products = Product::where('productId',$i['productId'])->first();
+                 $products->productCost_unit = $i['carton_cost'];
+                 $products->save();
                }
 
                 $po = Purchaseorder::where('poCode',$this->items[0]['poCode'])->first();
