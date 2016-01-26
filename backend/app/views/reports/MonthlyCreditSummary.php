@@ -85,16 +85,16 @@
                      <?php echo '$' . number_format(isset($monthly[$month[0]][$client['customer']['customerId']]) ? end($monthly[$month[0]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
                  </td>
                  <td >
-                     <?php echo '$' . number_format(isset($monthly[$month[1]][$client['customer']['customerId']]) ? end($monthly[$month[0]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
+                     <?php echo '$' . number_format(isset($monthly[$month[1]][$client['customer']['customerId']]) ? end($monthly[$month[1]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
                  </td>
                  <td >
-                     <?php echo '$' . number_format(isset($monthly[$month[2]][$client['customer']['customerId']]) ? end($monthly[$month[0]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
+                     <?php echo '$' . number_format(isset($monthly[$month[2]][$client['customer']['customerId']]) ? end($monthly[$month[2]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
                  </td>
                  <td >
-                     <?php echo '$' . number_format(isset($monthly[$month[3]][$client['customer']['customerId']]) ? end($monthly[$month[0]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
+                     <?php echo '$' . number_format(isset($monthly[$month[3]][$client['customer']['customerId']]) ? end($monthly[$month[3]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
                  </td>
                  <td >
-                     <?php echo '$' . number_format(isset($monthly[$month[4]][$client['customer']['customerId']]) ? end($monthly[$month[0]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
+                     <?php echo '$' . number_format(isset($monthly[$month[4]][$client['customer']['customerId']]) ? end($monthly[$month[4]][$client['customer']['customerId']])['accumulator'] : 0, 2, '.', ',')?>
                  </td>
              </tr>
 

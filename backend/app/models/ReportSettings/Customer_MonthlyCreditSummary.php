@@ -153,8 +153,8 @@ class Customer_MonthlyCreditSummary {
                 $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client)->OrderBy('deliveryDate')->get();
                 foreach ($data[$k] as $invoice) {
                     $customerId = $invoice->customerId;
-                    $this->_monthly[$k][$customerId][] = [
-                        'accumulator' => (isset($this->_monthly[$k][$customerId]) ? end($this->_monthly[$k][$customerId])['accumulator'] : 0) + $invoice->realAmount - ($invoice->paid + $invoice->discount_taken)
+                    $this->_monthly1[$k][$customerId][] = [
+                        'accumulator' => (isset($this->_monthly1[$k][$customerId]) ? end($this->_monthly1[$k][$customerId])['accumulator'] : 0) + $invoice->realAmount - ($invoice->paid + $invoice->discount_taken)
                     ];
                 }
             }
@@ -541,7 +541,7 @@ for($start = 0;$start < count($dateRange);$start++)
     public function outputPreview() {
 
 
-        return View::make('reports/MonthlyCreditSummary')->with('data', $this->data)->with('month',$this->month)->with('monthly',$this->_monthly)->with('date',date('Y-m-d', $this->_date2))->render();
+        return View::make('reports/MonthlyCreditSummary')->with('data', $this->data)->with('month',$this->month)->with('monthly',$this->_monthly1)->with('date',date('Y-m-d', $this->_date2))->render();
     }
 
     /* public function outputCsv(){
@@ -1116,30 +1116,36 @@ for($start = 0;$start < count($dateRange);$start++)
             $pdf->setXY(10, $y + 24);
             $pdf->Cell(0, 0, $this->month[0], 0, 0, "L");
 
-            $pdf->setXY(50, $y + 24);
+            $pdf->setXY(40, $y + 24);
             $pdf->Cell(0, 0, $this->month[1], 0, 0, "L");
 
-            $pdf->setXY(90, $y + 24);
+            $pdf->setXY(70, $y + 24);
             $pdf->Cell(0, 0, $this->month[2], 0, 0, "L");
 
-            $pdf->setXY(130, $y + 24);
+            $pdf->setXY(100, $y + 24);
             $pdf->Cell(0, 0, $this->month[3], 0, 0, "L");
 
+            $pdf->setXY(150, $y + 24);
+            $pdf->Cell(0, 0, $this->month[4], 0, 0, "L");
 
             $pdf->SetFont('Arial', '', 12);
             $pdf->setXY(10, $y + 30);
             $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[0]][$customerId]) ? end($this->_monthly[$this->month[0]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
 
-            $pdf->setXY(50, $y + 30);
+            $pdf->setXY(40, $y + 30);
             $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[1]][$customerId]) ? end($this->_monthly[$this->month[1]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
             // $pdf->Cell(0, 0, '$' . number_format(0, 2, '.', ','), 0, 0, "L");
 
-            $pdf->setXY(90, $y + 30);
+            $pdf->setXY(70, $y + 30);
             $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[2]][$customerId]) ? end($this->_monthly[$this->month[2]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
             //  $pdf->Cell(0, 0, '$' . number_format(0, 2, '.', ','), 0, 0, "L");
 
-            $pdf->setXY(130, $y + 30);
+            $pdf->setXY(100, $y + 30);
             $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[3]][$customerId]) ? end($this->_monthly[$this->month[3]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
+            // $pdf->Cell(0, 0, '$' .number_format(0, 2, '.', ','), 0, 0, "L");
+
+            $pdf->setXY(150, $y + 30);
+            $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[4]][$customerId]) ? end($this->_monthly[$this->month[4]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
             // $pdf->Cell(0, 0, '$' .number_format(0, 2, '.', ','), 0, 0, "L");
 
 
