@@ -37,12 +37,12 @@ class ReceiveMan
          return $this->newContainerCode;
      }
      
-     public function setItemss($dbid,$poCode,$shippingId,$containerId,$receivingId,$productId,$good_qty,$damage_qty,$on_hold_qty,$expiry_date,$rec_good_qty,$rec_damage_qty,$receiving_date,$unit_cost,$bin_location,$deleted,$unit,$rec_qty,$unitName)
+     public function setItemss($dbid,$poCode,$shippingId,$containerId,$receivingId,$productId,$good_qty,$damage_qty,$on_hold_qty,$expiry_date,$rec_good_qty,$rec_damage_qty,$receiving_date,$unit_cost,$bin_location,$deleted,$unitlevel,$rec_qty,$unitName)
      {
         
          $productDetails = Product :: select('productPacking_unit','productPacking_inner','productPacking_carton')->where('productId',$productId)->first()->toArray();
-         $mutiply = $this->reunit($unit,$productDetails['productPacking_unit'],$productDetails['productPacking_inner']);
-         $unitCost = $this->unitProductCost($unit_cost,$unit,$productDetails['productPacking_unit'],$productDetails['productPacking_inner'],$productDetails['productPacking_carton']);
+         $mutiply = $this->reunit($unitlevel,$productDetails['productPacking_unit'],$productDetails['productPacking_inner']);
+         $unitCost = $this->unitProductCost($unit_cost,$unitlevel,$productDetails['productPacking_unit'],$productDetails['productPacking_inner']);
          $this->items[] = [
              'id' => $dbid,
              'poCode' => $poCode,
@@ -61,7 +61,7 @@ class ReceiveMan
              'bin_location' => $bin_location,
              'deleted' => $deleted,
              'rec_receiveQty'=> $rec_qty,
-             'supplier_interval'=>$unit,
+             'supplier_interval'=>$unitlevel,
              'supplier_unitName'=>$unitName,
              'receivedQty' => $good_qty+$damage_qty+$on_hold_qty
          ];
@@ -110,7 +110,7 @@ class ReceiveMan
         return $multiply;
     }
     
-    public function unitProductCost($unitCost,$unitlevel,$unit,$inner,$carton)
+    public function unitProductCost($unitCost,$unitlevel,$unit,$inner)
     {
         $miniCost = 0;
         if($unitlevel == 'carton')

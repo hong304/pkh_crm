@@ -181,6 +181,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
             } else if ($scope.orders.location == 1)
             {
 
+              
                 $scope.items.forEach(function (item) {
                     $scope.product[i].productId = item.productId;
                     $scope.product[i].productName = item.product_detail.productName_chi;
@@ -190,13 +191,16 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                     $scope.product[i]['unit']['label'] = item.productUnitName;
                     $scope.product[i]['unit']['value'] = item.productQtyUnit;
 
-                    if (item.productQtyUnit == 'carton')
+                  /*  if (item.productQtyUnit == 'carton')
                         $scope.product[i]['unit_cost'] = item.product_detail.productCost_unit;
                     else if (item.productQtyUnit == 'inner')
                         $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_inner;
                     else if (item.productQtyUnit == 'unit')
-                        $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;
+                        $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;*/
                    // addUnit(item, i);
+                    $scope.product[i]['unit_cost'] = item.unitprice;
+
+
 if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
     $scope.orgqty[$scope.product[i].productId]=0;
 
@@ -212,7 +216,7 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
                     }
 
                 });
-                //console.log($scope.product);
+                console.log($scope.product);
             }
 
 
@@ -225,7 +229,7 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
 
    function addUnit(item, i)
     {
-        console.log(item);
+
 
         var availableunit = [];
         var storeUnit = [];
@@ -270,7 +274,7 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
         $scope.product[i].availableunit = availableunit;
         var indexNum = storeUnit.indexOf(item.unit);
         $scope.product[i]['unit'] = availableunit[indexNum];
-        console.log($scope.product[i]['unit']);
+
     }
 
 
@@ -538,8 +542,6 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
         $scope.orgqty.sort();
         $scope.totalqty.sort();
 
-        console.log($scope.totalqty);
-        console.log($scope.orgqty);
 
         for (var k in $scope.totalqty){
             if($scope.totalqty[k]>$scope.orgqty[k])
