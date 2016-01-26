@@ -27,6 +27,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
         location: '',
     };
 
+    $scope.disAllowsubmit = false;
 
     //Sunday is not allowed
     var today = new Date();
@@ -97,7 +98,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
     }
 
 
-    $scope.submitButtonText = '提交 (F10)';
+    $scope.submitButtonText = '提交';
     $scope.submitButtonColor = 'blue';
     $scope.countdown = "1";
     $scope.timer = {
@@ -181,7 +182,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
             } else if ($scope.orders.location == 1)
             {
 
-              
+
                 $scope.items.forEach(function (item) {
                     $scope.product[i].productId = item.productId;
                     $scope.product[i].productName = item.product_detail.productName_chi;
@@ -383,7 +384,8 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
          label: "確定",
          className: "red",
          callback: function() {*/
-        $scope.submitOrder(v);
+        if(!$scope.disAllowsubmit)
+            $scope.submitOrder(v);
         /*  }
          }
          }
@@ -443,6 +445,8 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
             });
         } else
         {
+            $scope.disAllowsubmit = true;
+
             console.log($scope.product);
             $http.post(
                     endpoint + '/newReceive.json', {
