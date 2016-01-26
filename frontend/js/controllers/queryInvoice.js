@@ -346,6 +346,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     	.success(function(res, status, headers, config){
     		$scope.nowUnixTime = Math.round(+new Date()/1000);
             $scope.invoiceinfo = res;
+console.log($scope.invoiceinfo);
+
 
 
             $scope.invoiceinfo.invoiceStatus = parseInt($scope.invoiceinfo.invoiceStatus);

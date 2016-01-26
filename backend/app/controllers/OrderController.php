@@ -582,6 +582,16 @@ class OrderController extends BaseController
                 ->withTrashed()
                 ->first();
 
+
+            foreach ($invoices->invoiceItem as $v){
+                if ($v->productQtyUnit == 'carton')
+                    $v->cost = $v->productDetail->productCost_unit;
+                else if($v->productQtyUnit == 'inner')
+                    $v->cost = $v->productDetail->productCost_unit/$v->productDetail->productPacking_inner;
+                else if ($v->productQtyUnit == 'unit')
+                    $v->cost = $v->productDetail->productCost_unit/$v->productDetail->productPacking_inner/$v->productDetail->productPacking_unit;
+            }
+
         }
    // pd(DB::getQueryLog());
 

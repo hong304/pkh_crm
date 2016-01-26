@@ -138,8 +138,9 @@
 																<span>${{i.productStandardPrice}}</span>
 															</td>
 															<td ng-if="systeminfo.permission.view_product_cost == true">
-                                                                <span style="display:none;" id="cost_{{$index}}">${{i.product_detail.productCost_unit}}</span>
-																<a href="#" ng-click="toggle($index)" id="controlcost_{{$index}}">[顯示]</a>
+																<span id="cost_{{$index}}">${{i.cost|number:2}}</span>
+                                                                <!--<span style="display:none;" id="cost_{{$index}}">${{i.product_detail.productCost_unit}}</span>
+																<a href="#" ng-click="toggle($index)" id="controlcost_{{$index}}">[顯示]</a>-->
 															</td>
 															<td>
 																<span data-ng-if="i.productDiscount > 0">{{i.productDiscount}}%</span>
