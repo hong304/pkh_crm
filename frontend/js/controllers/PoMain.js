@@ -544,6 +544,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
         $http.post(endpoint + '/getAllProduct.json', {
             poCode: poCode,
             productList: defaultProduct,
+            type:'PO'
         })
                 .success(function (res, status, headers, config) {
                     $scope.retrievedProduct = res;

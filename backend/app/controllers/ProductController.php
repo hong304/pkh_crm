@@ -29,8 +29,13 @@ class ProductController extends BaseController {
             'productStdPrice_carton', 'productStdPrice_inner', 'productStdPrice_unit','allowNegativePrice',
             'supplierStdPrice_inner','supplierStdPrice_unit','productCost_unit',
             'supplierPackingInterval_carton', 'supplierPackingInterval_inner', 'supplierPackingInterval_unit');
+        $type = Input::get('type');
 
-        $products->where('productStatus', 'o');
+        if(isset($type)){
+            if($type=='PO')
+            $products->where('supplierProductStatus', 'o');
+        }else
+            $products->where('productStatus', 'o');
 
         if(count($pa)>0){
             $products->orwherein('productId',$pa);

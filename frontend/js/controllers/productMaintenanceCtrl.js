@@ -58,6 +58,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'productId' : '',
 			'productLocation' : '',
 			'productStatus'	:	'',
+            'supplierProductStatus' : '',
 			'productPacking_carton' : '1',
 			'productPacking_inner' : '1',
 			'productPacking_unit' : '1',
@@ -194,6 +195,16 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
         	$scope.info.productStatus = status[pos];
 
 
+            var supplierProductStatus = [];
+            supplierProductStatus = supplierProductStatus.concat([{value: 'o', label: "正常"}]);
+            supplierProductStatus = supplierProductStatus.concat([{value: 's', label: "暫停"}]);
+            $scope.supplierProductStatus = supplierProductStatus;
+
+            var pos = supplierProductStatus.map(function(e) {
+                return e.value;
+            }).indexOf(res.supplierProductStatus);
+
+            $scope.info.supplierProductStatus = supplierProductStatus[pos];
 
                 var pos = $scope.systeminfo.productgroup.map(function(e) {
                     return e.groupid;
@@ -227,9 +238,16 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	status = status.concat([{value: 'o', label: "正常"}]);
     	status = status.concat([{value: 's', label: "暫停"}]);
     	$scope.status = status;
-    	
-    	$scope.submitbtn = true;
         $scope.info.productStatus = status[0];
+
+        var supplierProductStatus = [];
+        supplierProductStatus = supplierProductStatus.concat([{value: 'o', label: "正常"}]);
+        supplierProductStatus = supplierProductStatus.concat([{value: 's', label: "暫停"}]);
+        $scope.supplierProductStatus = supplierProductStatus;
+        $scope.info.supplierProductStatus = supplierProductStatus[0];
+
+    	$scope.submitbtn = true;
+
     	
     	$("#productFormModal").modal({backdrop: 'static'});
     	
@@ -271,7 +289,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	else
     	{
     		$scope.submitbtn = false;
-    		 $http.post(iutarget, {info: $scope.info})
+    		 $http.post(iutarget, {info: $scope.info}) //manipulateProduct.json
         	.success(function(res, status, headers, config){    
         		   
         		$scope.submitbtn = false;
