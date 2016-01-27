@@ -153,7 +153,7 @@ class receiveController extends BaseController {
                     }
                 }else if ($location == 1) {
 
-pd($product);
+
                     foreach ($product as $k => $v) {
                         if ($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" && isset($v['unit']['value'])) {
                             $this->new->setItemss($v['dbid'], $object['poCode'], "", "", $object['receivingId'], $v['productId'], $v['good_qty'], $v['damage_qty'], $v['on_hold_qty'], date('Y-m-d', strtotime($v['expiryDate'])), $v['good_qty'], $v['damage_qty'], $object['receiveDate'], $v['unit_cost'], $v['bin_location'], $v['deleted'], $v['unit']['value'],$v['qty'],$v['unit']['label']);
