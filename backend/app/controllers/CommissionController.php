@@ -95,13 +95,14 @@ class CommissionController extends BaseController
                 $join->on('InvoiceItem.productId', '=', 'Product.productId');
             })->whereNotIn('invoiceStatus',['96','99','97'])
                 ->where('InvoiceItem.productPrice','!=',0)->where('zoneId', $this->zone)->where('hascommission',true)
-                ->whereBetween('Invoice.deliveryDate', [$this->date1, $this->date2])->orderBy('invoiceitem.productId')->get();      // $invoices = invoiceitem::where('invoiceId','I1508-009113')->first();
+                ->whereBetween('Invoice.deliveryDate', [$this->date1, $this->date2])->orderBy('commissiongroupId','asc')->orderBy('Product.productId','asc')->get();      // $invoices = invoiceitem::where('invoiceId','I1508-009113')->first();
 
 
             // pd($invoices->real_normalized_unit);
 
             foreach($invoices as $k => $v){
                 $invoiceQ[$v->productId]['productId'] = $v->productId;
+                $invoiceQ[$v->productId]['commissionGroup'] = $v->commissiongroupId;
                 $invoiceQ[$v->productId]['productName_chi'] = $v->productName_chi;
 
                 if(!isset($invoiceQ[$v->productId]['normalizedQty'])){
@@ -121,6 +122,19 @@ class CommissionController extends BaseController
             foreach($invoiceQ as &$vv){
                 $vv['productQtys'] = floor($vv['normalizedQty']/$vv['normalizedUnit']);
             }
+          //
+            $a = [];
+            foreach($invoiceQ as &$vvv){
+                if(!isset($a[$vvv['commissionGroup']])){
+                    $a[$vvv['commissionGroup']]['total'] = 0;
+                    $a[$vvv['commissionGroup']]['count'] = 0;
+                }
+
+                $a[$vvv['commissionGroup']]['total'] += $vvv['productQtys'];
+                $a[$vvv['commissionGroup']]['count'] +=1;
+            }
+
+            pd($a);
 
             $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->where('zoneId', $this->zone)->get();
             foreach ($invoice as $invoiceQ1) {
@@ -197,13 +211,18 @@ class CommissionController extends BaseController
 
 
         $i += 1;
+        $j=$i-1;
         foreach ($invoices as $k => $v) {
             $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['productId']);
             $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['productName_chi']);
             $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['productQtys']);
             $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v['productPackingName_carton']);
-            $i++;
+            $j += $v[$v['commissionGroup']]['count'];
 
+            if($i == $j)
+                $objPHPExcel->getActiveSheet()->setCellValue('E' . $j, $v[$v['commissionGroup']]['total']);
+
+            $i++;
             $longest[] = strlen($v['productName_chi']);
 
         }
