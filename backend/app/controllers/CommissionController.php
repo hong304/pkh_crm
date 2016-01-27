@@ -123,18 +123,18 @@ class CommissionController extends BaseController
                 $vv['productQtys'] = floor($vv['normalizedQty']/$vv['normalizedUnit']);
             }
           //
-            $a = [];
+            $this->a = [];
             foreach($invoiceQ as &$vvv){
-                if(!isset($a[$vvv['commissionGroup']])){
-                    $a[$vvv['commissionGroup']]['total'] = 0;
-                    $a[$vvv['commissionGroup']]['count'] = 0;
+                if(!isset($this->a[$vvv['commissionGroup']])){
+                    $this->a[$vvv['commissionGroup']]['total'] = 0;
+                    $this->a[$vvv['commissionGroup']]['count'] = 0;
                 }
 
-                $a[$vvv['commissionGroup']]['total'] += $vvv['productQtys'];
-                $a[$vvv['commissionGroup']]['count'] +=1;
+                $this->a[$vvv['commissionGroup']]['total'] += $vvv['productQtys'];
+                $this->a[$vvv['commissionGroup']]['count'] +=1;
             }
 
-            pd($a);
+
 
             $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->where('zoneId', $this->zone)->get();
             foreach ($invoice as $invoiceQ1) {
@@ -211,16 +211,22 @@ class CommissionController extends BaseController
 
 
         $i += 1;
-        $j=$i-1;
+        $j=$i;
+
+//j=4
+
         foreach ($invoices as $k => $v) {
             $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['productId']);
             $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['productName_chi']);
             $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['productQtys']);
             $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v['productPackingName_carton']);
-            $j += $v[$v['commissionGroup']]['count'];
 
-            if($i == $j)
-                $objPHPExcel->getActiveSheet()->setCellValue('E' . $j, $v[$v['commissionGroup']]['total']);
+
+
+            if($i == $j) {
+                $j += $this->a[$v['commissionGroup']]['count'];
+                $objPHPExcel->getActiveSheet()->setCellValue('E' . ($j-1), $this->a[$v['commissionGroup']]['total']);
+            }
 
             $i++;
             $longest[] = strlen($v['productName_chi']);
