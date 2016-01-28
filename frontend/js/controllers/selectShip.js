@@ -172,13 +172,14 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                     if(res.length > 0)
                     {
                          SharedService.setValue('items', res[0].poitem, 'handleShippingUpdate');
+                        SharedService.setValue('supplierSelectionCompleted', true, 'doneShippingUpdate');
                     }
 
                 });
                
         }
-        
-      
+
+
         
     }
     
@@ -223,6 +224,8 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                     }
                 });
             }
+
+
         $("#selectShipModel").hide();
     }
     

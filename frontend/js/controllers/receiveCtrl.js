@@ -7,6 +7,7 @@ Metronic.unblockUI();
 app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state, $stateParams) {
     /* Register shortcut key */
 
+    $scope.product = [];
     $scope.orgqty = [];
     $scope.totalqty = [];
     $scope.orders = {
@@ -60,7 +61,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
     $scope.productCode = [];
     $scope.itemlist = [1, 2, 3];
     //$scope.retrievedProduct = [];
-    $scope.product = [];
+
     $scope.displayName = "";
     $scope.totalAmount = 0;
     $scope.allowSubmission = true;
@@ -136,6 +137,14 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
         $scope.orders.location = SharedService.location;
         $scope.items = SharedService.items;
 
+
+    });
+
+
+    $scope.$on('doneShippingUpdate', function () {
+
+        console.log($scope.items);
+
         if ($scope.countryDataList !== undefined)
         {
             for (var t = 0; t < $scope.countryDataList.length; t++)
@@ -161,21 +170,22 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
 
         if (typeof $scope.items != 'undefined')
         {
-           // $scope.product[i] = $.extend(true, {}, $scope.productStructure);
+
             var i = 1;
             if ($scope.orders.location == 2)
             {
                 $scope.items.forEach(function (item) {
+                    // $scope.product[i] = $.extend(true, {}, $scope.productStructure);
                     $scope.product[i].productId = item.productId;
                     $scope.product[i].productName = item.productName_chi;
                     $scope.product[i].qty = item.qty;
                     $scope.product[i]['good_qty'] = item.qty;
-                   /* if (item.unit == 'carton')
-                        $scope.product[i]['unit_cost'] = item.productCost_unit;
-                    else if (item.unit == 'inner')
-                        $scope.product[i]['unit_cost'] = item.supplierStdPrice_inner;
-                    else if (item.unit == 'unit')
-                        $scope.product[i]['unit_cost'] = item.supplierStdPrice_unit; */
+                    /* if (item.unit == 'carton')
+                     $scope.product[i]['unit_cost'] = item.productCost_unit;
+                     else if (item.unit == 'inner')
+                     $scope.product[i]['unit_cost'] = item.supplierStdPrice_inner;
+                     else if (item.unit == 'unit')
+                     $scope.product[i]['unit_cost'] = item.supplierStdPrice_unit; */
                     $scope.product[i]['unit_cost'] = item.unitprice;
                     addUnitTwo(item, i);
                     i++;
@@ -183,8 +193,10 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
             } else if ($scope.orders.location == 1)
             {
 
-
                 $scope.items.forEach(function (item) {
+
+                    //$scope.product[i] = $.extend(true, {}, $scope.productStructure);
+
                     $scope.product[i].productId = item.productId;
                     $scope.product[i].productName = item.product_detail.productName_chi;
                     $scope.product[i].qty = item.productQty;
@@ -193,18 +205,18 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                     $scope.product[i]['unit']['label'] = item.productUnitName;
                     $scope.product[i]['unit']['value'] = item.productQtyUnit;
 
-                  /*  if (item.productQtyUnit == 'carton')
-                        $scope.product[i]['unit_cost'] = item.product_detail.productCost_unit;
-                    else if (item.productQtyUnit == 'inner')
-                        $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_inner;
-                    else if (item.productQtyUnit == 'unit')
-                        $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;*/
-                   // addUnit(item, i);
+                    /*  if (item.productQtyUnit == 'carton')
+                     $scope.product[i]['unit_cost'] = item.product_detail.productCost_unit;
+                     else if (item.productQtyUnit == 'inner')
+                     $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_inner;
+                     else if (item.productQtyUnit == 'unit')
+                     $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;*/
+                    // addUnit(item, i);
                     $scope.product[i]['unit_cost'] = item.unitprice;
 
 
-if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
-    $scope.orgqty[$scope.product[i].productId]=0;
+                    if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
+                        $scope.orgqty[$scope.product[i].productId]=0;
 
                     $scope.orgqty[$scope.product[i].productId] += $scope.product[i]['good_qty'];
 
@@ -218,16 +230,15 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
                     }
 
                 });
-                console.log($scope.product);
+
             }
 
 
         }
 
-
-
-
     });
+
+
 
    function addUnit(item, i)
     {
@@ -287,22 +298,26 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
         $scope.reCalculateTotalAmount();
     }
 
-    $scope.itemlist.forEach(function (key) {
-        $scope.product[key] = $.extend(true, {}, $scope.productStructure);
-        $scope.timer.product[key] = $.extend(true, {}, $scope.timerProductStructure);
-    });
+
 
 
     $scope.$on('$viewContentLoaded', function () {
 
+        $scope.product = [];
+        $scope.itemlist.forEach(function (key) {
+            $scope.product[key] = $.extend(true, {}, $scope.productStructure);
+            $scope.timer.product[key] = $.extend(true, {}, $scope.timerProductStructure);
+        });
+
         Metronic.initAjax();
-        if ($scope.instatusmsg !== undefined && $stateParams.invoiceNumber !== undefined)
+        if ($stateParams.action == 'create')
         {
+            console.log($scope.product);
             Metronic.alert({
                 container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
                 place: 'prepend', // append or prepent in container
                 type: 'success', // alert's type
-                message: '<span style="font-size:16px;">' + $scope.instatusmsg + ' 編號: <strong>' + $stateParams.invoiceNumber + '</strong></span>', // alert's message
+                message: '<span style="font-size:16px;"> 收貨編號: <strong>' + $stateParams.receivingId + '</strong></span>', // alert's message
                 close: true, // make alert closable
                 reset: true, // close all previouse alerts first
                 focus: true, // auto scroll to the alert after shown
@@ -448,7 +463,7 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
         {
             $scope.disAllowsubmit = true;
 
-            console.log($scope.product);
+
             $http.post(
                     endpoint + '/newReceive.json', {
                         product: $scope.product,
@@ -463,16 +478,7 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
                         {
                             if (res.action == 'create')
                             {
-                                Metronic.alert({
-                                    container: '#orderinfo', // alerts parent container(by default placed after the page breadcrumbs)
-                                    place: 'prepend', // append or prepent in container
-                                    message: '<span style="font-size:20px;">收貨編號:' + $scope.receiveId + '</span>', // alert's message
-                                    close: true, // make alert closable
-                                    reset: true, // close all previouse alerts first
-                                    focus: true, // auto scroll to the alert after shown
-                                    closeInSeconds: 0, // auto close after defined seconds
-                                });
-                                //Oversea Cost problem 
+                                  //Oversea Cost problem
                                 if ($scope.orders.location == 2)
                                 {
                                     $http.post(
@@ -494,6 +500,9 @@ if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
                                             error(function (res, status, headers, config) {
                                             });
                                 }
+
+                                $state.go("receiveCtrl",{action:res.action,receivingId:res.receiveid},{ reload: true, inherit: false, notify: true });
+
                             }
                         } else if (res.result == false)
                         {

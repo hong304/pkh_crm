@@ -3,7 +3,7 @@
 app.controller('selectPoControl', function($scope, $http, SharedService, $timeout) {
 	
 	$scope.clientSuggestion = [];
-	$scope.clientHeader = "建議客戶";
+	$scope.clientHeader = "建議供應商";
 	$scope.purchaseorder = [];
 	$scope.lock = false;
 	

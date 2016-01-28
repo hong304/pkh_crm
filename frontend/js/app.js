@@ -1660,7 +1660,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
     }) 
     
      .state('receiveCtrl', {
-        url: "/receiveCtrl",
+         url: "/receiveCtrl/:action/:receivingId",
         templateUrl: "views/receive.html",            
         data: {pageTitle: '收貨管理列表', pageSubTitle: ''},
 
