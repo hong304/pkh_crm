@@ -17,18 +17,27 @@ function goEdit(invoiceId)
 
 app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state) {
 
+
+
     $scope.invoiceIdForApprove='';
     $(document).ready(function(){
         $(document).keydown(function (e) {
             if(($state.current.name=='pendingInvoice' || $state.current.name=='queryInvoice') && $scope.invoiceIdForApprove!=''){
                 if (e.keyCode == 121) //F10
                 {
-                  console.log('success approve');
                   $scope.manipulate('Approve',$scope.invoiceIdForApprove);
                   $scope.invoiceIdForApprove = '';
                 }
             }
         });
+
+        $('#queryInfo').keydown(function (e) {
+            if (e.keyCode == 13) { //Enter
+                $scope.updateDataSet();
+            }
+
+        });
+
     });
 
     $scope.systeminfo = $rootScope.systeminfo;
@@ -160,6 +169,8 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
         Metronic.initAjax();
     });
 
+
+
     $scope.checkParm = function()
     {
     	if($location.search().scope)
@@ -265,13 +276,13 @@ app.controller('queryInvoiceCtrl', function($scope, $rootScope, $http, SharedSer
     	$scope.updateDataSet();
     }
 
-    $scope.updateByDelay = function()
+   /* $scope.updateByDelay = function()
     {
     	$timeout.cancel(fetchDataTimer);
     	fetchDataTimer = $timeout(function () {
     		$scope.updateDataSet();
     	}, fetchDataDelay);
-    }
+    }*/
 
 
  // --------------------- for approval modal
