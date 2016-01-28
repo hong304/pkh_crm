@@ -112,6 +112,7 @@ class rePackController extends BaseController {
                 $this->remain = 0;
                 while($undeductUnit > 0 ){
                     $receiving = Receiving::where('productId',$outProduct['productId'])->where('good_qty','>=',$v['packing_size'])->orderBy('expiry_date','asc')->first();
+                    $org_good_qty = $receiving->good_qty;
                     $receiving->good_qty+=$this->remain;
                     if($undeductUnit > $receiving->good_qty){
                         $this->remain = $receiving->good_qty % $v['packing_size'];
@@ -127,15 +128,26 @@ class rePackController extends BaseController {
                         $ava_qty = $undeductUnit;
                         $undeductUnit = 0;
                     }
-                    $totalQty += $actual_deduct_qty;
+                    //$totalQty += $actual_deduct_qty;
                     $receiving->good_qty -= $actual_deduct_qty;
                     $receiving->save();
 
+                    // Raw source deduction
+                    $adjustsRaw = new adjust();
+                    $adjustsRaw->receivingId = $receiving->receivingId;
+                    $adjustsRaw->adjustType = 1;
+                    $adjustsRaw->good_qty = $org_good_qty;
+                    $adjustsRaw->adjusted_good_qty = $receiving->good_qty;
+                    $adjustsRaw->productId = ucwords($receiving->productId);
+                    $adjustsRaw->save();
+                    //end
+
                     $adjusts = new adjust();
                     $adjusts->adjustId = $receiving->id;
-                    $reId = Receiving::where('receivingId','LIKE','P%')->orderBy('receivingId','desc')->first();
+                    $reId = Receiving::where('receivingId','LIKE',"P%")->orderBy('receivingId','desc')->first();
+
                     if(count($reId)>0){
-                        $id = substr($reId->receivingId,2);
+                        $id = substr($reId->receivingId,1);
                         $id += 1;
                     }else{
                         $id = 1;
