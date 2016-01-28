@@ -170,7 +170,7 @@ class ReceiveMan
                        }
 
                  $poitems = poItem::where('poCode',$i['poCode'])->where('productId',$i['productId'])->where('productQtyUnit',$i['supplier_interval'])->first();
-                // $poitems->receivedQty += $i['receivedQty'];
+                 $poitems->receivedQty += $i['receivedQty'];
                  $poitems->save();
 
                  $item->save();
@@ -181,7 +181,7 @@ class ReceiveMan
                }
 
                 $po = Purchaseorder::where('poCode',$this->items[0]['poCode'])->first();
-               // $po->poStatus = 20;
+                $po->poStatus = 20;
                 $po->save();
 
                 return[
