@@ -162,14 +162,25 @@ class Report_DailySummary
                                     'counts' => (isset($this->goods[$productId . '(補貨)'][$unit]) ? $this->goods[$productId . '(補貨)'][$unit]['counts'] : 0) + $item->productQty,
                                 ];
                             }else if ($invoiceQ->invoiceStatus == '97') {
-                                $this->goods[$productId . '(換貨)'][$unit] = [
-                                    'productId' => $productId . '(換貨)',
+                                if($item->productQty > 0)
+                                $this->goods[$productId . '(換貨+)'][$unit] = [
+                                    'productId' => $productId . '(換貨+)',
                                     'name' => $productDetail->productName_chi,
                                     'productPrice' => $item->productPrice,
                                     'unit' => $unit,
                                     'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods[$productId . '(換貨)'][$unit]) ? $this->goods[$productId . '(換貨)'][$unit]['counts'] : 0) + $item->productQty,
+                                    'counts' => (isset($this->goods[$productId . '(換貨+)'][$unit]) ? $this->goods[$productId . '(換貨+)'][$unit]['counts'] : 0) + $item->productQty,
                                 ];
+                                if($item->productQty < 0)
+                                $this->goods[$productId . '(換貨-)'][$unit] = [
+                                    'productId' => $productId . '(換貨-)',
+                                    'name' => $productDetail->productName_chi,
+                                    'productPrice' => $item->productPrice,
+                                    'unit' => $unit,
+                                    'unit_txt' => $item->productUnitName,
+                                    'counts' => (isset($this->goods[$productId . '(換貨-)'][$unit]) ? $this->goods[$productId . '(換貨-)'][$unit]['counts'] : 0) + $item->productQty,
+                                ];
+
                             }else if ($item->productPrice == 0) {
                                 $this->goods[$productId . '(零元)'][$unit] = [
                                     'productId' => $productId . '(零元)',

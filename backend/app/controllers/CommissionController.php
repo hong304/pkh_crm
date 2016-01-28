@@ -14,6 +14,7 @@ class CommissionController extends BaseController
     private $_countcodreturn = 0;
     private $_countcodreplace = 0;
     private $_countcodreplenishment = 0;
+    private $filter = '';
 
     public function __construct(){
 
@@ -21,7 +22,10 @@ class CommissionController extends BaseController
             pd('Permission Denied');
         }
 
+
         $filter = Input::get('filterData');
+        $this->filter=$filter;
+
         $this->zone = (isset($filter['zone']['zoneId'])) ? $filter['zone']['zoneId'] : '0';
         $this->date1 = (isset($filter['deliveryDate']) ? strtotime($filter['deliveryDate']) : strtotime("today"));
         $this->date2 = (isset($filter['deliveryDate1']) ? strtotime($filter['deliveryDate1']) : strtotime("today"));
@@ -119,10 +123,17 @@ class CommissionController extends BaseController
                 $invoiceQ[$v->productId]['productPackingName_carton'] = $v->productPackingName_carton;
             }
 
-            foreach($invoiceQ as &$vv){
+            foreach($invoiceQ as$k=> &$vv){
                 $vv['productQtys'] = floor($vv['normalizedQty']/$vv['normalizedUnit']);
+                     }
+
+          foreach($invoiceQ as $k => $v){
+                if($v['productQtys']<=0)
+                    unset($invoiceQ[$k]);
             }
-          //
+
+
+
             $this->a = [];
             foreach($invoiceQ as &$vvv){
                 if(!isset($this->a[$vvv['commissionGroup']])){
@@ -133,7 +144,6 @@ class CommissionController extends BaseController
                 $this->a[$vvv['commissionGroup']]['total'] += $vvv['productQtys'];
                 $this->a[$vvv['commissionGroup']]['count'] +=1;
             }
-
 
 
             $invoice = Invoice::whereBetween('deliveryDate', [$this->date1, $this->date2])->where('zoneId', $this->zone)->get();
@@ -194,13 +204,13 @@ class CommissionController extends BaseController
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '車號:');
-        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $this->zone);
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $this->zone .' ('.$this->filter['zone']['zoneName'].')');
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '日期:');
-        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, date('Y-m-d',$this->date1));
-        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'To');
-        $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, date('Y-m-d',$this->date2));
+        $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, date('Y-m-d',$this->date1) . ' To ' .date('Y-m-d',$this->date2));
+       // $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'To');
+       // $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, date('Y-m-d',$this->date2));
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '產品編號');
@@ -213,15 +223,11 @@ class CommissionController extends BaseController
         $i += 1;
         $j=$i;
 
-//j=4
-
         foreach ($invoices as $k => $v) {
             $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $v['productId']);
             $objPHPExcel->getActiveSheet()->setCellValue('B' . $i, $v['productName_chi']);
             $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, $v['productQtys']);
             $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $v['productPackingName_carton']);
-
-
 
             if($i == $j) {
                 $j += $this->a[$v['commissionGroup']]['count'];
@@ -233,39 +239,75 @@ class CommissionController extends BaseController
 
         }
 
-        $i += 1;
+        $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, "=SUM(C5:C" . ($i-1) . ")");
+        $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, "=SUM(E5:E" . ($i-1) . ")");
+
+        $i += 2;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '現金總數:');
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcod'] );
+        $objPHPExcel->getActiveSheet()->mergeCells('C'.$i.':D'.$i);
         $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '$' . number_format($summary['sumcod'],2,'.',','));
+
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('B'.$i)
+            ->getAlignment()
+            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '月結總數:');
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcredit'] );
+        $objPHPExcel->getActiveSheet()->mergeCells('C'.$i.':D'.$i);
         $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, '$' . number_format($summary['sumcredit'],2,'.',','));
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('B'.$i)
+            ->getAlignment()
+            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '退貨單:');
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcodreturn'] );
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('B'.$i)
+            ->getAlignment()
+            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '換貨單:');
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcodreplace'] );
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('B'.$i)
+            ->getAlignment()
+            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
 
         $i += 1;
         $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, '補貨單:');
         $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, $summary['countcodreplenishment'] );
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('B'.$i)
+            ->getAlignment()
+            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
-
-
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(12);
         $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(max($longest));
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(8);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(8);
+
+        /*
         foreach (range('A', $objPHPExcel->getActiveSheet()->getHighestDataColumn()) as $col) {
             // $calculatedWidth = $objPHPExcel->getActiveSheet()->getColumnDimension($col)->getWidth();
             if($col != 'C')
                 $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-        }
+        }*/
 
+        $objPHPExcel->getActiveSheet()
+            ->getStyle('A1:A500')
+            ->getNumberFormat()
+            ->setFormatCode(
+                PHPExcel_Style_NumberFormat::FORMAT_TEXT
+            );
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
