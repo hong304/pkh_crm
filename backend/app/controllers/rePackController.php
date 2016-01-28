@@ -74,6 +74,9 @@ class rePackController extends BaseController {
             if($filter['supplier']!='')
                 $receivings->where('purchaseorders.supplierCode', '=', $filter['supplier']);
 
+            if($filter['productId']!='')
+                $receivings->where('productId', '=', $filter['productId']);
+
                 if($filter['poCode']!='')
                     $receivings->where('receivings.poCode', 'LIKE', $filter['poCode'] . '%');
 

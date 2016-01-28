@@ -40,7 +40,7 @@
 
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
-                    <input type="text" id="poCode" ng-model="keywordpo.poCode" ng-change="updateByDelay();" class="form-control" placeholder="">
+                    <input type="text" id="poCode" ng-model="keywordpo.poCode" class="form-control" placeholder="">
                 </div>
             </div>
         </div>
@@ -99,7 +99,11 @@
                 </div>
             </div>
 
-
+            <div class="portlet-body">
+                <div class="md-col-12">
+                    <button type="button" ng-click="updateDataSet();" id="submitbutton" class="btn blue">提交</button>
+                </div>
+            </div>
 
         </div>
     </div>

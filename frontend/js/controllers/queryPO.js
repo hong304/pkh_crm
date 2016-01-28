@@ -79,6 +79,16 @@ app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService,
     $scope.keywordpo.endPodate = year+'-'+month+'-'+day;
 
 
+    $(document).ready(function(){
+        $('#queryInfo').keydown(function (e) {
+            if (e.keyCode == 13) { //Enter
+                $scope.updateDataSet();
+            }
+
+        });
+
+    });
+
 
     $scope.$on('$viewContentLoaded', function () {
         // initialize core components

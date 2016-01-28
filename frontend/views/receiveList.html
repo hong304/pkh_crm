@@ -40,10 +40,27 @@
 
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
-                    <input type="text" id="searchpoCode" ng-model="filterData.poCode" ng-change="updateByDelay();" class="form-control" placeholder="">
+                    <input type="text" id="searchpoCode" ng-model="filterData.poCode" class="form-control" placeholder="">
                 </div>
             </div>
         </div>
+
+        <!--Product Id-->
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-green-sharp bold uppercase">貨品編號</span>
+                </div>
+            </div>
+
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <input type="text" id="searchProductId" ng-model="filterData.productId" class="form-control" placeholder="">
+                </div>
+            </div>
+        </div>
+
 
         <!--<div class="portlet light">
 			<div class="portlet-title">
@@ -112,7 +129,11 @@
                     </div>
                 </div>
 
-
+               <div class="portlet-body">
+                   <div class="md-col-12">
+                       <button type="button" ng-click="updateDataSet();" id="submitbutton" class="btn blue">提交</button>
+                   </div>
+               </div>
 
 		</div>
     </div>

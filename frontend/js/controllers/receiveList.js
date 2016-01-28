@@ -84,6 +84,17 @@ app.controller('receiveList', function($rootScope, $scope, $http, $timeout, Shar
 
     });
 
+
+    $(document).ready(function(){
+        $('#queryInfo').keydown(function (e) {
+            if (e.keyCode == 13) { //Enter
+                $scope.updateDataSet();
+            }
+
+        });
+
+    });
+
     $scope.$on('handleSupplierUpdate', function(){
         $scope.filterData.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
         $scope.filterData.supplierCode = SharedService.supplierName;
