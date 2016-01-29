@@ -30,6 +30,16 @@
                             </div>
                         </div>
 
+						<div class="form-group">
+							<label class="col-md-2 control-label">佣金類別  *</label>
+							<div class="col-md-10">
+								<select class="form-control"
+										ng-model="info.commissiongroup"
+										data-ng-options="x.commissiongroupName for x in commissiongroup track by x.commissiongroupId">
+								</select>
+							</div>
+						</div>
+
                         <div class="form-group"  data-ng-if="info.productId == ''">
                             <label class="col-md-2 control-label">Group Prefix  *</label>
                             <div class="col-md-1" data-ng-repeat="(k,i) in prefix" data-class="pull-left" >

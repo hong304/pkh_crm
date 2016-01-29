@@ -436,6 +436,21 @@ class ProductController extends BaseController {
 
         $i = Input::get('info');
 
+
+        $rules = [
+            'commissiongroup' => 'required_if:hasCommission,1',
+        ];
+
+        $validator = Validator::make($i, $rules);
+        if ($validator->fails())
+        {
+            $this->message = "請輸入所需信息";
+            return ['error' => 1,
+                    'msg' => $validator->messages()];
+        }
+
+
+
         $cm = new ProductManipulation($i['productId'], (isset($i['group']['groupid']) ? $i['group']['groupid'] : false), (isset($i['productnewId']) ? $i['productnewId']: false));
         //  $cm = new ProductManipulation($i['productId'], (isset($i['productId']) ? false : $i['group']['groupid']));
         $id = $cm->save($i);
@@ -533,6 +548,7 @@ class ProductController extends BaseController {
         elseif($mode == 'single')
         {
             $product = Product::where('productId', Input::get('productId'))->first();
+            $product['commissiongroup'] = commissiongroup::get();
         }elseif($mode == 'checkId'){
             $product = Product::select('productId')->where('productId', Input::get('productId'))->first();
             $product = count($product);

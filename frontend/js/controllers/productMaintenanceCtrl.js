@@ -163,7 +163,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     {
     	$scope.newId = "";
     	$scope.submitbtn = true;
-    	$http.post(querytarget, {mode: "single", productId: productId})
+    	$http.post(querytarget, {mode: "single", productId: productId}) //queryProduct.json
     	.success(function(res, status, headers, config){    
     		$scope.info = $.extend(true, {}, $scope.info_def);
     		$scope.info = res;
@@ -211,6 +211,16 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
                 }).indexOf(res.department+'-'+res.group+'-');
 
                 $scope.info.group = $scope.systeminfo.productgroup[pos];
+
+            $scope.commissiongroup = res.commissiongroup;
+
+            var pos = $scope.commissiongroup.map(function(e) {
+                return e.commissiongroupId;
+            }).indexOf(res.commissiongroupId);
+
+            $scope.info.commissiongroup = $scope.commissiongroup[pos];
+
+
 
     		$("#productFormModal").modal({backdrop: 'static'});
     		/*
@@ -298,10 +308,14 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
         		{
         			$("#productFormModal").modal('hide');
         		}
-        		else
+        		else if(res.error == 1)
         		{
-        			$scope.newId = "編號: " + res.id;
-        		}
+                    alert('Error: error code (00136)');
+                    $scope.newId = res.msg;
+                    $scope.submitbtn = true;
+        		}else{
+                    $scope.newId = "編號: " + res.id;
+                }
         		$scope.updateDataSet();
         		
         	});

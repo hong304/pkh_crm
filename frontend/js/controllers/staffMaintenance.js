@@ -124,7 +124,7 @@ app.controller('staffMaintenanceCtrl', function($scope, $rootScope, $http, Share
     {
     	$scope.staffId = $location.search().staffId;
     	
-    	$http.post(querytarget, {mode: "single", StaffId: $scope.staffId})
+    	$http.post(querytarget, {mode: "single", StaffId: $scope.staffId}) //queryStaff.json
     	.success(function(res, status, headers, config){    
     		
     		
