@@ -105,8 +105,9 @@ class inventoryController extends BaseController {
                     })->wherein('productStatus', ['o','s']);
 
             }else{
-                $receivings->where('good_qty','>',0);
+                $receivings->where('good_qty',$filter['zerofilter'],0);
             }
+
             if ($filter['status']) {
                 $receivings->where('productStatus', $filter['status']);
             }else{
@@ -159,6 +160,10 @@ class inventoryController extends BaseController {
                 ->addColumn('link', function ($p) {
                     // if(Auth::user()->can('edit_product'))
                     return '<span onclick="editProduct(\'' . $p->id . '\')" class="btn btn-xs default"><i class="fa fa-search"></i>盤點</span>';
+                    //      else
+                    //  return '';
+                }) ->editColumn('productId', function ($p) {
+                    return '<a onclick="viewProduct(\'' . $p->productId . '\')">'.$p->productId.'</a>';
                     //      else
                     //  return '';
                 })->addColumn('sales_return', function ($p) {

@@ -37,6 +37,27 @@
             </div>
         </div>
 
+
+		<!-- zero filter -->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">零存貨</span>
+				</div>
+
+			</div>
+			<div class="portlet-body">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<div class="radio-list">
+						<label><input ng-model="filterData.zerofilter"  type="radio" name="zerofilter"  value=">="> 全部</label>
+						<label><input ng-model="filterData.zerofilter"  type="radio" name="zerofilter"  value=">" checked> 多於零</label>
+						<label><input ng-model="filterData.zerofilter"  type="radio" name="zerofilter"  value="<="> 零存貨 </label>
+					</div>
+				</div>
+			</div>
+		</div>
+
         <!-- Product Location -->
         <div class="portlet light">
             <div class="portlet-title">
@@ -132,3 +153,4 @@
 <div ng-include="'/views/inventoryForm.html'"></div>
 <div ng-include="'/views/inventorySalesReturnModal.html'"></div>
 <div ng-include="'/views/model_repack.html'"></div>
+<div ng-include="'/views/productForm.html'"></div>

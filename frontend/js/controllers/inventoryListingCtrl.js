@@ -10,6 +10,15 @@ function editProduct(id)
     });
 }
 
+
+function viewProduct(productId)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.viewProduct(productId);
+    });
+}
+
 function salesReturn(id)
 {
     var scope = angular.element(document.getElementById("queryInfo")).scope();
@@ -61,8 +70,9 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
             'status' : '',
             'productLocation' : '',
             'sorting' : '',
-        'current_sorting': 'asc'
-		};
+        'current_sorting': 'asc',
+        'zerofilter' : '>'
+    };
 
     $scope.hasCommission = '';
     $scope.submit = true;
@@ -80,6 +90,39 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 	$scope.newId = "";
 	
 	$scope.info = {};
+
+
+
+    $scope.pinfo_def = {
+        'group'	:	false,
+        'productId' : '',
+        'productLocation' : '',
+        'productStatus'	:	'',
+        'supplierProductStatus' : '',
+        'productPacking_carton' : '1',
+        'productPacking_inner' : '1',
+        'productPacking_unit' : '1',
+        'productPacking_size' : '',
+        'productPackingName_carton' : '',
+        'productPackingName_inner' : '',
+        'productPackingName_unit' : '',
+        'productPackingInterval_carton' : '',
+        'productPackingInterval_inner' : '',
+        'productPackingInterval_unit' : '',
+        'productStdPrice_carton' : '',
+        'productStdPrice_inner' : '',
+        'productStdPrice_unit' : '',
+        'productMinPrice_carton' : '',
+        'productMinPrice_inner' : '',
+        'productMinPrice_unit' : '',
+        'productCost_unit'	:	'',
+        'productName_chi' : '',
+        'productName_eng' : '',
+        'productnewId' :'',
+        'hasCommission' : '',
+        'allowNegativePrice' : '',
+        'allowSeparate' : ''
+    };
 
 
 
@@ -319,6 +362,83 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
             $scope.info.adjusted_damage_qty = res.damage_qty;
       		$("#inventoryFormModal").modal({backdrop: 'static'});
     	});
+    }
+
+    $scope.viewProduct = function(productId)
+    {
+        $scope.newId = "";
+        $scope.submitbtn = false;
+        $http.post(endpoint + '/queryProduct.json', {mode: "single", productId: productId}) //queryProduct.json
+            .success(function(res, status, headers, config){
+                $scope.info = $.extend(true, {}, $scope.pinfo_def);
+                $scope.info = res;
+
+                $scope.hasCommission = res.hasCommission;
+                $scope.allowNegativePrice = res.allowNegativePrice;
+                //console.log($scope.info);
+
+                var floorcat = [];
+                floorcat = floorcat.concat([{value: '1', label: "1F"}]);
+                floorcat = floorcat.concat([{value: '9', label: "9F"}]);
+                $scope.floorcat = floorcat;
+
+                var pos = floorcat.map(function(e) {
+                    return e.value;
+                }).indexOf(res.productLocation);
+
+                $scope.info.productLocation = floorcat[pos];
+
+
+                var status = [];
+                status = status.concat([{value: 'o', label: "正常"}]);
+                status = status.concat([{value: 's', label: "暫停"}]);
+                $scope.status = status;
+
+                var pos = status.map(function(e) {
+                    return e.value;
+                }).indexOf(res.productStatus);
+
+                $scope.info.productStatus = status[pos];
+
+
+                var supplierProductStatus = [];
+                supplierProductStatus = supplierProductStatus.concat([{value: 'o', label: "正常"}]);
+                supplierProductStatus = supplierProductStatus.concat([{value: 's', label: "暫停"}]);
+                $scope.supplierProductStatus = supplierProductStatus;
+
+                var pos = supplierProductStatus.map(function(e) {
+                    return e.value;
+                }).indexOf(res.supplierProductStatus);
+
+                $scope.info.supplierProductStatus = supplierProductStatus[pos];
+
+                var pos = $scope.systeminfo.productgroup.map(function(e) {
+                    return e.groupid;
+                }).indexOf(res.department+'-'+res.group+'-');
+
+                $scope.info.group = $scope.systeminfo.productgroup[pos];
+
+                $scope.commissiongroup = res.commissiongroup;
+
+                var pos = $scope.commissiongroup.map(function(e) {
+                    return e.commissiongroupId;
+                }).indexOf(res.commissiongroupId);
+
+                $scope.info.commissiongroup = $scope.commissiongroup[pos];
+
+
+
+                $("#productFormModal").modal();
+                /*
+                 var pos = $scope.systeminfo.availableZone.map(function(e) {
+                 return e.zoneId;
+                 }).indexOf(res.deliveryZone);
+
+                 $scope.customerInfo.deliveryZone = $scope.systeminfo.availableZone[pos];
+                 */
+            });
+
+
     }
 
     $scope.salesReturn = function(id)
