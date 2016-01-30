@@ -79,7 +79,7 @@ class rePackController extends BaseController {
 
                 if($filter['poCode']!='')
                     $receivings->where('receivings.poCode', 'LIKE', $filter['poCode'] . '%');
-
+            $receivings = $receivings->orderby('receivings.poCode','desc');
             return Datatables::of($receivings)->make(true);
         }
     }
