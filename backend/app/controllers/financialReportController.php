@@ -778,8 +778,8 @@ class financialReportController extends BaseController
                 $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
                 $first = false;
             } else {
-                $time[date("Y-m", strtotime("-" . $v[1]*31 . " days "))][0] = date("Y-m-01", strtotime("-" . $v[0]*31 . " days"));
-                $time[date("Y-m", strtotime("-" . $v[1]*31 . " days"))][1] = date("Y-m-t", strtotime("-" . $v[1]*31 . " days"));
+                $time[date("Y-m", strtotime("last day of -".$v[1]." month"))][0] = date("Y-m-01", strtotime("last day of -".$v[0]." month"));
+                $time[date("Y-m", strtotime("last day of -".$v[1]." month"))][1] = date("Y-m-t", strtotime("last day of -".$v[1]." month"));
             }
         }
 
