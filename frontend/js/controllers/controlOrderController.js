@@ -193,6 +193,7 @@ app.controller('controlOrderController', function($rootScope, $scope, $http, $ti
     });
 
     $scope.$on('handleCustomerUpdate', function(){
+
         // received client selection broadcast. update to the invoice portlet
         $scope.an=true;
         $scope.order.clientId = SharedService.clientId;
@@ -380,6 +381,8 @@ else{
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
+
+
 
         if($stateParams.action == 'success') {
             if($stateParams.instatus=='2'){
