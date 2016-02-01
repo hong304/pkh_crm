@@ -63,7 +63,7 @@ class OrderController extends BaseController
         $ci->setInvoice($order);
 
 
-        $have_item = false;
+        $new_item = false;
         $ii=0;
         $j=0;
 
@@ -73,11 +73,11 @@ class OrderController extends BaseController
                 unset($product[$k]);
             }else{
 
-                if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] != 0)
+                if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] != 0) //old item
                     $itemIds[] = $p['dbid'];
 
-                if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] != 0){
-                    $have_item = true;
+                if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] != 0){ //new item
+                    $new_item = true;
                 }
 
                 if ($p['deleted'] == 0 && $p['qty'] > 0)
@@ -90,6 +90,14 @@ class OrderController extends BaseController
             }
         }
 
+        if (count($itemIds) == 0 && !$new_item)
+            return [
+                'result' => false,
+                'status' => 0,
+                'invoiceNumber' => $order['invoiceId'],
+                'invoiceItemIds' => 0,
+                'message' => '未有下單貨品(Error:001)',
+            ];
 
         if($order['status'] == 98){
             if($ii > 0){
@@ -199,17 +207,11 @@ class OrderController extends BaseController
              }
         }
 
+
+
         if ($order['invoiceId'] != '') {
 
-            if (count($itemIds) == 0 && !$have_item)
-                return [
-                    'result' => false,
-                    'status' => 0,
-                    'invoiceNumber' => $order['invoiceId'],
-                    'invoiceItemIds' => 0,
-                    'message' => '未有下單貨品(Error:001)',
-                ];
-            else if (count($itemIds) == 0){
+           if (count($itemIds) == 0){
                 $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail');
                 $deletedItemFromDB = $i->get();
                 $i->delete();
@@ -241,15 +243,6 @@ class OrderController extends BaseController
 
             }
 
-        } else {
-            if (!$have_item)
-                return [
-                    'result' => false,
-                    'status' => 0,
-                    'invoiceNumber' => 0,
-                    'invoiceItemIds' => 0,
-                    'message' => '未有下單貨品(Error:002)',
-                ];
         }
 
         foreach ($product as $p) {
