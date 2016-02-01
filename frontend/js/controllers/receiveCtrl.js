@@ -40,14 +40,14 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
     var yday = start_date.getDate();
 
 
-  /*  $("#deliverydate").datepicker({
+   $("#deliverydate").datepicker({
         rtl: Metronic.isRTL(),
         orientation: "left",
         autoclose: true
     });
 
     $("#deliverydate").datepicker("setDate", yyear + '-' + ymonth + '-' + yday);
-*/
+
 
     $scope.orders.receiveDate = yyear + '-' + ymonth + '-' + yday;
 

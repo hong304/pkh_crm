@@ -1676,11 +1676,14 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         assets + '/lib/angular-bootstrap/ui-bootstrap.min.js',
                         assets + '/lib/angular-bootstrap/ui-bootstrap-csp.css',
 
-        assets + '/css/dataTable/bootstrap.min.css',
+                        assets + '/css/dataTable/bootstrap.min.css',
                         assets + '/css/dataTable/dataTables.bootstrap.css',
                         assets + '/js/dataTable/jquery.dataTables.min.js',
                         assets + '/js/dataTable/dataTables.bootstrap.js',
-                        
+
+                        assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                        assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
                         'js/controllers/receiveCtrl.js',
                         'js/controllers/selectShip.js',
 
