@@ -467,30 +467,30 @@ else{
 
                     if($scope.systeminfo.user.id!=9 && $scope.systeminfo.user.id!=46){
 
-                    if(inf.lock == 1){
-                        Metronic.blockUI({
-                            target: '#orderportletbody',
-                            boxed: true,
-                            message: '你沒有權限修改此訂單'
-                        });
-                        $scope.allowSubmission = false;
-                        return false;
-                    }
-
-
-                        if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || (inf.invoiceStatus == 30 && $scope.disAllowsubmit) ){
-
+                        if(inf.lock == 1){
                             Metronic.blockUI({
                                 target: '#orderportletbody',
                                 boxed: true,
                                 message: '你沒有權限修改此訂單'
                             });
-
                             $scope.allowSubmission = false;
                             return false;
                         }
+
+
+                            if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || (inf.invoiceStatus == 30 && $scope.disAllowsubmit) ){
+
+                                Metronic.blockUI({
+                                    target: '#orderportletbody',
+                                    boxed: true,
+                                    message: '你沒有權限修改此訂單'
+                                });
+
+                                $scope.allowSubmission = false;
+                                return false;
+                            }
                     }
-                    
+
                     $scope.order.clientId = res.customerId;
                     $scope.order.clientName = res.customerName_chi;
                     $scope.order.address = res.address_chi;
