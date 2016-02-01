@@ -119,7 +119,7 @@ class ProductManipulation {
         $this->im->productLocation = $info['productLocation']['value'];
         $this->im->productStatus = $info['productStatus']['value'];
         $this->im->supplierProductStatus = $info['supplierProductStatus']['value'];
-        $this->im->commissiongroupId = $info['commissiongroup']['commissiongroupId'];
+        $this->im->commissiongroupId = isset($info['commissiongroup']['commissiongroupId'])?$info['commissiongroup']['commissiongroupId']:'';
 
  
 

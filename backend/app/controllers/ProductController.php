@@ -462,6 +462,10 @@ class ProductController extends BaseController {
     {
         $mode = Input::get('mode');
 
+        if($mode == 'commissiongroup'){
+            $product['commissiongroup'] = commissiongroup::get();
+            return Response::json($product);
+        }
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');

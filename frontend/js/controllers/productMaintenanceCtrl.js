@@ -81,7 +81,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
             'productnewId' :'',
             'hasCommission' : '',
             'allowNegativePrice' : '',
-            'allowSeparate' : ''
+            'allowSeparate' : '',
+        'commissiongroup' : '',
 	};
 	
 	$scope.submitbtn = true;
@@ -237,7 +238,20 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     
  $scope.addProduct = function()
     {
-    	$scope.info = $.extend(true, {}, $scope.info_def);
+
+        $http.post(querytarget, {mode: "commissiongroup"}) //queryProduct.json
+            .success(function(res, status, headers, config){
+                $scope.commissiongroup = res.commissiongroup;
+
+                var pos = $scope.commissiongroup.map(function(e) {
+                    return e.commissiongroupId;
+                }).indexOf(res.commissiongroupId);
+
+
+            });
+
+        $scope.info = $.extend(true, {}, $scope.info_def);
+
     	$scope.newId = "";
     	var floorcat = [];
     	floorcat = floorcat.concat([{value: '1', label: "1F"}]);
