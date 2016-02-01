@@ -475,7 +475,7 @@ else{
                         return false;
                     }
 
-                    if($scope.systeminfo.user.id!=9)
+                    if($scope.systeminfo.user.id!=9 && $scope.systeminfo.user.id!=46)
                         if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || (inf.invoiceStatus == 30 && $scope.disAllowsubmit) ){
 
                             Metronic.blockUI({
