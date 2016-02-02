@@ -258,6 +258,10 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/getProductCost.json','receiveController@getProductCost');
     Route::post('/addProductContainer.json','receiveController@addProductContainer');
 
+    //commission group
+    Route::post('/querycommissiongroup.json','commissiongroupController@querycommissiongroup');
+
+
 });
 
 

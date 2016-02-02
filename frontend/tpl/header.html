@@ -2,7 +2,7 @@
 <style>
     .adjustHeight
     {
-        min-height:128px;
+        min-height:158px;
     }
 </style>
 <div class="page-header-top">
@@ -437,6 +437,11 @@
 												<i class="icon-pin"></i>
 												類別設定 </a>
 											</li>
+                                            <li  data-ng-if="systemInfo.permission.view_commissiongroup == true">
+                                                <a href="/#/commissiongroupMaintenance" class="iconify">
+                                                    <i class="icon-pin"></i>
+                                                    佣金設定 </a>
+                                            </li>
 											
 										</ul>
 									</div>
