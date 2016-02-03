@@ -56,7 +56,7 @@ class CustomerController extends BaseController
                 $clientArray->wherein('deliveryZone', explode(',', Auth::user()->temp_zone));
             }
 
-            $clientArray = $clientArray->limit(20)
+            $clientArray = $clientArray->limit(20)->orderby('deliveryZone')
                 ->get();
 
 
