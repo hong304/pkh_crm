@@ -142,6 +142,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
         'adjustId':'',
         'receivingId':'',
         'good_qty':'',
+        'productPackingName_unit':'',
         deleted : 0
 
     }
@@ -223,7 +224,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 
     $scope.submitRepack = function () {
 
-
+/*
         if($scope.out.total_normalized_unit != $scope.totalAmount){
             alert('輸出及輸入數量必需相同');
             return false
@@ -233,9 +234,31 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
             alert('Repack amount cant more than available amount');
             return false
         }
+*/
+        if($scope.out.total_normalized_unit != $scope.totalAmount)
+        bootbox.dialog({
+            message: "輸出及輸入數量不相同，確定要包裝產品嗎？",
+            title: "產品包裝",
+            buttons: {
+                success: {
+                    label: "取消",
+                    className: "green",
+                    callback: function() {
 
+                    }
+                },
+                danger: {
+                    label: "確定",
+                    className: "red",
+                    callback: function() {
+                        insertToAdjust($scope.selfdefine);
+                    }
+                }
+            }
+        });
+else
+            insertToAdjust($scope.selfdefine);
 
-        insertToAdjust($scope.selfdefine);
 
     }
 
@@ -244,7 +267,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
         var target = endpoint + '/outRepackProduct.json';
         $http.post(target, {productId:$scope.out.productId})
             .success(function (res, status, headers, config) {
-
+                console.log(res);
                 $scope.out.productName = res.productName;
                 var availableunit = [];
                 if(res.productPackingName_carton != '')
@@ -255,6 +278,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
                 $scope.out.available = res.total;
                 $scope.out.availableunit = availableunit;
                 $scope.out.normalized_unit = res.normalized_unit;
+                $scope.out.productPackingName_unit = res.productPackingName_unit;
 
             });
     }
@@ -276,6 +300,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
 
         var i = 0;
         $scope.selfdefine.forEach(function(item){
+            console.log(item);
             if(item.deleted == 0)
             {
                 var finalize_amount = 0;
@@ -290,6 +315,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
                     $scope.selfdefine[i]['packing_size'] = item.qty;
                 }
                 $scope.totalAmount += Number(finalize_amount);
+                $scope.finalUnitName = item.productPackingName_unit;
                 $scope.selfdefine[i]['total_finalized_unit'] = finalize_amount;
 
             }
@@ -319,6 +345,7 @@ app.controller('inventoryListingCtrl', function($scope, $rootScope, $http, Share
                     $scope.selfdefine[i]['productName'] = res.productName_chi;
                     $scope.selfdefine[i]['normalized_unit'] = res.normalized_unit;
                     $scope.selfdefine[i]['normalized_inner'] = res.productPacking_unit;
+                    $scope.selfdefine[i]['productPackingName_unit'] = res.productPackingName_unit;
                 }
             });
     }
