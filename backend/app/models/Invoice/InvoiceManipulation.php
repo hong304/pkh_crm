@@ -139,6 +139,10 @@ class InvoiceManipulation
                     $i['dbid'] = false;
                 }
 
+                if(isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 27){
+                    $this->approval = true;
+                    $i['approvedSupervisorId'] = 0;
+                }
                 // check product price
 
                 // we might need approval. check if this item has been approved before
@@ -147,7 +151,7 @@ class InvoiceManipulation
                 if ((!Auth::user()->can('allow_by_pass_invoice_approval')) AND ($selling_price < $standard_price) AND $i['deleted'] == '0') {
 
                     // approved before?
-                    if (isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 0) {
+                   /* if (isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 0) {
                         // has change?
                         if ($selling_price != $invitem[$i['dbid']]['productPrice']) {
                             $this->approval = true;
@@ -155,10 +159,11 @@ class InvoiceManipulation
                         } else {
                             $i['approvedSupervisorId'] = $invitem[$i['dbid']]['approvedSupervisorId'];
                         }
-                    } else {
+                    } else {*/
+
                         $this->approval = true;
                         $i['approvedSupervisorId'] = 0;
-                    }
+                   // }
                 } else {
                     $i['approvedSupervisorId'] = 27;
                 }
@@ -314,8 +319,14 @@ class InvoiceManipulation
                 if ($i['dbid']) {
                     $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
                     // pd($item);
+                    if($this->action == 'update'){
+                        $item->new_added = 0;
+                    }
                 } else {
                     $item = new InvoiceItem();
+                    if($this->action == 'update'){
+                        $item->new_added = 1;
+                    }
                 }
 
                 $productMap = ProductSearchCustomerMap::where('productId', $i['productId'])->where('customerId', $this->im->customerId)->first();
