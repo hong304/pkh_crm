@@ -139,7 +139,7 @@ class InvoiceManipulation
                     $i['dbid'] = false;
                 }
 
-                if(isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 27){
+                if( (isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 27) AND (!Auth::user()->can('allow_by_pass_invoice_approval'))){
                     $this->approval = true;
                     $i['approvedSupervisorId'] = 0;
                 }
