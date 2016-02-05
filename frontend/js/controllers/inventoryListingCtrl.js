@@ -264,7 +264,9 @@ else
 
 
     $scope.searchReceiving = function(){
+        var product = $scope.out.productId;
         var target = endpoint + '/outRepackProduct.json';
+        if(product.length>3)
         $http.post(target, {productId:$scope.out.productId})
             .success(function (res, status, headers, config) {
                 console.log(res);
@@ -325,7 +327,9 @@ else
 
     $scope.searchProduct = function (value,i)
     {
+        var product = value;
         var target = endpoint + '/preRepackProduct.json';
+        if(product.length>2)
         $http.post(target, {productId:value})
             .success(function (res, status, headers, config) {
                 if(typeof res == "object")

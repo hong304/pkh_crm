@@ -135,26 +135,24 @@
                                                 數量
                                             </th>
                                             <th width="10%">
-                                                單位 <a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default"><i class="fa fa-plus"> </i></a>
+                                                單位 </a>
                                             </th>
+                                            <th><a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default"><i class="fa fa-plus"> </i></th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr data-ng-repeat="(k,i) in selfdefine">
-                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']"></td>
-                                            <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']"></td>
-                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']"></td>
+                                        <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">
+                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)" select-on-click></td>
+                                            <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']" select-on-click></td>
+                                            <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']" select-on-click></td>
                                             <td>
 
-                                                <select ng-model="selfdefine[k]['unit']" class="form-control" >
-                                                    <option value="箱">箱</option>
-                                                    <option value="包">包</option>
-                                                    <option value="桶">桶</option>
-                                                    <option value="札">札</option>
-                                                    <option value="盒">盒</option>
-                                                    <option value="排">排</option>
-                                                    <option value="隻">隻</option>
-                                                </select>
+                                                <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value">
+                                                               </select>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger" id="deletebtn_1" data-ng-click="deleteRow(k);">刪除
+                                                </button>
                                             </td>
                                         </tr>
                                         </tbody>

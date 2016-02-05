@@ -20,7 +20,8 @@ $scope.totalline = 0;
         'name' : '',
         'qty' : '',
         'unit'  : '',
-        'productlevel' : ''
+        'productlevel' : '',
+        deleted : 0
     }
 
     $scope.invoiceStructure = {
@@ -164,6 +165,47 @@ $scope.totalline = 0;
         $scope.totalline += 1;
 
     }
+
+    $scope.deleteRow = function(i)
+    {
+        $scope.selfdefine[i].deleted = 1;
+
+    }
+
+    $scope.searchProduct = function (value,i)
+    {
+        var product = value;
+        var target = endpoint + '/preRepackProduct.json';
+        if(product.length>2)
+            $http.post(target, {productId:value})
+                .success(function (res, status, headers, config) {
+                    if(typeof res == "object")
+                    {
+                        var availableunit = [];
+                        if(res.productPackingInterval_unit > 0)
+                            availableunit = availableunit.concat([{value: 'unit', label: res.productPackingName_unit}]);
+                        if(res.productPackingInterval_inner > 0)
+                            availableunit = availableunit.concat([{value: 'inner', label: res.productPackingName_inner}]);
+                        if(res.productPackingInterval_carton > 0)
+                            availableunit = availableunit.concat([{value: 'carton', label: res.productPackingName_carton}]);
+
+                        // $scope.selfdefine[i]['availableunit'] = availableunit.reverse();
+                        $scope.selfdefine[i]['availableunit'] = availableunit;
+                        $scope.selfdefine[i]['unit'] = $scope.selfdefine[i]['availableunit'][0];
+                        $scope.selfdefine[i]['qty'] = '';
+                        $scope.selfdefine[i]['productName'] = res.productName_chi;
+                        $scope.selfdefine[i]['normalized_unit'] = res.normalized_unit;
+                        $scope.selfdefine[i]['normalized_inner'] = res.productPacking_unit;
+                        $scope.selfdefine[i]['productPackingName_unit'] = res.productPackingName_unit;
+                    }
+
+
+                }).error(function(data, status, headers, config){
+                         $scope.selfdefine[i] = $.extend(true, {}, $scope.selfdefineS);
+                         $scope.selfdefine[i]['productId'] = value;
+                    });
+    }
+
     $scope.sendFile = function(file)
     {
     	
@@ -190,6 +232,7 @@ if(!$scope.prepareforreport){
     alert('請按提交,再產生PDF');
     return false;
 }
+console.log($scope.selfdefine);
 
         $http.post(querytarget, {reportId: 'vanselllist', output: "create", filterData: $scope.filterData,data:$scope.qty,selfdefine:$scope.selfdefine})
             .success(function(res, status, headers, config){

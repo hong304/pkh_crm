@@ -99,6 +99,7 @@ class VanSellController extends BaseController
         if ($this->_output == 'create') {
             $selfdefine = Input::get('selfdefine');
 
+
             // $debug = new debug();
             //  $debug->content = 'SelfDefine - zoneId:'.$this->_zone."shift:".$this->_shift;
             //  $debug->content .= json_encode($selfdefine);
@@ -107,11 +108,11 @@ class VanSellController extends BaseController
             vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define', true)->delete();
 
             foreach ($selfdefine as $d) {
-                if (trim($d['productName']) != '' && trim($d['qty']) != '' && trim($d['unit']) != '' && trim($d['productId'])) {
+                if ($d['deleted'] == 0 and isset($d['normalized_unit'])) {
                     $i = new vansell;
                     $i->productId = $d['productId'];
                     $i->name = $d['productName'];
-                    $i->unit = $d['unit'];
+                    $i->unit = $d['unit']['label'];
                     $i->qty = $d['qty'];
                     $i->zoneId = $this->_zone;
                     $i->date = $this->_date;
