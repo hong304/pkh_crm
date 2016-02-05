@@ -108,11 +108,12 @@ class VanSellController extends BaseController
             vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define', true)->delete();
 
             foreach ($selfdefine as $d) {
-                if ($d['deleted'] == 0 and isset($d['normalized_unit'])) {
+                if ($d['deleted'] == 0 and isset($d['success'])) {
                     $i = new vansell;
                     $i->productId = $d['productId'];
                     $i->name = $d['productName'];
                     $i->unit = $d['unit']['label'];
+                    $i->productlevel = $d['unit']['value'];
                     $i->qty = $d['qty'];
                     $i->zoneId = $this->_zone;
                     $i->date = $this->_date;
@@ -369,7 +370,7 @@ class VanSellController extends BaseController
         $this->_data['normal'] = $vansells;
 
 
-        $vansell_selfdefine = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->where('self_define', true)->orderBy('productId', 'asc')->get();
+        $vansell_selfdefine = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->where('self_define', true)->orderBy('productId', 'asc')->with('products')->get();
         $this->_data['selfdefine'] = $vansell_selfdefine;
 
         $vansells_pdf = vansell::where('zoneId', $zone)->where('date', $date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->get()->toArray();

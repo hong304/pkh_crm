@@ -21,7 +21,8 @@ $scope.totalline = 0;
         'qty' : '',
         'unit'  : '',
         'productlevel' : '',
-        deleted : 0
+        deleted : 0,
+        availableunit	:	[]
     }
 
     $scope.invoiceStructure = {
@@ -140,11 +141,34 @@ $scope.totalline = 0;
 
                 var j = 0;
                 $scope.report_selfdefine.forEach(function(item) {
+                    console.log(item);
+
                     $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
                     $scope.selfdefine[j]['productId'] = item.productId;
                     $scope.selfdefine[j]['productName'] = item.name;
                     $scope.selfdefine[j]['qty'] = item.qty;
-                    $scope.selfdefine[j]['unit'] = item.unit;
+                    $scope.selfdefine[j]['success'] = 1;
+
+                    var availableunit = [];
+                    //console.log(item);
+                    if(item.products.productPackingName_carton != '')
+                        availableunit = availableunit.concat([{value: 'carton', label: item.products.productPackingName_carton}]);
+                    if(item.products.productPackingName_inner != '')
+                    availableunit = availableunit.concat([{value: 'inner', label: item.products.productPackingName_inner}]);
+                                    if(item.products.productPackingName_unit != '')
+                        availableunit = availableunit.concat([{value: 'unit', label: item.products.productPackingName_unit}]);
+
+                    $scope.selfdefine[j].availableunit=availableunit;
+
+                    if(typeof $scope.selfdefine[j]['availableunit'][pos] == 'undefined'){
+                        var pos = $scope.selfdefine[j].availableunit.map(function(e) {
+                            return e.value;
+                        }).indexOf(item.productlevel);
+                    }
+                    $scope.selfdefine[j]['unit'] = $scope.selfdefine[j]['availableunit'][pos];
+
+
+                    //$scope.selfdefine[j]['unit']['label'] = item.unit;
                     j++;
                 });
                 $scope.initline = j;
@@ -194,9 +218,7 @@ $scope.totalline = 0;
                         $scope.selfdefine[i]['unit'] = $scope.selfdefine[i]['availableunit'][0];
                         $scope.selfdefine[i]['qty'] = '';
                         $scope.selfdefine[i]['productName'] = res.productName_chi;
-                        $scope.selfdefine[i]['normalized_unit'] = res.normalized_unit;
-                        $scope.selfdefine[i]['normalized_inner'] = res.productPacking_unit;
-                        $scope.selfdefine[i]['productPackingName_unit'] = res.productPackingName_unit;
+                        $scope.selfdefine[i]['success'] = 1;
                     }
 
 
