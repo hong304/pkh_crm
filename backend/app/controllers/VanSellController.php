@@ -598,7 +598,7 @@ class VanSellController extends BaseController
 
                         $pdf->setXY(101, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, $u['van_qty'], 0, 0, "L");
+                        $pdf->Cell(0, 0, sprintf('%s',$u['van_qty']), 0, 0, "L");
 
                         $pdf->setXY(110, $y);
                         $pdf->SetFont('chi', '', 13);
@@ -606,7 +606,7 @@ class VanSellController extends BaseController
 
                         $pdf->setXY(123, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
+                        $pdf->Cell(0, 0, sprintf('%s',$u['qty']), 0, 0, "L");
 
 
                         $pdf->setXY(133, $y);
@@ -636,7 +636,7 @@ class VanSellController extends BaseController
 
                         $pdf->setXY(101, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, $u['van_qty'], 0, 0, "L");
+                        $pdf->Cell(0, 0, sprintf('%s',$u['van_qty']), 0, 0, "L");
 
                         $pdf->setXY(110, $y);
                         $pdf->SetFont('chi', '', 13);
@@ -644,7 +644,7 @@ class VanSellController extends BaseController
 
                         $pdf->setXY(123, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, $u['qty'], 0, 0, "L");
+                        $pdf->Cell(0, 0, sprintf('%s',$u['qty']), 0, 0, "L");
 
 
                         $pdf->setXY(133, $y);
