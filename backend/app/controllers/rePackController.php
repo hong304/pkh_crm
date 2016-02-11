@@ -115,6 +115,12 @@ class rePackController extends BaseController {
                 $this->remain = 0;
                 while($undeductUnit > 0 ){
                     $receiving = Receiving::where('productId',$outProduct['productId'])->where('good_qty','>=',$v['packing_size'])->orderBy('expiry_date','asc')->first();
+
+                    if(count($receiving)==0){
+                        return [
+                            'msg' => 'not enough soruce product',
+                        ];
+                    }
                     $org_good_qty = $receiving->good_qty;
                     $receiving->good_qty+=$this->remain;
                     if($undeductUnit > $receiving->good_qty){

@@ -362,6 +362,10 @@ else
             $http.post(target, {items:items,outProduct:$scope.out})
                 .success(function (res, status, headers, config) {
 
+                    if(res.msg != ''){
+                        alert(res.msg);
+                        return false;
+                    }
                         $("#repackAll").modal('hide');
 
                         $scope.updateDataSet();
