@@ -586,7 +586,6 @@ class OrderController extends BaseController
             }
 
         }
-    pd(DB::getQueryLog());
 
         return Response::json($invoices);
 
