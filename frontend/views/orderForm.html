@@ -150,7 +150,7 @@
 
                                             <div data-ng-if="systeminfo.user.id == 9"
                                                  class="input-group input-small date date-picker"
-                                                 data-date-format="yyyy-mm-dd" data-date-start-date="-4d">
+                                                 data-date-format="yyyy-mm-dd" data-date-start-date="-10d">
                                                 <input type="text" class="form-control"
                                                        data-ng-change="updateDeliveryDate();"
                                                        ng-model="order.deliveryDate" readonly>
@@ -162,7 +162,7 @@
 
                                             <div data-ng-if="systemInfo.permission.sa_up == true && systeminfo.user.id!=9"
                                                  class="input-group input-small date date-picker"
-                                                 data-date-format="yyyy-mm-dd" data-date-start-date="-4d">
+                                                 data-date-format="yyyy-mm-dd" data-date-start-date="-5d">
                                                 <input type="text" class="form-control"
                                                        data-ng-change="updateDeliveryDate();"
                                                        ng-model="order.deliveryDate" readonly>
