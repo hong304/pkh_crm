@@ -211,15 +211,23 @@ class OrderController extends BaseController
 
         if ($order['invoiceId'] != '') {
 
+
+
            if (count($itemIds) == 0){
-                $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail');
-                $deletedItemFromDB = $i->get();
-                $i->delete();
+               InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
+               $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail');
+
+
+
             }else{
+               InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
                 $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail');
-                $deletedItemFromDB = $i->get();
-                $i->delete();
+
             }
+
+            $deletedItemFromDB = $i->get();
+
+            $i->update(['new_added'=>3]);
 
             if($order['status'] != 97 && $order['status'] != 96)
                 $this->backToStock($deletedItemFromDB);
@@ -242,6 +250,8 @@ class OrderController extends BaseController
                     lastitem::where('customerId', $order['clientId'])->where('productId', $v->productId)->delete();
 
             }
+
+            $i->delete();
 
         }
 

@@ -79,7 +79,8 @@ class Invoice_9FPickingList {
                         $products[$pQ->productId] = $pQ;
                     }
                 }
-        $invoice_del_item =[];
+
+      /*  $invoice_del_item =[];
         $invoice_item = [];
 
         foreach($invoicesQuery as $invoiceQ)
@@ -93,7 +94,7 @@ class Invoice_9FPickingList {
                             $invoice_item[$invoiceQ->invoiceId][$item->productId] = true;
                     }
            }
-        }
+        }*/
 
        // p($invoice_item);
        //pd($invoice_del_item);
@@ -160,7 +161,7 @@ class Invoice_9FPickingList {
 
                                             if(isset($invoice_del_item[$invoiceQ->invoiceId])){
                                                // $intersec = array_intersect_key($invoice_item[$invoiceQ->invoiceId],$invoice_del_item[$invoiceQ->invoiceId]);
-                                                $dd = array_diff_key($invoice_del_item[$invoiceQ->invoiceId],$invoice_item[$invoiceQ->invoiceId]);
+                                               // $dd = array_diff_key($invoice_del_item[$invoiceQ->invoiceId],$invoice_item[$invoiceQ->invoiceId]);
                                             }
 
                                    //     pd($dd);
@@ -230,7 +231,8 @@ class Invoice_9FPickingList {
                                             ];
 
                                         }else{
-                                            if(isset($dd[$productId]))
+                                           // if(isset($dd[$productId]))
+                                            if($invoiceQ->revised == true && $item->new_added=='3')
                                                 $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪除)'][$unit] = [
                                                     'productId' => $productId,
                                                     'name' => '(刪除)'.$productDetail->productName_chi,

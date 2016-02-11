@@ -401,7 +401,6 @@ class InvoiceManipulation
                                             $v1->delete();
                                         }
                                 }*/
-
                                 $item->delete();
                                 $item = new InvoiceItem();
                                 $item->invoiceId = $this->invoiceId;
