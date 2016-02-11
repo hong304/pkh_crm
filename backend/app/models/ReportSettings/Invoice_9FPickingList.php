@@ -92,7 +92,7 @@ class Invoice_9FPickingList {
                         else
                             $invoice_item[$invoiceQ->invoiceId][$item->productId] = true;
                     }
-            }
+           }
         }
 
        // p($invoice_item);
@@ -159,19 +159,58 @@ class Invoice_9FPickingList {
                                     } else {
 
                                             if(isset($invoice_del_item[$invoiceQ->invoiceId])){
-                                                $intersec = array_intersect_key($invoice_item[$invoiceQ->invoiceId],$invoice_del_item[$invoiceQ->invoiceId]);
+                                               // $intersec = array_intersect_key($invoice_item[$invoiceQ->invoiceId],$invoice_del_item[$invoiceQ->invoiceId]);
                                                 $dd = array_diff_key($invoice_del_item[$invoiceQ->invoiceId],$invoice_item[$invoiceQ->invoiceId]);
                                             }
 
                                    //     pd($dd);
 
                                         if($item->deleted_at == null){
-                                            if(isset($intersec[$productId]))
-                                                $productDetail->productName_chi = '(更正)'.$productDetail->productName_chi;
-                                            if($item->new_added)
-                                                $productDetail->productName_chi = '(新加)'.$productDetail->productName_chi;
+                                           // if(isset($intersec[$productId]))
 
+                                               // $productDetail->productName_chi = '(更正)'.$productDetail->productName_chi;
 
+                                              //  $productDetail->productName_chi = '(新加)'.$productDetail->productName_chi;
+
+                                            if($item->new_added=='2')
+                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更正)'][$unit] = [
+                                                    'productId' => $productId,
+                                                    'name' => '(更正)'.$productDetail->productName_chi,
+
+                                                    'productPacking_carton' => $productDetail->productPacking_carton,
+                                                    'productPacking_inner' => $productDetail->productPacking_inner,
+                                                    'productPacking_unit' => $productDetail->productPacking_unit,
+                                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                                    'productPackingSize' => $productDetail->productPacking_size,
+
+                                                    'unit' => $unit,
+                                                    'unit_txt' => $item->productUnitName,
+                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更正)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更正)'][$unit]['counts'] : 0) + $item->productQty,
+                                                    'stdPrice' => $productDetail->productStdPrice[$unit],
+                                                ];
+
+                                            else if($item->new_added=='1')
+                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新加)'][$unit] = [
+                                                    'productId' => $productId,
+                                                    'name' => '(新加)'.$productDetail->productName_chi,
+
+                                                    'productPacking_carton' => $productDetail->productPacking_carton,
+                                                    'productPacking_inner' => $productDetail->productPacking_inner,
+                                                    'productPacking_unit' => $productDetail->productPacking_unit,
+                                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                                    'productPackingSize' => $productDetail->productPacking_size,
+
+                                                    'unit' => $unit,
+                                                    'unit_txt' => $item->productUnitName,
+                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新加)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新加)'][$unit]['counts'] : 0) + $item->productQty,
+                                                    'stdPrice' => $productDetail->productStdPrice[$unit],
+                                                ];
+
+                                            else
                                             $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit] = [
                                                 'productId' => $productId,
                                                 'name' => $productDetail->productName_chi,
@@ -189,24 +228,26 @@ class Invoice_9FPickingList {
                                                 'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
                                                 'stdPrice' => $productDetail->productStdPrice[$unit],
                                             ];
+
                                         }else{
-                                            $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit] = [
-                                                'productId' => $productId,
-                                                'name' => isset($dd[$productId])?'(刪除)'.$productDetail->productName_chi:$productDetail->productName_chi,
+                                            if(isset($dd[$productId]))
+                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪除)'][$unit] = [
+                                                    'productId' => $productId,
+                                                    'name' => '(刪除)'.$productDetail->productName_chi,
 
-                                                'productPacking_carton' => $productDetail->productPacking_carton,
-                                                'productPacking_inner' => $productDetail->productPacking_inner,
-                                                'productPacking_unit' => $productDetail->productPacking_unit,
-                                                'productPackingName_carton' => $productDetail->productPackingName_carton,
-                                                'productPackingName_inner' => $productDetail->productPackingName_inner,
-                                                'productPackingName_unit' => $productDetail->productPackingName_unit,
-                                                'productPackingSize' => $productDetail->productPacking_size,
+                                                    'productPacking_carton' => $productDetail->productPacking_carton,
+                                                    'productPacking_inner' => $productDetail->productPacking_inner,
+                                                    'productPacking_unit' => $productDetail->productPacking_unit,
+                                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                                    'productPackingSize' => $productDetail->productPacking_size,
 
-                                                'unit' => $unit,
-                                                'unit_txt' => $item->productUnitName,
-                                                'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
-                                                'stdPrice' => $productDetail->productStdPrice[$unit],
-                                            ];
+                                                    'unit' => $unit,
+                                                    'unit_txt' => $item->productUnitName,
+                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪除)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪除)'][$unit]['counts'] : 0) + $item->productQty,
+                                                    'stdPrice' => $productDetail->productStdPrice[$unit],
+                                                ];
                                         }
 
 
@@ -284,6 +325,7 @@ class Invoice_9FPickingList {
         }*/
 
         $this->data = $this->goods;
+      //  pd($this->data);
         $this->data['version'] = $this->_version;
 
 

@@ -230,9 +230,6 @@ class InvoiceManipulation
             $this->im->updated_by = Auth::user()->id;
             $this->im->amount = $this->temp_invoice_information['amount'];
 
-            if ($this->im->version > 0)
-                Invoice::where('invoiceId', $this->invoiceId)->update(['f9_picking_dl' => 0, 'revised' => 1, 'version' => 0]);
-
         }
     }
 
@@ -319,15 +316,12 @@ class InvoiceManipulation
                 if ($i['dbid']) {
                     $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
                     // pd($item);
-                    if($this->action == 'update'){
+                   /* if($this->action == 'update'){
                         $item->new_added = 0;
-                    }
+                    }*/
                 } else {
                     $item = new InvoiceItem();
-                    if($this->action == 'update'){
-                        $item->new_added = 1;
-                    }
-                }
+                 }
 
                 $productMap = ProductSearchCustomerMap::where('productId', $i['productId'])->where('customerId', $this->im->customerId)->first();
                 //pd($productMap);
@@ -422,15 +416,25 @@ class InvoiceManipulation
                                 $item->productUnitName = trim($i['productUnitName']);
                                 $item->approvedSupervisorId = $i['approvedSupervisorId'];
 
+                                if($this->im->version >0)
+                                    $item->new_added = '2';
+
                                 $dirty = true;
 
+                            }else if (!$dirty && $this->im->version >0){
+                                $item->new_added = null;
                             }
                         }
+                    }
+                }else{
+                    if($this->action == 'update' && $this->im->version > 0){
+                        $item->new_added = 1;
                     }
                 }
 
 
                 if ($i['deleted'] == '0' && $i['productQty'] != 0) {
+
                     $item->save();
 
 
@@ -490,6 +494,9 @@ class InvoiceManipulation
 
 
             }
+
+            if ($this->im->version > 0)
+                Invoice::where('invoiceId', $this->invoiceId)->update(['f9_picking_dl' => 0, 'revised' => 1, 'version' => 0]);
 
             // $in = Invoice::where('invoiceId',$this->invoiceId)->with('invoiceItem')->first();
             //  $in->amount = $in->invoiceTotalAmount;
