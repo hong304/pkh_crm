@@ -158,7 +158,7 @@ class OrderController extends BaseController
                                         'productId' => $item->getOriginal('productId')
                                      ];
 
-                                     if ($order['status'] != '96' && $order['status'] != '97') {
+                                     if ($order['status'] != '96' && $order['status'] != '97') { //back to stock for qty changed items
                                          $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId',$item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
                                          if (count($invoiceitembatchs) > 0)
                                              foreach ($invoiceitembatchs as $k1 => $v1) {
@@ -215,13 +215,13 @@ class OrderController extends BaseController
 
            if (count($itemIds) == 0){
                InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
-               $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail');
+               $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail'); //if all old items are deleted
 
 
 
             }else{
                InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
-                $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail');
+                $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail'); //if the old items are deleted
 
             }
 
@@ -230,7 +230,7 @@ class OrderController extends BaseController
             $i->update(['new_added'=>3]);
 
             if($order['status'] != 97 && $order['status'] != 96)
-                $this->backToStock($deletedItemFromDB);
+                $this->backToStock($deletedItemFromDB); //back to stock for deleted items
 
             foreach ($deletedItemFromDB as $v) {
                 $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $order['clientId'] . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";

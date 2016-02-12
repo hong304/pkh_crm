@@ -391,7 +391,7 @@ class InvoiceManipulation
 
 
 
-                              /*  if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97') {
+                               if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97') { //back to stock for approve status changed items (and all unexpected case)
                                     $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
                                     if (count($invoiceitembatchs) > 0)
                                         foreach ($invoiceitembatchs as $k1 => $v1) {
@@ -400,7 +400,8 @@ class InvoiceManipulation
                                             $receivings->save();
                                             $v1->delete();
                                         }
-                                }*/
+                                }
+
                                 $item->delete();
                                 $item = new InvoiceItem();
                                 $item->invoiceId = $this->invoiceId;
