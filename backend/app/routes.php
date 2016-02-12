@@ -206,7 +206,7 @@ Route::group(array('before' => 'auth'), function()
     Route::post('/generalPickingStatus.json','HomeController@generalPickingStatus');
 
     //Data warehouse
-    Route::get('invoice','DataWarehouseController@getInvoice');
+    //Route::get('invoice','DataWarehouseController@getInvoice');
 
     Route::get('/getHoliday.json','OrderController@jsonHoliday');
 	
