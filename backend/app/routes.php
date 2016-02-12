@@ -833,11 +833,11 @@ Route::get('cron/completeOrder',function(){
 
     $accurage_date = '\''.$accurage_date.'\'';
 
-       $sql = 'INSERT INTO printqueue_record SELECT * FROM printqueue WHERE created_at <='.$accurage_date;
+       $sql = 'INSERT INTO printqueue_record SELECT * FROM printqueue WHERE created_at <='.$accurage_date and status != 'queued';
        $true = DB::statement($sql);
     if($true)
     {
-      $sql = 'DELETE FROM printqueue WHERE created_at <='.$accurage_date;
+      $sql = 'DELETE FROM printqueue WHERE created_at <='.$accurage_date and status != 'queued';
       DB::select(DB::raw($sql));
     }
 
