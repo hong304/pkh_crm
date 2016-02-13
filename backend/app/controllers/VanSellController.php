@@ -544,22 +544,22 @@ class VanSellController extends BaseController
             $pdf->SetFont('chi', '', 10);
 
             $pdf->setXY(10, 50);
-            $pdf->Cell(0, 0, "編號", 0, 0, "L");
+            $pdf->Cell(0, 0, "產品編號", 0, 0, "L");
 
             $pdf->setXY(40, 50);
-            $pdf->Cell(0, 0, "貨品說明", 0, 0, "L");
+            $pdf->Cell(0, 0, "產品明稱", 0, 0, "L");
 
             $pdf->setXY(101, 50);
-            $pdf->Cell(0, 0, "預載數", 0, 0, "L");
+            $pdf->Cell(0, 0, "預載數量", 0, 0, "L");
 
             $pdf->setXY(120, 50);
-            $pdf->Cell(0, 0, "訂單貨量", 0, 0, "L");
+            $pdf->Cell(0, 0, "上貨數量", 0, 0, "L");
 
             $pdf->setXY(145, 50);
-            $pdf->Cell(0, 0, "上貨總數貨", 0, 0, "L");
+            $pdf->Cell(0, 0, "添加數量", 0, 0, "L");
 
             $pdf->setXY(170, 50);
-            $pdf->Cell(0, 0, "核數", 0, 0, "L");
+            $pdf->Cell(0, 0, "覆核數量", 0, 0, "L");
 
             $pdf->Line(10, 53, 190, 53);
 
