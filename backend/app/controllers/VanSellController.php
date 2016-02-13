@@ -547,7 +547,7 @@ class VanSellController extends BaseController
             $pdf->Cell(0, 0, "產品編號", 0, 0, "L");
 
             $pdf->setXY(40, 50);
-            $pdf->Cell(0, 0, "產品明稱", 0, 0, "L");
+            $pdf->Cell(0, 0, "產品名稱", 0, 0, "L");
 
             $pdf->setXY(101, 50);
             $pdf->Cell(0, 0, "預載數量", 0, 0, "L");
