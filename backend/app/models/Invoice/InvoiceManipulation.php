@@ -448,7 +448,7 @@ class InvoiceManipulation
                         }
                     }
                 }else{
-                    if($this->action == 'update' && $this->im->version > 0){
+                    if($this->action == 'update' && ($this->im->version > 0 && $this->im->version !=100)){
                         $item->new_added = 1;
                     }
                 }
