@@ -362,7 +362,7 @@ else
             $http.post(target, {items:items,outProduct:$scope.out})
                 .success(function (res, status, headers, config) {
 
-                    if(res.msg != ''){
+                    if(res.status == 'error'){
                         alert(res.msg);
                         return false;
                     }

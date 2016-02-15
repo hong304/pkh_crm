@@ -139,34 +139,55 @@ class InvoiceManipulation
                     $i['dbid'] = false;
                 }
 
-                if( (isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 27) AND (!Auth::user()->can('allow_by_pass_invoice_approval'))){
-                    $this->approval = true;
-                    $i['approvedSupervisorId'] = 0;
+                //approvedSupervisorId==0 waiting for approval
+                //approvedSupervisorId==27 no need approval
+
+
+
+                // approved before
+                $skip =false;
+                if( (isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 27 AND $invitem[$i['dbid']]['approvedSupervisorId'] != 0) AND (!Auth::user()->can('allow_by_pass_invoice_approval')) AND $i['deleted'] == '0' ){
+
+                    if($selling_price < $standard_price)
+                        if ($selling_price != $invitem[$i['dbid']]['productPrice'] || $i['productQty'] !=  $invitem[$i['dbid']]['productQty'] || $i['productQtyUnit']['value'] !=  $invitem[$i['dbid']]['productQtyUnit']){
+                            $this->approval = true;
+                            $i['approvedSupervisorId'] = 0;
+                        }else{
+                            $i['approvedSupervisorId'] = $invitem[$i['dbid']]['approvedSupervisorId'];
+                            $skip = true;
+                        }
+                     else
+                            $i['approvedSupervisorId'] = 27;
+
+
                 }
+
+
+
                 // check product price
 
                 // we might need approval. check if this item has been approved before
                 // system (id = 27) approved indicate it is an automatic approve.
                 // in any circumstance we need to validate it again
-                if ((!Auth::user()->can('allow_by_pass_invoice_approval')) AND ($selling_price < $standard_price) AND $i['deleted'] == '0') {
+                if(!$skip)
+                    if ((!Auth::user()->can('allow_by_pass_invoice_approval')) AND ($selling_price < $standard_price) AND $i['deleted'] == '0') {
 
-                    // approved before?
-                   /* if (isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 0) {
-                        // has change?
-                        if ($selling_price != $invitem[$i['dbid']]['productPrice']) {
+                        // approved before?
+                       /* if (isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 0) {
+                            // has change?
+                            if ($selling_price != $invitem[$i['dbid']]['productPrice']) {
+                                $this->approval = true;
+                                $i['approvedSupervisorId'] = 0;
+                            } else {
+                                $i['approvedSupervisorId'] = $invitem[$i['dbid']]['approvedSupervisorId'];
+                            }
+                        } else {*/
                             $this->approval = true;
                             $i['approvedSupervisorId'] = 0;
-                        } else {
-                            $i['approvedSupervisorId'] = $invitem[$i['dbid']]['approvedSupervisorId'];
-                        }
-                    } else {*/
-
-                        $this->approval = true;
-                        $i['approvedSupervisorId'] = 0;
-                   // }
-                } else {
-                    $i['approvedSupervisorId'] = 27;
-                }
+                       // }
+                    } else {
+                            $i['approvedSupervisorId'] = 27;
+                    }
 
 
                 // update master
@@ -427,7 +448,7 @@ class InvoiceManipulation
                         }
                     }
                 }else{
-                    if($this->action == 'update' && $this->im->version > 0){
+                    if($this->action == 'update' && ($this->im->version > 0 && $this->im->version !=100)){
                         $item->new_added = 1;
                     }
                 }

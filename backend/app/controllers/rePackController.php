@@ -118,6 +118,7 @@ class rePackController extends BaseController {
 
                     if(count($receiving)==0){
                         return [
+                            'status' => 'error',
                             'msg' => 'not enough soruce product',
                         ];
                     }

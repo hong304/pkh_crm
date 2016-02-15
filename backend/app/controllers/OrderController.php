@@ -38,7 +38,7 @@ class OrderController extends BaseController
 
 
         $order = Input::get('order');
-     //   $timer = Input::get('timer');
+        $timer = Input::get('timer');
 
        /* if(isset($order['invoiceNumber']) and $order['invoiceId'] == ''){
 
@@ -261,7 +261,7 @@ class OrderController extends BaseController
         $result = $ci->save();
 
         // Update performance log
-        /*    $perf = new InvoiceUserPerformance();
+            $perf = new InvoiceUserPerformance();
             $perf->invoiceId = $result['invoiceNumber'];
             $perf->userid = Auth::user()->id;
             $perf->timestampe = time();
@@ -269,7 +269,7 @@ class OrderController extends BaseController
             $perf->submit = $timer['submit'];
             $perf->select_client = $timer['selected_client'];
             $perf->drilldown = json_encode($timer['product']);
-            $perf->save();*/
+            $perf->save();
 
 
         return Response::json($result);
