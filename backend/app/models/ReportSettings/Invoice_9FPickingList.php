@@ -174,9 +174,9 @@ class Invoice_9FPickingList {
                                               //  $productDetail->productName_chi = '(新加)'.$productDetail->productName_chi;
 
                                             if($item->new_added=='2')
-                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更正)'][$unit] = [
+                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更)'][$unit] = [
                                                     'productId' => $productId,
-                                                    'name' => '(更正)'.$productDetail->productName_chi,
+                                                    'name' => '(更)'.$productDetail->productName_chi,
 
                                                     'productPacking_carton' => $productDetail->productPacking_carton,
                                                     'productPacking_inner' => $productDetail->productPacking_inner,
@@ -188,14 +188,14 @@ class Invoice_9FPickingList {
 
                                                     'unit' => $unit,
                                                     'unit_txt' => $item->productUnitName,
-                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更正)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更正)'][$unit]['counts'] : 0) + $item->productQty,
+                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(更)'][$unit]['counts'] : 0) + $item->productQty,
                                                     'stdPrice' => $productDetail->productStdPrice[$unit],
                                                 ];
 
                                             else if($item->new_added=='1')
-                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新加)'][$unit] = [
+                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新)'][$unit] = [
                                                     'productId' => $productId,
-                                                    'name' => '(新加)'.$productDetail->productName_chi,
+                                                    'name' => '(新)'.$productDetail->productName_chi,
 
                                                     'productPacking_carton' => $productDetail->productPacking_carton,
                                                     'productPacking_inner' => $productDetail->productPacking_inner,
@@ -207,7 +207,7 @@ class Invoice_9FPickingList {
 
                                                     'unit' => $unit,
                                                     'unit_txt' => $item->productUnitName,
-                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新加)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新加)'][$unit]['counts'] : 0) + $item->productQty,
+                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(新)'][$unit]['counts'] : 0) + $item->productQty,
                                                     'stdPrice' => $productDetail->productStdPrice[$unit],
                                                 ];
 
@@ -233,9 +233,9 @@ class Invoice_9FPickingList {
                                         }else{
                                            // if(isset($dd[$productId]))
                                             if($invoiceQ->revised == true && $item->new_added=='3')
-                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪除)'][$unit] = [
+                                                $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪)'][$unit] = [
                                                     'productId' => $productId,
-                                                    'name' => '(刪除)'.$productDetail->productName_chi,
+                                                    'name' => '(刪)'.$productDetail->productName_chi,
 
                                                     'productPacking_carton' => $productDetail->productPacking_carton,
                                                     'productPacking_inner' => $productDetail->productPacking_inner,
@@ -247,7 +247,7 @@ class Invoice_9FPickingList {
 
                                                     'unit' => $unit,
                                                     'unit_txt' => $item->productUnitName,
-                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪除)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪除)'][$unit]['counts'] : 0) + $item->productQty,
+                                                    'counts' => (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪)'][$unit]) ? $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪)'][$unit]['counts'] : 0) + $item->productQty,
                                                     'stdPrice' => $productDetail->productStdPrice[$unit],
                                                 ];
                                         }
@@ -666,7 +666,10 @@ $i=3;
                     foreach($itemUnitlv as $item)
                     {
                         $pdf->setXY($base_x + 0, $y);
-                        $pdf->Cell(0, 0, "    " . $item['name'], 0, 0, 'L');
+                        if(preg_match('[新|更|刪]', $item['name']) != true) {
+                            $item['name']=  "     " . $item['name'];
+                        }
+                        $pdf->Cell(0, 0,$item['name'], 0, 0, 'L');
 
                         $inner = '';
                         if($item['productPacking_inner']>1)
