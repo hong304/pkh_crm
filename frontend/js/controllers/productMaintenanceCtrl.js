@@ -82,7 +82,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
             'hasCommission' : '',
             'allowNegativePrice' : '',
             'allowSeparate' : '',
-        'commissiongroup' : '',
+            'commissiongroup' : '',
+            'vansale' : ''
 	};
 	
 	$scope.submitbtn = true;
@@ -170,6 +171,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     		$scope.info = res;
             $scope.hasCommission = res.hasCommission;
             $scope.allowNegativePrice = res.allowNegativePrice;
+            $scope.allowSeparate = res.allowSeparate;
+            $scope.vansale = res.vansale;
     		//console.log($scope.info);
 
     		var floorcat = [];
@@ -295,6 +298,13 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
             $scope.info.allowSeparate= 1;
         else
             $scope.info.allowSeparate= 0;
+    }
+
+    $scope.selectVan = function(i){
+        if(i == 'yes')
+            $scope.info.vansale= 1;
+        else
+            $scope.info.vansale= 0;
     }
 
     $scope.submitProductForm = function()
