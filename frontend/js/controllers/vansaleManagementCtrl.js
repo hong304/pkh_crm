@@ -145,7 +145,7 @@ $scope.totalline = 0;
     $scope.finalsubmitnextvanqty=function(){
         $http.post(querytarget, {output: "vanPost", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine}) //getVansellreport.json
             .success(function(res){
-
+                $scope.preload_check = res.preload_check;
             });
     }
 
@@ -169,6 +169,8 @@ $scope.totalline = 0;
             $scope.report_selfdefine = res.selfdefine;
             $scope.preload_check = res.preload_check;
 
+
+                console.log($scope.preload_check);
 
            $scope.info = [];
                 var i = 0;
