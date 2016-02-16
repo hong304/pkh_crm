@@ -149,17 +149,33 @@ class VanSellController extends BaseController
 
 
                 if($this->_shift == '-1'){
-                    $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift','!=','-1')->get();
-                    foreach ($vansales as $v){
-                        $merge[$v->productId][$v->productlevel] = [
-                            'productId' => $v->productId,
-                            'productlevel' => $v->productlevel,
-                            'qty' => (isset($merge[$v->productId][$v->productlevel]) ? $merge[$v->productId][$v->productlevel]['qty'] : 0) + $v->qty,
-                        ];
+
+                    if($this->_zone != '11'){
+                        $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift','!=','-1')->get();
+
+                        foreach ($vansales as $v){
+                            $merge[$v->productId][$v->productlevel] = [
+                                'productId' => $v->productId,
+                                'productlevel' => $v->productlevel,
+                                'qty' => (isset($merge[$v->productId][$v->productlevel]) ? $merge[$v->productId][$v->productlevel]['qty'] : 0) + $v->qty,
+                            ];
+                        }
+
+                        $this->compileResults();
+
+                       // pd(vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->get());
+
+                        foreach ($merge as $v) {
+                            foreach($v as $v1){
+                                $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('productId',$v1['productId'])->first();
+                                $savevansell->qty = $v1['qty'];
+                                $savevansell->save();
+                            }
+                        }
                     }
                 }
 
-                pd($merge);
+               // pd($merge);
 
             }else if(Input::get('mode')=='1'){
                 vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'11']);
