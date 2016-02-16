@@ -405,14 +405,16 @@ class InvoiceManipulation
                 */
 
                 $dirty = false;
-                if ($i['dbid']) {
+                if ($i['dbid']) { //dirty check for qty and price changed
                     if ($item->isDirty()) {
                         foreach ($item->getDirty() as $attribute => $value) {
                             if (!in_array($attribute, array('backgroundcode'))) {
 
 
+                                //back to stock for approve status changed items (and all unexpected case)
+                                //qty changed handled at orderController page
 
-                               if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97') { //back to stock for approve status changed items (and all unexpected case)
+                               if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97') {
                                     $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
                                     if (count($invoiceitembatchs) > 0)
                                         foreach ($invoiceitembatchs as $k1 => $v1) {
@@ -458,7 +460,7 @@ class InvoiceManipulation
 
                     $item->save();
 
-
+                    //draw inventory for dirty items or new items
                     if($this->temp_invoice_information['status'] != '96' && $this->temp_invoice_information['status'] != '97' && ($dirty||!$i['dbid']) ){
                             $normalizedUnit = $this->normalizedUnit($i);
                             $packingSize = $this->packingSize($i,$this->product[$i['productId']]['productPackingInterval_carton']);
