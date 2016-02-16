@@ -127,9 +127,12 @@ class VanSellController extends BaseController
                     $van_insert->save();
                 }
             }
-
+            vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'30']);
             //$this->compileResults();
-            exit;
+            $van_exist = vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->lists('status');
+            $this->compileResults();
+            $this->_data['preload_check'] = $van_exist[0];
+            return Response::json($this->_data);
             //return Response::json($this->_data);
         }
 
