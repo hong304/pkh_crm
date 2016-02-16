@@ -232,6 +232,8 @@ class OrderController extends BaseController
             if($order['status'] != 97 && $order['status'] != 96)
                 $this->backToStock($deletedItemFromDB); //back to stock for deleted items
 
+            $i->delete();
+
             foreach ($deletedItemFromDB as $v) {
                 $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $order['clientId'] . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
                 $item = DB::select(DB::raw($sql));
@@ -251,7 +253,7 @@ class OrderController extends BaseController
 
             }
 
-            $i->delete();
+
 
         }
 
