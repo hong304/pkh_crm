@@ -204,7 +204,7 @@ class VanSellController extends BaseController
                 foreach (Input::get('data') as $v) {
                     $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define', false)->where('id', $v['id'])->first();
                     $savevansell->qty = $v['qty'];
-                    $savevansell->self_enter = 1;
+                   // $savevansell->self_enter = 1;
                     $savevansell->save();
                 }
             }
@@ -259,12 +259,13 @@ class VanSellController extends BaseController
                 //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define', false)->where('id', $v['id'])->first();
 
+                //if user don't enter any qty , qty will be equal to invoice qty, otherwrise will be updated from user define
                 if ($v['qty'] === '' || is_null($v['qty'])) {
                     $savevansell->qty = $v['org_qty'];
-                    $savevansell->self_enter = 0;
+                   // $savevansell->self_enter = 0;
                 } else {
                     $savevansell->qty = $v['qty'];
-                    $savevansell->self_enter = 1;
+                   // $savevansell->self_enter = 1;
                 }
 
                 $savevansell->save();
@@ -413,13 +414,11 @@ class VanSellController extends BaseController
         $vansell_query = vansell::select('productId', 'productlevel','org_qty','van_qty')->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->get()->toArray();
         //$van_query = van::select('productId', 'productlevel','van_qty')->where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->get()->toArray();
 
-        // pd($vansell_query);
-      //  pd($this->_data);
 
         $allIds = [];
         $create = [];
         $index = 0;
-        foreach ($this->_data as $g) {
+        foreach ($this->_data as $g) { // invoice and preload products
             foreach ($g as $k => $v) {
 
                 $skip = false;
@@ -432,12 +431,14 @@ class VanSellController extends BaseController
                     }
                 }*/
 
-                foreach ($vansell_query as $k1 => $v1){
+                foreach ($vansell_query as $k1 => $v1){ //vansale table data
                     if ($v1['productId'] == $v['productId'] && $v1['productlevel'] == $v['unit']) {
                         if($v1['van_qty'] != $v['van_qty'] || $v1['org_qty']!=$v['counts']){
                             $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->first();
-                            if ($vansell->qty == $vansell->org_qty && $vansell->self_enter == 0)
-                                $vansell->qty = $v['counts'];
+
+                            // if there is not self enter, qty will be updated auto from invoice qty
+                           // if ($vansell->qty == $vansell->org_qty && $vansell->self_enter == 0)
+                           //    $vansell->qty = $v['counts'];
                             $vansell->org_qty = $v['counts'];
                             $vansell->van_qty = $v['van_qty'];
                             $vansell->save();
@@ -500,13 +501,15 @@ class VanSellController extends BaseController
             foreach ($result as $vv)
             {
                 $del = vansell::where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('productId', $vv)->where('self_define', false)->first();
-                if ($del->self_enter == false)
-                    $del->delete();
-                else
-                {
+
+
+               // if ($del->self_enter == false)
+               //     $del->delete();
+               // else
+               // {
                     $del->org_qty = 0;
                     $del->save();
-                }
+                //}
 
             }
 

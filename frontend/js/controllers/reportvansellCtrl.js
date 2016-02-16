@@ -169,8 +169,8 @@ $scope.totalline = 0;
                 var i = 0;
                 $scope.report.forEach(function(item) {
                     //if(!$scope.systeminfo.permission.sa_up)
-                        if(item.qty == item.org_qty && item.self_enter == 0)
-                            item.qty = '';
+                        //if(item.qty == item.org_qty && item.self_enter == 0)
+                            //item.qty = '';
 
                     $scope.info[i] = $.extend(true, {}, $scope.vanStracture);
                     $scope.info[i]['id'] = item.id;
