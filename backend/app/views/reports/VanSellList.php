@@ -3,10 +3,10 @@
     <thead>
         <tr role="row" class="heading">
             <th width="20%">
-                                                        貨品編號
+                                                        產品編號
             </th>
             <th width="60%">
-                貨品名稱
+                產品名稱
             </th>
             <th width="20%"> 
                 數量

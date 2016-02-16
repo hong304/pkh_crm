@@ -59,6 +59,7 @@ class VanSellController extends BaseController
 
 
         $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : strtotime("today"));
+        $this->deliveryDate = $indata['filterData']['deliveryDate'];
         $this->_zone = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['value'] : $permittedZone[0]);
         $this->_zonename = (isset($indata['filterData']['zone']) ? $indata['filterData']['zone']['label'] : $permittedZone[0]);
         $this->_shift = (isset($indata['filterData']['shift']) ? $indata['filterData']['shift'] : '1');
@@ -91,8 +92,99 @@ class VanSellController extends BaseController
             exit;
         }
 
+        if ($this->_output == 'vanPost') {
+            $filterData = Input::get('filterData');
+            $selfdefine = Input::get('selfdefine');
+            $input = Input::get('data');
+
+            pd($input);
+
+            van::where('deliveryDate', $filterData['next_working_day'])->where('zoneId', $this->_zone)->delete();
+
+            foreach ($input as $v) {
+                if($v['next_vanqty'] > 0){
+                    $van_insert = new van();
+                    $van_insert->deliveryDate = $filterData['next_working_day'];
+                    $van_insert->zoneId = $this->_zone;
+                    $van_insert->productId = $v['productId'];
+                    $van_insert->van_qty = $v['next_vanqty'];
+                    $van_insert->productlevel = $v['productlevel'];
+                    $van_insert->unit = $v['unit'];
+                    //$van_insert->pic = Input::get('pic');
+                    $van_insert->save();
+                }
+            }
+
+            foreach ($selfdefine as $v) {
+                if($v['deleted'] == '0'){
+                    $van_insert = new van();
+                    $van_insert->deliveryDate = $filterData['next_working_day'];
+                    $van_insert->zoneId = $this->_zone;
+                    $van_insert->productId = $v['productId'];
+                    $van_insert->van_qty = $v['next_vanqty'];
+                    $van_insert->productlevel = $v['unit']['value'];
+                    $van_insert->unit = $v['unit']['label'];
+                    //$van_insert->pic = Input::get('pic');
+                    $van_insert->save();
+                }
+            }
+
+            //$this->compileResults();
+            exit;
+            //return Response::json($this->_data);
+        }
+
         if ($this->_output == 'preview') {
+
+
+            if(Input::get('mode')==0){
+
+                if(vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->count()==0){
+                    $vanheader = new vanHeader();
+                    $vanheader->zoneId = $this->_zone;
+                    $vanheader->deliveryDate = $this->deliveryDate;
+                    $vanheader->status = '1';
+                    $vanheader->shift = $this->_shift;
+                    $vanheader->save();
+                }
+
+
+
+            }else if(Input::get('mode')=='1'){
+                vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'11']);
+
+                $selfdefine = Input::get('selfdefine');
+                vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define', true)->delete();
+
+                foreach ($selfdefine as $d) {
+                    if ($d['deleted'] == 0 and isset($d['success'])) {
+                        $i = new vansell;
+                        $i->productId = $d['productId'];
+                        $i->name = $d['productName'];
+                        $i->unit = $d['unit']['label'];
+                        $i->productlevel = $d['unit']['value'];
+                        $i->qty = $d['qty'];
+                        $i->zoneId = $this->_zone;
+                        $i->date = $this->_date;
+                        $i->shift = $this->_shift;
+                        $i->self_define = 1;
+                        $i->save();
+                    }
+                }
+                foreach (Input::get('data') as $v) {
+                    $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define', false)->where('id', $v['id'])->first();
+                    $savevansell->qty = $v['qty'];
+                    $savevansell->self_enter = 1;
+                    $savevansell->save();
+                }
+            }
+
+            $van_exist = vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->lists('status');
+
+
+
             $this->compileResults();
+            $this->_data['preload_check'] = $van_exist[0];
             return Response::json($this->_data);
         }
 
@@ -137,11 +229,11 @@ class VanSellController extends BaseController
                 //  $inv[$v['productId'].$v['productlevel']] = $v['value'];
                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('self_define', false)->where('id', $v['id'])->first();
 
-                if ($v['value'] === '' || is_null($v['value'])) {
+                if ($v['qty'] === '' || is_null($v['qty'])) {
                     $savevansell->qty = $v['org_qty'];
                     $savevansell->self_enter = 0;
                 } else {
-                    $savevansell->qty = $v['value'];
+                    $savevansell->qty = $v['qty'];
                     $savevansell->self_enter = 1;
                 }
 
@@ -254,12 +346,25 @@ class VanSellController extends BaseController
                             'unit' => $unit,
                             'unit_txt' => $item->productUnitName,
                             'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                            'van_qty' => 0,
                         ];
                     }
                 }
             }
         }
 
+        $van_query = van::where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->with('products')->get();
+
+        foreach($van_query as $v){
+            $this->goods['1F'][$v['productId']][$v['productlevel']] = [
+                'productId' => $v->productId,
+                'name' => $v->products->productName_chi,
+                'unit' => $v['productlevel'],
+                'unit_txt' => $v['unit'],
+                'van_qty' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['van_qty'] : 0) + $v->van_qty,
+                'counts' => 0,
+            ];
+        }
 
         // pd($this->goods['1F']);
         //  pd(DB::getQueryLog());
@@ -267,7 +372,7 @@ class VanSellController extends BaseController
         $this->_data = $this->goods['1F'];
 
         $vansell_query = vansell::select('productId', 'productlevel','org_qty','van_qty')->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->get()->toArray();
-        $van_query = van::select('productId', 'productlevel','van_qty')->where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->get()->toArray();
+        //$van_query = van::select('productId', 'productlevel','van_qty')->where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->get()->toArray();
 
         // pd($vansell_query);
       //  pd($this->_data);
@@ -280,22 +385,22 @@ class VanSellController extends BaseController
 
                 $skip = false;
 
-                $van_qty = 0;
+               /* $van_qty = 0;
                 foreach($van_query as $k2 => $v2){
                     if ($v2['productId'] == $v['productId'] && $v2['productlevel'] == $v['unit']){
                         $van_qty = $v2['van_qty'];
                         break;
                     }
-                }
+                }*/
 
                 foreach ($vansell_query as $k1 => $v1){
                     if ($v1['productId'] == $v['productId'] && $v1['productlevel'] == $v['unit']) {
-                        if($v1['van_qty'] != $van_qty || $v1['org_qty']!=$v['counts']){
+                        if($v1['van_qty'] != $v['van_qty'] || $v1['org_qty']!=$v['counts']){
                             $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->first();
                             if ($vansell->qty == $vansell->org_qty && $vansell->self_enter == 0)
                                 $vansell->qty = $v['counts'];
                             $vansell->org_qty = $v['counts'];
-                            $vansell->van_qty = $van_qty;
+                            $vansell->van_qty = $v['van_qty'];
                             $vansell->save();
                         }
                         $skip = true;
@@ -309,7 +414,7 @@ class VanSellController extends BaseController
                     $create[$index]['unit'] = $v['unit_txt'];
                     $create[$index]['org_qty'] = $v['counts'];
                     $create[$index]['productlevel'] = $v['unit'];
-                    $create[$index]['van_qty'] = $van_qty;
+                    $create[$index]['van_qty'] = $v['van_qty'];
                     $create[$index]['date'] = $this->_date;
                     $create[$index]['zoneId'] = $this->_zone;
                     $create[$index]['shift'] = $this->_shift;

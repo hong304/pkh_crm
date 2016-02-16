@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('reportvansellCtrl', function($scope, $http, SharedService, $timeout, $location, $sce) {
+app.controller('vansaleManagementCtrl', function($scope, $http, SharedService, $timeout, $location, $sce,$rootScope) {
 
 	var querytarget = endpoint + "/getVansellreport.json";
     $scope.allowSubmission = true;
@@ -35,6 +35,7 @@ $scope.totalline = 0;
 	
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
+        $scope.systeminfo = $rootScope.systeminfo;
         $scope.loadSetting();
     });
 
@@ -147,14 +148,17 @@ $scope.totalline = 0;
 
     $scope.loadReport = function(i)
     {
+
         if(i==0){
             if(!$scope.allowSubmission)
                 return false;
             $scope.allowSubmission=false;
+
+
         }
 
         $scope.prepareforreport = true;
-    	$http.post(querytarget, {output: "preview", filterData: $scope.filterData, mode: i}) //getVansellreport.json
+    	$http.post(querytarget, {output: "preview", filterData: $scope.filterData, mode: i,data:$scope.info,selfdefine:$scope.selfdefine}) //getVansellreport.json
             .success(function(res){
 
 
@@ -166,10 +170,6 @@ $scope.totalline = 0;
            $scope.info = [];
                 var i = 0;
                 $scope.report.forEach(function(item) {
-                    //if(!$scope.systeminfo.permission.sa_up)
-                        if(item.qty == item.org_qty && item.self_enter == 0)
-                            item.qty = '';
-
                     $scope.info[i] = $.extend(true, {}, $scope.vanStracture);
                     $scope.info[i]['id'] = item.id;
                     $scope.info[i]['productId'] = item.productId;
@@ -184,8 +184,6 @@ $scope.totalline = 0;
            $scope.selfdefine = [];
                 var j = 0;
                 $scope.report_selfdefine.forEach(function(item) {
-                    console.log(item);
-
                     $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
                     $scope.selfdefine[j]['productId'] = item.productId;
                     $scope.selfdefine[j]['productName'] = item.name;

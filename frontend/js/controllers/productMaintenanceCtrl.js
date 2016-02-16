@@ -55,7 +55,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     $scope.vansale = '';
     $scope.allowNegativePrice = '';
     $scope.allowSeparate = '';
-    
+
     $scope.submit = true;
 	$scope.info_def = {
 			'group'	:	false,
