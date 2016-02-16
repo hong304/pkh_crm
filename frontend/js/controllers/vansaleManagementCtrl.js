@@ -37,6 +37,7 @@ $scope.totalline = 0;
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
         $scope.loadSetting();
+
     });
 
 
@@ -56,6 +57,7 @@ $scope.totalline = 0;
 
 
     		$scope.setting = res;
+
     		Metronic.unblockUI();
     		$timeout(function(){
 

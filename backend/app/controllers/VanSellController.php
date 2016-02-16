@@ -86,6 +86,7 @@ class VanSellController extends BaseController
                 'title' => $this->_reportTitle,
                 'filterOptions' => $this->registerFilter(),
                 'downloadOptions' => $this->registerDownload(),
+                'shift' => $this->Zoneshift()
             ];
 
             echo json_encode($returnInfo);
@@ -529,6 +530,10 @@ class VanSellController extends BaseController
         return $filterSetting;
     }
 
+    public function ZoneShift(){
+        return Zone::wherein('zoneId', explode(',', Auth::user()->temp_zone))->lists('batch','zoneId');
+    }
+
     public
     function registerDownload()
     {
@@ -536,6 +541,11 @@ class VanSellController extends BaseController
             [
                 'type' => 'pdf',
                 'name' => '列印 PDF 版本',
+                'warning' => false
+            ],
+            [
+                'type' => 'csv',
+                'name' => '借貨對算表',
                 'warning' => false
             ],
         ];

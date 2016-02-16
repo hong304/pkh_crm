@@ -36,6 +36,7 @@ $scope.totalline = 0;
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.loadSetting();
+
     });
 
 
@@ -136,6 +137,7 @@ $scope.totalline = 0;
     $scope.reset = function(){
         $scope.prepareforreport = false;
         $scope.allowSubmission = true;
+        $scope.show = $scope.setting.shift[$scope.filterData.zone.value];
     }
 
     $scope.finalsubmitnextvanqty=function(){
@@ -184,7 +186,7 @@ $scope.totalline = 0;
            $scope.selfdefine = [];
                 var j = 0;
                 $scope.report_selfdefine.forEach(function(item) {
-                    console.log(item);
+
 
                     $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
                     $scope.selfdefine[j]['productId'] = item.productId;
@@ -290,8 +292,10 @@ $scope.totalline = 0;
     	
     }
     
-    $scope.sendRealFile = function()
+    $scope.sendRealFile = function(i)
     {
+
+
 
 if(!$scope.prepareforreport){
     alert('請按提交,再產生PDF');
