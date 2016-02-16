@@ -1,0 +1,203 @@
+<form class="form-horizontal" role="form" id="queryInfo">
+
+    <div class="col-md-2">
+
+        <div class="portlet light" data-ng-if="setting.downloadOptions != false">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-cogs font-green-sharp"></i>
+                    <span class="caption-subject font-red-sunglo bold uppercase">列印/下載</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <button class="btn  blue-steel btn-block" data-ng-click="sendFile(d);" data-ng-repeat="d in setting.downloadOptions">{{d.name}}</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="portlet light" data-ng-repeat="f in setting.filterOptions">
+
+            <!--  single-dropdown -->
+            <div class="portlet-body" data-ng-if="f.type == 'single-dropdown'">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group">
+                        <select class="form-control"
+                                ng-model="filterData[f.model]"
+                                data-ng-options="x.label for x in f.optionList track by x.value" data-ng-change="reset();">
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portlet-body" id="shift" data-ng-if="f.type == 'single-dropdown'">
+                <div class="md-col-12">
+                    <select class="form-control"
+                            ng-model="filterData.shift" data-ng-change="reset();">
+                        <option value='1'>早班</option>
+                        <option value='2'>晚班</option>
+                        <option value='-1'>全部</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- date-picker -->
+            <div class="portlet-body" data-ng-if="f.type == 'date-picker'">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group  date " id="{{f.id}}" data-date-format="yyyy-mm-dd" data-date-start-date="-5d">
+                        <input type="text" class="form-control" readonly ng-model="filterData[f.model]" data-ng-change="reset();">
+						<span class="input-group-btn">
+							<button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="portlet-body" data-ng-if="f.type == 'submit'">
+                <div class="md-col-12">
+                    <button type="button" ng-click="loadReport(0);" id="submitbutton" class="btn blue">提交</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+    <div class="col-md-10">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="portlet light">
+
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs font-green-sharp"></i>
+                            <span class="caption-subject font-green-sharp bold uppercase">{{setting.title}}</span>
+                        </div>
+
+                    </div>
+
+                    <div class="portlet-body">
+
+
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr role="row" class="heading">
+                                <th width="10%">
+                                    貨品編號
+                                </th>
+                                <th width="40%">
+                                    貨品名稱
+                                </th>
+                                <th width="5%">
+                                    訂單貨量
+                                </th>
+
+                                <th width="5%">
+                                    預載數量
+                                </th>
+
+                                <th width="5%">
+                                    上貨數量
+                                </th>
+                                <th width="5%">
+                                    回貨數量
+                                </th>
+                                <th width="20%">
+                                    預載數量({{next_working_day}})
+                                </th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr data-ng-repeat="(k,i) in report" style="line-height:35px;font-size:15px;{{i.backgroundcode}}">
+
+                                <td>
+                                    {{i.productId}}
+                                </td>
+                                <td>{{i.name}}</td>
+                                <td>{{i.org_qty}} {{i.unit}}</td>
+                                <td>{{i.van_qty}} {{i.unit}}</td>
+                                <td><input type="text" class="form-control" data-ng-model="info[k]['qty'] " data-ng-disabled="preload_check>1" select-on-click></td>
+                                <td><input type="text" class="form-control" data-ng-model="info[k]['return_qty']" select-on-click></td>
+                                <td><input type="text" class="form-control" data-ng-model="info[k]['next_vanqty']" data-ng-disabled="preload_check<11" select-on-click></td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr role="row" class="heading">
+                                <th width="10%">
+                                    貨品編號
+                                </th>
+                                <th width="50%">
+                                    貨品名稱
+                                </th>
+                                <th width="5%">
+                                    上貨數量
+                                </th>
+                                <th width="5%">
+                                    回貨數量
+                                </th>
+                                <th width="10%">
+                                    預載數量({{next_working_day}})
+                                </th>
+                                <th width="5%">
+                                    單位 </a>
+                                </th>
+                                <th width="5%">
+                                    <a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default" data-ng-disabled="preload_check>1"><i class="fa fa-plus"> </i></a>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">
+                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)" select-on-click></td>
+                                <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']" select-on-click></td>
+                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']" select-on-click></td>
+                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['return_qty']" select-on-click></td>
+                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['next_vanqty']" data-ng-disabled="preload_check==11" select-on-click></td>
+                                <td>
+
+                                    <select ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value">
+                                    </select>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" id="deletebtn_1" data-ng-click="deleteRow(k);" data-ng-disabled="preload_check>1">刪除
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+
+                        <div class="portlet-body">
+                            <div class="md-col-12">
+                                <button type="button" ng-click="loadReport(1);" id="finalsubmitqty" class="btn red" data-ng-disabled="preload_check>1">確認上貨數量</button>
+                                <button type="button" ng-click="finalsubmitnextvanqty();" id="finalsubmitnextvanqty" class="btn blue" data-ng-disabled="preload_check<11">確認回貨及預載數量</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+                </div>
+                <!-- END EXAMPLE TABLE PORTLET-->
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+</form>
