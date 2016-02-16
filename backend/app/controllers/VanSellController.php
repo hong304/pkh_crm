@@ -115,7 +115,7 @@ class VanSellController extends BaseController
             }
 
             foreach ($selfdefine as $v) {
-                if($v['deleted'] == '0'){
+                if($v['deleted'] == '0' and isset($v['next_vanqty'])){
                     $van_insert = new van();
                     $van_insert->deliveryDate = $filterData['next_working_day'];
                     $van_insert->zoneId = $this->_zone;
