@@ -98,8 +98,6 @@ class VanSellController extends BaseController
             $selfdefine = Input::get('selfdefine');
             $input = Input::get('data');
 
-            pd($input);
-
             van::where('deliveryDate', $filterData['next_working_day'])->where('zoneId', $this->_zone)->delete();
 
             foreach ($input as $v) {
@@ -150,6 +148,18 @@ class VanSellController extends BaseController
                 }
 
 
+                if($this->_shift == '-1'){
+                    $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift','!=','-1')->get();
+                    foreach ($vansales as $v){
+                        $merge[$v->productId][$v->productlevel] = [
+                            'productId' => $v->productId,
+                            'productlevel' => $v->productlevel,
+                            'qty' => (isset($merge[$v->productId][$v->productlevel]) ? $merge[$v->productId][$v->productlevel]['qty'] : 0) + $v->qty,
+                        ];
+                    }
+                }
+
+                pd($merge);
 
             }else if(Input::get('mode')=='1'){
                 vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'11']);
@@ -288,6 +298,15 @@ class VanSellController extends BaseController
             //$pdf->Code128(10,3,$filenameUn,150,5);
 
             exit;
+        }
+
+        if($this->_output == 'audit'){
+            if($this->_shift == '-1')
+                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift',$this->_shift)->get();
+            else
+                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift','!=','-1')->get();
+
+            pd($vansales);
         }
 
 
@@ -544,7 +563,7 @@ class VanSellController extends BaseController
                 'warning' => false
             ],
             [
-                'type' => 'csv',
+                'type' => 'audit',
                 'name' => '借貨對算表',
                 'warning' => false
             ],
@@ -555,8 +574,7 @@ class VanSellController extends BaseController
 
 
 # PDF Section
-    public
-    function generateHeader($pdf)
+    public function generateHeader($pdf)
     {
         if ($this->_shift == 1)
             $shift = '早班';

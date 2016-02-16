@@ -139,6 +139,7 @@ $scope.totalline = 0;
     $scope.reset = function(){
         $scope.prepareforreport = false;
         $scope.allowSubmission = true;
+        $scope.show = $scope.setting.shift[$scope.filterData.zone.value];
     }
 
     $scope.finalsubmitnextvanqty=function(){
@@ -290,27 +291,45 @@ $scope.totalline = 0;
     	
     }
     
-    $scope.sendRealFile = function()
+    $scope.sendRealFile = function(i)
     {
 
-if(!$scope.prepareforreport){
-    alert('請按提交,再產生PDF');
-    return false;
-}
+        console.log(i);
 
-        $http.post(querytarget, {output: "create", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine})
-            .success(function(res, status, headers, config){
+        if(!$scope.prepareforreport){
+            alert('請按提交,再產生PDF');
+            return false;
+        }
 
-                var queryObject = {
-                    filterData	:	$scope.filterData,
-                    reportId	:	'vanselllist',
-                    output		:	'pdf'
-                };
-                var queryString = $.param( queryObject );
 
-                window.open(endpoint + "/getVansellreport.json?" + queryString);
+        if(i == 'audit'){
+            $http.post(querytarget, {output: "audit", filterData: $scope.filterData})
+                .success(function(res, status, headers, config){
 
-            });
+                    var queryObject = {
+                        filterData	:	$scope.filterData,
+                        reportId	:	'vanselllist',
+                        output		:	'audit'
+                    };
+                    var queryString = $.param( queryObject );
+
+                   // window.open(endpoint + "/getVansellreport.json?" + queryString);
+
+                });
+        }else
+            $http.post(querytarget, {output: "create", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine})
+                .success(function(res, status, headers, config){
+
+                    var queryObject = {
+                        filterData	:	$scope.filterData,
+                        reportId	:	'vanselllist',
+                        output		:	'pdf'
+                    };
+                    var queryString = $.param( queryObject );
+
+                    window.open(endpoint + "/getVansellreport.json?" + queryString);
+
+                });
 
 
 
