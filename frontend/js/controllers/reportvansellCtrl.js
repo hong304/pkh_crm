@@ -270,6 +270,7 @@ $scope.totalline = 0;
                 }).error(function(data, status, headers, config){
                          $scope.selfdefine[i] = $.extend(true, {}, $scope.selfdefineS);
                          $scope.selfdefine[i]['productId'] = value;
+                         $scope.selfdefine[i]['success'] = 0;
                     });
     }
 

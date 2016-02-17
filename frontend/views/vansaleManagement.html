@@ -155,13 +155,13 @@
                                     單位 </a>
                                 </th>
                                 <th width="5%">
-                                    <a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default" data-ng-disabled="preload_check>1"><i class="fa fa-plus"> </i></a>
+                                    <a href="#" ng-click="addRows();" class="btn btn-xs btn-circle btn-default" data-ng-disabled="preload_check==30"><i class="fa fa-plus"> </i></a>
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">
-                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" data-ng-disabled="preload_check>1" ng-change="searchProduct(selfdefine[k]['productId'],k)" select-on-click></td>
+                                <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['productId']" data-ng-disabled="preload_check==30" ng-change="searchProduct(selfdefine[k]['productId'],k)" select-on-click></td>
                                 <td><input type="text" class="form-control" data-ng-model="selfdefine[k]['productName']" data-ng-disabled="preload_check>1" select-on-click></td>
                                 <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['qty']" data-ng-disabled="preload_check>1" select-on-click></td>
                                 <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['return_qty']" data-ng-disabled="preload_check==30" select-on-click></td>
