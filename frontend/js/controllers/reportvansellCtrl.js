@@ -306,6 +306,7 @@ if(!$scope.prepareforreport){
         $http.post(querytarget, {output: "create", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine})
             .success(function(res, status, headers, config){
 
+
                 var queryObject = {
                     filterData	:	$scope.filterData,
                     reportId	:	'vanselllist',

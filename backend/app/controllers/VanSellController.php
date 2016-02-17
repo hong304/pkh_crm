@@ -17,6 +17,7 @@ class VanSellController extends BaseController
     private $_pdf = '';
     private $_zonename = '';
     private $kk = '';
+    private $audit = '';
 
     public function postVans()
     {
@@ -320,13 +321,60 @@ class VanSellController extends BaseController
             exit;
         }
 
-        if($this->_output == 'audit'){
-            if($this->_shift == '-1')
-                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift',$this->_shift)->get();
-            else
-                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift','!=','-1')->get();
+        if($this->_output == 'auditPdf'){
 
-            pd($vansales);
+            if($this->_shift == '-1')
+                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift',$this->_shift)->with('products')->get();
+            else
+                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->whereIn('shift',[1,2])->with('products')->get();
+
+            //pd($vansales);
+            $this->_reportTitle = '借貨對算表';
+
+            foreach($vansales as $v){
+                $this->audit[$v['productId']][$v['productlevel']] = [
+                    'productId' => $v->productId,
+                    'name' => $v->products->productName_chi,
+                    'unit' => $v['productlevel'],
+                    'unit_txt' => $v['unit'],
+                    'van_qty' => (isset( $this->audit[$v['productId']][$v['productlevel']]['van_qty']) ?  $this->audit[$v['productId']][$v['productlevel']]['van_qty'] : 0) + $v->van_qty,
+                    'qty' => (isset( $this->audit[$v['productId']][$v['productlevel']]['qty']) ?  $this->audit[$v['productId']][$v['productlevel']]['qty'] : 0) + $v->qty,
+                    'org_qty' => (isset( $this->audit[$v['productId']][$v['productlevel']]['org_qty']) ?  $this->audit[$v['productId']][$v['productlevel']]['org_qty'] : 0) + $v->org_qty,
+                ];
+            }
+
+            $this->next_working_day = date('d/m',strtotime(Input::get('filterData.next_working_day')));
+
+            $this->_reportId = 'vansaleAudit';
+            $reportOutput = $this->outputPDFAudit();
+
+            $filenameUn = $reportOutput['uniqueId'];
+            $filename = $filenameUn . ".pdf";
+
+            if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift))
+                mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift, 0777, true);
+            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift . '/' . $filename;
+
+            //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+
+
+            if (ReportArchive::where('id', $filenameUn)->count() == 0) {
+                $archive = new ReportArchive();
+                $archive->id = $filenameUn;
+                $archive->report = 'vansaleAudit';
+                $archive->file = $path;
+                $archive->remark = $reportOutput['remark'];
+                $archive->created_by = Auth::user()->id;
+                $archive->zoneId = $this->_zone;
+                $archive->shift = $this->_shift;
+                $neworder = json_decode($reportOutput['associates']);
+                $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
+                $archive->save();
+            }
+
+            $pdf = $reportOutput['pdf'];
+            $pdf->Output($path, "IF");
+            //$pdf->Code128(10,3,$filenameUn,150,5);
         }
 
 
@@ -619,8 +667,161 @@ class VanSellController extends BaseController
 
     }
 
-    public
-    function outputPDF()
+
+    public function generateHeaderAudit($pdf)
+    {
+        $pdf->SetFont('chi', '', 18);
+        $pdf->Cell(0, 10, "炳記行貿易有限公司", 0, 1, "C");
+        $pdf->SetFont('chi', 'U', 16);
+        $pdf->Cell(0, 10, $this->_reportTitle, 0, 1, "C");
+        $pdf->SetFont('chi', 'U', 13);
+        $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT) . "(" . $this->_zonename . ")", 0, 2, "L");
+        $pdf->Cell(0, 5, "出車日期: " . date("Y-m-d", $this->_date), 0, 2, "L");
+        $pdf->setXY(0, 0);
+        $pdf->SetFont('chi', '', 9);
+        $pdf->Code128(10, $pdf->h - 15, $this->_uniqueid, 50, 10);
+        $pdf->Cell(0, 10, sprintf("報告編號: %s", $this->_uniqueid), 0, 2, "R");
+
+    }
+
+
+    public function outputPDFAudit()
+    {
+
+        $pdf = new PDF();
+
+        $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
+        // handle 1F goods
+
+        foreach($this->audit as $k=> &$v){
+            foreach($v as $k1=> &$u) {
+                if ($u['van_qty'] + $u['qty'] - $u['org_qty'] == 0) {
+                    unset($this->audit[$k][$k1]);
+                }
+            }
+        }
+
+        $this->audit= array_filter($this->audit);
+        ksort($this->audit);
+
+        $firstF = array_chunk($this->audit, 20, true);
+
+        // pd($firstF);
+
+        foreach ($firstF as $i => $f) {
+            // for first Floor
+            $pdf->AddPage();
+
+
+            $this->generateHeaderAudit($pdf);
+
+            $pdf->SetFont('chi', '', 12);
+
+            $pdf->setXY(10, 50);
+            $pdf->Cell(0, 0, "產品編號", 0, 0, "L");
+
+            $pdf->setXY(30, 50);
+            $pdf->Cell(0, 0, "產品名稱", 0, 0, "L");
+
+            $pdf->setXY(90, 50);
+            $pdf->Cell(0, 0, "借貨數量", 0, 0, "L");
+
+            $pdf->setXY(120, 50);
+            $pdf->Cell(0, 0, "還貨數量", 0, 0, "L");
+
+            $pdf->setXY(158, 50);
+            $pdf->Cell(0, 0, "預載數量(".$this->next_working_day.")", 0, 0, "L");
+
+
+            $pdf->Line(10, 53, 190, 53);
+
+            $y = 60;
+
+            $pdf->setXY(10, $pdf->h - 30);
+            $pdf->Cell(0, 0, "經手人", 0, 0, "L");
+
+            $pdf->setXY(60, $pdf->h - 30);
+            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+            $pdf->Line(10, $pdf->h - 35, 50, $pdf->h - 35);
+            $pdf->Line(60, $pdf->h - 35, 100, $pdf->h - 35);
+
+            $pdf->setXY(500, $pdf->h - 30);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i + 1, count($firstF)), 0, 0, "R");
+
+
+            foreach ($f as $id => $g) {
+                foreach ($g as $id1 => $u) {
+
+
+                        $pdf->setXY(10, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
+
+                        $pdf->setXY(30, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
+
+                        $pdf->setXY(90, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, sprintf('%s%s', $u['van_qty'] + $u['qty'] - $u['org_qty'],$u['unit_txt']), 0, 0, "L");
+
+                        $pdf->setXY(120, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, "____________", 0, 0, "L");
+
+                        $pdf->setXY(158, $y);
+                        $pdf->SetFont('chi', '', 13);
+                        $pdf->Cell(0, 0, "____________", 0, 0, "L");
+
+                        $y += 8;
+
+
+                    /*  $d = substr(current($f)['productId'], 0, 1);
+                      $nd = substr(next($f)['productId'], 0, 1);
+                      if ($nd != '')
+                          if ($nd != $d) {
+                              $pdf->Line(10, $y, 190, $y);
+                              $y += 7;
+                          }*/
+                 }
+            }
+
+             $y += 10;
+               // Notes part
+               if ($i == 0) {
+                   for ($note = 0; $note <= 3; $note++) {
+                       $pdf->Line(10, $y, 80, $y);
+                                    $pdf->Line(90, $y, 110, $y);
+                       $pdf->Line(120, $y, 150, $y);
+                       $pdf->Line(160, $y, 190, $y);
+
+
+                       $y += 10;
+                   }
+               }
+
+        }
+
+        // handle 9F goods
+
+
+        //end of handel nine floor
+
+        // output
+
+
+        return [
+            'pdf' => $pdf,
+            'remark' => sprintf("Van Sell List DeliveryDate = %s", date("Y-m-d", $this->_date)),
+            'zoneId' => $this->_zone,
+            'uniqueId' => $this->_uniqueid,
+            'shift' => $this->_shift,
+            'associates' => json_encode($this->_invoices),
+        ];
+    }
+
+    public function outputPDF()
     {
 
         // Update it as generated into picking list

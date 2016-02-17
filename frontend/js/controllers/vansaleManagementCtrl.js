@@ -305,19 +305,17 @@ $scope.totalline = 0;
 
 
         if(i == 'audit'){
-            $http.post(querytarget, {output: "audit", filterData: $scope.filterData})
-                .success(function(res, status, headers, config){
 
                     var queryObject = {
                         filterData	:	$scope.filterData,
-                        reportId	:	'vanselllist',
-                        output		:	'audit'
+                        reportId	:	'vansaleAudit',
+                        output		:	'auditPdf'
                     };
                     var queryString = $.param( queryObject );
 
-                   // window.open(endpoint + "/getVansellreport.json?" + queryString);
+                   window.open(endpoint + "/getVansellreport.json?" + queryString);
 
-                });
+
         }else
             $http.post(querytarget, {output: "create", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine})
                 .success(function(res, status, headers, config){
