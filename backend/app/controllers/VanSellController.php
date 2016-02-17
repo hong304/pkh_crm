@@ -402,7 +402,7 @@ class VanSellController extends BaseController
                 'unit' => $v['productlevel'],
                 'unit_txt' => $v['unit'],
                 'van_qty' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['van_qty'] : 0) + $v->van_qty,
-                'counts' => 0,
+                'counts' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['counts'] : 0),
             ];
         }
 
