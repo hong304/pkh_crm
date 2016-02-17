@@ -177,6 +177,7 @@ $scope.totalline = 0;
                     $scope.info[i]['id'] = item.id;
                     $scope.info[i]['productId'] = item.productId;
                     $scope.info[i]['org_qty'] = item.org_qty;
+                    //$scope.info[i]['shift1'] = item.shift1;
                     $scope.info[i]['qty'] = item.qty;
                     $scope.info[i]['unit'] = item.unit;
                     $scope.info[i]['productlevel'] = item.productlevel;

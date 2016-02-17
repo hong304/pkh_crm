@@ -292,6 +292,8 @@ $this->updateVanQty();
                 ];
             }
 
+
+
             $this->next_working_day = date('d/m',strtotime(Input::get('filterData.next_working_day')));
 
             $this->_reportId = 'vansaleAudit';
@@ -405,7 +407,18 @@ $this->updateVanQty();
                 ];
             }
         }else{
-            
+           /* $vansell_query = vansell::where('date', $this->_date)->where('shift', '1')->where('zoneId', $zone)->where('self_define', false)->with('products')->get();
+            foreach($vansell_query as $v){
+                $this->goods['1F'][$v['productId']][$v['productlevel']] = [
+                    'productId' => $v->productId,
+                    'name' => $v->products->productName_chi,
+                    'unit' => $v['productlevel'],
+                    'unit_txt' => $v['unit'],
+                    'van_qty' => 0,
+                    'counts' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]['counts']) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['counts'] : 0),
+                    'shift1' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]['shift1']) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['shift1'] : 0) + $v->qty,
+                ];
+            }*/
         }
 
         // pd($this->goods['1F']);
@@ -443,6 +456,8 @@ $this->updateVanQty();
                            //    $vansell->qty = $v['counts'];
                             $vansell->org_qty = $v['counts'];
                             $vansell->van_qty = $v['van_qty'];
+                            if($this->_shift == '2')
+                                $vansell->shift1 = $v['shift1'];
                             $vansell->save();
                         }
                         $skip = true;
@@ -657,9 +672,11 @@ $this->updateVanQty();
         $this->audit= array_filter($this->audit);
         ksort($this->audit);
 
+        //pd($this->audit);
+
         $firstF = array_chunk($this->audit, 20, true);
 
-        // pd($firstF);
+        //pd($firstF);
 
         foreach ($firstF as $i => $f) {
             // for first Floor
@@ -1077,14 +1094,7 @@ $this->updateVanQty();
     public function updateSelfDefine(){
         $selfdefine = Input::get('selfdefine');
 
-        // $debug = new debug();
-        //  $debug->content = 'SelfDefine - zoneId:'.$this->_zone."shift:".$this->_shift;
-        //  $debug->content .= json_encode($selfdefine);
-        //  $debug->save();
-
         vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define', true)->delete();
-
-
 
         foreach ($selfdefine as $d) {
             if ($d['deleted'] == 0 and isset($d['success']) and strlen($d['productId'])>2) {
@@ -1097,7 +1107,7 @@ $this->updateVanQty();
                 $i->zoneId = $this->_zone;
                 $i->date = $this->_date;
                 $i->shift = $this->_shift;
-                $i->return_qty = $d['return_qty'];
+                $i->return_qty = isset($d['return_qty'])?$d['return_qty']:0;
                 $i->self_define = 1;
                 $i->save();
             }
