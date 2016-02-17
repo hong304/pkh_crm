@@ -676,7 +676,7 @@ $this->updateVanQty();
 
         $firstF = array_chunk($this->audit, 20, true);
 
-        //pd($firstF);
+
 
         foreach ($firstF as $i => $f) {
             // for first Floor
@@ -720,21 +720,31 @@ $this->updateVanQty();
             $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i + 1, count($firstF)), 0, 0, "R");
 
 
-            foreach ($f as $id => $g) {
-                foreach ($g as $id1 => $u) {
+
+           /* foreach ($f as $ga) {
+                foreach ($ga as $u) {
+                    p($u);
+                }
+            }*/
+
+
+
+            foreach ($f as $ga) {
+
+                foreach ($ga as $v1) {
 
 
                         $pdf->setXY(10, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
+                        $pdf->Cell(0, 0, $v1['productId'], 0, 0, "L");
 
                         $pdf->setXY(30, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
+                        $pdf->Cell(0, 0, sprintf('%s',$v1['name']), 0, 0, "L");
 
                         $pdf->setXY(90, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, sprintf('%s%s', $u['van_qty'] + $u['qty'] - $u['org_qty'],$u['unit_txt']), 0, 0, "L");
+                        $pdf->Cell(0, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty']) - $v1['org_qty'],$v1['unit_txt']), 0, 0, "L");
 
                         $pdf->setXY(120, $y);
                         $pdf->SetFont('chi', '', 13);
@@ -1069,8 +1079,7 @@ $this->updateVanQty();
         return Response::json($reportCustom);
     }
 
-    public
-    function viewArchivedReport()
+    public function viewArchivedReport()
     {
         $rid = Input::get('rid');
 
