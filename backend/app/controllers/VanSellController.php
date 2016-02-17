@@ -143,7 +143,7 @@ class VanSellController extends BaseController
         if ($this->_output == 'preview') {
 
 
-            if(Input::get('mode')==0){
+            if(Input::get('mode')==0){ //preview
 
                 if(vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->count()==0){
                     $vanheader = new vanHeader();
@@ -180,11 +180,15 @@ class VanSellController extends BaseController
                             }
                         }
                     }
+
+                    if($this->_shift=='2'){
+
+                    }
                 }
 
                // pd($merge);
 
-            }else if(Input::get('mode')=='1'){
+            }else if(Input::get('mode')=='1'){ //double confirm
                 vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'11']);
 
                 $this->updateSelfDefine();
@@ -386,17 +390,22 @@ $this->updateVanQty();
             }
         }
 
-        $van_query = van::where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->with('products')->get();
+        if($this->_shift != '2'){
 
-        foreach($van_query as $v){
-            $this->goods['1F'][$v['productId']][$v['productlevel']] = [
-                'productId' => $v->productId,
-                'name' => $v->products->productName_chi,
-                'unit' => $v['productlevel'],
-                'unit_txt' => $v['unit'],
-                'van_qty' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['van_qty'] : 0) + $v->van_qty,
-                'counts' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['counts'] : 0),
-            ];
+            $van_query = van::where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->with('products')->get();
+
+            foreach($van_query as $v){
+                $this->goods['1F'][$v['productId']][$v['productlevel']] = [
+                    'productId' => $v->productId,
+                    'name' => $v->products->productName_chi,
+                    'unit' => $v['productlevel'],
+                    'unit_txt' => $v['unit'],
+                    'van_qty' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['van_qty'] : 0) + $v->van_qty,
+                    'counts' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['counts'] : 0),
+                ];
+            }
+        }else{
+            
         }
 
         // pd($this->goods['1F']);
@@ -568,8 +577,7 @@ $this->updateVanQty();
         return Zone::wherein('zoneId', explode(',', Auth::user()->temp_zone))->lists('batch','zoneId');
     }
 
-    public
-    function registerDownload()
+    public function registerDownload()
     {
         $downloadSetting = [
             [
