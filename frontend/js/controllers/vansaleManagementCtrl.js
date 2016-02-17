@@ -180,6 +180,7 @@ $scope.totalline = 0;
                     $scope.info[i]['id'] = item.id;
                     $scope.info[i]['productId'] = item.productId;
                     $scope.info[i]['org_qty'] = item.org_qty;
+                    $scope.info[i]['return_qty'] = item.return_qty;
                     $scope.info[i]['qty'] = item.qty;
                     $scope.info[i]['unit'] = item.unit;
                     $scope.info[i]['productlevel'] = item.productlevel;
@@ -194,6 +195,7 @@ $scope.totalline = 0;
                     $scope.selfdefine[j]['productId'] = item.productId;
                     $scope.selfdefine[j]['productName'] = item.name;
                     $scope.selfdefine[j]['qty'] = item.qty;
+                    $scope.selfdefine[j]['return_qty'] = item.return_qty;
                     $scope.selfdefine[j]['success'] = 1;
 
                     var availableunit = [];
