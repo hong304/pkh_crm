@@ -18,6 +18,7 @@ class VanSellController extends BaseController
     private $_zonename = '';
     private $kk = '';
     private $audit = '';
+    private $shift1 = '';
 
     public function postVans()
     {
@@ -179,10 +180,6 @@ class VanSellController extends BaseController
                                 $savevansell->save();
                             }
                         }
-                    }
-
-                    if($this->_shift=='2'){
-
                     }
                 }
 
@@ -392,7 +389,7 @@ $this->updateVanQty();
             }
         }
 
-        if($this->_shift != '2'){
+        if($this->_shift != '2'){ // if is not shift 2 , don't need copy preload qty to vansale list
 
             $van_query = van::where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->with('products')->get();
 
@@ -407,21 +404,19 @@ $this->updateVanQty();
                 ];
             }
         }else{
-           /* $vansell_query = vansell::where('date', $this->_date)->where('shift', '1')->where('zoneId', $zone)->where('self_define', false)->with('products')->get();
+            $vansell_query = vansell::where('date', $this->_date)->where('shift', '1')->where('zoneId', $zone)->where('self_define', false)->with('products')->get();
             foreach($vansell_query as $v){
-                $this->goods['1F'][$v['productId']][$v['productlevel']] = [
+                $this->shift1[$v['productId']][$v['productlevel']] = [
                     'productId' => $v->productId,
                     'name' => $v->products->productName_chi,
                     'unit' => $v['productlevel'],
                     'unit_txt' => $v['unit'],
-                    'van_qty' => 0,
-                    'counts' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]['counts']) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['counts'] : 0),
-                    'shift1' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]['shift1']) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['shift1'] : 0) + $v->qty,
+                    'shift1' => (isset($this->shift1[$v['productId']][$v['productlevel']]['shift1']) ? $this->shift1[$v['productId']][$v['productlevel']]['shift1'] : 0) + $v->qty,
                 ];
-            }*/
+            }
         }
 
-        // pd($this->goods['1F']);
+       //  pd($this->shift1);
         //  pd(DB::getQueryLog());
 
         $this->_data = $this->goods['1F'];
@@ -448,7 +443,7 @@ $this->updateVanQty();
 
                 foreach ($vansell_query as $k1 => $v1){ //vansale table data
                     if ($v1['productId'] == $v['productId'] && $v1['productlevel'] == $v['unit']) {
-                        if($v1['van_qty'] != $v['van_qty'] || $v1['org_qty']!=$v['counts']){
+                        if($v1['van_qty'] != $v['van_qty'] || $v1['org_qty']!=$v['counts'] || isset($this->shift1[$v['productId']][$v['unit']]['shift1'])){
                             $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->first();
 
                             // if there is not self enter, qty will be updated auto from invoice qty
@@ -457,7 +452,7 @@ $this->updateVanQty();
                             $vansell->org_qty = $v['counts'];
                             $vansell->van_qty = $v['van_qty'];
                             if($this->_shift == '2')
-                                $vansell->shift1 = $v['shift1'];
+                                $vansell->shift1 = isset($this->shift1[$v['productId']][$v['unit']]['shift1'])?$this->shift1[$v['productId']][$v['unit']]['shift1']:0;
                             $vansell->save();
                         }
                         $skip = true;
@@ -475,6 +470,7 @@ $this->updateVanQty();
                     $create[$index]['date'] = $this->_date;
                     $create[$index]['zoneId'] = $this->_zone;
                     $create[$index]['shift'] = $this->_shift;
+                    $create[$index]['shift1'] =  isset($this->shift1[$v['productId']][$v['unit']]['shift1'])?$this->shift1[$v['productId']][$v['unit']]['shift1']:0;
                     $create[$index]['created_at'] = date('Y-m-d H:i:s');
                     $create[$index]['updated_at'] = date('Y-m-d H:i:s');
 

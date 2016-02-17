@@ -90,15 +90,15 @@
                                             <th width="10%">
                                                 貨品編號
                                             </th>
-                                            <th width="60%">
+                                            <th width="50%">
                                                 貨品名稱
                                             </th>
                                             <th width="10%">
                                                 預載數量
                                             </th>
-                                            <!--<th width="10%" data-ng-show="filterData.shift==2">
+                                            <th width="10%" data-ng-show="filterData.shift==2">
                                                 早班上貨量
-                                            </th>-->
+                                            </th>
 
                                             <th width="10%">
                                                 訂單貨量
@@ -126,7 +126,7 @@
                                             <td data-ng-if="i.van_qty>0" style="color: red">{{i.van_qty}} {{i.unit}}</td>
                                             <td data-ng-if="i.van_qty==0">{{i.van_qty}} {{i.unit}}</td>
 
-                                           <!-- <td>{{i.shift1}} {{i.unit}}</td>-->
+                                           <td data-ng-show="filterData.shift==2">{{i.shift1}} {{i.unit}}</td>
                                             <td>{{i.org_qty}} {{i.unit}}</td>
 
                                             <td><input type="text" class="form-control" data-ng-model="info[k]['qty']" data-ng-disabled="preload_check>1" select-on-click></td>
