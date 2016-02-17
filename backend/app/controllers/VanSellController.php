@@ -230,7 +230,7 @@ class VanSellController extends BaseController
             vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->orderBy('productId', 'asc')->where('self_define', true)->delete();
 
             foreach ($selfdefine as $d) {
-                if ($d['deleted'] == 0 and isset($d['success'])) {
+                if ($d['deleted'] == 0 and isset($d['success']) and strlen($d['productId'])>2) {
                     $i = new vansell;
                     $i->productId = $d['productId'];
                     $i->name = $d['productName'];
