@@ -164,6 +164,7 @@ $scope.totalline = 0;
             $scope.report_selfdefine = res.selfdefine;
             $scope.preload_check = res.preload_check;
 
+                console.log(res.selfdefine);
 
            $scope.info = [];
                 var i = 0;
@@ -248,6 +249,8 @@ $scope.totalline = 0;
         if(product.length>2)
             $http.post(target, {productId:value})
                 .success(function (res, status, headers, config) {
+                    $scope.selfdefine[i]['success'] = 0;
+
                     if(typeof res == "object")
                     {
                         var availableunit = [];
@@ -268,9 +271,8 @@ $scope.totalline = 0;
 
 
                 }).error(function(data, status, headers, config){
-                         $scope.selfdefine[i] = $.extend(true, {}, $scope.selfdefineS);
-                         $scope.selfdefine[i]['productId'] = value;
-                         $scope.selfdefine[i]['success'] = 0;
+                        // $scope.selfdefine[i] = $.extend(true, {}, $scope.selfdefineS);
+                        // $scope.selfdefine[i]['productId'] = value;
                     });
     }
 

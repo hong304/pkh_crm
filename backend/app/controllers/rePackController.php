@@ -48,8 +48,8 @@ class rePackController extends BaseController {
         $productId = Input :: get('productId');
         $productName = Product :: select ('productName_chi','productPacking_carton','productPackingName_carton','productPacking_inner','productPackingName_inner','productPacking_unit','productPackingName_unit','productPackingInterval_inner','productPackingInterval_unit','productPackingInterval_carton')->where('productId',$productId)->first();
 
-
-       $productName->normalized_unit = $productName->normalized_unit;
+        if(isset($productName))
+            $productName->normalized_unit = $productName->normalized_unit;
 
 
         if(isset($productName))
