@@ -154,6 +154,13 @@ $scope.totalline = 0;
             });
     }
 
+    $scope.unlock=function(){
+        $http.post(querytarget, {output: "unlock", filterData: $scope.filterData}) //getVansellreport.json
+            .success(function(res){
+                $scope.preload_check = res.preload_check;
+            });
+    }
+
     $scope.loadReport = function(i)
     {
 
