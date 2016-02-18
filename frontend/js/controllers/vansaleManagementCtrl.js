@@ -30,7 +30,7 @@ $scope.totalline = 0;
         'qty' : '',
         'org_qty' : '',
         'unit'  : '',
-        'next_vanqty' : '',
+        'preload' : '',
         'return_qty' : ''
     }
 	
@@ -183,6 +183,9 @@ $scope.totalline = 0;
                     if(item.return_qty == 0)
                         item.return_qty = '';
                     $scope.info[i]['return_qty'] = item.return_qty;
+                    if(item.preload == 0)
+                        item.preload = '';
+                    $scope.info[i]['preload'] = item.preload;
                     $scope.info[i]['qty'] = item.qty;
                     $scope.info[i]['unit'] = item.unit;
                     $scope.info[i]['productlevel'] = item.productlevel;
@@ -197,6 +200,10 @@ $scope.totalline = 0;
                     $scope.selfdefine[j]['productId'] = item.productId;
                     $scope.selfdefine[j]['productName'] = item.name;
                     $scope.selfdefine[j]['qty'] = item.qty;
+                    if(item.preload == 0)
+                        item.preload = '';
+
+                    $scope.selfdefine[j]['preload'] = item.preload;
                     if(item.return_qty == 0)
                         item.return_qty = '';
                     $scope.selfdefine[j]['return_qty'] = item.return_qty;
@@ -239,6 +246,7 @@ $scope.totalline = 0;
             $scope.selfdefine[j]['productName'] = '';
             $scope.selfdefine[j]['qty'] = '';
             $scope.selfdefine[j]['unit'] = '';
+            $scope.selfdefine[j]['preload'] = '';
         $scope.totalline += 1;
 
     }
