@@ -212,21 +212,24 @@ class OrderController extends BaseController
         if ($order['invoiceId'] != '') {
 
 
-
+            $invoice= Invoice::where('invoiceId', $order['invoiceId'])->firstOrFail();
            if (count($itemIds) == 0){
-               InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
-               $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail'); //if all old items are deleted
+               if($invoice->version >0)
+                    InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
+                    $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail'); //if all old items are deleted
 
 
 
             }else{
-               InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
-                $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail'); //if the old items are deleted
+               if($invoice->version >0)
+                    InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
+                    $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail'); //if the old items are deleted
 
             }
 
             $deletedItemFromDB = $i->get();
 
+            if($invoice->version >0 || $invoice->revised==1)
             $i->update(['new_added'=>3]);
 
             if($order['status'] != 97 && $order['status'] != 96)

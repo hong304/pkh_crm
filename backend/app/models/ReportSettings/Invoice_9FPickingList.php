@@ -232,7 +232,7 @@ class Invoice_9FPickingList {
 
                                         }else{
                                            // if(isset($dd[$productId]))
-                                            if($invoiceQ->revised == true && $item->new_added=='3')
+                                            if($item->new_added=='3')
                                                 $this->goods['9F'][$customerId . $invoiceId]['items'][$productId.'(刪)'][$unit] = [
                                                     'productId' => $productId,
                                                     'name' => '(刪)'.$productDetail->productName_chi,

@@ -10,6 +10,7 @@ class InvoiceManipulation
     public $im = "";
     public $approval = false;
     public $product = [];
+    public $lastid = '';
 
     public function __construct($invoiceId = false, $timer = false)
     {
@@ -20,6 +21,7 @@ class InvoiceManipulation
         } elseif ($this->action == 'update') {
             // check if this invoice exists
             $this->im = Invoice::where('invoiceId', $invoiceId)->firstOrFail();
+            $this->lastid = pickingListVersionControl::where('zone',$this->im->zoneId)->where('date',date("Y-m-d",$this->im->deliveryDate))->where('shift',$this->im->shift)->first();
 
             if ($this->im->invoiceStatus == 99) {
 
@@ -439,8 +441,8 @@ class InvoiceManipulation
                                 $item->productUnitName = trim($i['productUnitName']);
                                 $item->approvedSupervisorId = $i['approvedSupervisorId'];
 
-                                if($this->im->version >0)
-                                    $item->new_added = '2';
+                                if($this->im->version >0 || $this->im->revised == 1 )
+                                    $item->new_added = '2'; //modified
 
                                 $dirty = true;
 
@@ -450,8 +452,8 @@ class InvoiceManipulation
                         }
                     }
                 }else{
-                    if($this->action == 'update' && ($this->im->version > 0 && $this->im->version !=100)){
-                        $item->new_added = 1;
+                    if($this->action == 'update' && ( ($this->im->version > 0 || $this->im->revised == 1) && $this->im->version !=100)){
+                        $item->new_added = 1; //new added
                     }
                 }
 
