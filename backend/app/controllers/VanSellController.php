@@ -98,13 +98,12 @@ class VanSellController extends BaseController
         if($this->_output =='unlock'){
             vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'1']);
             $van_exist = vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->lists('status');
-            $this->compileResults();
             $this->_data['preload_check'] = $van_exist[0];
+            return Response::json($this->_data);
         }
 
         if ($this->_output == 'vanPost') {
             $filterData = Input::get('filterData');
-
             $selfdefine = Input::get('selfdefine');
             $input = Input::get('data');
 
