@@ -411,7 +411,7 @@ $this->updateVanQty();
                     'name' => $v->products->productName_chi,
                     'unit' => $v['productlevel'],
                     'unit_txt' => $v['unit'],
-                    'shift1' => (isset($this->shift1[$v['productId']][$v['productlevel']]['shift1']) ? $this->shift1[$v['productId']][$v['productlevel']]['shift1'] : 0) + $v->qty,
+                    'shift1' => (isset($this->shift1[$v['productId']][$v['productlevel']]['shift1']) ? $this->shift1[$v['productId']][$v['productlevel']]['shift1'] : 0) + $v->qty+$v->van_qty,
                 ];
             }
         }
