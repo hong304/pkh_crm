@@ -876,27 +876,27 @@ $this->updateVanQty();
 
             $this->generateHeader($pdf);
 
-            $pdf->SetFont('chi', '', 10);
+            $pdf->SetFont('chi', '', 12);
 
             $pdf->setXY(10, 50);
             $pdf->Cell(0, 0, "產品編號", 0, 0, "L");
 
-            $pdf->setXY(40, 50);
+            $pdf->setXY(30, 50);
             $pdf->Cell(0, 0, "產品名稱", 0, 0, "L");
 
-            $pdf->setXY(101, 50);
+            $pdf->setXY(100, 50);
             $pdf->Cell(0, 0, "預載數量", 0, 0, "L");
 
-            $pdf->setXY(120, 50);
+            $pdf->setXY(127, 50);
             $pdf->Cell(0, 0, "上貨數量", 0, 0, "L");
 
-            $pdf->setXY(145, 50);
+            $pdf->setXY(155, 50);
             $pdf->Cell(0, 0, "添加數量", 0, 0, "L");
 
-            $pdf->setXY(170, 50);
+            $pdf->setXY(180, 50);
             $pdf->Cell(0, 0, "覆核數量", 0, 0, "L");
 
-            $pdf->Line(10, 53, 190, 53);
+            $pdf->Line(10, 53, 200, 53);
 
             $y = 60;
 
@@ -927,32 +927,32 @@ $this->updateVanQty();
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
 
-                        $pdf->setXY(40, $y);
+                        $pdf->setXY(30, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
-                        $pdf->setXY(101, $y);
+                        $pdf->setXY(100, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, sprintf('%s',$u['van_qty']), 0, 0, "L");
 
-                        $pdf->setXY(110, $y);
+                        $pdf->setXY(111, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
 
-                        $pdf->setXY(123, $y);
+                        $pdf->setXY(127, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, sprintf('%s',$u['qty']), 0, 0, "L");
 
 
-                        $pdf->setXY(133, $y);
+                        $pdf->setXY(138, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
 
-                        $pdf->setXY(145, $y);
+                        $pdf->setXY(155, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, "________", 0, 0, "L");
 
-                        $pdf->setXY(170, $y);
+                        $pdf->setXY(180, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, "________", 0, 0, "L");
 
@@ -965,32 +965,32 @@ $this->updateVanQty();
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
 
-                        $pdf->setXY(40, $y);
+                        $pdf->setXY(30, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
 
-                        $pdf->setXY(101, $y);
+                        $pdf->setXY(100, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, sprintf('%s',$u['van_qty']), 0, 0, "L");
 
-                        $pdf->setXY(110, $y);
+                        $pdf->setXY(111, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
 
-                        $pdf->setXY(123, $y);
+                        $pdf->setXY(127, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, sprintf('%s',$u['qty']), 0, 0, "L");
 
 
-                        $pdf->setXY(133, $y);
+                        $pdf->setXY(138, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, str_replace(' ', '', $u['unit']), 0, 0, "L");
 
-                        $pdf->setXY(145, $y);
+                        $pdf->setXY(155, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, "________", 0, 0, "L");
 
-                        $pdf->setXY(170, $y);
+                        $pdf->setXY(180, $y);
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, "________", 0, 0, "L");
 
@@ -998,7 +998,7 @@ $this->updateVanQty();
                     }
 
                     if ($u['qty'] == '-100') {
-                        $pdf->Line(10, $y, 190, $y);
+                        $pdf->Line(10, $y, 200, $y);
                         $y += 7;
                     }
 
