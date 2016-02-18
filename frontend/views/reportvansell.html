@@ -132,8 +132,8 @@
                                                 <td data-ng-show="filterData.shift!=2" data-ng-if="i.van_qty==0">{{i.van_qty}} {{i.unit}}</td>
 
 
-                                           <td data-ng-show="filterData.shift==2">{{i.shift1_preload}} {{i.unit}}</td>
-                                            <td data-ng-show="filterData.shift==2">{{i.shift1}} {{i.unit}}</td>
+                                           <td data-ng-show="filterData.shift==2"> <span data-ng-if="i.shift1_preload>0">{{i.shift1_preload}} {{i.unit}}</span></td>
+                                            <td data-ng-show="filterData.shift==2"><span data-ng-if="i.shift1>0">{{i.shift1}} {{i.unit}}</span></td>
                                             <td>{{i.org_qty}} {{i.unit}}</td>
                                             <td><input type="text" class="form-control" data-ng-model="info[k]['qty']" data-ng-disabled="preload_check>1" select-on-click></td>
 
