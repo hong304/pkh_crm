@@ -659,7 +659,8 @@ var i =0;
             'amount' : '0',
             'paid' : '0',
             'no' : '',
-            'remain' : 0
+            'remain' : 0,
+            'discountStatus' : ''
         };
 
         $scope.filterData.deliverydate = d.getFullYear()+'-'+lastMonth+'-'+d.getDate();

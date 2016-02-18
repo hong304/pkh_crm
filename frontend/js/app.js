@@ -1394,8 +1394,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
 		
 		
 
-        .state('customerCashListing', {
-            url: "/customerCashListing",
+        .state('financeCashListing', {
+            url: "/financeCashListing",
             templateUrl: "views/customerCashListing.html",
             data: {pageTitle: '現金客列表', pageSubTitle: ''},
             controller: "financeCashController",
