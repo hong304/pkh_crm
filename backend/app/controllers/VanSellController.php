@@ -411,7 +411,8 @@ $this->updateVanQty();
                     'name' => $v->products->productName_chi,
                     'unit' => $v['productlevel'],
                     'unit_txt' => $v['unit'],
-                    'shift1' => (isset($this->shift1[$v['productId']][$v['productlevel']]['shift1']) ? $this->shift1[$v['productId']][$v['productlevel']]['shift1'] : 0) + $v->qty+$v->van_qty,
+                    'shift1' => (isset($this->shift1[$v['productId']][$v['productlevel']]['shift1']) ? $this->shift1[$v['productId']][$v['productlevel']]['shift1'] : 0) + $v->qty,
+                    'shift1_preload' => (isset($this->shift1[$v['productId']][$v['productlevel']]['shift1_preload']) ? $this->shift1[$v['productId']][$v['productlevel']]['shift1_preload'] : 0) + $v->qty+$v->van_qty,
                 ];
             }
         }
@@ -451,8 +452,10 @@ $this->updateVanQty();
                            //    $vansell->qty = $v['counts'];
                             $vansell->org_qty = $v['counts'];
                             $vansell->van_qty = $v['van_qty'];
-                            if($this->_shift == '2')
+                            if($this->_shift == '2'){
+                                $vansell->shift1_preload = isset($this->shift1[$v['productId']][$v['unit']]['shift1_preload'])?$this->shift1[$v['productId']][$v['unit']]['shift1_preload']:0;
                                 $vansell->shift1 = isset($this->shift1[$v['productId']][$v['unit']]['shift1'])?$this->shift1[$v['productId']][$v['unit']]['shift1']:0;
+                            }
                             $vansell->save();
                         }
                         $skip = true;

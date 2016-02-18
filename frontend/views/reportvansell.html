@@ -93,11 +93,15 @@
                                             <th width="50%">
                                                 貨品名稱
                                             </th>
-                                            <th width="10%">
+                                            <th width="10%" data-ng-show="filterData.shift!=2">
                                                 預載數量
                                             </th>
                                             <th width="10%" data-ng-show="filterData.shift==2">
-                                                早班上貨量
+                                                早班+預載
+                                            </th>
+
+                                            <th width="10%" data-ng-show="filterData.shift==2">
+                                                早班訂單
                                             </th>
 
                                             <th width="10%">
@@ -123,13 +127,16 @@
                                             </td>
                                             <td>{{i.name}}</td>
 
-                                            <td data-ng-if="i.van_qty>0" style="color: red">{{i.van_qty}} {{i.unit}}</td>
-                                            <td data-ng-if="i.van_qty==0">{{i.van_qty}} {{i.unit}}</td>
 
-                                           <td data-ng-show="filterData.shift==2">{{i.shift1}} {{i.unit}}</td>
+                                                <td data-ng-show="filterData.shift!=2" data-ng-if="i.van_qty>0" style="color: red">{{i.van_qty}} {{i.unit}}</td>
+                                                <td data-ng-show="filterData.shift!=2" data-ng-if="i.van_qty==0">{{i.van_qty}} {{i.unit}}</td>
+
+
+                                           <td data-ng-show="filterData.shift==2">{{i.shift1_preload}} {{i.unit}}</td>
+                                            <td data-ng-show="filterData.shift==2">{{i.shift1}} {{i.unit}}</td>
                                             <td>{{i.org_qty}} {{i.unit}}</td>
-
                                             <td><input type="text" class="form-control" data-ng-model="info[k]['qty']" data-ng-disabled="preload_check>1" select-on-click></td>
+
                                         </tr>
 
                                         </tbody>
