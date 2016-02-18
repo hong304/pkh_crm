@@ -108,12 +108,16 @@ $scope.totalline = 0;
                                 var month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
                                 var year = nextDay.getFullYear();
 
+                                var current_day = ("0" + (today.getDate())).slice(-2);
+                                var current_month = ("0" + (today.getMonth() + 1)).slice(-2);
+                                var current_year = today.getFullYear();
+
                                 $("#" + options.id).datepicker({
                                     rtl: Metronic.isRTL(),
                                     orientation: "left",
                                     autoclose: true
                                 });
-                                $("#" + options.id).datepicker( "setDate", year + '-' + month + '-' + day );
+                                $("#" + options.id).datepicker( "setDate", current_year + '-' + current_month + '-' + current_day );
 
                                 $scope.next_working_day =  day + '/' + month;
                                 $scope.filterData.next_working_day =  year + '-' + month + '-' + day;
