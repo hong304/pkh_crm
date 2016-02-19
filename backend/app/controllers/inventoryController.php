@@ -85,7 +85,7 @@ class inventoryController extends BaseController {
         if($mode == 'collection')
         {
 
-            DB::statement('UPDATE receivings AS t
+            DB::update('UPDATE receivings AS t
                 INNER JOIN
                 (SELECT productId,SUM(good_qty) tqty FROM receivings GROUP BY productId) t1
                 ON t.productId = t1.productId
