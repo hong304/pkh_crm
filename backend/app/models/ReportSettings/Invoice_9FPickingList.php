@@ -264,9 +264,9 @@ class Invoice_9FPickingList {
                                 }
 
 
-                            /* show carton summary on last page
-                             if($unit == 'carton' && $item->productQty > 0.5){
-                                 $this->goods['carton'][$productId]['items'] = [
+                            // show groceries summary on last page
+                             if(($unit == 'carton' && $item->productQty < 1) ||$unit == 'inner' || $unit == 'unit'){
+                                 $this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit] = [
                                      'productId' => $productId,
                                      'name' => $productDetail->productName_chi,
                                      'productPacking_carton' => $productDetail->productPacking_carton,
@@ -278,12 +278,34 @@ class Invoice_9FPickingList {
                                      'productPackingSize' => $productDetail->productPacking_size,
                                      'unit' => $unit,
                                      'unit_txt' => $item->productUnitName,
-                                     'counts' => (isset($this->goods['carton'][$productId]['items']) ? $this->goods['carton'][$productId]['items']['counts'] : 0) + $item->productQty,
+                                     'counts' => (isset($this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
 
                                  ];
-                                 $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
-                                 $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
-                             } end of show carton summary on last page */
+                             } //end of show groceries summary on last page
+
+                            $this->goods['groceries'][$customerId.$invoiceId]['customerInfo'] = $client->toArray();
+                            $this->goods['groceries'][$customerId.$invoiceId]['invoiceId'] = $invoiceId;
+
+                            // show carton summary on last page
+                            if($unit == 'carton' && $item->productQty > 0.5){
+                                $this->goods['carton'][$productId]['items'] = [
+                                    'productId' => $productId,
+                                    'name' => $productDetail->productName_chi,
+                                    'productPacking_carton' => $productDetail->productPacking_carton,
+                                    'productPacking_inner' => $productDetail->productPacking_inner,
+                                    'productPacking_unit' => $productDetail->productPacking_unit,
+                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                    'productPackingSize' => $productDetail->productPacking_size,
+                                    'unit' => $unit,
+                                    'unit_txt' => $item->productUnitName,
+                                    'counts' => (isset($this->goods['carton'][$productId]['items']) ? $this->goods['carton'][$productId]['items']['counts'] : 0) + $item->productQty,
+
+                                ];
+                                $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
+                                $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
+                            } //end of show carton summary on last page
 
                             /*   group by route path
                                  if($unit == 'carton'){
@@ -314,17 +336,41 @@ class Invoice_9FPickingList {
                 }
 
 
-        usort($this->goods['9F'], function($elementA, $elementB) {
-            return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
-        });
 
-        /* show carton summary on last page
+       // usort($this->goods['9F'], function($elementA, $elementB) {
+       //     return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
+      //  });
+
+        foreach($this->goods['groceries'] as $k => &$vvvv){
+            if(!isset($vvvv['items'])){
+                unset($this->goods['groceries'][$k]);
+            }
+
+        }
+    //    usort($this->goods['groceries'], function($elementA, $elementB) {
+     //       return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
+     //   });
+
+        function comp($elementA, $elementB) {
+            if ($elementA['customerInfo']['routePlanningPriority'] == $elementB['customerInfo']['routePlanningPriority']) {
+                return $elementA['customerInfo']['customerId'] - $elementB['customerInfo']['customerId'];
+            }
+            return $elementA['customerInfo']['routePlanningPriority'] - $elementB['customerInfo']['routePlanningPriority'];
+        }
+
+        usort($this->goods['9F'], 'comp');
+        usort($this->goods['groceries'], 'comp');
+
+
+       // pd($this->goods['groceries']);
+
+        // show carton summary on last page
         if(isset($this->goods['carton'])){
             ksort($this->goods['carton']);
             foreach ($this->goods['carton'] as &$v){
                 ksort($v['items']);
             }
-        }*/
+        }
 
         $this->data = $this->goods;
       //  pd($this->data);
@@ -546,9 +592,12 @@ $i=3;
 
     public function outputPDF()
     {
-        // handle 9F goods
-        $ninef = $this->data['9F'];
 
+        $pdf = new PDF();
+        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
+
+// handle 9F goods
+        $ninef = $this->data['9F'];
         $newway = [];
 
         foreach($ninef as $k => $v){
@@ -577,11 +626,7 @@ $i=3;
         }
         $this->_newway = $newway;
 
-
         $consec = $j = 0;
-
-        $pdf = new PDF();
-        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
 
         foreach( $this->_newway as $c=>$nf)
         {
@@ -601,7 +646,7 @@ $i=3;
                 $ninefproducts[$j][] = $nf;
             }
         }
-        //  pd($ninefproducts);
+
         foreach($ninefproducts as $index=>$order)
         {
 
@@ -713,9 +758,9 @@ $i=3;
               //  $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
             }
         }
+// handle 9F goods
 
-
-/* show carton summary on last page
+//show carton summary on last page
         if(isset($this->data['carton'])){
             $consec = $j = 0;
             foreach($this->data['carton'] as $c=>$nf)
@@ -801,7 +846,160 @@ $i=3;
 
             }
         }
-end of show carton summary on last page*/
+//end of show carton summary on last page*/
+
+// handle groceries goods
+
+        $ninef1 = $this->data['groceries'];
+        $newway1 = [];
+
+
+
+        foreach($ninef1 as $k => $v){
+
+                $temp = array_chunk($v['items'],35,true);
+                if(count($temp)>1){
+                    foreach($temp as $kk => $vv){
+                        if($kk == 0){
+                            $newway1[$k]['items'] = $vv;
+                            $newway1[$k]['customerInfo'] = $v['customerInfo'];
+                            $newway1[$k]['invoiceId'] = $v['invoiceId'];
+
+                        }else{
+                            $newway1[$k."-".$kk]['items'] = $vv;
+                            $newway1[$k."-".$kk]['customerInfo'] = $v['customerInfo'];
+                            $newway1[$k."-".$kk]['invoiceId'] = $v['invoiceId'];
+                        }
+                    }
+                }else{
+                    $newway1[$k]['items'] = $v['items'];
+                    $newway1[$k]['customerInfo'] = $v['customerInfo'];
+                    $newway1[$k]['invoiceId'] = $v['invoiceId'];
+                }
+
+        }
+
+
+
+        $consec = $j = 0;
+        $ninefproducts = [];
+        foreach($newway1 as $c=>$nf)
+        {
+
+            $consec += count($nf['items'])+2;
+            $nf['consec'] = count($nf['items']);
+            $nf['acccon'] = $consec;
+
+            // we can have 20 items as most per section
+            $ninefproducts[$j][] = $nf;
+            if($consec > 40)
+            {
+                array_pop($ninefproducts[$j]);
+                $nf['acccon'] = count($nf['items'])+2;
+                $j++;
+                $consec = $nf['acccon'];
+                $ninefproducts[$j][] = $nf;
+            }
+        }
+
+        foreach($ninefproducts as $index=>$order)
+        {
+
+            // if it is in left section, add a new page
+            //  if($index % 2 == 0)
+            //   {
+
+            $pdf->AddPage();
+            $this->generateHeader($pdf);
+
+            $pdf->SetFont('chi','',10);
+            $pdf->setXY(10, $pdf->h-30);
+            $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+            $pdf->setXY(60, $pdf->h-30);
+            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+            $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+            $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+
+            $pdf->setXY(0, 0);
+
+            // add a straight line
+            //    $pdf->Line(105, 45, 105, 280);
+
+            $pdf->SetFont('chi','',10);
+            $pdf->setXY(500, $pdf->h-30);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts))) , 0, 0, "R");
+            //   }
+
+            //$pdf->Cell(50, 50, "NA", 0, 0, "L");
+
+            // define left right position coordinate x differences
+            $y = 55;
+            $base_x = 10;
+            /*  if($index % 2 == 0)
+              {
+                  $base_x = 5;
+              }
+              else
+              {
+                  $base_x = 110;
+              }*/
+
+            foreach($order as $o)
+            {
+
+                $pdf->setXY($base_x + 0, $y);
+                $pdf->SetFont('chi','U',14);
+                $pdf->Cell(0, 0, sprintf("%s - %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi']), 0, 0, "L");
+
+                $pdf->SetFont('chi','',12);
+
+                $y += 5;
+
+                foreach($o['items'] as $itemUnitlv)
+                {
+                    foreach($itemUnitlv as $item)
+                    {
+                        $pdf->setXY($base_x + 0, $y);
+                        $pdf->Cell(0, 0,$item['name'], 0, 0, 'L');
+
+                        $inner = '';
+                        if($item['productPacking_inner']>1)
+                            $inner = $item['productPacking_inner'] . $item['productPackingName_inner']."x";
+
+
+                        // $pdf->setXY($base_x + 120, $y);
+                        // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 70, $y);
+                        $pdf->Cell(20, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'R');
+
+
+
+
+
+                                $pdf->setXY($base_x + 100, $y);
+                        $pdf->Cell(0, 0, "[  ]     [  ]", 0, 0, 'L');
+
+
+
+
+                        $y +=  5;
+                    }
+                }
+
+                $y += 5;
+
+                //  $pdf->SetDash(1, 1);
+                //  $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+            }
+        }
+// handle groceries goods
+
+        //show groceries summary on last page
+
+        //end of show groceries summary on last page
 
 /* group by route path
         if(isset($this->data['carton'])){
