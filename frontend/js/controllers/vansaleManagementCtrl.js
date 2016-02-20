@@ -145,6 +145,48 @@ $scope.totalline = 0;
         $scope.prepareforreport = false;
         $scope.allowSubmission = true;
         $scope.show = $scope.setting.shift[$scope.filterData.zone.value];
+
+
+
+
+
+
+        var target = endpoint + '/getHoliday.json';
+
+        $http.get(target)
+            .success(function(res){
+
+                var js_selected_day =new Date($scope.filterData.deliveryDate);
+                var plus = js_selected_day.getDay() == 6 ? 2 : 1;
+                var nextDay = new Date(js_selected_day.getTime() + 24 * 60 * 60 * 1000 * plus);
+
+                var flag = true;
+                var working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+                do{
+                    flag= true;
+                    $.each( res, function( key, value ) {
+                        if(value == working_date){
+                            flag = false;
+                            var today = new Date(nextDay.getFullYear()+'-'+working_date);
+                            nextDay = new Date(today);
+                            nextDay.setDate(today.getDate()+1);
+
+                            if(nextDay.getDay() == 0)
+                                nextDay.setDate(today.getDate()+2);
+
+                            working_date = ("0" + (nextDay.getMonth() + 1)).slice(-2)+'-'+("0" + (nextDay.getDate())).slice(-2);
+                        }
+                    });
+                }while(flag == false);
+
+                var day = ("0" + (nextDay.getDate())).slice(-2);
+                var month = ("0" + (nextDay.getMonth() + 1)).slice(-2);
+                var year = nextDay.getFullYear();
+
+                $scope.next_working_day =  day + '/' + month;
+                $scope.filterData.next_working_day =  year + '-' + month + '-' + day;
+            });
+
     }
 
     $scope.finalsubmitnextvanqty=function(){
