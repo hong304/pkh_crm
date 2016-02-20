@@ -85,11 +85,11 @@ class inventoryController extends BaseController {
         if($mode == 'collection')
         {
 
-            DB::update('UPDATE receivings AS t
+          /*  DB::update('UPDATE receivings AS t
                 INNER JOIN
                 (SELECT productId,SUM(good_qty) tqty FROM receivings GROUP BY productId) t1
                 ON t.productId = t1.productId
-                SET total_qty=tqty');
+                SET total_qty=tqty');*/
 
             $filter = Input::get('filterData');
 
@@ -170,10 +170,10 @@ class inventoryController extends BaseController {
                         // if(Auth::user()->can('edit_product'))
                         return '<span onclick="salesReturn(\''.$p->id.'\')" class="btn btn-xs default"><i class="fa fa-search"></i>回貨</span>';
 
-                })->editColumn('total_qty', function ($p){
-                        return $p->total_qty.$p->productPackingName_unit;
-                })->addColumn('total_qty_carton', function ($p) {
-                    return number_format($p->total_qty/$p->productPacking_unit/$p->productPacking_inner,1).$p->productPackingName_carton;
+                })->editColumn('good_qty', function ($p){
+                        return $p->good_qty.$p->productPackingName_unit;
+                })->addColumn('qty_carton', function ($p) {
+                    return number_format($p->good_qty/$p->productPacking_unit/$p->productPacking_inner,1).$p->productPackingName_carton;
                 })->make(true);
 
         }
