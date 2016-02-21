@@ -455,8 +455,14 @@ class Invoice_9FPickingList {
             ],
             [
                 'type' => 'csv',
-                'name' => '匯出 Excel 核對表',
+                'name' => 'Excel 核對表',
                 'warning'   =>  false,
+            ],
+            [
+                'type' => 'excel',
+                'name' => '備貨單核對表',
+                'warning'   =>  false,
+
             ],
         ];
 
@@ -468,6 +474,253 @@ class Invoice_9FPickingList {
 
         return View::make('reports/pickinglist9f')->with('data', $this->data)->render();
 
+    }
+
+    public function outputExcel(){
+
+        $pdf = new PDF();
+        $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
+
+
+
+//show carton summary on last page
+        if(isset($this->data['carton'])){
+            $consec = $j = 0;
+            foreach($this->data['carton'] as $c=>$nf)
+            {
+
+                $consec += 1;
+                $nf['consec'] = count($nf['items']);
+                $nf['acccon'] = $consec;
+
+                // we can have 40 items as most per section
+                $ninefproducts1[$j][] = $nf;
+                if($consec > 20)
+                {
+                    array_pop($ninefproducts1[$j]);
+                    $nf['acccon'] = 1;
+                    $j++;
+                    $consec = $nf['acccon'];
+                    $ninefproducts1[$j][] = $nf;
+                }
+            }
+            //   pd($ninefproducts1);
+
+            foreach($ninefproducts1 as $index=>$order)
+            {
+
+
+                // if it is in left section, add a new page
+                //  if($index % 2 == 0)
+                //   {
+
+                $pdf->AddPage();
+                $this->generateHeader($pdf,'箱頭總匯');
+
+                $pdf->SetFont('chi','',10);
+                $pdf->setXY(10, $pdf->h-30);
+                $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+                $pdf->setXY(60, $pdf->h-30);
+                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+                $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+                $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+
+                $pdf->setXY(0, 0);
+
+                // add a straight line
+                //    $pdf->Line(105, 45, 105, 280);
+
+                $pdf->SetFont('chi','',10);
+                $pdf->setXY(500, $pdf->h-30);
+                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts1))) , 0, 0, "R");
+                //   }
+
+
+                // define left right position coordinate x differences
+                $y = 55;
+                $base_x = 10;
+
+
+                foreach($order as $k=>$o)
+                {
+
+
+
+                    $pdf->setXY($base_x + 0, $y);
+                    $pdf->SetFont('chi','',12);
+                    $pdf->Cell(0, 0, sprintf("%s - %s", $o['productDetail']['productId'],$o['productDetail']['productName_chi'], 0, 0, "L"));
+
+
+
+                    $pdf->setXY($base_x + 100, $y);
+                    $pdf->Cell(0, 0, "    " . sprintf("%s %s", $o['items']['counts'],$o['items']['unit_txt']), 0, 0, 'L');
+
+                    $pdf->SetFont('chi','',14);
+                    $pdf->setXY($base_x + 140, $y);
+                    $pdf->Cell(0, 0, "[  ]   [  ]", 0, 0, 'L');
+
+                    $y += 10;
+
+                    $pdf->SetDash(1, 1);
+                    $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+                }
+
+            }
+        }
+//end of show carton summary on last page*/
+
+// handle groceries goods
+
+        $ninef1 = $this->data['groceries'];
+        $newway1 = [];
+
+
+
+        foreach($ninef1 as $k => $v){
+
+            $temp = array_chunk($v['items'],35,true);
+            if(count($temp)>1){
+                foreach($temp as $kk => $vv){
+                    if($kk == 0){
+                        $newway1[$k]['items'] = $vv;
+                        $newway1[$k]['customerInfo'] = $v['customerInfo'];
+                        $newway1[$k]['invoiceId'] = $v['invoiceId'];
+
+                    }else{
+                        $newway1[$k."-".$kk]['items'] = $vv;
+                        $newway1[$k."-".$kk]['customerInfo'] = $v['customerInfo'];
+                        $newway1[$k."-".$kk]['invoiceId'] = $v['invoiceId'];
+                    }
+                }
+            }else{
+                $newway1[$k]['items'] = $v['items'];
+                $newway1[$k]['customerInfo'] = $v['customerInfo'];
+                $newway1[$k]['invoiceId'] = $v['invoiceId'];
+            }
+
+        }
+
+
+
+        $consec = $j = 0;
+        $ninefproducts = [];
+        foreach($newway1 as $c=>$nf)
+        {
+
+            $consec += count($nf['items'])+2;
+            $nf['consec'] = count($nf['items']);
+            $nf['acccon'] = $consec;
+
+            // we can have 20 items as most per section
+            $ninefproducts[$j][] = $nf;
+            if($consec > 40)
+            {
+                array_pop($ninefproducts[$j]);
+                $nf['acccon'] = count($nf['items'])+2;
+                $j++;
+                $consec = $nf['acccon'];
+                $ninefproducts[$j][] = $nf;
+            }
+        }
+
+        foreach($ninefproducts as $index=>$order)
+        {
+
+            // if it is in left section, add a new page
+            //  if($index % 2 == 0)
+            //   {
+
+            $pdf->AddPage();
+            $this->generateHeader($pdf,'散貨總滙');
+
+            $pdf->SetFont('chi','',10);
+            $pdf->setXY(10, $pdf->h-30);
+            $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
+
+            $pdf->setXY(60, $pdf->h-30);
+            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+            $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+            $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+
+            $pdf->setXY(0, 0);
+
+            // add a straight line
+            //    $pdf->Line(105, 45, 105, 280);
+
+            $pdf->SetFont('chi','',10);
+            $pdf->setXY(500, $pdf->h-30);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts))) , 0, 0, "R");
+            //   }
+
+            //$pdf->Cell(50, 50, "NA", 0, 0, "L");
+
+            // define left right position coordinate x differences
+            $y = 55;
+            $base_x = 10;
+            /*  if($index % 2 == 0)
+              {
+                  $base_x = 5;
+              }
+              else
+              {
+                  $base_x = 110;
+              }*/
+
+            foreach($order as $o)
+            {
+
+                $pdf->setXY($base_x + 0, $y);
+                $pdf->SetFont('chi','U',14);
+                $pdf->Cell(0, 0, sprintf("%s - %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi']), 0, 0, "L");
+
+                $pdf->SetFont('chi','',12);
+
+                $y += 5;
+
+                foreach($o['items'] as $itemUnitlv)
+                {
+                    foreach($itemUnitlv as $item)
+                    {
+                        $pdf->setXY($base_x + 0, $y);
+                        $pdf->Cell(0, 0,$item['name'], 0, 0, 'L');
+
+                        $inner = '';
+                        if($item['productPacking_inner']>1)
+                            $inner = $item['productPacking_inner'] . $item['productPackingName_inner']."x";
+
+
+                        // $pdf->setXY($base_x + 120, $y);
+                        // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
+
+                        $pdf->setXY($base_x + 70, $y);
+                        $pdf->Cell(20, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'R');
+
+
+
+
+
+                        $pdf->setXY($base_x + 100, $y);
+                        $pdf->Cell(0, 0, "[  ]     [  ]", 0, 0, 'L');
+
+
+
+
+                        $y +=  5;
+                    }
+                }
+
+                $y += 5;
+
+                //  $pdf->SetDash(1, 1);
+                //  $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+            }
+        }
+// handle groceries goods
+
+        $pdf->Output('', 'I');
     }
 
     public function outputCSV(){
@@ -573,12 +826,14 @@ $i=3;
    }
 
     # PDF Section
-    public function generateHeader($pdf)
+    public function generateHeader($pdf,$title=false)
     {
         $shift = ($this->_shift== 1)?'早班':'晚班';
         $pdf->SetFont('chi','',18);
         $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
+        if($title!=false)
+            $this->_reportTitle = sprintf("%s - v%s", $title,  $this->_version);
         $pdf->Cell(0, 10,$this->_reportTitle,0,1,"C");
         $pdf->SetFont('chi','U',13);
         $pdf->Cell(0, 10, "車號: " . str_pad($this->_zone, 2, '0', STR_PAD_LEFT)."(".$this->_zonename.")", 0, 2, "L");
@@ -760,246 +1015,7 @@ $i=3;
         }
 // handle 9F goods
 
-//show carton summary on last page
-        if(isset($this->data['carton'])){
-            $consec = $j = 0;
-            foreach($this->data['carton'] as $c=>$nf)
-            {
 
-                $consec += 1;
-                $nf['consec'] = count($nf['items']);
-                $nf['acccon'] = $consec;
-
-                // we can have 40 items as most per section
-                $ninefproducts1[$j][] = $nf;
-                if($consec > 20)
-                {
-                    array_pop($ninefproducts1[$j]);
-                    $nf['acccon'] = 1;
-                    $j++;
-                    $consec = $nf['acccon'];
-                    $ninefproducts1[$j][] = $nf;
-                }
-            }
-            //   pd($ninefproducts1);
-
-            foreach($ninefproducts1 as $index=>$order)
-            {
-
-
-                // if it is in left section, add a new page
-                //  if($index % 2 == 0)
-                //   {
-
-                $pdf->AddPage();
-                $this->generateHeader($pdf);
-
-                $pdf->SetFont('chi','',10);
-                $pdf->setXY(10, $pdf->h-30);
-                $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
-
-                $pdf->setXY(60, $pdf->h-30);
-                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
-
-                $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
-                $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
-
-                $pdf->setXY(0, 0);
-
-                // add a straight line
-                //    $pdf->Line(105, 45, 105, 280);
-
-                $pdf->SetFont('chi','',10);
-                $pdf->setXY(500, $pdf->h-30);
-                $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts1))) , 0, 0, "R");
-                //   }
-
-
-                // define left right position coordinate x differences
-                $y = 55;
-                $base_x = 10;
-
-
-                foreach($order as $k=>$o)
-                {
-
-
-
-                    $pdf->setXY($base_x + 0, $y);
-                    $pdf->SetFont('chi','',12);
-                    $pdf->Cell(0, 0, sprintf("%s - %s", $o['productDetail']['productId'],$o['productDetail']['productName_chi'], 0, 0, "L"));
-
-
-
-                    $pdf->setXY($base_x + 100, $y);
-                    $pdf->Cell(0, 0, "    " . sprintf("%s %s", $o['items']['counts'],$o['items']['unit_txt']), 0, 0, 'L');
-
-                    $pdf->SetFont('chi','',14);
-                    $pdf->setXY($base_x + 140, $y);
-                    $pdf->Cell(0, 0, "[  ]   [  ]", 0, 0, 'L');
-
-                    $y += 10;
-
-                    $pdf->SetDash(1, 1);
-                    $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
-                }
-
-            }
-        }
-//end of show carton summary on last page*/
-
-// handle groceries goods
-
-        $ninef1 = $this->data['groceries'];
-        $newway1 = [];
-
-
-
-        foreach($ninef1 as $k => $v){
-
-                $temp = array_chunk($v['items'],35,true);
-                if(count($temp)>1){
-                    foreach($temp as $kk => $vv){
-                        if($kk == 0){
-                            $newway1[$k]['items'] = $vv;
-                            $newway1[$k]['customerInfo'] = $v['customerInfo'];
-                            $newway1[$k]['invoiceId'] = $v['invoiceId'];
-
-                        }else{
-                            $newway1[$k."-".$kk]['items'] = $vv;
-                            $newway1[$k."-".$kk]['customerInfo'] = $v['customerInfo'];
-                            $newway1[$k."-".$kk]['invoiceId'] = $v['invoiceId'];
-                        }
-                    }
-                }else{
-                    $newway1[$k]['items'] = $v['items'];
-                    $newway1[$k]['customerInfo'] = $v['customerInfo'];
-                    $newway1[$k]['invoiceId'] = $v['invoiceId'];
-                }
-
-        }
-
-
-
-        $consec = $j = 0;
-        $ninefproducts = [];
-        foreach($newway1 as $c=>$nf)
-        {
-
-            $consec += count($nf['items'])+2;
-            $nf['consec'] = count($nf['items']);
-            $nf['acccon'] = $consec;
-
-            // we can have 20 items as most per section
-            $ninefproducts[$j][] = $nf;
-            if($consec > 40)
-            {
-                array_pop($ninefproducts[$j]);
-                $nf['acccon'] = count($nf['items'])+2;
-                $j++;
-                $consec = $nf['acccon'];
-                $ninefproducts[$j][] = $nf;
-            }
-        }
-
-        foreach($ninefproducts as $index=>$order)
-        {
-
-            // if it is in left section, add a new page
-            //  if($index % 2 == 0)
-            //   {
-
-            $pdf->AddPage();
-            $this->generateHeader($pdf);
-
-            $pdf->SetFont('chi','',10);
-            $pdf->setXY(10, $pdf->h-30);
-            $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
-
-            $pdf->setXY(60, $pdf->h-30);
-            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
-
-            $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
-            $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
-
-            $pdf->setXY(0, 0);
-
-            // add a straight line
-            //    $pdf->Line(105, 45, 105, 280);
-
-            $pdf->SetFont('chi','',10);
-            $pdf->setXY(500, $pdf->h-30);
-            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $index+1, ceil(count($ninefproducts))) , 0, 0, "R");
-            //   }
-
-            //$pdf->Cell(50, 50, "NA", 0, 0, "L");
-
-            // define left right position coordinate x differences
-            $y = 55;
-            $base_x = 10;
-            /*  if($index % 2 == 0)
-              {
-                  $base_x = 5;
-              }
-              else
-              {
-                  $base_x = 110;
-              }*/
-
-            foreach($order as $o)
-            {
-
-                $pdf->setXY($base_x + 0, $y);
-                $pdf->SetFont('chi','U',14);
-                $pdf->Cell(0, 0, sprintf("%s - %s", $o['customerInfo']['routePlanningPriority'], $o['customerInfo']['customerName_chi']), 0, 0, "L");
-
-                $pdf->SetFont('chi','',12);
-
-                $y += 5;
-
-                foreach($o['items'] as $itemUnitlv)
-                {
-                    foreach($itemUnitlv as $item)
-                    {
-                        $pdf->setXY($base_x + 0, $y);
-                        $pdf->Cell(0, 0,$item['name'], 0, 0, 'L');
-
-                        $inner = '';
-                        if($item['productPacking_inner']>1)
-                            $inner = $item['productPacking_inner'] . $item['productPackingName_inner']."x";
-
-
-                        // $pdf->setXY($base_x + 120, $y);
-                        // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
-
-                        $pdf->setXY($base_x + 70, $y);
-                        $pdf->Cell(20, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'R');
-
-
-
-
-
-                                $pdf->setXY($base_x + 100, $y);
-                        $pdf->Cell(0, 0, "[  ]     [  ]", 0, 0, 'L');
-
-
-
-
-                        $y +=  5;
-                    }
-                }
-
-                $y += 5;
-
-                //  $pdf->SetDash(1, 1);
-                //  $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
-            }
-        }
-// handle groceries goods
-
-        //show groceries summary on last page
-
-        //end of show groceries summary on last page
 
 /* group by route path
         if(isset($this->data['carton'])){
