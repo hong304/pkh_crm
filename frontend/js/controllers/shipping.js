@@ -49,13 +49,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
            shippingId:'',
        };
        
-       $scope.selfdefine = {
-           productId : '',
-           qty : '',
-           unit :'',
-           unitName :'',
-           deleted : 0
-       };
+       $scope.selfdefine = [];
        
        $scope.selfdefineS = {
            productId : '',
@@ -441,7 +435,9 @@ $scope.an = false;
 
     $scope.preSubmitOrder = function(v){
 
-
+console.log($scope.product);
+        return false;
+        
         bootbox.dialog({
             message: '是否確定輸入無誤?',
             title: "提交訂單",
@@ -669,16 +665,32 @@ $scope.an = false;
     }
     
     var target = endpoint + '/getPurchaseAll.json';
-    
+
+    $scope.isEmptyObj = function(obj) {
+        for(var prop in obj) {
+            if(obj.hasOwnProperty(prop))
+                return false;
+        }
+
+        return true;
+    }
+
     $scope.openProductDetails = function(i)
     {
         $("#containerProduct").modal('toggle');
         
-        $scope.selfdefine = $.extend(true, {}, $scope.selfdefineS);   
-     
+       //
+        if(!$scope.isEmptyObj($scope.product[i].containerProductDetails)){
+            console.log('not null');
+            $scope.selfdefine = $scope.product[i].containerProductDetails;
+        }else {
+            $scope.selfdefine = [];
+            $scope.initLine = 0;
+        }
+
         if($scope.product[i].containerProductDetails == null)
         {
-           $scope.product[i].containerProductDetails = $scope.selfdefine;
+          // $scope.product[i].containerProductDetails = $scope.selfdefine;
         }
     
        
@@ -690,7 +702,7 @@ $scope.an = false;
             $scope.selfdefine.unit = $scope.product[i].containerProductDetails.unit;
             $scope.selfdefine.unitName = $scope.product[i].containerProductDetails.unitName;*/
         
-            console.log($scope.selfdefine);
+          //  console.log($scope.selfdefine);
         
         $scope.editable_rowProduct = i;
         if($scope.shipping.poCode != "")
@@ -715,7 +727,7 @@ $scope.an = false;
         } 
     }
     
-    $scope.initLine = 0;
+
     
     $scope.addProductRow = function(){
         $scope.selfdefine[$scope.initLine] = $.extend(true, {}, $scope.selfdefineS);
