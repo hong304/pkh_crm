@@ -344,7 +344,7 @@ class financialReportController extends BaseController
             $join->on('invoice_payment.invoice_id', '=', 'Invoice.invoiceId');
         })->leftJoin('payments', function ($join) {
             $join->on('invoice_payment.payment_id', '=', 'payments.id');
-        })->where('paymentTerms', 1)->whereIn('invoiceStatus', [20, 30, 98])->where('receive_date', date('Y-m-d', $this->_date))->get();
+        })->where('paymentTerms', 1)->whereIn('invoiceStatus', [20, 30,  98])->where('receive_date', date('Y-m-d', $this->_date))->get();
 
 
         foreach ($invoices as $invoiceQ) {
@@ -385,7 +385,7 @@ class financialReportController extends BaseController
 
 
 
-            $invoices = Invoice::whereIn('invoiceStatus',['2','20','30','98'])->whereBetween('deliveryDate',[$this->_date, $this->_date2])->get();
+            $invoices = Invoice::whereIn('invoiceStatus',[2,20,30,96,97,98])->whereBetween('deliveryDate',[$this->_date, $this->_date2])->get();
 
 
             $NoOfInvoices = [];
