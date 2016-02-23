@@ -170,33 +170,7 @@ $scope.an = false;
 
 
 
-    $scope.getLastItem = function(productId,clientId,i,q){
 
-        var target = endpoint + '/getLastItem.json';
-        $http.post(target, {productId: productId, customerId: clientId})
-            .success(function (res, status, headers, config) {
-                $scope.lastitem = res;
-            
-                if(res.productQty > 0){
-                    $scope.product[i].unitprice = res.productPrice;
-                    var pos = $scope.product[i]['availableunit'].map(function(e) {
-                        
-                        return e.value;
-                    }).indexOf(res.productQtyUnit);
-                    $scope.product[i]['unit'] = $scope.product[i]['availableunit'][pos];
-   
-                }
-                if(q==0 && $("#productCode_"+i).val() != productId){
-                        $scope.getLastItem($("#productCode_"+i).val(),$scope.order.clientId,i,1);
-                       // $scope.updateStandardPrice(i);
-                    if (typeof res[0] == 'undefined'){
-                        $scope.updateStandardPrice(i);
-                    }
-                }
-            });
-
-    }
-    
 
     $scope.itemlist.forEach(function(key){
         $scope.product[key] = $.extend(true, {}, $scope.productStructure);
@@ -312,9 +286,11 @@ $scope.an = false;
                     defaultProduct.forEach(function(item) {
    
                       //  $scope.productCode[j] = item.productId;
-                        
+
+
                         
                         $scope.product[j]['dbid'] = item.id;
+
                         $scope.product[j]['containerId'] = item.containerId;
                         $scope.product[j]['serial_no'] = item.serial_no;
                         $scope.product[j]['receiveDate'] = item.container_receiveDate;
@@ -435,9 +411,8 @@ $scope.an = false;
 
     $scope.preSubmitOrder = function(v){
 
-console.log($scope.product);
-        return false;
-        
+
+
         bootbox.dialog({
             message: '是否確定輸入無誤?',
             title: "提交訂單",
@@ -474,7 +449,7 @@ console.log($scope.product);
             generalError = true;
         }
 
-        $scope.allowSubmission = false;
+        //$scope.allowSubmission = false;
 
         if(!$scope.shipping.poCode || !$scope.shipping.supplierCode || !$scope.shipping.departure_date || !$scope.shipping.etaDate || !$scope.shipping.fsp)
         {

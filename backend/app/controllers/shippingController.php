@@ -29,12 +29,17 @@ class shippingController extends BaseController {
 
         $have_item = false;    //fOR UPDATE
         $itemIds = [];
-        foreach ($shipItem as $p) {
-            if ($p['dbid'] != '' && $p['deleted'] == 0)
-                $itemIds[] = $p['dbid'];
-            if ($p['dbid'] == '' && $p['containerId'] != '')
-                $have_item = true;
+        foreach ($shipItem as $k => &$p) {
+            if($p['containerId'] == ''){
+                unset($shipItem[$k]);
+            }else{
+                if ($p['dbid'] != '' && $p['deleted'] == 0)
+                    $itemIds[] = $p['dbid'];
+                if ($p['dbid'] == '' && $p['containerId'] != '')
+                    $have_item = true;
+            }
         }
+
 
 
         //Below should be uncomment when the update function is ready
@@ -52,7 +57,10 @@ class shippingController extends BaseController {
             //If there is no shippingId, not only the records deleted in ui but also records in db will be deleted.
         }
 
+
+
         foreach ($shipItem as $k) {
+
             if ($k['deleted'] == 0) {
                 $cost_00 = (isset($k['cost']['cost_00'])) ? $k['cost']['cost_00'] : 0;
                 $cost_01 = (isset($k['cost']['cost_01'])) ? $k['cost']['cost_01'] : 0;
@@ -65,6 +73,17 @@ class shippingController extends BaseController {
                 $cost_08 = (isset($k['cost']['cost_08'])) ? $k['cost']['cost_08'] : 0;
                 $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
 
+foreach($k['containerProductDetails'] as $vk){
+    $containerproduct = new containerproduct();
+    $containerproduct->shippingId = $shipment['shippingId'];
+    $containerproduct->containerId = $k['containerId'];
+    $containerproduct->productId = $vk['productId'];
+        $containerproduct->qty = $vk['qty'];
+            $containerproduct->unit = $vk['unit'];
+        $containerproduct->unitName = $vk['unitName'];
+    $containerproduct->save();
+
+}
 
                 $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'], $k['sale_method'], $cost_00, $cost_01, $cost_02, $cost_03, $cost_04, $cost_05, $cost_06, $cost_07, $cost_08, $cost_09);
             }// clear the deleted record      
