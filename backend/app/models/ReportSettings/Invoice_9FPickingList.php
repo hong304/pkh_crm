@@ -159,10 +159,10 @@ class Invoice_9FPickingList {
 
                                     } else {
 
-                                            if(isset($invoice_del_item[$invoiceQ->invoiceId])){
+                                        //if(isset($invoice_del_item[$invoiceQ->invoiceId])){
                                                // $intersec = array_intersect_key($invoice_item[$invoiceQ->invoiceId],$invoice_del_item[$invoiceQ->invoiceId]);
                                                // $dd = array_diff_key($invoice_del_item[$invoiceQ->invoiceId],$invoice_item[$invoiceQ->invoiceId]);
-                                            }
+                                        // }
 
                                    //     pd($dd);
 
@@ -265,48 +265,50 @@ class Invoice_9FPickingList {
 
 
                             // show groceries summary on last page
-                             if(($unit == 'carton' && $item->productQty < 1) ||$unit == 'inner' || $unit == 'unit'){
-                                 $this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit] = [
-                                     'productId' => $productId,
-                                     'name' => $productDetail->productName_chi,
-                                     'productPacking_carton' => $productDetail->productPacking_carton,
-                                     'productPacking_inner' => $productDetail->productPacking_inner,
-                                     'productPacking_unit' => $productDetail->productPacking_unit,
-                                     'productPackingName_carton' => $productDetail->productPackingName_carton,
-                                     'productPackingName_inner' => $productDetail->productPackingName_inner,
-                                     'productPackingName_unit' => $productDetail->productPackingName_unit,
-                                     'productPackingSize' => $productDetail->productPacking_size,
-                                     'unit' => $unit,
-                                     'unit_txt' => $item->productUnitName,
-                                     'counts' => (isset($this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
 
-                                 ];
-                             } //end of show groceries summary on last page
+                            if($item->deleted_at == null){
+                                 if(($unit == 'carton' && $item->productQty < 1) ||$unit == 'inner' || $unit == 'unit'){
+                                     $this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit] = [
+                                         'productId' => $productId,
+                                         'name' => $productDetail->productName_chi,
+                                         'productPacking_carton' => $productDetail->productPacking_carton,
+                                         'productPacking_inner' => $productDetail->productPacking_inner,
+                                         'productPacking_unit' => $productDetail->productPacking_unit,
+                                         'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                         'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                         'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                         'productPackingSize' => $productDetail->productPacking_size,
+                                         'unit' => $unit,
+                                         'unit_txt' => $item->productUnitName,
+                                         'counts' => (isset($this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit]) ? $this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit]['counts'] : 0) + $item->productQty,
 
-                            $this->goods['groceries'][$customerId.$invoiceId]['customerInfo'] = $client->toArray();
-                            $this->goods['groceries'][$customerId.$invoiceId]['invoiceId'] = $invoiceId;
+                                     ];
+                                 } //end of show groceries summary on last page
 
-                            // show carton summary on last page
-                            if($unit == 'carton' && $item->productQty > 0.5){
-                                $this->goods['carton'][$productId]['items'] = [
-                                    'productId' => $productId,
-                                    'name' => $productDetail->productName_chi,
-                                    'productPacking_carton' => $productDetail->productPacking_carton,
-                                    'productPacking_inner' => $productDetail->productPacking_inner,
-                                    'productPacking_unit' => $productDetail->productPacking_unit,
-                                    'productPackingName_carton' => $productDetail->productPackingName_carton,
-                                    'productPackingName_inner' => $productDetail->productPackingName_inner,
-                                    'productPackingName_unit' => $productDetail->productPackingName_unit,
-                                    'productPackingSize' => $productDetail->productPacking_size,
-                                    'unit' => $unit,
-                                    'unit_txt' => $item->productUnitName,
-                                    'counts' => (isset($this->goods['carton'][$productId]['items']) ? $this->goods['carton'][$productId]['items']['counts'] : 0) + $item->productQty,
+                                $this->goods['groceries'][$customerId.$invoiceId]['customerInfo'] = $client->toArray();
+                                $this->goods['groceries'][$customerId.$invoiceId]['invoiceId'] = $invoiceId;
 
-                                ];
-                                $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
-                                $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
-                            } //end of show carton summary on last page
+                                // show carton summary on last page
+                                if($unit == 'carton' && $item->productQty > 0.5){
+                                    $this->goods['carton'][$productId]['items'] = [
+                                        'productId' => $productId,
+                                        'name' => $productDetail->productName_chi,
+                                        'productPacking_carton' => $productDetail->productPacking_carton,
+                                        'productPacking_inner' => $productDetail->productPacking_inner,
+                                        'productPacking_unit' => $productDetail->productPacking_unit,
+                                        'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                        'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                        'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                        'productPackingSize' => $productDetail->productPacking_size,
+                                        'unit' => $unit,
+                                        'unit_txt' => $item->productUnitName,
+                                        'counts' => (isset($this->goods['carton'][$productId]['items']) ? $this->goods['carton'][$productId]['items']['counts'] : 0) + $item->productQty,
 
+                                    ];
+                                    $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
+                                    $this->goods['carton'][$productId]['productPrice'] = $productDetail->productStdPrice[$unit];
+                                 } //end of show carton summary on last page
+                            }
                             /*   group by route path
                                  if($unit == 'carton'){
                                      $this->goods['carton'][$productId]['items'][$invoiceQ->routePlanningPriority] = [
