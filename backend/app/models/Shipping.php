@@ -6,7 +6,9 @@ class Shipping extends Eloquent  {
     {
         $shippings = $ele;
   
-        $shippings = $shippings->with('Shippingitem','Supplier')->get();
+        $shippings = $shippings->with(['Shippingitem' => function ($query) {
+            $query->with('containerproduct');
+        }])->with('Supplier')->get();
 		
 		$total = $shippings->count();
 		 
@@ -23,7 +25,7 @@ class Shipping extends Eloquent  {
 
     }
     
-    public function Shippingitem()
+    public function Shippingitem() //containers
     {
 	    return $this->hasMany('Shippingitem', 'shippingId', 'shippingId');
     }

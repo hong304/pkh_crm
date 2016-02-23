@@ -288,7 +288,11 @@ $scope.an = false;
                       //  $scope.productCode[j] = item.productId;
 
 
-                        
+
+                 $scope.product[j].containerProductDetails = item.containerproduct;
+
+
+
                         $scope.product[j]['dbid'] = item.id;
 
                         $scope.product[j]['containerId'] = item.containerId;
@@ -653,7 +657,7 @@ $scope.an = false;
     $scope.openProductDetails = function(i)
     {
         $("#containerProduct").modal('toggle');
-        
+
        //
         if(!$scope.isEmptyObj($scope.product[i].containerProductDetails)){
             console.log('not null');
@@ -667,8 +671,8 @@ $scope.an = false;
         {
           // $scope.product[i].containerProductDetails = $scope.selfdefine;
         }
-    
-       
+
+        console.log($scope.selfdefine);
          
     
          /*   $scope.selfdefine.productId = $scope.product[i].containerProductDetails.productId;

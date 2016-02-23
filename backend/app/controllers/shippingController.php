@@ -72,7 +72,7 @@ class shippingController extends BaseController {
                 $cost_07 = (isset($k['cost']['cost_07'])) ? $k['cost']['cost_07'] : 0;
                 $cost_08 = (isset($k['cost']['cost_08'])) ? $k['cost']['cost_08'] : 0;
                 $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
-
+if($k['containerProductDetails'] != '')
 foreach($k['containerProductDetails'] as $vk){
     $containerproduct = new containerproduct();
     $containerproduct->shippingId = $shipment['shippingId'];
@@ -142,7 +142,7 @@ foreach($k['containerProductDetails'] as $vk){
                             ->make(true);
         }
 
-        return Response::json($ship);
+      //  return Response::json($ship);
     }
 
     public function jsonGetSingleShip() {
