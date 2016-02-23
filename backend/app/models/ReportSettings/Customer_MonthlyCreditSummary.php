@@ -838,6 +838,7 @@ for($start = 0;$start < count($dateRange);$start++)
                     $numsum = '$' . number_format($this->_monthly[$month[4]]['byCustomer'][$client['customer']['customerId']], 1, '.', ',');
                 else
                     $numsum = '';
+                $pdf->Cell(0, 0, $numsum, 0, 0, "L");
 
                 $pdf->setXY(255, $y);
                 if (isset($this->_monthly[$month[5]]['byCustomer'][$client['customer']['customerId']]))
