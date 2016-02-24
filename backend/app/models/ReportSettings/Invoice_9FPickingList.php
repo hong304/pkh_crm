@@ -463,7 +463,7 @@ class Invoice_9FPickingList {
             [
                 'type' => 'excel',
                 'name' => '備貨單核對表',
-                'warning'   =>  false,
+                'warning'   =>  'Invoices can not be modified when audit list is printed!',
 
             ],
         ];
