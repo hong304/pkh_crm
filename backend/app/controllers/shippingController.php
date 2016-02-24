@@ -61,7 +61,8 @@ class shippingController extends BaseController {
 
 
         foreach ($shipItem as $k) {
-            containerproduct::where('shippingitem_id', $k['dbid'])->delete();
+            if($k['deleted']==1)
+                containerproduct::where('shippingitem_id', $k['dbid'])->delete();
             if ($k['deleted'] == 0) {
                 $cost_00 = (isset($k['cost']['cost_00'])) ? $k['cost']['cost_00'] : 0;
                 $cost_01 = (isset($k['cost']['cost_01'])) ? $k['cost']['cost_01'] : 0;
@@ -73,12 +74,12 @@ class shippingController extends BaseController {
                 $cost_07 = (isset($k['cost']['cost_07'])) ? $k['cost']['cost_07'] : 0;
                 $cost_08 = (isset($k['cost']['cost_08'])) ? $k['cost']['cost_08'] : 0;
                 $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
-if($k['containerProductDetails'] != '')
+if($k['containerProductDetails'] != '' && $k['defaultContainerProduct'] == 0)
 foreach($k['containerProductDetails'] as $vk){
 
 
-    if((isset($vk['productName']) || isset($vk['id']))) {
-        if(!isset($vk['deleted'])||(isset($vk['deleted']) and $vk['deleted']==0)){
+    if((isset($vk['productName']) || isset($vk['id']) and $vk['deleted']==0 )) {
+
        $containerproduct = new containerproduct();
         $containerproduct->shippingitem_id = $k['dbid'];
         $containerproduct->containerId = $k['containerId'];
@@ -87,7 +88,7 @@ foreach($k['containerProductDetails'] as $vk){
         $containerproduct->unit = $vk['unit']['value'];
         $containerproduct->unitName = $vk['unit']['label'];
         $containerproduct->save();
-        }
+
     }
 
 }

@@ -40,6 +40,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         feight_payment:'',
         supplierName:'',
         shipCompany:'',
+
     };
     
        $scope.containerCost = {
@@ -131,7 +132,8 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         receiveDate:'',
         cost : '',
         sale_method:1,
-        containerProductDetails :''
+        containerProductDetails :'',
+        defaultContainerProduct : 1
     };
 
     $scope.shippingCostStructure={
@@ -187,6 +189,8 @@ $scope.getPoProduct = function(poCode) {
         })
         .success(function (res, status, headers, config) {
             $scope.retrievedProduct = res;
+          //  console.log('inside');
+          //  console.log(res);
         });
 }
 
@@ -245,6 +249,8 @@ $scope.getPoProduct = function(poCode) {
 
 					$scope.shipping = data.shipping;
                     $scope.getPoProduct($scope.shipping.poCode);
+                    console.log('shippingId');
+                    console.log($scope.retrievedProduct);
 					 if($scope.shipping.supplier.length > 0)
                                         {
                                             $scope.shipping.supplierName = data.shipping.supplier[0].supplierName;
@@ -302,6 +308,8 @@ $scope.getPoProduct = function(poCode) {
 
                  $scope.product[j].containerProductDetails = item.containerproduct;
 
+
+console.log($scope.product[j].containerProductDetails);
 
                         $scope.product[j]['dbid'] = item.id;
 
@@ -429,6 +437,7 @@ $scope.getPoProduct = function(poCode) {
 
 
         if ($scope.retrievedProduct[code.toUpperCase()]) {
+
             var item = $scope.retrievedProduct[code.toUpperCase()];
             $scope.selfdefine[j]['productId'] = code.toUpperCase();
             $scope.selfdefine[j]['productName'] = item.productName_chi;
@@ -449,7 +458,8 @@ $scope.getPoProduct = function(poCode) {
 
             $scope.selfdefine[j].availableunit = availableunit;
             $scope.selfdefine[j].unit = $scope.selfdefine[j].availableunit[0];
-            $scope.selfdefine[j].deleted = 0;
+
+
         }
     };
 
@@ -794,6 +804,7 @@ var j = 0;
     {
         $("#containerProduct").modal('hide');
         $scope.product[$scope.editable_rowProduct].containerProductDetails = $scope.selfdefine;
+        $scope.product[$scope.editable_rowProduct].defaultContainerProduct = 0;
         console.log($scope.product[$scope.editable_rowProduct].containerProductDetails);
        /* $scope.product[$scope.editable_rowProduct].containerProductDetails.productId =  $scope.selfdefine.productId;
         $scope.product[$scope.editable_rowProduct].containerProductDetails.productName =  $scope.selfdefine.productName;
