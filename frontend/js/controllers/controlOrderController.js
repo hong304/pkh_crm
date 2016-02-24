@@ -465,7 +465,7 @@ else{
                         return false;
                     }
 
-                    if($scope.systeminfo.user.id!=9 && $scope.systeminfo.user.id!=46){
+                    if($scope.systeminfo.user.id!=46){
 
                         if(inf.lock == 1){
                             Metronic.blockUI({

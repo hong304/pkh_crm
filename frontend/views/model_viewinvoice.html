@@ -240,7 +240,7 @@
 
 				<!-- Edit Invoice -->
 				<!-- Condition: Invoice Status = {1, 2, 3} -->
-				<button type="button" class="btn green" data-ng-if="((invoiceinfo.printed != true || systemInfo.permission.edit_invoice_any_status) && invoiceinfo.lock == 0) || systeminfo.user.id == 9" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
+				<button type="button" class="btn green" data-ng-if="((invoiceinfo.printed != true || systemInfo.permission.edit_invoice_any_status) && invoiceinfo.lock == 0) || systeminfo.user.id == 46" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>
                <!-- <button type="button" class="btn green" data-ng-if="invoiceinfo.invoiceStatus > 3 && systemInfo.permission.edit_invoice_any_status" data-ng-click="goEdit(invoiceinfo.invoiceId);">修改</button>-->
 
                 <!-- Void Invoice -->

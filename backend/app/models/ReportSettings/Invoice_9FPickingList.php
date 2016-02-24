@@ -480,6 +480,8 @@ class Invoice_9FPickingList {
 
     public function outputExcel(){
 
+
+        invoice::whereIn('invoiceId',$this->_invoices)->update(['printed'=>1]);
         $pdf = new PDF();
         $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
 
