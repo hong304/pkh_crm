@@ -75,7 +75,7 @@ class shippingController extends BaseController {
 if($k['containerProductDetails'] != '')
 foreach($k['containerProductDetails'] as $vk){
     $containerproduct = new containerproduct();
-    $containerproduct->shippingId = $shipment['shippingId'];
+    $containerproduct->shippingitem_id = $k['dbid'];
     $containerproduct->containerId = $k['containerId'];
     $containerproduct->productId = $vk['productId'];
         $containerproduct->qty = $vk['qty'];

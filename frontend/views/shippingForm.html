@@ -649,13 +649,14 @@
                          </div>
                     
                         <div class="portlet-body">
-                            <table class="col-md-12">
-                                <thead>
+                            <table class="col-md-12 table table-bordered table-hover">
+                                <tr role="row" class="heading">
                                        <th>貨物編號</th>
                                        <th>貨物名稱</th>
                                        <th>數量</th>
-                                       <th>單位<a href="#" ng-click="addProductRow();" class="btn btn-xs btn-circle btn-default" ><i class="fa fa-plus"> </i></a></th>
-                                </thead>
+                                       <th>單位</th>
+                                    <th><a href="#" ng-click="addProductRow();" class="btn btn-xs btn-circle btn-default" ><i class="fa fa-plus"> </i></a></th>
+                                </tr>
                                 <tbody>
                                    <!-- <tr data-ng-repeat="i in itemlist" data-ng-if="product[i]['deleted'] == 0">-->
                                         <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">

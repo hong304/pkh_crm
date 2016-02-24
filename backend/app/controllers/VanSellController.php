@@ -873,8 +873,7 @@ $this->updateVanQty();
 
         $firstF = array_chunk($new_array, 26, true);
 
-        // pd($firstF);
-
+        $firstI = 0;
         foreach ($firstF as $i => $f) {
             // for first Floor
             $pdf->AddPage();
@@ -883,6 +882,16 @@ $this->updateVanQty();
             $this->generateHeader($pdf);
 
             $pdf->SetFont('chi', '', 12);
+            if ($firstI == 0) {
+                // first
+                $pdf->setXY(155, 20);
+                $pdf->Cell(0, 0, "車牌 : ___________", 0, 0, "L");
+                $pdf->setXY(155, 30);
+                $pdf->Cell(0, 0, "司機 : ___________", 0, 0, "L");
+                $pdf->setXY(155, 40);
+                $pdf->Cell(0, 0, "跟車 : ___________", 0, 0, "L");
+            }
+            $firstI++;
 
             $pdf->setXY(10, 50);
             $pdf->Cell(0, 0, "產品編號", 0, 0, "L");

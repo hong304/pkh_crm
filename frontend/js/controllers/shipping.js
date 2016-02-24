@@ -20,6 +20,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
     }
 
     $scope.shipping = {
+        shippingitem_id : '',
         shippingId:'',
         poCode: '',
         supplierCode:'',
@@ -56,7 +57,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
            qty : '',
            unit :'',
            unitName :'',
-           deleted : 0
+           deleted : '0',
        };
        
     
@@ -102,6 +103,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
     $scope.sameDayInvoice = '';
     $scope.productCode = [];
     $scope.itemlist = [1, 2, 3];
+
     $scope.productRow = [1];
     $scope.retrievedProduct = [];
     $scope.product = [];
@@ -176,13 +178,13 @@ $scope.an = false;
         $scope.product[key] = $.extend(true, {}, $scope.productStructure);
         $scope.timer.product[key] = $.extend(true, {}, $scope.timerProductStructure);
     });
-    
+
 
 
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
-        $scope.determineAction();
+       // $scope.determineAction();
 
 
         if(!$location.search().shippingId)
@@ -254,6 +256,7 @@ $scope.an = false;
                         // load customer product, first load full db, second load invoice-items
                         
                         Metronic.unblockUI();
+                        $scope.showOrNot = 1
                         $scope.loadProduct($scope.shipping.shippingId, $scope.shippingItems);
                 });
 
@@ -292,7 +295,6 @@ $scope.an = false;
                  $scope.product[j].containerProductDetails = item.containerproduct;
 
 
-
                         $scope.product[j]['dbid'] = item.id;
 
                         $scope.product[j]['containerId'] = item.containerId;
@@ -303,7 +305,7 @@ $scope.an = false;
                         $scope.product[j]['container_weight'] = item.container_weight;
                         $scope.product[j]['container_capacity'] = item.container_capacity;
                         $scope.product[j]['feight_currency'] = item.feight_currency;
-			$scope.product[j]['feight_amount'] = item.feight_amount;
+			            $scope.product[j]['feight_amount'] = item.feight_amount;
                         $scope.product[j]['remark'] = item.remark;
                         $scope.product[j]['sale_method'] = item.sale_method;
 
@@ -572,6 +574,7 @@ $scope.an = false;
     $scope.deleteProductRow = function(k)
     {
         $scope.selfdefine[k].deleted = 1;
+
     }
 
     $scope.openRemarkPanel = function(i)
@@ -658,21 +661,58 @@ $scope.an = false;
     {
         $("#containerProduct").modal('toggle');
 
+        $scope.selfdefine = [];
+
+        $scope.itemlistContainerProducts = [];
+
+        $scope.itemlistContainerProducts[i] = [0, 1];
+
+        $scope.itemlistContainerProducts[i].forEach(function(key){
+            $scope.selfdefine[key] = $.extend(true, {}, $scope.selfdefineS);
+        });
+
        //
         if(!$scope.isEmptyObj($scope.product[i].containerProductDetails)){
-            console.log('not null');
-            $scope.selfdefine = $scope.product[i].containerProductDetails;
-        }else {
-            $scope.selfdefine = [];
-            $scope.initLine = 0;
+
+           // console.log($scope.product[i].containerProductDetails);
+var j = 0;
+            var containerProducts = $scope.product[i].containerProductDetails;
+            containerProducts.forEach(function(item){
+                if((item.deleted == 0 && item.productId != '')||item.id>0){
+
+                    $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
+                    $scope.selfdefine[j]['productId'] = item.productId;
+                    $scope.selfdefine[j]['qty'] = item.qty;
+                    $scope.selfdefine[j]['unit'] = item.unit;
+                    $scope.selfdefine[j]['unitName'] = item.unitName;
+
+
+
+                    if(typeof $scope.selfdefine[j+1] == 'undefined')
+                    {
+
+                        var list = $scope.itemlistContainerProducts[i];
+                        $scope.newkey = list.length + 1;
+                        console.log('newkey:'+$scope.newkey);
+                        list.push($scope.newkey);
+                        $scope.selfdefine[$scope.newkey] = $.extend(true, {}, $scope.selfdefineS);
+                    }
+
+                    j++;
+
+                }
+            });
         }
 
-        if($scope.product[i].containerProductDetails == null)
-        {
-          // $scope.product[i].containerProductDetails = $scope.selfdefine;
-        }
-
+        console.log('open:');
         console.log($scope.selfdefine);
+
+        // if($scope.product[i].containerProductDetails == null)
+        // {
+          // $scope.product[i].containerProductDetails = $scope.selfdefine;
+        // }
+
+
          
     
          /*   $scope.selfdefine.productId = $scope.product[i].containerProductDetails.productId;
@@ -709,8 +749,9 @@ $scope.an = false;
 
     
     $scope.addProductRow = function(){
-        $scope.selfdefine[$scope.initLine] = $.extend(true, {}, $scope.selfdefineS);
-        $scope.initLine += 1;
+        $scope.newkey = $scope.itemlistContainerProducts[ $scope.editable_rowProduct].length + 1;
+        $scope.itemlistContainerProducts[ $scope.editable_rowProduct].push($scope.newkey);
+        $scope.selfdefine[$scope.newkey] = $.extend(true, {}, $scope.selfdefineS);
     }
     
         

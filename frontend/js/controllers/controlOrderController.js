@@ -755,6 +755,8 @@ else{
             // UX Auto Add Next COlumn
             if(typeof $scope.product[i+1] == 'undefined')
             {
+
+
                 $scope.newkey = $scope.itemlist.length + 1;
                 $scope.itemlist.push($scope.newkey);
                 $scope.product[$scope.newkey] = $.extend(true, {}, $scope.productStructure);
