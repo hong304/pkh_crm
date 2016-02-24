@@ -660,7 +660,7 @@
                                 <tbody>
                                    <!-- <tr data-ng-repeat="i in itemlist" data-ng-if="product[i]['deleted'] == 0">-->
                                         <tr data-ng-repeat="(k,i) in selfdefine" data-ng-if="selfdefine[k]['deleted'] == 0">
-                                            <td><input type="text"  class="form-control" ng-model="selfdefine[k]['productId']" ng-change="searchProduct(selfdefine[k]['productId'],k)"></td>
+                                            <td><input type="text"  class="form-control" ng-model="selfdefine[k]['productId']" ng-change="searchPoProduct(selfdefine[k]['productId'],k)"></td>
                                             <td><input type="text" class="form-control" ng-model="selfdefine[k]['productName']" disabled></td>
                                             <td><input type="text"  class="form-control" ng-model="selfdefine[k]['qty']"></td>
                                             <td>           

@@ -180,11 +180,20 @@ $scope.an = false;
     });
 
 
+$scope.getPoProduct = function(poCode) {
+
+    $http.post(endpoint + '/getPoProduct.json', {
+            poCode: poCode,
+        })
+        .success(function (res, status, headers, config) {
+            $scope.retrievedProduct = res;
+        });
+}
 
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
-       // $scope.determineAction();
+        $scope.determineAction();
 
 
         if(!$location.search().shippingId)
@@ -203,12 +212,13 @@ $scope.an = false;
         $scope.shipping.supplierCode = SharedService.supplierCode;
         $scope.shipping.supplierName = SharedService.supplierName;
         $scope.shipping.poCode = SharedService.poCode;
-        
+
         $scope.displayName = $scope.shipping.supplierCode + " (" + $scope.shipping.supplierName + ")";
         if($scope.shipping.supplierCode === undefined)
         {
             $scope.displayName = "";
         }
+            $scope.getPoProduct($scope.shipping.poCode);
 
         Metronic.unblockUI();
 
@@ -231,7 +241,10 @@ $scope.an = false;
             $http.post(target, {shippingId: $location.search().shippingId})
                 .success(function(data, status, headers, config){
 
+
+
 					$scope.shipping = data.shipping;
+                    $scope.getPoProduct($scope.shipping.poCode);
 					 if($scope.shipping.supplier.length > 0)
                                         {
                                             $scope.shipping.supplierName = data.shipping.supplier[0].supplierName;
@@ -258,6 +271,7 @@ $scope.an = false;
                         Metronic.unblockUI();
                         $scope.showOrNot = 1
                         $scope.loadProduct($scope.shipping.shippingId, $scope.shippingItems);
+
                 });
 
 
@@ -269,13 +283,7 @@ $scope.an = false;
             });
         }
         
-        else 
-        {
-            $('#selectPoModel').modal('show');
-            $('#selectPoModel').on('shown.bs.modal', function () {
-                $('#keyword').focus();
-            })
-        }
+
 
 
     });
@@ -385,7 +393,10 @@ $scope.an = false;
         $scope.currentSelectProductRow = i;
         SharedService.setValue('currentSelectProductRow', i, 'updateProductSelection');
     }
-    
+
+
+
+
     //Capitalize all characters
     $scope.capital = function(i)
     {
@@ -413,7 +424,35 @@ $scope.an = false;
             $("#qty_" + $scope.currentSelectProductRow).focus().select();
         })
     });
-    
+
+    $scope.searchPoProduct = function(code,j) {
+
+
+        if ($scope.retrievedProduct[code.toUpperCase()]) {
+            var item = $scope.retrievedProduct[code.toUpperCase()];
+            $scope.selfdefine[j]['productId'] = code.toUpperCase();
+            $scope.selfdefine[j]['productName'] = item.productName_chi;
+
+            var availableunit = [];
+            if(item.productPackingInterval_unit > 0)
+            {
+                availableunit = availableunit.concat([{value: 'unit', label: item.productPackingName_unit}]);
+            }
+            if(item.productPackingInterval_inner > 0)
+            {
+                availableunit = availableunit.concat([{value: 'inner', label: item.productPackingName_inner}]);
+            }
+            if(item.productPackingInterval_carton > 0)
+            {
+                availableunit = availableunit.concat([{value: 'carton', label: item.productPackingName_carton}]);
+            }
+
+            $scope.selfdefine[j].availableunit = availableunit;
+            $scope.selfdefine[j].unit = $scope.selfdefine[j].availableunit[0];
+            $scope.selfdefine[j].deleted = 0;
+        }
+    };
+
 
     $scope.preSubmitOrder = function(v){
 
@@ -681,12 +720,8 @@ var j = 0;
                 if((item.deleted == 0 && item.productId != '')||item.id>0){
 
                     $scope.selfdefine[j] = $.extend(true, {}, $scope.selfdefineS);
-                    $scope.selfdefine[j]['productId'] = item.productId;
-                    $scope.selfdefine[j]['qty'] = item.qty;
-                    $scope.selfdefine[j]['unit'] = item.unit;
-                    $scope.selfdefine[j]['unitName'] = item.unitName;
-
-
+                    $scope.searchPoProduct(item.productId,j);
+                    $scope.selfdefine[j].qty = item.qty;
 
                     if(typeof $scope.selfdefine[j+1] == 'undefined')
                     {

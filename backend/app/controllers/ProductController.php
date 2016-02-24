@@ -5,6 +5,10 @@ class ProductController extends BaseController {
     public $_shift = '';
     public $message = "";
     private $invoice,$customer,$_date1,$_date2;
+
+
+
+
     public function jsonGetAllProduct()
     {
         // $time_start = microtime(true);
@@ -45,6 +49,8 @@ class ProductController extends BaseController {
 
         // Switch to standard array
         $products = Product::compileProductStandardForm($products);
+
+
 
         // if customerid is given, get a compiled products json with customer discount information
         //$products = Product::compileProductAddCustomerDiscount($products, Input::get('customerId'));

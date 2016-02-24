@@ -223,7 +223,8 @@ Route::group(array('before' => 'auth'), function()
       Route::post('/loadShip.json','shippingController@loadShip');     
      Route::any('/outputPreview.json','shippingController@outputPreview');  
      Route::any('/outputPo.json','shippingController@outputPo');  
-     Route::post('/loadPo.json','shippingController@loadPo');   
+     Route::post('/loadPo.json','shippingController@loadPo');
+    Route::post('/getPoProduct.json','shippingController@getPoProduct');
      Route::any('/printPo.json','newPoController@printPo');
      Route::any('/outputShipNote.json','shippingController@outputShipNote');
      Route::any('/outputShipContainer.json','shippingController@outputShipContainer');

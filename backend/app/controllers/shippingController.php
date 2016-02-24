@@ -57,10 +57,11 @@ class shippingController extends BaseController {
             //If there is no shippingId, not only the records deleted in ui but also records in db will be deleted.
         }
 
+//pd($shipItem);
 
 
         foreach ($shipItem as $k) {
-
+            containerproduct::where('shippingitem_id', $k['dbid'])->delete();
             if ($k['deleted'] == 0) {
                 $cost_00 = (isset($k['cost']['cost_00'])) ? $k['cost']['cost_00'] : 0;
                 $cost_01 = (isset($k['cost']['cost_01'])) ? $k['cost']['cost_01'] : 0;
@@ -74,14 +75,20 @@ class shippingController extends BaseController {
                 $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
 if($k['containerProductDetails'] != '')
 foreach($k['containerProductDetails'] as $vk){
-    $containerproduct = new containerproduct();
-    $containerproduct->shippingitem_id = $k['dbid'];
-    $containerproduct->containerId = $k['containerId'];
-    $containerproduct->productId = $vk['productId'];
+
+
+    if((isset($vk['productName']) || isset($vk['id']))) {
+        if(!isset($vk['deleted'])||(isset($vk['deleted']) and $vk['deleted']==0)){
+       $containerproduct = new containerproduct();
+        $containerproduct->shippingitem_id = $k['dbid'];
+        $containerproduct->containerId = $k['containerId'];
+        $containerproduct->productId = $vk['productId'];
         $containerproduct->qty = $vk['qty'];
-            $containerproduct->unit = $vk['unit'];
-        $containerproduct->unitName = $vk['unitName'];
-    $containerproduct->save();
+        $containerproduct->unit = $vk['unit']['value'];
+        $containerproduct->unitName = $vk['unit']['label'];
+        $containerproduct->save();
+        }
+    }
 
 }
 
@@ -94,6 +101,19 @@ foreach($k['containerProductDetails'] as $vk){
 
         return Response::json($message);
     }
+
+    public function getPoProduct(){
+        $poProducts = Poitem::where('poCode',Input::get('poCode'))->lists('productId');
+        $products = Product::whereIn('productId',$poProducts)->get()->toArray();
+        // Switch to standard array
+        $products = Product::compileProductStandardForm($products);
+
+     //   pd($products);
+
+        return Response::json($products);
+
+    }
+
 
     public function jsonQueryShip() {
         $mode = Input::get('mode');
