@@ -276,12 +276,12 @@ $this->updateVanQty();
         if($this->_output == 'auditPdf'){
 
             if($this->_shift == '-1')
-                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift',$this->_shift)->with('products')->get();
+                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift',$this->_shift)->with('products')->orderby('productId','asc')->get();
             else
-                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->whereIn('shift',[1,2])->with('products')->get();
+                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->whereIn('shift',[1,2])->with('products')->orderby('productId','asc')->get();
 
             //pd($vansales);
-            $this->_reportTitle = '借貨對算表';
+            $this->_reportTitle = '回貨對算表';
 
             foreach($vansales as $v){
                 $this->audit[$v['productId']][$v['productlevel']] = [
@@ -607,7 +607,7 @@ $this->updateVanQty();
             ],
             [
                 'type' => 'audit',
-                'name' => '借貨對算表',
+                'name' => '回貨對算表',
                 'warning' => false
             ],
         ];
@@ -675,7 +675,7 @@ $this->updateVanQty();
         }
 
         $this->audit= array_filter($this->audit);
-        ksort($this->audit);
+
 
         //pd($this->audit);
 
@@ -702,10 +702,7 @@ $this->updateVanQty();
             $pdf->Cell(0, 0, "借貨數量", 0, 0, "L");
 
             $pdf->setXY(120, 50);
-            $pdf->Cell(0, 0, "還貨數量", 0, 0, "L");
-
-            $pdf->setXY(158, 50);
-            $pdf->Cell(0, 0, "預載數量(".$this->next_working_day.")", 0, 0, "L");
+            $pdf->Cell(0, 0, "回貨數量", 0, 0, "L");
 
 
             $pdf->Line(10, 53, 190, 53);
@@ -755,10 +752,6 @@ $this->updateVanQty();
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, "____________", 0, 0, "L");
 
-                        $pdf->setXY(158, $y);
-                        $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, "____________", 0, 0, "L");
-
                         $y += 8;
 
 
@@ -772,19 +765,62 @@ $this->updateVanQty();
                  }
             }
 
-             $y += 10;
-               // Notes part
-               if ($i == 0) {
-                   for ($note = 0; $note <= 3; $note++) {
-                       $pdf->Line(10, $y, 80, $y);
-                                    $pdf->Line(90, $y, 110, $y);
-                       $pdf->Line(120, $y, 150, $y);
-                       $pdf->Line(160, $y, 190, $y);
+
+            $y += 10;
+            // Notes part
+            if ($i == 0) {
+                for ($note = 0; $note <= 1; $note++) {
+                    $pdf->Line(10, $y, 80, $y);
+                    $pdf->Line(90, $y, 110, $y);
+                    $pdf->Line(120, $y, 150, $y);
+                   // $pdf->Line(160, $y, 190, $y);
 
 
-                       $y += 10;
-                   }
-               }
+                    $y += 10;
+                }
+            }
+
+
+            $pdf->setXY(10, $y);
+            $pdf->SetFont('chi', '', 15);
+            $pdf->Cell(0, 0, '預載數量', 0, 0, "L");
+
+            $y+=8;
+
+            $pdf->SetFont('chi', '', 12);
+
+            $pdf->setXY(10, $y);
+            $pdf->Cell(0, 0, "產品編號", 0, 0, "L");
+
+            $pdf->setXY(30, $y);
+            $pdf->Cell(0, 0, "產品名稱", 0, 0, "L");
+
+            $pdf->setXY(120, $y);
+            $pdf->Cell(0, 0, "預載數量(".$this->next_working_day.")", 0, 0, "L");
+
+            $pdf->Line(10, $y+3, 190, $y+3);
+
+            $y +=10;
+
+            $products = product::where('vansale',1)->get();
+
+            foreach($products as $v){
+                $pdf->setXY(10, $y);
+                $pdf->SetFont('chi', '', 13);
+                $pdf->Cell(0, 0, $v['productId'], 0, 0, "L");
+
+                $pdf->setXY(30, $y);
+                $pdf->SetFont('chi', '', 13);
+                $pdf->Cell(0, 0, sprintf('%s',$v['productName_chi']), 0, 0, "L");
+
+
+                $pdf->setXY(120, $y);
+                $pdf->SetFont('chi', '', 13);
+                $pdf->Cell(0, 0, "____________", 0, 0, "L");
+
+                $y += 8;
+            }
+
 
         }
 
@@ -884,12 +920,14 @@ $this->updateVanQty();
             $pdf->SetFont('chi', '', 12);
             if ($firstI == 0) {
                 // first
-                $pdf->setXY(155, 20);
+                $pdf->setXY(155, 16);
                 $pdf->Cell(0, 0, "車牌 : ___________", 0, 0, "L");
-                $pdf->setXY(155, 30);
+                $pdf->setXY(155, 24);
                 $pdf->Cell(0, 0, "司機 : ___________", 0, 0, "L");
-                $pdf->setXY(155, 40);
+                $pdf->setXY(155, 32);
                 $pdf->Cell(0, 0, "跟車 : ___________", 0, 0, "L");
+                $pdf->setXY(147, 40);
+                $pdf->Cell(0, 0, "出車時間 : ___________", 0, 0, "L");
             }
             $firstI++;
 
