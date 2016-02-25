@@ -61,7 +61,7 @@ class shippingController extends BaseController {
 
 
         foreach ($shipItem as $k) {
-            if($k['deleted']==1)
+            if($k['deleted']==1||$k['defaultContainerProduct'] == 0)
                 containerproduct::where('shippingitem_id', $k['dbid'])->delete();
             if ($k['deleted'] == 0) {
                 $cost_00 = (isset($k['cost']['cost_00'])) ? $k['cost']['cost_00'] : 0;

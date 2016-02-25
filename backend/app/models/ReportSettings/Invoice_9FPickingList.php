@@ -126,36 +126,39 @@ class Invoice_9FPickingList {
 
 
                                     if (isset($this->goods['9F'][$customerId . $invoiceId]['items'][$productId][$unit]) && $productDetail->allowSeparate) {
-                                        if (!function_exists('fact')) {
-                                            function fact($goods, $customerId, $productId, $invoiceId, $unit, $n)
-                                            {
-                                                if (isset($goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $n][$unit])) {
-                                                    return fact($goods, $customerId, $productId, $invoiceId, $unit, $n + 1);
-                                                } else {
-                                                    return $n;
+
+                                        if($item->deleted_at == null){
+                                            if (!function_exists('fact')) {
+                                                function fact($goods, $customerId, $productId, $invoiceId, $unit, $n)
+                                                {
+                                                    if (isset($goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $n][$unit])) {
+                                                        return fact($goods, $customerId, $productId, $invoiceId, $unit, $n + 1);
+                                                    } else {
+                                                        return $n;
+                                                    }
                                                 }
                                             }
+
+                                            $v = fact($this->goods, $customerId, $productId, $invoiceId, $unit, '1');
+
+                                            $this->goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $v][$unit] = [
+                                                'productId' => $productId,
+                                                'name' => $productDetail->productName_chi,
+
+                                                'productPacking_carton' => $productDetail->productPacking_carton,
+                                                'productPacking_inner' => $productDetail->productPacking_inner,
+                                                'productPacking_unit' => $productDetail->productPacking_unit,
+                                                'productPackingName_carton' => $productDetail->productPackingName_carton,
+                                                'productPackingName_inner' => $productDetail->productPackingName_inner,
+                                                'productPackingName_unit' => $productDetail->productPackingName_unit,
+                                                'productPackingSize' => $productDetail->productPacking_size,
+
+                                                'unit' => $unit,
+                                                'unit_txt' => $item->productUnitName,
+                                                'counts' => $item->productQty,
+                                                'stdPrice' => $productDetail->productStdPrice[$unit],
+                                            ];
                                         }
-
-                                        $v = fact($this->goods, $customerId, $productId, $invoiceId, $unit, '1');
-
-                                        $this->goods['9F'][$customerId . $invoiceId]['items'][$productId . '-' . $v][$unit] = [
-                                            'productId' => $productId,
-                                            'name' => $productDetail->productName_chi,
-
-                                            'productPacking_carton' => $productDetail->productPacking_carton,
-                                            'productPacking_inner' => $productDetail->productPacking_inner,
-                                            'productPacking_unit' => $productDetail->productPacking_unit,
-                                            'productPackingName_carton' => $productDetail->productPackingName_carton,
-                                            'productPackingName_inner' => $productDetail->productPackingName_inner,
-                                            'productPackingName_unit' => $productDetail->productPackingName_unit,
-                                            'productPackingSize' => $productDetail->productPacking_size,
-
-                                            'unit' => $unit,
-                                            'unit_txt' => $item->productUnitName,
-                                            'counts' => $item->productQty,
-                                            'stdPrice' => $productDetail->productStdPrice[$unit],
-                                        ];
 
                                     } else {
 
