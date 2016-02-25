@@ -177,6 +177,7 @@ class ReceiveMan
 
                  $products = Product::where('productId',$i['productId'])->first();
                  $products->productCost_unit = $i['carton_cost'];
+                 $products->timestamps = false;
                  $products->save();
                }
 

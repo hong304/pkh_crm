@@ -138,7 +138,7 @@ class ProductManipulation {
             $this->im->department =$pieces[0];
             $this->im->group =$pieces[1];
         }
-
+        $this->im->updated_by = Auth::user()->id;
 	    $this->im->save();
 	    
 	    return $this->_productId;

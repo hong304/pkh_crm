@@ -42,6 +42,67 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
     });
 
 
+    $scope.updateDataSet = function () {
+
+        $(document).ready(function() {
+            if (!$scope.firstload)
+            {
+                $("#datatable_ajax").dataTable().fnDestroy();
+            }
+            else
+            {
+                $scope.firstload = false;
+            }
+
+
+            $('#datatable_ajax').dataTable({
+                // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
+
+                "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
+                "bServerSide": true,
+                "ajax": {
+                    "url": queryShip, // ajax source
+                    "type": 'POST',
+                    "data": {mode: "collection", filterData: $scope.keywordship},
+                    "xhrFields": {withCredentials: true}
+                },
+                "iDisplayLength": 50,
+                "pagingType": "full_numbers",
+                //  "fnDrawCallback" : function() {
+                //   window.alert = function() {};
+                //  },
+                "language": {
+                    "lengthMenu": "顯示 _MENU_ 項結果",
+                    "zeroRecords": "沒有匹配結果",
+                    "sEmptyTable": "沒有匹配結果",
+                    "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+                    "infoFiltered": "(filtered from _MAX_ total records)",
+                    "Processing": "處理中...",
+                    "Paginate": {
+                        "First": "首頁",
+                        "Previous": "上頁",
+                        "Next": "下頁",
+                        "Last": "尾頁"
+                    }
+                },
+                "columns": [
+                    {"data": "shippingId", "width": "15%"},
+                    {"data": "poCode", "width": "10%"},
+                    {"data": "supplierName", "width": "15%"},
+                    {"data": "etaDate", "width": "10%"},
+                    {"data": "status", "width": "10%"},
+                    {"data": "carrier", "width": "10%"},
+                    {"data": "username", "width": "10%"},
+                    {"data": "updated_at", "width": "10%"},
+                    {"data": "link", "width": "10%"}
+                ]
+
+            });
+
+        });
+    };
+
     $scope.$on('handleSupplierUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
         $scope.keywordship.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
@@ -138,66 +199,7 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
             $scope.keywordship.supplier = "";
             $scope.updateDataSet();
         }
-    $scope.updateDataSet = function () {
 
-
-        if (!$scope.firstload)
-        {
-            $("#datatable_ajax").dataTable().fnDestroy();
-        }
-        else
-        {
-            $scope.firstload = false;
-        }
-
-
-        $('#datatable_ajax').dataTable({
-            // "dom": '<"row"f<"clear">>rt<"bottom"ip<"clear">>',
-
-            "sDom": '<"row"<"col-sm-6"<"pull-left"p>><"col-sm-6"f>>rt<"row"<"col-sm-12"i>>',
-            "bServerSide": true,
-            "ajax": {
-                "url": queryShip, // ajax source
-                "type": 'POST',
-                "data": {mode: "collection", filterData: $scope.keywordship},
-                "xhrFields": {withCredentials: true}
-            },
-            "iDisplayLength": 50,
-            "pagingType": "full_numbers",
-            //  "fnDrawCallback" : function() {
-            //   window.alert = function() {};
-            //  },
-            "language": {
-                "lengthMenu": "顯示 _MENU_ 項結果",
-                "zeroRecords": "沒有匹配結果",
-                "sEmptyTable": "沒有匹配結果",
-                "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
-                "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
-                "infoFiltered": "(filtered from _MAX_ total records)",
-                "Processing": "處理中...",
-                "Paginate": {
-                    "First": "首頁",
-                    "Previous": "上頁",
-                    "Next": "下頁",
-                    "Last": "尾頁"
-                }
-            },
-            "columns": [
-                {"data": "shippingId", "width": "15%"},
-                {"data": "poCode", "width": "10%"},
-                {"data": "supplierName", "width": "15%"},
-                {"data": "etaDate", "width": "10%"},
-                {"data": "status", "width": "10%"},
-                {"data": "carrier", "width": "10%"},
-                {"data": "username", "width": "10%"},
-                {"data": "updated_at", "width": "10%"},
-                {"data": "link", "width": "10%"}
-            ]
-
-        });
-
-
-    };
 
 
 });

@@ -40,13 +40,6 @@ class Product extends Eloquent  {
             }
         });
 
-        static::updating(function($table)  {
-            $table->updated_by = Auth::user()->id;
-        });
-        static::saving(function($table)  {
-            $table->updated_by = Auth::user()->id;
-        });
-
 	    Product::saving(function($e)
 	    {
 	        unset($e->productPacking);
