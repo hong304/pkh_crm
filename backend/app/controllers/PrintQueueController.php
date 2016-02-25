@@ -15,6 +15,7 @@ class PrintQueueController extends BaseController
     public $invoiceIds = [];
     private $zone = '';
     private $shift = '';
+    private $deliveryDate = '';
     private $startTime = '';
     private $public_path = '';
 
@@ -22,6 +23,10 @@ class PrintQueueController extends BaseController
 
     public function __construct()
     {
+        if(Input::has('deliveryDate'))
+            $this->deliveryDate = strtotime(Input::get('deliveryDate'));
+        else
+            $this->deliveryDate = strtotime('00:00:00');
 
         if ($_SERVER['env'] == 'uat') {
             $this->public_path = 'C:\xampp\htdocs\pkh_crm\backend\public/';
@@ -359,7 +364,7 @@ class PrintQueueController extends BaseController
             ->wherein('invoiceStatus', ['1', '3'])
             ->where('shift', $this->shift)
             ->wherein('zoneId', explode(',', $this->zone))
-            ->groupBy('invoiceStatus', 'zoneId')->where('deliveryDate', strtotime('00:00:00'))->get();
+            ->groupBy('invoiceStatus', 'zoneId')->where('deliveryDate', $this->deliveryDate)->get();
 
         $summary['countInDataMart'] = 0;
 
@@ -376,7 +381,8 @@ class PrintQueueController extends BaseController
             ->where('invoiceStatus', '!=', 98)
             ->where('shift', $this->shift)
             ->wherein('zoneId', explode(',', $this->zone))
-            ->where('deliveryDate', strtotime('00:00:00'))->get();
+            ->where('deliveryDate', $this->deliveryDate)->get();
+
         foreach ($invoices as $invoice) {
             $summary[$invoice->version]['countInDataMart'] = (isset($summary[$invoice->version]['countInDataMart']) ? $summary[$invoice->version]['countInDataMart'] : 0) + $invoice->counts;
             $summary['countInDataMart'] += $invoice->counts;

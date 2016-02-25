@@ -52,6 +52,10 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     $scope.setting = {
         'setting' : false
     };
+
+    $scope.zone = {
+        zoneId : ''
+    }
 	
     $scope.$on('$viewContentLoaded', function() {
 
@@ -174,21 +178,87 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
     $scope.sendFile = function(file)
     {
+        if($location.search().id=='pickinglist9f'){
+            $scope.invoiceStatusCheck(file.type);
+        }else{
+
+            if(file.warning != false)
+            {
+                bootbox.confirm(file.warning, function(result) {
+                    if(result == true)
+                    {
+                        $scope.sendRealFile(file.type);
+                    }
+                });
+            }
+            else {
+                    $scope.sendRealFile(file.type);
+            }
+        }
     	
-    	if(file.warning != false)
-		{
-    		bootbox.confirm(file.warning, function(result) {
-    			if(result == true)
-    			{
-    				$scope.sendRealFile(file.type);
-    			}
-        	}); 
-		}
-    	else
-    	{
-    		$scope.sendRealFile(file.type);
-    	}
-    	
+    }
+
+    $scope.invoiceStatusCheck = function(filetype){
+
+
+
+        $scope.shift = $scope.filterData.shift.value;
+        $scope.zone.zoneId =$scope.filterData.zone.value;
+        $scope.deliveryDate = $scope.filterData.deliveryDate;
+
+        $http({
+            method: 'POST',
+            url: endpoint + "/getInvoiceStatusMatchPrint.json",
+            data: {zone:$scope.zone,shift:$scope.shift,deliveryDate:$scope.deliveryDate}
+        }).success(function (res) {
+
+         
+
+            if(res.countInDataMart>0) {
+
+                var reject = res['3'].countInDataMart;
+
+                var pending = res['1'].countInDataMart;
+
+                var version = res['0'].countInDataMart;
+
+                bootbox.dialog({
+                    message: reject+"張單被拒絕,處理完才可產生<br>"+pending+"張單等待批刻,處理完才可產生<br>"+version+"張單還沒產生備貨單,處理完才可產生",
+                    title: "警告!!!",
+                    buttons: {
+                        success: {
+                            label: "取消",
+                            className: "green",
+                            callback: function() {
+
+                            }
+                        }
+                    }
+                });
+            }else{
+                bootbox.dialog({
+                    message: "產生核對表後將不能修改訂單，確定要產生嗎？",
+                    title: "備貨單核對表",
+                    buttons: {
+                        success: {
+                            label: "取消",
+                            className: "green",
+                            callback: function() {
+
+                            }
+                        },
+                        danger: {
+                            label: "確定",
+                            className: "red",
+                            callback: function() {
+
+                                $scope.sendRealFile(filetype)
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
     
     $scope.sendRealFile = function(type)
@@ -200,8 +270,6 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     	};
 
     	var queryString = $.param( queryObject );
-        console.log(queryObject);
-
         var realFileDisplay = window.open(endpoint + "/getReport.json?" + queryString);
     }
 
