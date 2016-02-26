@@ -8,7 +8,7 @@ class Supplier extends Eloquent  {
     }
 
     public function purchaseorder(){
-        return $this->hasMany('Purchaseorder','supplierCode','supplierCode');
+        return $this->hasOne('Purchaseorder','supplierCode','supplierCode');
     }
 
     public function receiving(){

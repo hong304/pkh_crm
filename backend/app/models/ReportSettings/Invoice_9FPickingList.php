@@ -270,7 +270,7 @@ class Invoice_9FPickingList {
                             // show groceries summary on last page
 
                             if($item->deleted_at == null){
-                                 if(($unit == 'carton' && $item->productQty < 1) ||$unit == 'inner' || $unit == 'unit'){
+                                 if(($unit == 'carton' && $item->productQty < 1) || $unit == 'unit'){
                                      $this->goods['groceries'][$customerId.$invoiceId]['items'][$productId][$unit] = [
                                          'productId' => $productId,
                                          'name' => $productDetail->productName_chi,
@@ -292,7 +292,7 @@ class Invoice_9FPickingList {
                                 $this->goods['groceries'][$customerId.$invoiceId]['invoiceId'] = $invoiceId;
 
                                 // show carton summary on last page
-                                if($unit == 'carton' && $item->productQty > 0.5){
+                                if(($unit == 'carton' && $item->productQty > 0.5) ||$unit == 'inner'){
                                     $this->goods['carton'][$productId]['items'] = [
                                         'productId' => $productId,
                                         'name' => $productDetail->productName_chi,
@@ -990,7 +990,7 @@ $i=3;
                     foreach($itemUnitlv as $item)
                     {
                         $pdf->setXY($base_x + 0, $y);
-                        if(preg_match('[新|更|刪]', $item['name']) != true) {
+                        if(preg_match('[(新)|(更)|(刪)]', $item['name']) != true) {
                             $item['name']=  "     " . $item['name'];
                         }
                         $pdf->Cell(0, 0,$item['name'], 0, 0, 'L');

@@ -694,16 +694,20 @@ $this->updateVanQty();
 
             $pdf->SetFont('chi', '', 12);
 
+
+            $pdf->setXY(137, 40);
+            $pdf->Cell(0, 0, "回車時間:______________", 0, 0, "L");
+
             $pdf->setXY(10, 50);
             $pdf->Cell(0, 0, "產品編號", 0, 0, "L");
 
             $pdf->setXY(30, 50);
             $pdf->Cell(0, 0, "產品名稱", 0, 0, "L");
 
-            $pdf->setXY(90, 50);
+            $pdf->setXY(95, 50);
             $pdf->Cell(0, 0, "借貨數量", 0, 0, "L");
 
-            $pdf->setXY(120, 50);
+            $pdf->setXY(137, 50);
             $pdf->Cell(0, 0, "回貨數量", 0, 0, "L");
 
 
@@ -746,13 +750,13 @@ $this->updateVanQty();
                         $pdf->SetFont('chi', '', 13);
                         $pdf->Cell(0, 0, sprintf('%s',$v1['name']), 0, 0, "L");
 
-                        $pdf->setXY(90, $y);
+                        $pdf->setXY(100, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty']) - $v1['org_qty'],$v1['unit_txt']), 0, 0, "L");
+                        $pdf->Cell(10, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty']) - $v1['org_qty'],$v1['unit_txt']), 0, 0, "R");
 
-                        $pdf->setXY(120, $y);
+                        $pdf->setXY(130, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(0, 0, "____________", 0, 0, "L");
+                        $pdf->Cell(0, 0, "________________", 0, 0, "L");
 
                         $y += 8;
 
@@ -771,10 +775,10 @@ $this->updateVanQty();
             $y += 10;
             // Notes part
             if ($i == 0) {
-                for ($note = 0; $note <= 1; $note++) {
+                for ($note = 0; $note <= 2; $note++) {
                     $pdf->Line(10, $y, 80, $y);
-                    $pdf->Line(90, $y, 110, $y);
-                    $pdf->Line(120, $y, 150, $y);
+                    $pdf->Line(90, $y, 120, $y);
+                    $pdf->Line(130, $y, 170, $y);
                    // $pdf->Line(160, $y, 190, $y);
 
 
@@ -785,7 +789,7 @@ $this->updateVanQty();
 
             $pdf->setXY(10, $y);
             $pdf->SetFont('chi', '', 15);
-            $pdf->Cell(0, 0, '預載數量', 0, 0, "L");
+            $pdf->Cell(0, 0, "預載數量(".$this->next_working_day.")", 0, 0, "L");
 
             $y+=8;
 
@@ -797,7 +801,7 @@ $this->updateVanQty();
             $pdf->setXY(30, $y);
             $pdf->Cell(0, 0, "產品名稱", 0, 0, "L");
 
-            $pdf->setXY(120, $y);
+            $pdf->setXY(90, $y);
             $pdf->Cell(0, 0, "預載數量(".$this->next_working_day.")", 0, 0, "L");
 
             $pdf->Line(10, $y+3, 190, $y+3);
@@ -816,7 +820,7 @@ $this->updateVanQty();
                 $pdf->Cell(0, 0, sprintf('%s',$v['productName_chi']), 0, 0, "L");
 
 
-                $pdf->setXY(120, $y);
+                $pdf->setXY(90, $y);
                 $pdf->SetFont('chi', '', 13);
                 $pdf->Cell(0, 0, "____________", 0, 0, "L");
 

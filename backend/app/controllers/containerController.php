@@ -11,9 +11,11 @@ class containerController extends BaseController {
         $shippingId = '10019';
         $containerId = 'B002';
 
-        $shippingitems = shippingitem::with('containerproduct')->with(['shipping' => function ($query) {
+        $shippingitems = shippingitem::with(['containerproduct'=>function($q){
+            $q->with('product');
+        }])->with(['shipping' => function ($query) {
             $query->with('Supplier','purchaseOrder');
-        }])->where('containerId',$containerId)->where('shippingId',$shippingId)->get()->toArray();
+        }])->where('containerId',$containerId)->where('shippingId',$shippingId)->first()->toArray();
 
 
         return Response::json($shippingitems);

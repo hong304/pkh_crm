@@ -19,7 +19,7 @@ class financeCashController extends BaseController {
             if($i->invoiceStatus == 30)
                 $i->invoiceStatus = '20';
             $i->manual_complete = 0;
-            if($v->pivot->discount_taken>0){
+            if($v->pivot->discount_taken!=0){
                 $i->discount -= $v->pivot->discount_taken;
                 $i->discount = 0;
             }
