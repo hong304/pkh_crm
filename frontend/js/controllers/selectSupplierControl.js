@@ -82,6 +82,7 @@ app.controller('selectSupplierControl', function($scope, $http, SharedService, $
         SharedService.setValue('location', c.location, 'handleSupplierUpdate');
         SharedService.setValue('country', c.countryId, 'handleSupplierUpdate');
 
+        SharedService.setValue('SupplierSelectionCompleted', true, 'doneSupplierUpdate');
          
     	
     	//SharedService.setValue('clientSelectionCompleted', true, 'doneCustomerUpdate');

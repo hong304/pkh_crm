@@ -426,9 +426,37 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                 });
             }]
         }
-    }) 
-    
-    .state('editOrder', {
+    })
+
+        .state('trading', {
+            url: "/trading",
+            templateUrl: "views/tradingOrder.html",
+            data: {pageTitle: '下單平台', pageSubTitle: ''},
+
+            controller: "tradingController",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                            assets + '/global/plugins/fuelux/js/spinner.min.js',
+                            assets + '/dependencies/jquery.cookie.min.js',
+                            assets + '/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
+                            assets + '/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+
+                            'js/controllers/tradingController.js',
+                            'js/controllers/selectClientCtrl.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
+        .state('editOrder', {
         url: "/editOrder", 
         templateUrl: "views/orderForm.html",            
         data: {pageTitle: '下單平台', pageSubTitle: ''},
@@ -1669,9 +1697,40 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                 });
             }]
         }
-    }) 
-    
-      .state('ships', {
+    })
+
+
+        .state('containerManagement', {
+            url: "/containerManagement",
+            templateUrl: "views/containerManagement.html",
+            data: {pageTitle: '搜尋貨櫃', pageSubTitle: ''},
+
+            controller: "containerManagement",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+
+                            assets + '/css/dataTable/style.css',
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            'js/controllers/containerManagement.js',
+                            'js/controllers/selectSupplierControl.js',
+                            //  'js/controllers/selectPoControl.js',
+                            //      'js/controllers/selectProductCtrl.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
+        .state('ships', {
         url: "/ships",
         templateUrl: "views/shippingSchedule.html",            
         data: {pageTitle: '船務管理列表', pageSubTitle: ''},

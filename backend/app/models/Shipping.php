@@ -37,7 +37,7 @@ class Shipping extends Eloquent  {
         
         public function purchaseOrder()
         {
-            return $this->hasMany('Purchaseorder', 'poCode', 'poCode');
+            return $this->hasOne('Purchaseorder', 'poCode', 'poCode');
         }
         
   

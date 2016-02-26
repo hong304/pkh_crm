@@ -16,4 +16,9 @@ class Shippingitem extends Eloquent  {
         return $this->hasMany('Receiving', 'containerId', 'containerId')
             ->join('Product', 'receivings.productId','=', 'product.productId');
     }
+
+    public function shipping() //containers
+    {
+        return $this->belongsTo('shipping', 'shippingId', 'shippingId');
+    }
 }

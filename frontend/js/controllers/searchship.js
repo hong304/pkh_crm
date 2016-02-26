@@ -106,9 +106,12 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
     $scope.$on('handleSupplierUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
         $scope.keywordship.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
-
+        $scope.keywordship.supplierCode =SharedService.supplierName;
     });
 
+    $scope.$on('doneSupplierUpdate', function(){
+        $scope.updateDataSet();
+    });
 
     if($location.search().orderTime)
     {
@@ -195,7 +198,7 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
     
         $scope.clearShipSearch = function()
         {
-            $scope.keywordship.supplierName = "";
+            $scope.keywordship.supplierCode = "";
             $scope.keywordship.supplier = "";
             $scope.updateDataSet();
         }

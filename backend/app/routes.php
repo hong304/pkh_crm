@@ -228,6 +228,11 @@ Route::group(array('before' => 'auth'), function()
      Route::any('/printPo.json','newPoController@printPo');
      Route::any('/outputShipNote.json','shippingController@outputShipNote');
      Route::any('/outputShipContainer.json','shippingController@outputShipContainer');
+
+    //Container
+    Route::any('/searchContainer.json','containerController@searchContainer');
+    Route::post('/getfullContainerInfo.json','containerController@getfullContainerInfo');
+
      
      //Receiving
      Route::post('/searchSupplier.json','receiveController@searchSupplier');

@@ -1,0 +1,129 @@
+<style>
+    .dataTables_filter
+    {
+        display:none;
+    }
+</style>
+
+<form class="form-horizontal" role="form" id="queryInfo" data-ng-init="">
+
+    <div class="col-md-2">
+		<!-- Client -->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">供應商</span>
+				</div>
+				<div class="actions">
+					<a href="javascript:;" ng-click="clearShipSearch();" class="btn btn-default btn-circle">
+					<i class="fa fa-times"></i>
+					<span class="hidden-480"> 清除 </span> </a>
+				</div>
+			</div>
+
+			<div class="portlet-body">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<div class="input-group">
+						<input id="shipSupplier" class="form-control" type="text" disabled name="shipSupplier" placeholder="選擇供應商" data-ng-model="keywordship.supplierCode"/>
+						<span class="input-group-btn">
+                                                    <a href="#" data-target="#selectSuppliermodel" data-toggle="modal"  id="selectSupplier" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+        <!--Invoice No.-->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">船務編號</span>
+				</div>				
+			</div>
+			
+			<div class="portlet-body">				
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="poCode" ng-model="keywordship.shippingId" ng-change="updateStatus();" class="form-control" placeholder="">
+				</div>
+			</div>
+		</div>
+
+		<!-- Status -->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">狀態</span>
+				</div>
+				
+			</div>
+			<div class="portlet-body">				
+				<div class="md-col-12" style="margin-bottom:15px;">
+
+
+
+					<div  class="radio-list"> 
+						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status0" ng-value="0"> 全部</label>
+						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status1" ng-value="1" value="1"> 正常</label>
+                                                <label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status30" ng-value="30" value="30"> 已完成 </label>
+						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status99" ng-value="99" value="99"> 已刪除 </label>
+					</div>
+
+				</div>
+			</div>
+		</div>	
+		
+		<!-- Delivery Date -->
+
+                <!-- date-picker -->
+            
+
+
+
+		
+	</div>
+
+	<div class="col-md-10">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">搜索結果</span>
+						</div>
+						
+					</div>
+					<div class="portlet-body">
+
+						<table class="table table-striped table-bordered table-hover" id="datatable_ajax">
+						<thead>
+							<tr role="row" class="heading">
+								<th id="shippingId" ng-click="click($event);">船務編號</th>
+                                                                <th id="shippings.poCode" ng-click="click($event);">採購單編號</th>
+                                                                <th ng-click="click($event);">供應商名稱</th>
+                                                                <th id="shippings.etaDate" ng-click="click($event);">預期到港日期</th>
+                                                                <th>狀態</th>
+                                                                <th id="carrier" ng-click="click($event);">承運商</th>
+                                                                <th>員工</th> 
+                                                                <th id="shippings.updated_at" ng-click="click($event);">修改時間</th> 
+                                                                <th></th>
+							</tr>
+							
+						</thead>
+						<tbody>
+						</tbody>
+					</table>						
+					</div>
+				</div>
+				<!-- END EXAMPLE TABLE PORTLET-->
+			</div>
+		</div>
+    </div>
+</form>
+<!-- Select Client Modal -->
+<div ng-include="'/views/model_ship.html'"></div>
+
+<div ng-include="'/views/model_selectsupplier.html'"></div>

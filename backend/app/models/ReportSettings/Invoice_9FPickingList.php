@@ -466,7 +466,7 @@ class Invoice_9FPickingList {
             [
                 'type' => 'excel',
                 'name' => '備貨單核對表',
-                'warning'   =>  'Invoices can not be modified when audit list is printed!',
+                'warning'   =>  '產生核對表後將不能修改訂單，確定要產生嗎？',
 
             ],
         ];
@@ -519,20 +519,28 @@ class Invoice_9FPickingList {
 
                 // if it is in left section, add a new page
                 //  if($index % 2 == 0)
-                //   {
+                //   {核數人
 
                 $pdf->AddPage();
                 $this->generateHeader($pdf,'箱頭總匯');
+
+                $pdf->SetFont('chi','',11);
+                $pdf->setXY(135, 47);
+                $pdf->Cell(0, 0, sprintf("%s     %s", '1樓負責人','9樓負責人', 0, 0, "L"));
 
                 $pdf->SetFont('chi','',10);
                 $pdf->setXY(10, $pdf->h-30);
                 $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
 
                 $pdf->setXY(60, $pdf->h-30);
-                $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+                $pdf->Cell(0, 0, "9樓負責人", 0, 0, "L");
+
+                $pdf->setXY(110, $pdf->h-30);
+                $pdf->Cell(0, 0, "1樓負責人", 0, 0, "L");
 
                 $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
                 $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+                $pdf->Line(110, $pdf->h-35, 150, $pdf->h-35);
 
                 $pdf->setXY(0, 0);
 
@@ -564,9 +572,10 @@ class Invoice_9FPickingList {
                     $pdf->setXY($base_x + 100, $y);
                     $pdf->Cell(0, 0, "    " . sprintf("%s %s", $o['items']['counts'],$o['items']['unit_txt']), 0, 0, 'L');
 
+
                     $pdf->SetFont('chi','',14);
-                    $pdf->setXY($base_x + 140, $y);
-                    $pdf->Cell(0, 0, "[  ]   [  ]", 0, 0, 'L');
+                    $pdf->setXY($base_x + 130, $y);
+                    $pdf->Cell(0, 0, "[    ]        [    ]", 0, 0, 'L');
 
                     $y += 10;
 
@@ -642,15 +651,23 @@ class Invoice_9FPickingList {
             $pdf->AddPage();
             $this->generateHeader($pdf,'散貨總滙');
 
+            $pdf->SetFont('chi','',11);
+            $pdf->setXY(105, 52);
+            $pdf->Cell(0, 0, sprintf("%s   %s", '1樓負責人','9樓負責人', 0, 0, "L"));
+
             $pdf->SetFont('chi','',10);
             $pdf->setXY(10, $pdf->h-30);
             $pdf->Cell(0, 0, "備貨人", 0, 0, "L");
 
             $pdf->setXY(60, $pdf->h-30);
-            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+            $pdf->Cell(0, 0, "9樓負責人", 0, 0, "L");
+
+            $pdf->setXY(110, $pdf->h-30);
+            $pdf->Cell(0, 0, "1樓負責人", 0, 0, "L");
 
             $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
             $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+            $pdf->Line(110, $pdf->h-35, 150, $pdf->h-35);
 
             $pdf->setXY(0, 0);
 
@@ -710,7 +727,7 @@ class Invoice_9FPickingList {
 
 
                         $pdf->setXY($base_x + 100, $y);
-                        $pdf->Cell(0, 0, "[  ]     [  ]", 0, 0, 'L');
+                        $pdf->Cell(0, 0, "[    ]         [    ]", 0, 0, 'L');
 
 
 

@@ -178,8 +178,8 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
     $scope.sendFile = function(file)
     {
-        if($location.search().id=='pickinglist9f'){
-            $scope.invoiceStatusCheck(file.type);
+        if($location.search().id=='pickinglist9f' && file.warning != false){
+            $scope.invoiceStatusCheck(file);
         }else{
 
             if(file.warning != false)
@@ -198,7 +198,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
     	
     }
 
-    $scope.invoiceStatusCheck = function(filetype){
+    $scope.invoiceStatusCheck = function(file){
 
 
 
@@ -237,8 +237,8 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
                 });
             }else{
                 bootbox.dialog({
-                    message: "產生核對表後將不能修改訂單，確定要產生嗎？",
-                    title: "備貨單核對表",
+                    message: file.warning,
+                    title: file.name,
                     buttons: {
                         success: {
                             label: "取消",
@@ -252,7 +252,7 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
                             className: "red",
                             callback: function() {
 
-                                $scope.sendRealFile(filetype)
+                                $scope.sendRealFile(file.type)
                             }
                         }
                     }
