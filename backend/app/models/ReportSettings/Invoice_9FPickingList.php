@@ -525,8 +525,8 @@ class Invoice_9FPickingList {
                 $this->generateHeader($pdf,'箱頭總匯');
 
                 $pdf->SetFont('chi','',11);
-                $pdf->setXY(135, 47);
-                $pdf->Cell(0, 0, sprintf("%s     %s", '1樓負責人','9樓負責人', 0, 0, "L"));
+                $pdf->setXY(105, 47);
+                $pdf->Cell(0, 0, sprintf("%s     %s", '9樓負責人','1樓負責人', 0, 0, "L"));
 
                 $pdf->SetFont('chi','',10);
                 $pdf->setXY(10, $pdf->h-30);
@@ -569,12 +569,12 @@ class Invoice_9FPickingList {
 
 
 
-                    $pdf->setXY($base_x + 100, $y);
+                    $pdf->setXY($base_x + 70, $y);
                     $pdf->Cell(0, 0, "    " . sprintf("%s %s", $o['items']['counts'],$o['items']['unit_txt']), 0, 0, 'L');
 
 
                     $pdf->SetFont('chi','',14);
-                    $pdf->setXY($base_x + 130, $y);
+                    $pdf->setXY($base_x + 100, $y);
                     $pdf->Cell(0, 0, "[    ]        [    ]", 0, 0, 'L');
 
                     $y += 10;
@@ -653,7 +653,7 @@ class Invoice_9FPickingList {
 
             $pdf->SetFont('chi','',11);
             $pdf->setXY(105, 52);
-            $pdf->Cell(0, 0, sprintf("%s   %s", '1樓負責人','9樓負責人', 0, 0, "L"));
+            $pdf->Cell(0, 0, sprintf("%s   %s", '9樓負責人','1樓負責人', 0, 0, "L"));
 
             $pdf->SetFont('chi','',10);
             $pdf->setXY(10, $pdf->h-30);
