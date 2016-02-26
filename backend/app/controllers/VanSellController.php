@@ -128,14 +128,16 @@ class VanSellController extends BaseController
 
             foreach ($selfdefine as $v) {
                 if($v['deleted'] == '0' and isset($v['preload'])){
-                    $van_insert = new van();
-                    $van_insert->deliveryDate = $filterData['next_working_day'];
-                    $van_insert->zoneId = $this->_zone;
-                    $van_insert->productId = strtoupper($v['productId']);
-                    $van_insert->van_qty = $v['preload'];
-                    $van_insert->productlevel = $v['unit']['value'];
-                    $van_insert->unit = $v['unit']['label'];
-                    $van_insert->save();
+                    if($v['preload']>0){
+                        $van_insert = new van();
+                        $van_insert->deliveryDate = $filterData['next_working_day'];
+                        $van_insert->zoneId = $this->_zone;
+                        $van_insert->productId = strtoupper($v['productId']);
+                        $van_insert->van_qty = $v['preload'];
+                        $van_insert->productlevel = $v['unit']['value'];
+                        $van_insert->unit = $v['unit']['label'];
+                        $van_insert->save();
+                    }
                 }
             }
             vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'30']);
