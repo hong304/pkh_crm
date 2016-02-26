@@ -64,7 +64,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
 
     var today = new Date();
 
-    var plus = today.getDay() == 6 ? 2 : 1;
+    var plus = today.getDay() == 6 ? 2 : 0;
     var nextDay = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
 
     var day = nextDay.getDate();
