@@ -293,7 +293,7 @@ class Invoice_9FPickingList {
 
                                 // show carton summary on last page
                                 if(($unit == 'carton' && $item->productQty > 0.5) ||$unit == 'inner'){
-                                    $this->goods['carton'][$productId]['items'] = [
+                                    $this->goods['carton'][$productId]['items'][$unit] = [
                                         'productId' => $productId,
                                         'name' => $productDetail->productName_chi,
                                         'productPacking_carton' => $productDetail->productPacking_carton,
@@ -305,7 +305,7 @@ class Invoice_9FPickingList {
                                         'productPackingSize' => $productDetail->productPacking_size,
                                         'unit' => $unit,
                                         'unit_txt' => $item->productUnitName,
-                                        'counts' => (isset($this->goods['carton'][$productId]['items']) ? $this->goods['carton'][$productId]['items']['counts'] : 0) + $item->productQty,
+                                        'counts' => (isset($this->goods['carton'][$productId]['items'][$unit]) ? $this->goods['carton'][$productId]['items'][$unit]['counts'] : 0) + $item->productQty,
 
                                     ];
                                     $this->goods['carton'][$productId]['productDetail'] = $productDetail->toArray();
@@ -372,9 +372,9 @@ class Invoice_9FPickingList {
         // show carton summary on last page
         if(isset($this->goods['carton'])){
             ksort($this->goods['carton']);
-            foreach ($this->goods['carton'] as &$v){
-                ksort($v['items']);
-            }
+            //foreach ($this->goods['carton'] as &$v){
+                //ksort($v['items']);
+            //}
         }
 
         $this->data = $this->goods;
@@ -511,7 +511,7 @@ class Invoice_9FPickingList {
                     $ninefproducts1[$j][] = $nf;
                 }
             }
-            //   pd($ninefproducts1);
+              // pd($ninefproducts1);
 
             foreach($ninefproducts1 as $index=>$order)
             {
@@ -558,29 +558,30 @@ class Invoice_9FPickingList {
                 $base_x = 10;
 
 
-                foreach($order as $k=>$o)
+                foreach($order as $k=>$oo)
                 {
+                    foreach($oo['items'] as $o){
+
+
+                                        $pdf->setXY($base_x + 0, $y);
+                                        $pdf->SetFont('chi','',12);
+                                        $pdf->Cell(0, 0, sprintf("%s - %s", $oo['productDetail']['productId'],$oo['productDetail']['productName_chi'], 0, 0, "L"));
 
 
 
-                    $pdf->setXY($base_x + 0, $y);
-                    $pdf->SetFont('chi','',12);
-                    $pdf->Cell(0, 0, sprintf("%s - %s", $o['productDetail']['productId'],$o['productDetail']['productName_chi'], 0, 0, "L"));
+                                        $pdf->setXY($base_x + 70, $y);
+                                        $pdf->Cell(0, 0, "    " . sprintf("%s %s", $o['counts'],$o['unit_txt']), 0, 0, 'L');
 
 
+                                        $pdf->SetFont('chi','',14);
+                                        $pdf->setXY($base_x + 100, $y);
+                                        $pdf->Cell(0, 0, "[    ]        [    ]", 0, 0, 'L');
 
-                    $pdf->setXY($base_x + 70, $y);
-                    $pdf->Cell(0, 0, "    " . sprintf("%s %s", $o['items']['counts'],$o['items']['unit_txt']), 0, 0, 'L');
+                                        $y += 10;
 
-
-                    $pdf->SetFont('chi','',14);
-                    $pdf->setXY($base_x + 100, $y);
-                    $pdf->Cell(0, 0, "[    ]        [    ]", 0, 0, 'L');
-
-                    $y += 10;
-
-                    $pdf->SetDash(1, 1);
-                    $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+                                        $pdf->SetDash(1, 1);
+                                        $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+                    }
                 }
 
             }
