@@ -87,15 +87,16 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
                     }
                 },
                 "columns": [
-                    {"data": "shippingId", "width": "15%"},
-                    {"data": "poCode", "width": "10%"},
-                    {"data": "supplierName", "width": "15%"},
-                    {"data": "etaDate", "width": "10%"},
-                    {"data": "status", "width": "10%"},
-                    {"data": "carrier", "width": "10%"},
-                    {"data": "username", "width": "10%"},
-                    {"data": "updated_at", "width": "10%"},
-                    {"data": "link", "width": "10%"}
+                    {"data": "container.shipping.supplier.supplierName", "width": "15%"},
+                    {"data": "container.container_size", "width": "10%"},
+                    {"data": "container.shipping.vessel", "width": "15%"},
+                    {"data": "containerId", "width": "10%"},
+                    {"data": "productId", "width": "10%"},
+                    {"data": "product.productName_chi", "width": "10%"},
+                    {"data": "qty", "width": "10%"},
+                    {"data": "container.container_actualDate", "width": "10%"},
+                    {"data": "container.shipping.fsp", "width": "10%"},
+
                 ]
 
             });

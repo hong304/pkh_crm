@@ -365,8 +365,6 @@ $scope.totalline = 0;
     $scope.sendRealFile = function(i)
     {
 
-        console.log(i);
-
         if(!$scope.prepareforreport){
             alert('請按提交,再產生PDF');
             return false;
@@ -385,7 +383,16 @@ $scope.totalline = 0;
                    window.open(endpoint + "/getVansellreport.json?" + queryString);
 
 
-        }else
+        }else if (i == 'discrepancy'){
+            var queryObject = {
+                filterData	:	$scope.filterData,
+                reportId	:	'vansaleDiscrepancy',
+                output		:	'discrepancyPDF'
+            };
+            var queryString = $.param( queryObject );
+
+            window.open(endpoint + "/getVansellreport.json?" + queryString);
+        } else
             $http.post(querytarget, {output: "create", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine})
                 .success(function(res, status, headers, config){
 

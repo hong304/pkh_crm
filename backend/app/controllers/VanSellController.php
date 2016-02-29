@@ -275,6 +275,61 @@ $this->updateVanQty();
             exit;
         }
 
+        if($this->_output == 'discrepancyPDF') {
+
+            if ($this->_shift == '-1')
+                $vansales = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->with('products')->orderby('productId', 'asc')->get();
+            else
+                $vansales = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->whereIn('shift', [1, 2])->with('products')->orderby('productId', 'asc')->get();
+
+            //pd($vansales);
+            $this->_reportTitle = '總匯對算表';
+
+            foreach ($vansales as $v) {
+                $this->audit[$v['productId']][$v['productlevel']] = [
+                    'productId' => $v->productId,
+                    'name' => $v->products->productName_chi,
+                    'unit' => $v['productlevel'],
+                    'unit_txt' => $v['unit'],
+                    'van_qty' => (isset($this->audit[$v['productId']][$v['productlevel']]['van_qty']) ? $this->audit[$v['productId']][$v['productlevel']]['van_qty'] : 0) + $v->van_qty,
+                    'qty' => (isset($this->audit[$v['productId']][$v['productlevel']]['qty']) ? $this->audit[$v['productId']][$v['productlevel']]['qty'] : 0) + $v->qty,
+                    'org_qty' => (isset($this->audit[$v['productId']][$v['productlevel']]['org_qty']) ? $this->audit[$v['productId']][$v['productlevel']]['org_qty'] : 0) + $v->org_qty,
+                    'return_qty' => (isset($this->audit[$v['productId']][$v['productlevel']]['return_qty']) ? $this->audit[$v['productId']][$v['productlevel']]['return_qty'] : 0) + $v->return_qty,
+                ];
+            }
+
+            $this->_reportId = 'vansaleDiscrepancy';
+            $reportOutput = $this->outputPDFAdiscrepancy();
+
+            $filenameUn = $reportOutput['uniqueId'];
+            $filename = $filenameUn . ".pdf";
+
+            if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift))
+                mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift, 0777, true);
+            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift . '/' . $filename;
+
+            //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+
+
+            if (ReportArchive::where('id', $filenameUn)->count() == 0) {
+                $archive = new ReportArchive();
+                $archive->id = $filenameUn;
+                $archive->report = 'vansaleDiscrepancy';
+                $archive->file = $path;
+                $archive->remark = $reportOutput['remark'];
+                $archive->created_by = Auth::user()->id;
+                $archive->zoneId = $this->_zone;
+                $archive->shift = $this->_shift;
+                $neworder = json_decode($reportOutput['associates']);
+                $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
+                $archive->save();
+            }
+
+            $pdf = $reportOutput['pdf'];
+            $pdf->Output($path, "IF");
+
+        }
+
         if($this->_output == 'auditPdf'){
 
             if($this->_shift == '-1')
@@ -612,6 +667,11 @@ $this->updateVanQty();
                 'name' => '回貨對算表',
                 'warning' => false
             ],
+            [
+                'type' => 'discrepancy',
+                'name' => '總匯對算表',
+                'warning' => false
+            ],
         ];
 
         return $downloadSetting;
@@ -657,6 +717,150 @@ $this->updateVanQty();
         $pdf->Code128(10, $pdf->h - 15, $this->_uniqueid, 50, 10);
         $pdf->Cell(0, 10, sprintf("報告編號: %s", $this->_uniqueid), 0, 2, "R");
 
+    }
+
+
+
+    public function outputPDFAdiscrepancy()
+    {
+
+        $pdf = new PDF();
+
+        $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
+        // handle 1F goods
+
+        foreach($this->audit as $k=> &$v){
+            foreach($v as $k1=> &$u) {
+                if (($u['van_qty']+$u['qty']) - $u['org_qty'] - $u['return_qty'] == 0) {
+                    unset($this->audit[$k][$k1]);
+                }
+            }
+        }
+
+        $this->audit= array_filter($this->audit);
+
+
+        //pd($this->audit);
+
+        $firstF = array_chunk($this->audit, 20, true);
+
+
+
+        foreach ($firstF as $i => $f) {
+            // for first Floor
+            $pdf->AddPage();
+
+
+            $this->generateHeaderAudit($pdf);
+
+            $pdf->SetFont('chi', '', 12);
+
+
+            $pdf->setXY(10, 50);
+            $pdf->Cell(0, 0, "產品編號", 0, 0, "L");
+
+            $pdf->setXY(30, 50);
+            $pdf->Cell(0, 0, "產品名稱", 0, 0, "L");
+
+            $pdf->setXY(90, 50);
+            $pdf->Cell(0, 0, "上貨總數", 0, 0, "L");
+
+            $pdf->setXY(120, 50);
+            $pdf->Cell(0, 0, "訂單總數", 0, 0, "L");
+
+            $pdf->setXY(150, 50);
+            $pdf->Cell(0, 0, "還貨總數", 0, 0, "L");
+
+            $pdf->setXY(180, 50);
+            $pdf->Cell(0, 0, "差異", 0, 0, "L");
+
+            $pdf->Line(10, 53, 190, 53);
+
+            $y = 60;
+
+            $pdf->setXY(10, $pdf->h - 30);
+            $pdf->Cell(0, 0, "經手人", 0, 0, "L");
+
+            $pdf->setXY(60, $pdf->h - 30);
+            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+
+            $pdf->Line(10, $pdf->h - 35, 50, $pdf->h - 35);
+            $pdf->Line(60, $pdf->h - 35, 100, $pdf->h - 35);
+
+            $pdf->setXY(500, $pdf->h - 30);
+            $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i + 1, count($firstF)), 0, 0, "R");
+
+
+
+            /* foreach ($f as $ga) {
+                 foreach ($ga as $u) {
+                     p($u);
+                 }
+             }*/
+
+
+
+            foreach ($f as $ga) {
+
+                foreach ($ga as $v1) {
+
+
+                    $pdf->setXY(10, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, $v1['productId'], 0, 0, "L");
+
+                    $pdf->setXY(30, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, sprintf('%s',$v1['name']), 0, 0, "L");
+
+                    $pdf->setXY(90, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, sprintf('%s',$v1['qty']+$v1['van_qty']), 0, 0, "L");
+
+                    $pdf->setXY(120, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, sprintf('%s',$v1['org_qty']), 0, 0, "L");
+
+                    $pdf->setXY(150, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, sprintf('%s',$v1['return_qty']), 0, 0, "L");
+
+                    $pdf->setXY(180, $y);
+                    $pdf->SetFont('chi', '', 13);
+                    $pdf->Cell(0, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty']) - $v1['org_qty']-$v1['return_qty'],$v1['unit_txt']), 0, 0, "L");
+
+
+
+                    $y += 8;
+
+
+                    /*  $d = substr(current($f)['productId'], 0, 1);
+                      $nd = substr(next($f)['productId'], 0, 1);
+                      if ($nd != '')
+                          if ($nd != $d) {
+                              $pdf->Line(10, $y, 190, $y);
+                              $y += 7;
+                          }*/
+                }
+            }
+        }
+
+        // handle 9F goods
+
+
+        //end of handel nine floor
+
+        // output
+
+
+        return [
+            'pdf' => $pdf,
+            'remark' => sprintf("Van Sell List DeliveryDate = %s", date("Y-m-d", $this->_date)),
+            'zoneId' => $this->_zone,
+            'uniqueId' => $this->_uniqueid,
+            'shift' => $this->_shift,
+            'associates' => json_encode($this->_invoices),
+        ];
     }
 
 
