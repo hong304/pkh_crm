@@ -991,7 +991,10 @@ $i=3;
                     foreach($itemUnitlv as $item)
                     {
                         $pdf->setXY($base_x + 0, $y);
-                        if(preg_match('[(新)|(更)|(刪)]', $item['name']) != true) {
+                        if (strpos($item['name'], '(新)') !== false) {
+                            $item['name']=  "     " . $item['name'];
+                        }
+                        if(preg_match('[(更)|(刪)]', $item['name']) != true) {
                             $item['name']=  "     " . $item['name'];
                         }
                         $pdf->Cell(0, 0,$item['name'], 0, 0, 'L');
