@@ -394,10 +394,10 @@
                 </li>
 
 
-                <li class="menu-dropdown mega-menu-dropdown" data-ng-if="systemInfo.permission.view_inventory == true" >
+                <li class="menu-dropdown mega-menu-dropdown" data-ng-if="systemInfo.permission.view_shipping == true">
                     <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
                         <i class="fa fa-cogs"></i>
-                        般務管理<i class="fa fa-angle-down"></i>
+                        船務管理<i class="fa fa-angle-down"></i>
                     </a>
                     <ul class="dropdown-menu" style="min-width: 200px">
                         <li>
@@ -406,7 +406,7 @@
                                     <div class="col-md-12">
                                         <ul class="mega-menu-submenu">
                                             <li>
-                                                <a href="/#/shipping" class="iconify" data-ng-if="systemInfo.permission.view_inventory == true">
+                                                <a href="/#/shipping" class="iconify" data-ng-if="systemInfo.permission.view_shipping == true">
                                                     <i class="icon-home"></i>
                                                     船務管理</a>
                                             </li>
@@ -427,11 +427,6 @@
                                                 <a href="/#/containerManagement" class="iconify">
                                                     <i class="icon-home"></i>
                                                     搜尋貨櫃 </a>
-                                            </li>
-                                            <li>
-                                                <a href="/#/salesReturn/" class="iconify">
-
-                                                    產品回貨 </a>
                                             </li>
                                         </ul>
                                     </div>

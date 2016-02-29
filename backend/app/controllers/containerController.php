@@ -26,20 +26,20 @@ class containerController extends BaseController {
         $mode = Input::get('mode');
         $filter = Input ::get('filterData');
         $current_sorting = $filter['current_sorting'];
-        $sorting = "shippingId";
+        $sorting = "containerId";
         if (!$filter['sorting'] == '') {
             $sorting = $filter['sorting'];
         }
 
         if ($mode == 'collection') {
 
-            $shippingitems = shippingitem::with('containerproduct','shipping')
-                    ->orderby($sorting, $current_sorting)->get()->toArray();
-pd($shippingitems);
+            $shippingitems = containerproduct::with(['container'=>function($q){
+                $q->with(['shipping'=>function($q1){
+                   $q1->with('supplier');
+                }]);
+            }])->with('product')->orderby($sorting, $current_sorting);
 
-            $ship->where('shippings.shippingId', 'LIKE', '%' . $filter['shippingId'] . '%')
-                    ->where('shippings.status', 'LIKE', '%' . $filter['status'] . '%')
-                    ->where('shippings.supplierCode', 'LIKE', '%' . $filter['supplier'] . '%');
+
 
 
 
