@@ -118,14 +118,16 @@ class newPoController extends BaseController {
           /*  if(isset($filter['deliverydate1']))
                 $invoice = Invoice::select('*');
             else*/
-           $purchaseOrder
-                   ->where('purchaseorders.supplierCode', 'LIKE', '%' . $filter['supplier'] . '%')
-                   ->where('poCode', 'LIKE', '%' . $filter['poCode'] . '%')
-                   ->where('poStatus', 'LIKE', '%' . $filter['poStatus'] . '%')
-                  // ->where('purchaseorders.poDate', '>=', $filter['startPodate'])->where('purchaseorders.poDate', '<=', $filter['endPodate']);
-                   ->whereBetween('purchaseorders.poDate', array($filter['startPodate'],$filter['endPodate']));
-        
-           
+
+
+            if($filter['poCode']!='') {
+                $purchaseOrder->where('poCode', 'LIKE', $filter['poCode'] . '%');
+            }else{
+                $purchaseOrder
+                    ->where('purchaseorders.supplierCode', 'LIKE', '%' . $filter['supplier'] . '%')
+                    ->where('poStatus', 'LIKE', '%' . $filter['poStatus'] . '%')
+                    ->whereBetween('purchaseorders.poDate', array($filter['startPodate'],$filter['endPodate']));
+            }
 
             return Datatables::of($purchaseOrder)
                             ->addColumn('link', function ($purchaseOrde) {

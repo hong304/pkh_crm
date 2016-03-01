@@ -412,15 +412,14 @@
                                             </li>
 
                                             <li>
-                                                <a href="/#/inventoryAdjustmentHistory" class="iconify" data-ng-if="systemInfo.permission.view_inventoryHistory == true">
+                                                <a href="/#/searchship" class="iconify"  data-ng-if="systemInfo.permission.view_shipping == true">
                                                     <i class="icon-home"></i>
-                                                    存貨調整記錄</a>
+                                                    搜尋船務 </a>
                                             </li>
-
                                             <li>
-                                                <a href="/#/receiveCtrl" class="iconify" ng-click="$state.go('receiveCtrl', {}, {reload: true});">
+                                                <a href="/#/ships" class="iconify"  data-ng-if="systemInfo.permission.view_shipping == true">
                                                     <i class="icon-home"></i>
-                                                    收貨管理 </a>
+                                                    船務管理列表 </a>
                                             </li>
 
                                             <li>
@@ -545,30 +544,7 @@
                                                                                          </li>
 										</ul>
 									</div>
-                                                                    
-                                    <div class="col-md-3 adjustHeight" >
-										<ul class="mega-menu-submenu">
-											<li>
-												<h3>船務相關</h3>
-											</li>
 
-											 <li>
-                                                                                             <a href="/#/shipping" class="iconify" ng-click="$state.go('shipping', {}, {reload: true});" data-ng-if="systemInfo.permission.view_shipping == true">
-                                                                                             <i class="icon-home"></i>
-                                                                                            船務管理 </a>
-                                                                                         </li>
-                                                                                          <li>
-                                                                                             <a href="/#/searchship" class="iconify"  data-ng-if="systemInfo.permission.view_shipping == true">
-                                                                                             <i class="icon-home"></i>
-                                                                                            搜尋船務 </a>
-                                                                                         </li>      
-                                                                                          <li>
-                                                                                             <a href="/#/ships" class="iconify"  data-ng-if="systemInfo.permission.view_shipping == true">
-                                                                                             <i class="icon-home"></i>
-                                                                                            船務管理列表 </a>
-                                                                                         </li>   
-										</ul>
-									</div>
 
 
 
