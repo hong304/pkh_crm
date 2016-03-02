@@ -89,9 +89,10 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
                 "columns": [
                     {"data": "container.shipping.supplier.supplierName", "width": "15%"},
                     {"data": "container.container_size", "width": "10%"},
-                    {"data": "container.shipping.vessel", "width": "15%"},
+                    {"data": "container.shipping.carrier", "width": "10%"},
+                    {"data": "container.shipping.vessel", "width": "10%"},
                     {"data": "containerId", "width": "10%"},
-                    {"data": "productId", "width": "10%"},
+                    {"data": "productId", "width": "5%"},
                     {"data": "product.productName_chi", "width": "8%"},
                     {"data": "qty", "width": "8%"},
                     {"data": "container.container_actualDate", "width": "8%"},

@@ -10,7 +10,11 @@
         </tr>
     </thead>
     <tbody>
-        <?php foreach($data as $row){
+        <?php
+        if(count($data)==0){
+            echo "<tr><td colspan='6'>No record</td></tr>";
+        }else
+         foreach($data as $row){
             if ($row['productQtys']>0){?>
             <tr>
                 <td><?php echo $row['productId']; ?></td>

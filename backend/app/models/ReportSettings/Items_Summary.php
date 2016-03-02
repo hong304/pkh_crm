@@ -45,7 +45,7 @@ class Items_Summary {
     
     public function compileResults()
     {
-
+        $invoiceitems = [];
         $filter = $this->_indata['filterData'];
 
         if(strlen($this->_group) < 2 && strlen($filter['name']) < 4 && strlen($filter['phone']) < 4 && strlen($filter['customerId']) < 3 && $this->productId=='' && $this->productName==''){
@@ -98,7 +98,7 @@ class Items_Summary {
                        $normal_goods[] = $v->invoiceId;
                    }
                }
-
+if(count($normal_goods)>0){
                               $invoiceitems = InvoiceItem::select('InvoiceItem.productId',DB::raw('SUM(productQty) AS productQtys'),DB::raw('SUM(productQty*ProductPrice) AS productAmount'),'productUnitName','productQtyUnit','productName_chi')->wherein('invoiceId',$normal_goods)
 
                                      ->leftJoin('Product', function($join) {
@@ -107,7 +107,7 @@ class Items_Summary {
                                      ->where('productName_chi', 'LIKE','%' . $this->productName. '%')
                                      ->groupBy('productId')->groupBy('productQtyUnit')
                                      ->get()->toArray();
-
+}
 
 
                    if(count($return_goods)>0){

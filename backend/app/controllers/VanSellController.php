@@ -928,7 +928,7 @@ $this->updateVanQty();
             $pdf->Line(10, $pdf->h - 30, 50, $pdf->h - 30);
             $pdf->Line(60, $pdf->h - 30, 100, $pdf->h - 30);
 
-            $pdf->setXY(500, $pdf->h - 30);
+            $pdf->setXY(500, $pdf->h - 25);
             $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i + 1, count($firstF)), 0, 0, "R");
 
 
