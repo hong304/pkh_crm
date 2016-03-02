@@ -59,11 +59,17 @@ class inventoryController extends BaseController {
     public function queryInventoryHistory(){
 
         $mode = Input::get('mode');
-
+        $filterData = Input::get('filterData');
         if($mode == 'collection')
         {
 
-            $adjusts = Adjust::with('receiving')->orderby('updated_at','desc');
+
+            $adjusts = Adjust::with('receiving');
+
+     if($filterData['keyword'] != '')
+         $adjusts->where('productId',$filterData['keyword']);
+
+               $adjusts=$adjusts->orderby('updated_at','desc');
 
             return Datatables::of($adjusts)->editColumn('adjustType', function ($p) {
                 if($p->adjustType == 1){

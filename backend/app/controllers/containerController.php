@@ -8,9 +8,6 @@ class containerController extends BaseController {
         $shippingId = Input::get('shippingId');
         $containerId = Input::get('containerId');
 
-        $shippingId = '10019';
-        $containerId = 'B002';
-
         $shippingitems = shippingitem::with(['containerproduct'=>function($q){
             $q->with('product');
         }])->with(['shipping' => function ($query) {
@@ -43,11 +40,13 @@ class containerController extends BaseController {
 
 
 
-
             //Dont add get() here
             return Datatables::of($shippingitems)
                             ->addColumn('link', function ($shi) {
-                                return '<span onclick="editShip(\'' . $shi->id . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 檢視</span>';
+                                if($shi->container->sale_method == 2)
+                                    return '<a href="/#/trading?shippingId='.$shi->container->shippingId.'&containerId='.$shi->container->containerId.'" class="btn btn-xs default"><i class="fa fa-search"></i>Trade</a>';
+                                else
+                                    return '';
                             })->make(true);
         }
 

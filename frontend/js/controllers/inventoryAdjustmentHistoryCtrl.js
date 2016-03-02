@@ -333,7 +333,7 @@ app.controller('inventoryAdjustmentHistoryCtrl', function($scope, $rootScope, $h
                 ],
                 "pageLength": 50, // default record count per page
                 "ajax": {
-                    "url": querytarget, // ajax source
+                    "url": querytarget, // queryInventoryHistory.json
                     "type": 'POST',
                     "data": {filterData: $scope.filterData, mode: "collection"},
             		"xhrFields": {withCredentials: true}

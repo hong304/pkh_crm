@@ -92,10 +92,11 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
                     {"data": "container.shipping.vessel", "width": "15%"},
                     {"data": "containerId", "width": "10%"},
                     {"data": "productId", "width": "10%"},
-                    {"data": "product.productName_chi", "width": "10%"},
-                    {"data": "qty", "width": "10%"},
-                    {"data": "container.container_actualDate", "width": "10%"},
-                    {"data": "container.shipping.fsp", "width": "10%"},
+                    {"data": "product.productName_chi", "width": "8%"},
+                    {"data": "qty", "width": "8%"},
+                    {"data": "container.container_actualDate", "width": "8%"},
+                    {"data": "container.shipping.fsp", "width": "8%"},
+                    {"data": "link", "width": "10%"},
 
                 ]
 

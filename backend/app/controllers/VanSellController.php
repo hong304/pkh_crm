@@ -982,7 +982,7 @@ $this->updateVanQty();
                 for ($note = 0; $note <= 2; $note++) {
                     $pdf->Line(10, $y, 80, $y);
                     $pdf->Line(90, $y, 120, $y);
-                    $pdf->Line(130, $y, 170, $y);
+                    //$pdf->Line(130, $y, 170, $y);
                    // $pdf->Line(160, $y, 190, $y);
 
 
@@ -1012,7 +1012,7 @@ $this->updateVanQty();
 
             $y +=10;
 
-            $products = product::where('vansale',1)->get();
+            $products = product::where('vansale',1)->orderBy('productId')->get();
 
             foreach($products as $v){
                 $pdf->setXY(10, $y);

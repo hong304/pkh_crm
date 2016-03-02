@@ -360,7 +360,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
             // get full invoice information
             var target = endpoint + '/getfullContainerInfo.json';
 
-            $http.post(target, {invoiceId: $location.search().invoiceId})
+            $http.post(target, {shippingId: $location.search().shippingId,containerId:$location.search().containerId})
                 .success(function(res, status, headers, config){
 
 
