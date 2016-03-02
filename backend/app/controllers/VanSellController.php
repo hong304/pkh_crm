@@ -919,14 +919,14 @@ $this->updateVanQty();
 
             $y = 60;
 
-            $pdf->setXY(10, $pdf->h - 30);
+            $pdf->setXY(10, $pdf->h - 25);
             $pdf->Cell(0, 0, "經手人", 0, 0, "L");
 
-            $pdf->setXY(60, $pdf->h - 30);
+            $pdf->setXY(60, $pdf->h - 25);
             $pdf->Cell(0, 0, "核數人", 0, 0, "L");
 
-            $pdf->Line(10, $pdf->h - 35, 50, $pdf->h - 35);
-            $pdf->Line(60, $pdf->h - 35, 100, $pdf->h - 35);
+            $pdf->Line(10, $pdf->h - 30, 50, $pdf->h - 30);
+            $pdf->Line(60, $pdf->h - 30, 100, $pdf->h - 30);
 
             $pdf->setXY(500, $pdf->h - 30);
             $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i + 1, count($firstF)), 0, 0, "R");
@@ -976,7 +976,7 @@ $this->updateVanQty();
             }
 
 
-            $y += 10;
+            $y += 8;
             // Notes part
             if ($i == 0) {
                 for ($note = 0; $note <= 1; $note++) {
@@ -986,7 +986,7 @@ $this->updateVanQty();
                    // $pdf->Line(160, $y, 190, $y);
 
 
-                    $y += 10;
+                    $y += 8;
                 }
             }
 
