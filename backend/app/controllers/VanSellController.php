@@ -979,10 +979,10 @@ $this->updateVanQty();
             $y += 10;
             // Notes part
             if ($i == 0) {
-                for ($note = 0; $note <= 2; $note++) {
+                for ($note = 0; $note <= 1; $note++) {
                     $pdf->Line(10, $y, 80, $y);
                     $pdf->Line(90, $y, 120, $y);
-                    //$pdf->Line(130, $y, 170, $y);
+                    $pdf->Line(130, $y, 170, $y);
                    // $pdf->Line(160, $y, 190, $y);
 
 
