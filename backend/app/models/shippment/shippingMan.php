@@ -135,14 +135,14 @@ class shippingMan
     	    {
                 if($i['dbid'])
     	        {
-    	            $item = Shippingitem::where('id', $i['dbid'])->first();
+    	            $item = Container::where('id', $i['dbid'])->first();
     	            $item->updated_at = time();
                     $item->updated_by = Auth::user()->id;
 
     	        }
     	        else
     	        {
-    	            $item = new Shippingitem();
+    	            $item = new Container();
     	            $item->created_at = $item->updated_at = time();
                     $item->updated_by = $item->created_by = Auth::user()->id;
     	        }
@@ -243,20 +243,20 @@ class shippingMan
     
     public function saveOtherItems($conainerdbid)
     {
-        $shippingItem = Shippingitem :: where('id',$conainerdbid)->first(); //check the dbid exists or not
-        if(count($shippingItem->toArray()) > 0)
+        $containers = Container :: where('id',$conainerdbid)->first(); //check the dbid exists or not
+        if(count($containers->toArray()) > 0)
         {
-    	    $shippingItem->updated_at = time();
-            $shippingItem->updated_by = Auth::user()->id;
+            $containers->updated_at = time();
+            $containers->updated_by = Auth::user()->id;
           //  $item->container_size = $i['container_size'];
             foreach($this->itemsother as $k=>$v)
             {
                 foreach($v as $kk=>$vv)
                 {
-                    $shippingItem->$kk = $vv;
+                    $containers->$kk = $vv;
                 }
             }
-            $shippingItem->save();
+            $containers->save();
             return [
 	        'result' => true,
 	        'containerdbid' => $conainerdbid,

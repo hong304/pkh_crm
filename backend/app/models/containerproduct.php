@@ -9,7 +9,7 @@ class containerproduct extends Eloquent{
 
     public function container() //containers
     {
-        return $this->belongsTo('shippingitem','shippingitem_id','id');
+        return $this->belongsTo('Container','container_id','id');
     }
 
 }

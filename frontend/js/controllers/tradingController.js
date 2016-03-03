@@ -341,7 +341,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
             }, 2000);
 
 
-        }else if($location.search().containerId)
+        }else if($location.search().container_id)
         {
 
 
@@ -360,7 +360,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
             // get full invoice information
             var target = endpoint + '/getfullContainerInfo.json';
 
-            $http.post(target, {shippingId: $location.search().shippingId,containerId:$location.search().containerId})
+            $http.post(target, {container_id:$location.search().container_id})
                 .success(function(res, status, headers, config){
 
 

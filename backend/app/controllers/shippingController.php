@@ -51,18 +51,18 @@ class shippingController extends BaseController {
                     'message' => '未有下單貨品',
                 ];
             else if (count($itemIds) == 0) // If all the items are deleted
-                Shippingitem::where('shippingId', $shipment['shippingId'])->delete();
+                Container::where('shippingId', $shipment['shippingId'])->delete();
             else
-                Shippingitem::whereNotIn('id', $itemIds)->where('shippingId', $shipment['shippingId'])->delete();
+                Container::whereNotIn('id', $itemIds)->where('shippingId', $shipment['shippingId'])->delete();
             //If there is no shippingId, not only the records deleted in ui but also records in db will be deleted.
         }
 
-//pd($shipItem);
+
 
 
         foreach ($shipItem as $k) {
             if($k['deleted']==1||$k['defaultContainerProduct'] == 0)
-                containerproduct::where('shippingitem_id', $k['dbid'])->delete();
+                containerproduct::where('container_id', $k['dbid'])->delete();
             if ($k['deleted'] == 0) {
                 $cost_00 = (isset($k['cost']['cost_00'])) ? $k['cost']['cost_00'] : 0;
                 $cost_01 = (isset($k['cost']['cost_01'])) ? $k['cost']['cost_01'] : 0;
@@ -81,8 +81,7 @@ foreach($k['containerProductDetails'] as $vk){
     if((isset($vk['productName']) || isset($vk['id']) and $vk['deleted']==0 )) {
 
        $containerproduct = new containerproduct();
-        $containerproduct->shippingitem_id = $k['dbid'];
-        $containerproduct->containerId = $k['containerId'];
+        $containerproduct->container_id = $k['dbid'];
         $containerproduct->productId = $vk['productId'];
         $containerproduct->qty = $vk['qty'];
         $containerproduct->unit = $vk['unit']['value'];
@@ -176,7 +175,7 @@ foreach($k['containerProductDetails'] as $vk){
 
         $returnInformation = [
             'shipping' => array_values($shipping['shipping'])[0],
-            'shippingItem' => array_values($shipping['shipping'])[0]['shippingitem'],
+            'container' => array_values($shipping['shipping'])[0]['containers'],
         ];
         return Response::json($returnInformation);
     }
@@ -189,7 +188,7 @@ foreach($k['containerProductDetails'] as $vk){
 
     public function loadShip() {
         $id = Input::get('id');
-        $ship = Shipping::where('shippingId', $id)->with('Shippingitem')->get();
+        $ship = Shipping::where('shippingId', $id)->with('containers')->get();
         return Response::json($ship);
     }
 

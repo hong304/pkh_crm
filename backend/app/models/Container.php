@@ -1,6 +1,6 @@
 <?php
 
-class Shippingitem extends Eloquent  {
+class Container extends Eloquent  {
     
     public function productDetail()
     {

@@ -5,14 +5,13 @@ class containerController extends BaseController {
 
     public function getfullContainerInfo(){
 
-        $shippingId = Input::get('shippingId');
-        $containerId = Input::get('containerId');
+        $container_id = Input::get('container_id');
 
-        $shippingitems = shippingitem::with(['containerproduct'=>function($q){
+        $shippingitems = container::with(['containerproduct'=>function($q){
             $q->with('product');
         }])->with(['shipping' => function ($query) {
             $query->with('Supplier','purchaseOrder');
-        }])->where('containerId',$containerId)->where('shippingId',$shippingId)->first()->toArray();
+        }])->where('id',$container_id)->first()->toArray();
 
 
         return Response::json($shippingitems);
@@ -28,23 +27,36 @@ class containerController extends BaseController {
             $sorting = $filter['sorting'];
         }
 
+
+
         if ($mode == 'collection') {
 
-            $shippingitems = containerproduct::with(['container'=>function($q){
-                $q->with(['shipping'=>function($q1){
-                   $q1->with('supplier');
-                }]);
-            }])->with('product')->orderby($sorting, $current_sorting);
+            $shippingitems= container::select('containers.id','shippings.shippingId','sale_method','supplierName','container_size','carrier','vessel','containerId','containerproducts.productId','productName_chi','qty','container_actualDate','fsp')
+                ->leftJoin('shippings','shippings.shippingId','=','containers.shippingId')
+                ->leftJoin('suppliers','suppliers.supplierCode','=','shippings.supplierCode')
+                ->leftJoin('containerproducts','containerproducts.container_id','=','containers.id')
+                ->leftJoin('product','product.productId','=','containerproducts.productId');
 
 
+            if($filter['containerId']!=''){
+                $shippingitems->where('containerId',$filter['containerId']);
+            }
 
+            if($filter['shippingId']!=''){
+                $shippingitems->where('shippingId',$filter['shippingId']);
+            }
 
+            if($filter['supplierName']!=''){
+                $shippingitems->where('supplierName',$filter['supplierName']);
+            }
+
+            $shippingitems->wherebetween('actualDate',[$filter['etaDate'],$filter['etaDate2']])->orderby($sorting, $current_sorting);
 
             //Dont add get() here
             return Datatables::of($shippingitems)
                             ->addColumn('link', function ($shi) {
-                                if($shi->container->sale_method == 2)
-                                    return '<a href="/#/trading?shippingId='.$shi->container->shippingId.'&containerId='.$shi->container->containerId.'" class="btn btn-xs default"><i class="fa fa-search"></i>Trade</a>';
+                                if($shi->sale_method == 2)
+                                    return '<a href="/#/trading?container_id='.$shi->id.'" class="btn btn-xs default"><i class="fa fa-search"></i>Trade</a>';
                                 else
                                     return '';
                             })->make(true);

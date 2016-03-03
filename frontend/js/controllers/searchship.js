@@ -159,7 +159,7 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
             }).success(function (data) {
 
                $scope.shipping = data.shipping;
-			   $scope.shippingItem = data.shippingItem;
+			   $scope.shippingItem = data.container;
             });
   
     }

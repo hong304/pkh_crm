@@ -32,6 +32,7 @@ class OrderController extends BaseController
 
 
 
+
         $itemIds = [];
         $dirtyItem = [];
         $product = Input::get('product');
@@ -199,7 +200,7 @@ class OrderController extends BaseController
                                  'status' => 0,
                                  'invoiceNumber' => '',
                                  'invoiceItemIds' => 0,
-                                 'message' => $p['code'] . '沒有足夠的貨量',
+                                 'message' => $p['code'].$p['name']. '沒有足夠的存貨',
                              ];
                          }
                      }

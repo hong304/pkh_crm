@@ -246,6 +246,7 @@ $scope.getPoProduct = function(poCode) {
                 .success(function(data, status, headers, config){
 
 
+console.log(data);
 
 					$scope.shipping = data.shipping;
                     $scope.getPoProduct($scope.shipping.poCode);
@@ -259,7 +260,7 @@ $scope.getPoProduct = function(poCode) {
                                         {
                                             $scope.shipping.supplierName = "";
                                         }           
-					$scope.shippingItems = data.shippingItem;
+					$scope.shippingItems = data.container;
 
    
                     if($scope.shipping.status != 99)

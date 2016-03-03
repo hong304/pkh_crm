@@ -16,8 +16,8 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
     $scope.autoreload = false;
     
     $scope.filterData = {
-        supplierCode: '',
-        supplier:'',
+        supplierName: '',
+        containerId:'',
         shippingId:'',
         status:'',
         etaDate:'',
@@ -133,17 +133,17 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
                     }
                 },
                 "columns": [
-                    {"data": "container.shipping.supplier.supplierName", "width": "15%"},
-                    {"data": "container.container_size", "width": "10%"},
-                    {"data": "container.shipping.carrier", "width": "10%"},
-                    {"data": "container.shipping.vessel", "width": "10%"},
+                    {"data": "supplierName", "width": "15%"},
+                    {"data": "container_size", "width": "5%"},
+                    {"data": "carrier", "width": "10%"},
+                    {"data": "vessel", "width": "10%"},
                     {"data": "containerId", "width": "10%"},
                     {"data": "productId", "width": "5%"},
-                    {"data": "product.productName_chi", "width": "8%"},
-                    {"data": "qty", "width": "8%"},
-                    {"data": "container.container_actualDate", "width": "8%"},
-                    {"data": "container.shipping.fsp", "width": "8%"},
-                    {"data": "link", "width": "10%"},
+                    {"data": "productName_chi", "width": "10%"},
+                    {"data": "qty", "width": "5%"},
+                    {"data": "container_actualDate", "width": "5%"},
+                    {"data": "fsp", "width": "5%"},
+                    {"data": "link", "width": "5%"},
 
                 ]
 
