@@ -15,12 +15,13 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
     $scope.firstload = true;
     $scope.autoreload = false;
     
-    $scope.keywordship = {
-        supplierName:'',
+    $scope.filterData = {
+        supplierCode: '',
         supplier:'',
         shippingId:'',
         status:'',
-        etaDate:'',  
+        etaDate:'',
+        etaDate2: '',
         sorting: '',
         current_sorting: 'desc',
     };
@@ -28,18 +29,63 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
     $scope.shipInfo = {
         shippingId :'',
         poCode :'',
-        supplierName:'',
         etaDate:'',
         status:'',
         carrier:'',
     };
-    
+
+
+    var today = new Date();
+    var plus = today.getDay() == 6 ? 3 : 2;
+
+    var min = today.getDay() == 1 ? 2 : 1;
+
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * plus);
+    var start_date = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 30);
+
+    var ymonth = start_date.getMonth() + 1;
+    var yyear = start_date.getFullYear();
+    var yday = start_date.getDate();
+
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+
+
+    $("#etaDate").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#etaDate").datepicker( "setDate", yyear + '-' + ymonth + '-' + yday);
+
+    $("#etaDate2").datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        autoclose: true
+    });
+    $("#etaDate2").datepicker( "setDate", year + '-' + month + '-' + day );
+
+    $scope.filterData.etaDate = yyear+'-'+ymonth+'-'+yday;
+    $scope.filterData.etaDate2 = year+'-'+month+'-'+day;
+
+    $(document).ready(function(){
+        $('#queryInfo').keydown(function (e) {
+            if (e.keyCode == 13) { //Enter
+                $scope.updateDataSet();
+            }
+
+        });
+
+    });
+
  $scope.$on('$viewContentLoaded', function () {
         // initialize core components
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
         $scope.updateDataSet();
     });
+
 
 
     $scope.updateDataSet = function () {
@@ -63,7 +109,7 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
                 "ajax": {
                     "url": queryShip, // ajax source
                     "type": 'POST',
-                    "data": {mode: "collection", filterData: $scope.keywordship},
+                    "data": {mode: "collection", filterData: $scope.filterData},
                     "xhrFields": {withCredentials: true}
                 },
                 "iDisplayLength": 50,
@@ -108,8 +154,8 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
 
     $scope.$on('handleSupplierUpdate', function(){
         // received client selection broadcast. update to the invoice portlet
-        $scope.keywordship.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
-        $scope.keywordship.supplierCode =SharedService.supplierName;
+        $scope.filterData.supplier = SharedService.supplierCode === undefined ? '' : SharedService.supplierCode;
+        $scope.filterData.supplierCode =SharedService.supplierName;
     });
 
     $scope.$on('doneSupplierUpdate', function(){
@@ -118,19 +164,19 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
 
     if($location.search().orderTime)
     {
-        $scope.keywordship.sorting = "shippings.updated_at";
+        $scope.filterData.sorting = "shippings.updated_at";
         $scope.updateDataSet();
     }
     
     $scope.click = function (event)
     {
 
-        $scope.keywordship.sorting = event.target.id;
+        $scope.filterData.sorting = event.target.id;
 
-        if ($scope.keywordship.current_sorting == 'asc') {
-            $scope.keywordship.current_sorting = 'desc';
+        if ($scope.filterData.current_sorting == 'asc') {
+            $scope.filterData.current_sorting = 'desc';
         } else {
-            $scope.keywordship.current_sorting = 'asc';
+            $scope.filterData.current_sorting = 'asc';
         }
 
         $scope.updateDataSet();
@@ -144,9 +190,9 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
     
     $scope.updateRadio = function()
     {
-        if($scope.keywordship.status == 0)
+        if($scope.filterData.status == 0)
         {
-            $scope.keywordship.status = '';
+            $scope.filterData.status = '';
         }
          $scope.updateDataSet();
     }
@@ -201,8 +247,8 @@ app.controller('containerManagement', function ($scope, $rootScope, $http, Share
     
         $scope.clearShipSearch = function()
         {
-            $scope.keywordship.supplierCode = "";
-            $scope.keywordship.supplier = "";
+            $scope.filterData.supplierCode = "";
+            $scope.filterData.supplier = "";
             $scope.updateDataSet();
         }
 

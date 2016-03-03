@@ -8,44 +8,79 @@
 <form class="form-horizontal" role="form" id="queryInfo" data-ng-init="">
 
     <div class="col-md-2">
-		<!-- Client -->
-		<div class="portlet light">
-			<div class="portlet-title">
-				<div class="caption">
-					<i class="fa fa-cogs font-green-sharp"></i>
-					<span class="caption-subject font-green-sharp bold uppercase">供應商</span>
-				</div>
-				<div class="actions">
-					<a href="javascript:;" ng-click="clearShipSearch();" class="btn btn-default btn-circle">
-					<i class="fa fa-times"></i>
-					<span class="hidden-480"> 清除 </span> </a>
-				</div>
-			</div>
-
-			<div class="portlet-body">
-				<div class="md-col-12" style="margin-bottom:15px;">
-					<div class="input-group">
-						<input id="shipSupplier" class="form-control" type="text" disabled name="shipSupplier" placeholder="選擇供應商" data-ng-model="keywordship.supplierCode"/>
-						<span class="input-group-btn">
-                                                    <a href="#" data-target="#selectSuppliermodel" data-toggle="modal"  id="selectSupplier" class="btn btn-success" type="button"><i class="fa fa-arrow-left fa-fw"/></i> 搜索</a>
-						</span>
-					</div>
-				</div>
-			</div>
-		</div>
-
         <!--Invoice No.-->
 		<div class="portlet light">
 			<div class="portlet-title">
 				<div class="caption">
 					<i class="fa fa-cogs font-green-sharp"></i>
-					<span class="caption-subject font-green-sharp bold uppercase">船務編號</span>
+					<span class="caption-subject font-green-sharp bold uppercase">Shipping ID</span>
 				</div>				
 			</div>
 			
 			<div class="portlet-body">				
 				<div class="md-col-12" style="margin-bottom:15px;">
-					<input type="text" id="poCode" ng-model="keywordship.shippingId" ng-change="updateStatus();" class="form-control" placeholder="">
+					<input type="text" id="poCode" ng-model="filterData.shippingId" class="form-control" placeholder="">
+				</div>
+			</div>
+		</div>
+
+		<!--Supplier Name-->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">Supplier Name</span>
+				</div>
+			</div>
+
+			<div class="portlet-body">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="supplierName" ng-model="filterData.supplierName" class="form-control" placeholder="">
+				</div>
+			</div>
+		</div>
+
+		<!--container No.-->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">Container No.</span>
+				</div>
+			</div>
+
+			<div class="portlet-body">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="containerId" ng-model="keywordship.containerId" class="form-control" placeholder="">
+				</div>
+			</div>
+		</div>
+
+		<!-- 支付日期 -->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">到港期</span>
+				</div>
+
+			</div>
+
+			<div class="portlet-body">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<div class="input-group  date " id="etaDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+						<input type="text" class="form-control" readonly ng-model="filterData.etaDate">
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+					</div>
+					至
+					<div class="input-group  date " id="etaDate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
+						<input type="text" class="form-control" readonly ng-model="filterData.etaDate2">
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -65,7 +65,7 @@ app.controller('selectShipControl', function($rootScope, $scope, $http, $timeout
     
     
     $scope.selectSupplier = function(supplier){
-          var target = endpoint + '/jsonSearchPo.json';
+          var target = endpoint + '/jsonSearchPo.json'; //shippingController@jsonSearchPo
          $scope.supplier.supplierCode = supplier.supplierCode;
          $scope.supplier.supplierName = supplier.supplierName;
          SharedService.setValue('supplierCode', supplier.supplierCode, 'handleShipPassUpdate');

@@ -98,7 +98,7 @@ app.controller('shipping', function($rootScope, $scope, $http, $timeout, SharedS
         autoclose: true
     });
 
-    $scope.shipping.etaDate  = yyear+'-'+ymonth+'-'+yday;
+   // $scope.shipping.etaDate  = yyear+'-'+ymonth+'-'+yday;
     
    
     $scope.sameDayInvoice = '';
@@ -203,7 +203,7 @@ $scope.getPoProduct = function(poCode) {
         if(!$location.search().shippingId)
         {
             $timeout(function(){
-                $('#selectShipModel').modal('show');
+                $('#selectShipModel').modal('show'); //model_selectShip.html|selectShipControl
               
                 $('#selectShipModel').on('shown.bs.modal', function () {
                     $('#keyword').focus();
@@ -249,8 +249,9 @@ $scope.getPoProduct = function(poCode) {
 
 					$scope.shipping = data.shipping;
                     $scope.getPoProduct($scope.shipping.poCode);
-                    console.log('shippingId');
-                    console.log($scope.retrievedProduct);
+
+
+
 					 if($scope.shipping.supplier.length > 0)
                                         {
                                             $scope.shipping.supplierName = data.shipping.supplier[0].supplierName;
@@ -309,7 +310,7 @@ $scope.getPoProduct = function(poCode) {
                  $scope.product[j].containerProductDetails = item.containerproduct;
 
 
-console.log($scope.product[j].containerProductDetails);
+//console.log($scope.product[j].containerProductDetails);
 
                         $scope.product[j]['dbid'] = item.id;
 
@@ -531,7 +532,7 @@ console.log($scope.product[j].containerProductDetails);
                   //  timer	:	$scope.timer,
                 }).
                 success(function(res, status, headers, config) {
-                   console.log(res);
+                 //  console.log(res);
                     if(res.result == true)
                     {
                         $scope.an=false;
@@ -738,7 +739,7 @@ var j = 0;
 
                         var list = $scope.itemlistContainerProducts[i];
                         $scope.newkey = list.length + 1;
-                        console.log('newkey:'+$scope.newkey);
+                        //console.log('newkey:'+$scope.newkey);
                         list.push($scope.newkey);
                         $scope.selfdefine[$scope.newkey] = $.extend(true, {}, $scope.selfdefineS);
                     }
@@ -749,8 +750,8 @@ var j = 0;
             });
         }
 
-        console.log('open:');
-        console.log($scope.selfdefine);
+        //console.log('open:');
+        //console.log($scope.selfdefine);
 
         // if($scope.product[i].containerProductDetails == null)
         // {
@@ -805,7 +806,7 @@ var j = 0;
         $("#containerProduct").modal('hide');
         $scope.product[$scope.editable_rowProduct].containerProductDetails = $scope.selfdefine;
         $scope.product[$scope.editable_rowProduct].defaultContainerProduct = 0;
-        console.log($scope.product[$scope.editable_rowProduct].containerProductDetails);
+        //console.log($scope.product[$scope.editable_rowProduct].containerProductDetails);
        /* $scope.product[$scope.editable_rowProduct].containerProductDetails.productId =  $scope.selfdefine.productId;
         $scope.product[$scope.editable_rowProduct].containerProductDetails.productName =  $scope.selfdefine.productName;
         $scope.product[$scope.editable_rowProduct].containerProductDetails.qty =  $scope.selfdefine.qty;
