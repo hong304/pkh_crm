@@ -75,30 +75,35 @@ class ReportFactory{
             elseif($output == 'pdf')
             {
                 $reportOutput = $this->_module->outputPDF();
-                if(isset($reportOutput)) {
-                    $this->recordPdf($reportOutput);
+                if(isset($reportOutput) && is_array($reportOutput)) {
+                    if(isset($reportOutput['uniqueId']))
+                        $this->recordPdf($reportOutput);
                     exit;
                 }
             }else if($output == 'csv'){
                 $reportOutput =  $this->_module->outputCsv();
-                if(isset($reportOutput)) {
-                    $this->recordPdf($reportOutput);
+
+                if(isset($reportOutput) && is_array($reportOutput)) {
+                    if(isset($reportOutput['uniqueId']))
+                        $this->recordPdf($reportOutput);
                     exit;
                 }
 
                return $reportOutput;
             }else if($output == 'excel'){
                 $reportOutput = $this->_module->outputExcel();
-                if(isset($reportOutput)) {
-                    $this->recordPdf($reportOutput);
+                if(isset($reportOutput) && is_array($reportOutput)) {
+                    if(isset($reportOutput['uniqueId']))
+                        $this->recordPdf($reportOutput);
                     exit;
                 }
 
                 return $reportOutput;
             }else if($output == 'excel1'){
                 $reportOutput = $this->_module->outputExcel1();
-                if(isset($reportOutput)) {
-                    $this->recordPdf($reportOutput);
+                if(isset($reportOutput) && is_array($reportOutput)) {
+                    if(isset($reportOutput['uniqueId']))
+                        $this->recordPdf($reportOutput);
                     exit;
                 }
 

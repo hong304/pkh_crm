@@ -1147,7 +1147,7 @@ for($start = 0;$start < count($dateRange);$start++)
             $pdf->setXY(100, $y + 24);
             $pdf->Cell(0, 0, $this->month[3], 0, 0, "L");
 
-            $pdf->setXY(150, $y + 24);
+            $pdf->setXY(130, $y + 24);
             $pdf->Cell(0, 0, $this->month[4], 0, 0, "L");
 
             $pdf->SetFont('Arial', '', 12);
@@ -1166,7 +1166,7 @@ for($start = 0;$start < count($dateRange);$start++)
             $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[3]][$customerId]) ? end($this->_monthly[$this->month[3]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
             // $pdf->Cell(0, 0, '$' .number_format(0, 2, '.', ','), 0, 0, "L");
 
-            $pdf->setXY(150, $y + 30);
+            $pdf->setXY(130, $y + 30);
             $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[$this->month[4]][$customerId]) ? end($this->_monthly[$this->month[4]][$customerId])['accumulator'] : 0, 2, '.', ','), 0, 0, "L");
             // $pdf->Cell(0, 0, '$' .number_format(0, 2, '.', ','), 0, 0, "L");
 
