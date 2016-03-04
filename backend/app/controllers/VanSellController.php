@@ -238,39 +238,10 @@ $this->updateVanQty();
         if ($this->_output == 'pdf') {
 
 
-            $this->_reportId = 'vanselllist';
             $this->compileResults();
-            $reportOutput = $this->outputPDF();
 
-            //$filenameUn = $this->_reportId . '-' . str_random(10) . '-' . date("YmdHis");
-            //$filenameUn = microtime(true);
-            $filenameUn = $reportOutput['uniqueId'];
-            $filename = $filenameUn . ".pdf";
+SystemController::reportRecord($this->outputPDF());
 
-            if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift))
-                mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift, 0777, true);
-            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift . '/' . $filename;
-
-            //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
-
-
-            if (ReportArchive::where('id', $filenameUn)->count() == 0) {
-                $archive = new ReportArchive();
-                $archive->id = $filenameUn;
-                $archive->report = 'vanselllist';
-                $archive->file = $path;
-                $archive->remark = $reportOutput['remark'];
-                $archive->created_by = Auth::user()->id;
-                $archive->zoneId = $this->_zone;
-                $archive->shift = $this->_shift;
-                $neworder = json_decode($reportOutput['associates']);
-                $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
-                $archive->save();
-            }
-
-            $pdf = $reportOutput['pdf'];
-            $pdf->Output($path, "IF");
-            //$pdf->Code128(10,3,$filenameUn,150,5);
 
             exit;
         }
@@ -297,36 +268,8 @@ $this->updateVanQty();
                     'return_qty' => (isset($this->audit[$v['productId']][$v['productlevel']]['return_qty']) ? $this->audit[$v['productId']][$v['productlevel']]['return_qty'] : 0) + $v->return_qty,
                 ];
             }
+            SystemController::reportRecord($this->outputPDFAdiscrepancy());
 
-            $this->_reportId = 'vansaleDiscrepancy';
-            $reportOutput = $this->outputPDFAdiscrepancy();
-
-            $filenameUn = $reportOutput['uniqueId'];
-            $filename = $filenameUn . ".pdf";
-
-            if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift))
-                mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift, 0777, true);
-            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift . '/' . $filename;
-
-            //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
-
-
-            if (ReportArchive::where('id', $filenameUn)->count() == 0) {
-                $archive = new ReportArchive();
-                $archive->id = $filenameUn;
-                $archive->report = 'vansaleDiscrepancy';
-                $archive->file = $path;
-                $archive->remark = $reportOutput['remark'];
-                $archive->created_by = Auth::user()->id;
-                $archive->zoneId = $this->_zone;
-                $archive->shift = $this->_shift;
-                $neworder = json_decode($reportOutput['associates']);
-                $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
-                $archive->save();
-            }
-
-            $pdf = $reportOutput['pdf'];
-            $pdf->Output($path, "IF");
 
         }
 
@@ -355,37 +298,9 @@ $this->updateVanQty();
 
 
             $this->next_working_day = date('d/m',strtotime(Input::get('filterData.next_working_day')));
-
-            $this->_reportId = 'vansaleAudit';
-            $reportOutput = $this->outputPDFAudit();
-
-            $filenameUn = $reportOutput['uniqueId'];
-            $filename = $filenameUn . ".pdf";
-
-            if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift))
-                mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift, 0777, true);
-            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $this->_shift . '/' . $filename;
-
-            //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+            SystemController::reportRecord($this->outputPDFAudit());
 
 
-            if (ReportArchive::where('id', $filenameUn)->count() == 0) {
-                $archive = new ReportArchive();
-                $archive->id = $filenameUn;
-                $archive->report = 'vansaleAudit';
-                $archive->file = $path;
-                $archive->remark = $reportOutput['remark'];
-                $archive->created_by = Auth::user()->id;
-                $archive->zoneId = $this->_zone;
-                $archive->shift = $this->_shift;
-                $neworder = json_decode($reportOutput['associates']);
-                $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
-                $archive->save();
-            }
-
-            $pdf = $reportOutput['pdf'];
-            $pdf->Output($path, "IF");
-            //$pdf->Code128(10,3,$filenameUn,150,5);
         }
 
 
@@ -855,11 +770,12 @@ $this->updateVanQty();
 
         return [
             'pdf' => $pdf,
-            'remark' => sprintf("Van Sell List DeliveryDate = %s", date("Y-m-d", $this->_date)),
+            'remark' => sprintf("Vansale discrepancy report DeliveryDate = %s", date("Y-m-d", $this->_date)),
             'zoneId' => $this->_zone,
             'uniqueId' => $this->_uniqueid,
             'shift' => $this->_shift,
-            'associates' => json_encode($this->_invoices),
+            'deliveryDate' => date("Y-m-d", $this->_date),
+            'reportId' => 'vansaleDiscrepancy',
         ];
     }
 
@@ -1044,11 +960,13 @@ $this->updateVanQty();
 
         return [
             'pdf' => $pdf,
-            'remark' => sprintf("Van Sell List DeliveryDate = %s", date("Y-m-d", $this->_date)),
+            'remark' => sprintf("Vansale Audit List DeliveryDate = %s", date("Y-m-d", $this->_date)),
             'zoneId' => $this->_zone,
             'uniqueId' => $this->_uniqueid,
             'shift' => $this->_shift,
-            'associates' => json_encode($this->_invoices),
+            'reportId' => 'vansaleAudit',
+            'deliveryDate' => date("Y-m-d", $this->_date),
+            //'associates' => json_encode($this->_invoices),
         ];
     }
 
@@ -1314,6 +1232,8 @@ $this->updateVanQty();
             'zoneId' => $this->_zone,
             'uniqueId' => $this->_uniqueid,
             'shift' => $this->_shift,
+            'reportId' => 'vanselllist',
+            'deliveryDate' => date("Y-m-d", $this->_date),
             'associates' => json_encode($this->_invoices),
         ];
     }
@@ -1406,4 +1326,6 @@ $this->updateVanQty();
             $savevansell->save();
         }
     }
+
+
 }

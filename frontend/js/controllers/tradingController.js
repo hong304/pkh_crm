@@ -375,6 +375,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
                         $scope.product[i].itemdiscount = item.itemdiscount;
                         $scope.product[i].productPacking = item.productPacking;
                         $scope.product[i].qty = item.qty;
+                        $scope.product[i].unit = item.unit;
                         $scope.product[i].unitName = item.unitName;
                         $scope.product[i].itemdiscount =0;
                         $scope.productCode[i] = item.productId;
@@ -400,7 +401,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
     });
 
 
-    $scope.preSubmitOrder = function(v){
+ /*   $scope.preSubmitOrder = function(v){
 
         //   var currentDate = new Date(new Date().getTime());
         //    var day = currentDate.getDate();
@@ -455,15 +456,12 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
             $scope.submitOrder(v);
 
     }
-
-    $scope.submitOrder = function(v)
+*/
+    $scope.submitOrder = function()
     {
       //  console.log($scope.product);
      //   return false;
         var generalError = false;
-
-
-        $scope.timer.submit = Date.now();
 
 
 
@@ -473,7 +471,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
             generalError = true;
         }
 
-        $scope.allowSubmission = false;
+       // $scope.allowSubmission = false;
 
 
         if(!$scope.order.invoiceDate || !$scope.order.deliveryDate || !$scope.order.dueDate || !$scope.order.status || !$scope.order.address || !$scope.order.clientId)
@@ -515,12 +513,11 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
                 return false;
             }
 
-            $scope.order.print = v;
+
             $http.post(
-                endpoint + '/placeOrder.json', {
+                endpoint + '/placeTradingOrder.json', {
                     product : $scope.product,
                     order : $scope.order,
-                    timer	:	$scope.timer,
                 }).
                 success(function(res, status, headers, config) {
 

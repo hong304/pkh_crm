@@ -745,7 +745,19 @@ class Invoice_9FPickingList {
         }
 // handle groceries goods
 
-        $pdf->Output('', 'I');
+       // $pdf->Output('', 'I');
+
+        return [
+            'pdf' => $pdf,
+            'remark' => sprintf("Picking Audit List, DeliveryDate = %s", date("Y-m-d", $this->_date)),
+            'zoneId' => $this->_zone,
+            'uniqueId' => microtime(true),
+            'shift' => $this->_shift,
+            'deliveryDate'=>date("Y-m-d", $this->_date),
+            'reportId' => 'PickingAuditList',
+            'associates' => json_encode($this->_invoices),
+        ];
+
     }
 
     public function outputCSV(){
@@ -1167,6 +1179,7 @@ $i=3;
             'zoneId' => $this->_zone,
             'uniqueId' => $this->_uniqueid,
             'shift' => $this->_shift,
+            'deliveryDate'=>date("Y-m-d", $this->_date),
             'associates' => json_encode($this->_invoices),
         ];
     }

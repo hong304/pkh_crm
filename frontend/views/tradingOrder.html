@@ -78,7 +78,7 @@
                                         </label>
 
                                         <div class="col-md-6">
-                                            <select class="form-control" disabled>
+                                            <select class="form-control">
                                                 <option ng-model="order.invoiceCurrency"
                                                         data-ng-repeat="currencyvalue in systemInfo.currencylist">
                                                     {{currencyvalue}}
@@ -418,10 +418,7 @@
                         </table>
 
                         <div class="form-actions text-right" ng-if="allowSubmission == true">
-                            <button type="button" ng-click="preSubmitOrder(0);" id="submitbutton0" class="btn red">
-                                提交不列印(F6)
-                            </button>
-                            <button type="button" ng-click="preSubmitOrder(1);" id="submitbutton"
+                            <button type="button" ng-click="submitOrder();" id="submitbutton"
                                     class="btn {{submitButtonColor}}">{{submitButtonText}}
                             </button>
                             <!-- <button type="button" ng-click="" class="btn default">取消</button> -->

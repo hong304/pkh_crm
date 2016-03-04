@@ -75,66 +75,90 @@ class ReportFactory{
             elseif($output == 'pdf')
             {
                 $reportOutput = $this->_module->outputPDF();
-                $filenameUn = $reportOutput['uniqueId'];
-                $filename = $filenameUn . ".pdf";
-                $shift = '';
-                if(isset($reportOutput['shift'])) {
-                    $shift = $reportOutput['shift'];
-                    if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift']))
-                        mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'], 0777, true);
-                    $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'] . '/' . $filename;
-                }else {
-                    if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId))
-                        mkdir(storage_path() . '/report_archive/' . $this->_reportId, 0777, true);
-                    $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+                if(isset($reportOutput)) {
+                    $this->recordPdf($reportOutput);
+                    exit;
                 }
-                if(ReportArchive::where('id',$filenameUn)->where('shift',$shift)->count() == 0){
-
-                    $archive = new ReportArchive();
-                    $archive->id = $filenameUn;
-                    $archive->report = $this->_reportId;
-                    $archive->file = $path;
-                    $archive->remark = $reportOutput['remark'];
-                    if(isset($reportOutput['zoneId']))
-                        $archive->zoneId = $reportOutput['zoneId'];
-                    if(isset($reportOutput['shift']))
-                        $archive->shift = $reportOutput['shift'];
-                    $archive->created_by = Auth::user()->id;
-                    $unid = explode("-",$reportOutput['uniqueId']);
-
-
-                    if(isset($reportOutput['associates'])){
-                        $neworder = json_decode($reportOutput['associates']);
-                        if(isset($unid[1]) && $unid[1]>1){
-                            $unid[1] -= 1;
-                            $comma_separated = implode("-", $unid);
-                            $chre = ReportArchive::where('id',$comma_separated)->first();
-                            if(count($chre)>0){
-                                $invoiceIds = json_decode(json_decode($chre->associates, true, true));
-                                $neworder = array_diff($neworder,$invoiceIds);
-                            }
-                        }
-                        $neworder = array_values($neworder);
-                    }
-                    $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
-                    $archive->save();
-                }
-
-                $pdf = $reportOutput['pdf'];
-                $pdf->Output($path, "IF");
-                //$pdf->Code128(10,3,$filenameUn,150,5);
-                
-                exit;
             }else if($output == 'csv'){
-               return $this->_module->outputCsv();
+                $reportOutput =  $this->_module->outputCsv();
+                if(isset($reportOutput)) {
+                    $this->recordPdf($reportOutput);
+                    exit;
+                }
+
+               return $reportOutput;
             }else if($output == 'excel'){
-                return $this->_module->outputExcel();
+                $reportOutput = $this->_module->outputExcel();
+                if(isset($reportOutput)) {
+                    $this->recordPdf($reportOutput);
+                    exit;
+                }
+
+                return $reportOutput;
             }else if($output == 'excel1'){
-                return $this->_module->outputExcel1();
+                $reportOutput = $this->_module->outputExcel1();
+                if(isset($reportOutput)) {
+                    $this->recordPdf($reportOutput);
+                    exit;
+                }
+
+                return $reportOutput;
             }
         }
     }
-    
+
+    private function recordPdf($reportOutput){
+        $filenameUn = $reportOutput['uniqueId'];
+        $filename = $filenameUn . ".pdf";
+        $shift = '';
+        if(isset($reportOutput['shift'])) {
+            $shift = $reportOutput['shift'];
+            if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift']))
+                mkdir(storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'], 0777, true);
+            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $reportOutput['shift'] . '/' . $filename;
+        }else {
+            if (!file_exists(storage_path() . '/report_archive/' . $this->_reportId))
+                mkdir(storage_path() . '/report_archive/' . $this->_reportId, 0777, true);
+            $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+        }
+        if(ReportArchive::where('id',$filenameUn)->where('shift',$shift)->count() == 0){
+
+            $archive = new ReportArchive();
+            $archive->id = $filenameUn;
+            $archive->report = isset($reportOutput['reportId'])?$reportOutput['reportId']:$this->_reportId;
+            $archive->file = $path;
+            $archive->remark = $reportOutput['remark'];
+            if(isset($reportOutput['zoneId']))
+                $archive->zoneId = $reportOutput['zoneId'];
+            if(isset($reportOutput['shift']))
+                $archive->shift = $reportOutput['shift'];
+            $archive->deliveryDate = isset($reportOutput['deliveryDate'])?$reportOutput['deliveryDate']:'';
+            $archive->created_by = Auth::user()->id;
+            $unid = explode("-",$reportOutput['uniqueId']);
+
+
+            if(isset($reportOutput['associates'])){
+                $neworder = json_decode($reportOutput['associates']);
+                if(isset($unid[1]) && $unid[1]>1){
+                    $unid[1] -= 1;
+                    $comma_separated = implode("-", $unid);
+                    $chre = ReportArchive::where('id',$comma_separated)->first();
+                    if(count($chre)>0){
+                        $invoiceIds = json_decode(json_decode($chre->associates, true, true));
+                        $neworder = array_diff($neworder,$invoiceIds);
+                    }
+                }
+                $neworder = array_values($neworder);
+            }
+            $archive->associates = isset($reportOutput['associates']) ? json_encode(json_encode($neworder)) : false;
+            $archive->save();
+        }
+
+        $pdf = $reportOutput['pdf'];
+        $pdf->Output($path, "IF");
+        //$pdf->Code128(10,3,$filenameUn,150,5);
+    }
+
     private function _prepareMenuFilter()
     {
         $mod = $this->_module;

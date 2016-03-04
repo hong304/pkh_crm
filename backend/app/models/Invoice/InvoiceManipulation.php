@@ -552,6 +552,7 @@ class InvoiceManipulation
 
     public function generatePrintInvoiceImage($invoice_id)
     {
+
         $e = Invoice::where('invoiceId', $invoice_id)->first();
         $image = new InvoiceImage();
 

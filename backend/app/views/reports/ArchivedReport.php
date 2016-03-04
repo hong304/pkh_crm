@@ -6,7 +6,8 @@
             <th width="8%">Zone ID</th>
             <th width="8%">Zone Name</th>
             <th width="8%">Shift</th>
-            <th width="40%">Remark</th>
+            <th width="30%">Remark</th>
+            <th width="10%">Delivery Date</th>
             <th width="10%">Creator</th>
             <th width="15%">Time</th>
             <th width="5%">Action</th>
@@ -20,6 +21,7 @@
                 <td><?php echo $row['zone']['zoneName']; ?></td>
                 <td><?php echo $row['shift']; ?></td>
                 <td><?php echo $row['remark']; ?></td>
+                <td><?php echo $row['deliveryDate']; ?></td>
                 <td><?php echo $row['user']['username']; ?></td>
                 <td><?php echo $row['created_at']; ?></td>
                 <td><a target="_blank" href="<?php echo $_SERVER['backend'];?>/viewArchivedReport?rid=<?php echo $row['id']; ?>&shift=<?php echo $row['shift'];?>">View</a></td>

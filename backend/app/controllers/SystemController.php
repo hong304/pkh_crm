@@ -6,6 +6,7 @@ class SystemController extends BaseController {
     
     public $currency = array (
             'HKD' => '港幣',
+            'USD' => '美元',
         );
     
     public function jsonSystem()
@@ -285,5 +286,35 @@ class SystemController extends BaseController {
         $accurage_date = date('Y-m-d', strtotime('-'.$count.' days', strtotime($days_ago)));
 
         return($accurage_date);
+    }
+
+    public static function reportRecord($reportOutput){
+
+        $filenameUn = $reportOutput['uniqueId'];
+        $filename = $filenameUn . ".pdf";
+
+        if (!file_exists(storage_path() . '/report_archive/' . $reportOutput['reportId'] . '/' . $reportOutput['shift']))
+            mkdir(storage_path() . '/report_archive/' . $reportOutput['reportId'] . '/' . $reportOutput['shift'], 0777, true);
+        $path = storage_path() . '/report_archive/' . $reportOutput['reportId'] . '/' . $reportOutput['shift'] . '/' . $filename;
+
+        //   $path = storage_path() . '/report_archive/' . $this->_reportId . '/' . $filename;
+
+
+        if (ReportArchive::where('id', $filenameUn)->count() == 0) {
+            $archive = new ReportArchive();
+            $archive->id = $filenameUn;
+            $archive->report = $reportOutput['reportId'];
+            $archive->file = $path;
+            $archive->remark = $reportOutput['remark'];
+            $archive->created_by = Auth::user()->id;
+            $archive->zoneId = $reportOutput['zoneId'];
+            $archive->shift = $reportOutput['shift'];
+            $archive->deliveryDate = $reportOutput['deliveryDate'];
+            $archive->save();
+        }
+
+        $pdf = $reportOutput['pdf'];
+        $pdf->Output($path, "IF");
+
     }
 }
