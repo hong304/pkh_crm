@@ -13,6 +13,7 @@ class Report_Archived {
         $report = Report::where('id', $indata['reportId'])->first();
         $this->_reportTitle = $report->name;
         $this->_shift =  (isset($indata['filterData']['shift']['value']))?$indata['filterData']['shift']['value']:'-1';
+        $this->_date = (isset($indata['filterData']['deliveryDate']) ? strtotime($indata['filterData']['deliveryDate']) : '');
         if(isset( $indata['filterData']['zone']) && $indata['filterData']['zone']['value'] != '-1'){
 
             $this->_zone =  $indata['filterData']['zone']['value'];
@@ -46,6 +47,8 @@ class Report_Archived {
 
         if($this->_shift != '-1')
             $reports->where('shift',$this->_shift);
+        if($this->_date!='')
+            $reports->where('deliveryDate',date('Y-m-d',$this->_date));
 
         $reports = $reports->orderby('created_at', 'desc')->with('zone')->paginate(30);;
 
@@ -88,6 +91,13 @@ class Report_Archived {
                 'model1' => 'shift',
                 'optionList1' => $ashift,
                 'defaultValue1' => $this->_shift,
+            ],
+            [
+                'id' => 'deliveryDate',
+                'type' => 'date-picker',
+                'label' => '送貨日期',
+                'model' => 'deliveryDate',
+                'defaultValue' => date("Y-m-d", time()),
             ],
             [
                 'id' => 'submit',

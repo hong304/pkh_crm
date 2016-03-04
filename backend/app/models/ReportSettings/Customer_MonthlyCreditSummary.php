@@ -33,8 +33,9 @@ class Customer_MonthlyCreditSummary {
         $this->_date2 = (isset($indata['filterData']['deliveryDate2']) ? strtotime($indata['filterData']['deliveryDate2']) : strtotime("today"));
         $this->_uniqueid = microtime(true);
 
-        $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
+       // $time_interval = [['0', '0'], ['1', '1'], ['2', '2'], ['5', '3'], ['11', '6'], ['120', '12']];
 
+        $time_interval = [['0', '0'], ['1', '1'], ['2', '2'],['3','3'],['5', '4'], ['11', '6'], ['120', '12']];
         $first = true;
 
         $ymd = date('Y-m-d',$this->_date2);
@@ -53,12 +54,13 @@ class Customer_MonthlyCreditSummary {
             }
         }
 
-        $this->month[0] = substr( $this->time[key(array_slice( $this->time, -6, 1, true))][0],0,7);
-        $this->month[1] = substr( $this->time[key(array_slice( $this->time, -5, 1, true))][0],0,7);
-        $this->month[2] = substr( $this->time[key(array_slice( $this->time, -4, 1, true))][0],0,7);
-        $this->month[3] = substr( $this->time[key(array_slice( $this->time, -3, 1, true))][0],0,7). ' to '. substr( $this->time[key(array_slice( $this->time, -3, 1, true))][1],0,7);
-        $this->month[4] = substr( $this->time[key(array_slice( $this->time, -2, 1, true))][0],0,7). ' to '. substr( $this->time[key(array_slice( $this->time, -2, 1, true))][1],0,7);
-        $this->month[5] = key(array_slice( $this->time, -1, 1, true)) .' or over';
+        $this->month[0] = substr( $this->time[key(array_slice( $this->time, -7, 1, true))][0],0,7);
+        $this->month[1] = substr( $this->time[key(array_slice( $this->time, -6, 1, true))][0],0,7);
+        $this->month[2] = substr( $this->time[key(array_slice( $this->time, -5, 1, true))][0],0,7);
+        $this->month[3] = substr( $this->time[key(array_slice( $this->time, -4, 1, true))][0],0,7);
+        $this->month[4] = substr( $this->time[key(array_slice( $this->time, -3, 1, true))][0],0,7). ' to '. substr( $this->time[key(array_slice( $this->time, -3, 1, true))][1],0,7);
+        $this->month[5] = substr( $this->time[key(array_slice( $this->time, -2, 1, true))][0],0,7). ' to '. substr( $this->time[key(array_slice( $this->time, -2, 1, true))][1],0,7);
+        $this->month[6] = key(array_slice( $this->time, -1, 1, true)) .' or over';
 
     }
 
@@ -647,7 +649,9 @@ for($start = 0;$start < count($dateRange);$start++)
     //aging pdf
     public function outputCsv() {
 
-        $time_interval = [['0', '0'], ['1', '1'], ['2', '2'],['3','3'],['5', '4'], ['11', '6'], ['120', '12']];
+
+
+      /*  $time_interval = [['0', '0'], ['1', '1'], ['2', '2'],['3','3'],['5', '4'], ['11', '6'], ['120', '12']];
 
 
         $first = true;
@@ -658,20 +662,18 @@ for($start = 0;$start < count($dateRange);$start++)
                 $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
                 $first = false;
             } else {
-               // $time[date("Y-m", strtotime("-" . $v[1]*31 . " days "))][0] = date("Y-m-01", strtotime("-" . $v[0]*31 . " days"));
-               // $time[date("Y-m", strtotime("-" . $v[1]*31 . " days"))][1] = date("Y-m-t", strtotime("-" . $v[1]*31 . " days"));
                 $time[date("Y-m", strtotime("last day of -".$v[1]." month"))][0] = date("Y-m-01", strtotime("last day of -".$v[0]." month"));
                 $time[date("Y-m", strtotime("last day of -".$v[1]." month"))][1] = date("Y-m-t", strtotime("last day of -".$v[1]." month"));
             }
-        }
+        }*/
 
-        $month[0] = key(array_slice($time, -7, 1, true));
-        $month[1] = key(array_slice($time, -6, 1, true));
-        $month[2] = key(array_slice($time, -5, 1, true));
-        $month[3] = key(array_slice($time, -4, 1, true));
-        $month[4] = key(array_slice($time, -3, 1, true));
-        $month[5] = key(array_slice($time, -2, 1, true));
-        $month[6] = key(array_slice($time, -1, 1, true));
+        $month[0] = key(array_slice($this->time, -7, 1, true));
+        $month[1] = key(array_slice($this->time, -6, 1, true));
+        $month[2] = key(array_slice($this->time, -5, 1, true));
+        $month[3] = key(array_slice($this->time, -4, 1, true));
+        $month[4] = key(array_slice($this->time, -3, 1, true));
+        $month[5] = key(array_slice($this->time, -2, 1, true));
+        $month[6] = key(array_slice($this->time, -1, 1, true));
 
 
         $this->_reportMonth = date("n", $this->_date2);
@@ -708,7 +710,7 @@ for($start = 0;$start < count($dateRange);$start++)
 
             $data = [];
 
-            foreach ($time as $k => $v) {
+            foreach ($this->time as $k => $v) {
                 $data[$k] = Invoice::whereBetween('deliveryDate', [strtotime($v[0]), strtotime($v[1])])->where('paymentTerms', 2)->where('amount', '!=', DB::raw('paid'))->where('manual_complete', false)->where('Invoice.customerId', $client['customer']['customerId'])->OrderBy('deliveryDate')->get();
 
                 foreach ($data[$k] as $invoice) {
@@ -721,7 +723,7 @@ for($start = 0;$start < count($dateRange);$start++)
                 }
             }
         }
-        foreach ($time as $k => $v) {
+        foreach ($this->time as $k => $v) {
             if (!isset($this->_monthly[$k]['total']))
                 $this->_monthly[$k]['total'] = 0;
             if (isset($this->_monthly[$k]['byCustomer']))
@@ -864,34 +866,34 @@ for($start = 0;$start < count($dateRange);$start++)
                 $pdf->Cell(0, 0, '$' . number_format($own_total, 2, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(130, $y);
-                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -7, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -7, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($this->time, -7, 1, true))]['total']) ? $this->_monthly[key(array_slice($this->time, -7, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(155, $y);
-                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -6, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -6, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($this->time, -6, 1, true))]['total']) ? $this->_monthly[key(array_slice($this->time, -6, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(180, $y);
-                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($time, -5, 1, true))]['total']) ? $this->_monthly[key(array_slice($time, -5, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
+                $pdf->Cell(0, 0, '$' . number_format(isset($this->_monthly[key(array_slice($this->time, -5, 1, true))]['total']) ? $this->_monthly[key(array_slice($this->time, -5, 1, true))]['total'] : 0, 1, '.', ','), 0, 0, "L");
 
                 $pdf->setXY(205, $y);
-                if (isset($this->_monthly[key(array_slice($time, -4, 1, true))]['total']))
-                    if ($this->_monthly[key(array_slice($time, -4, 1, true))]['total'] != 0)
-                        $numsum = '$' . number_format($this->_monthly[key(array_slice($time, -4, 1, true))]['total'], 1, '.', ',');
+                if (isset($this->_monthly[key(array_slice($this->time, -4, 1, true))]['total']))
+                    if ($this->_monthly[key(array_slice($this->time, -4, 1, true))]['total'] != 0)
+                        $numsum = '$' . number_format($this->_monthly[key(array_slice($this->time, -4, 1, true))]['total'], 1, '.', ',');
                     else
                         $numsum = '';
 
                 $pdf->Cell(0, 0, $numsum, 0, 0, "L");
 
                 $pdf->setXY(230, $y);
-                if (isset($this->_monthly[key(array_slice($time, -3, 1, true))]['total']))
-                    if ($this->_monthly[key(array_slice($time, -3, 1, true))]['total'] != 0)
-                        $numsum = '$' . number_format($this->_monthly[key(array_slice($time, -3, 1, true))]['total'], 1, '.', ',');
+                if (isset($this->_monthly[key(array_slice($this->time, -3, 1, true))]['total']))
+                    if ($this->_monthly[key(array_slice($this->time, -3, 1, true))]['total'] != 0)
+                        $numsum = '$' . number_format($this->_monthly[key(array_slice($this->time, -3, 1, true))]['total'], 1, '.', ',');
                     else
                         $numsum = '';
 
                 $pdf->setXY(255, $y);
-                if (isset($this->_monthly[key(array_slice($time, -2, 1, true))]['total']))
-                    if ($this->_monthly[key(array_slice($time, -2, 1, true))]['total'] != 0)
-                        $numsum = '$' . number_format($this->_monthly[key(array_slice($time, -2, 1, true))]['total'], 1, '.', ',');
+                if (isset($this->_monthly[key(array_slice($this->time, -2, 1, true))]['total']))
+                    if ($this->_monthly[key(array_slice($this->time, -2, 1, true))]['total'] != 0)
+                        $numsum = '$' . number_format($this->_monthly[key(array_slice($this->time, -2, 1, true))]['total'], 1, '.', ',');
                     else
                         $numsum = '';
 
@@ -1033,10 +1035,10 @@ for($start = 0;$start < count($dateRange);$start++)
             $pdf->setXY(40, $y + 16);
             $pdf->Cell(0, 0, "發票編號", 0, 0, "L");
 
-            $pdf->setXY(105, $y + 16);
+            $pdf->setXY(115, $y + 16);
             $pdf->Cell(0, 0, "借方", 0, 0, "L");
 
-            $pdf->setXY(140, $y + 16);
+            $pdf->setXY(145, $y + 16);
             $pdf->Cell(0, 0, "貸方", 0, 0, "L");
 
             $pdf->setXY(170, $y + 16);
@@ -1089,10 +1091,10 @@ for($start = 0;$start < count($dateRange);$start++)
                         $apaid = '';
 
 
-                    $pdf->setXY(105, $y);
+                    $pdf->setXY(115, $y);
                     $pdf->Cell(10, 0, $acm, 0, 0, "R");
 
-                    $pdf->setXY(140, $y);
+                    $pdf->setXY(145, $y);
                     $pdf->Cell(10, 0, $apaid, 0, 0, "R");
 
                     $pdf->setXY(170, $y);
