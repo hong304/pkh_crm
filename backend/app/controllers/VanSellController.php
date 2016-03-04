@@ -315,7 +315,7 @@ SystemController::reportRecord($this->outputPDF());
 
         // get invoice from that date and that zone
         $this->goods = ['1F' => [], '9F' => []];
-        $invoicesQuery = Invoice::select('invoiceId')->wherein('invoiceStatus', ['2', '1', '96', '97'])->where('zoneId', $zone)->where('deliveryDate', $date);
+        $invoicesQuery = Invoice::select('invoiceId')->wherein('invoiceStatus', ['2', '1','20','30', '96', '97'])->where('zoneId', $zone)->where('deliveryDate', $date);
 
         if ($this->_shift != '-1')
             $invoicesQuery->where('shift', $this->_shift);
