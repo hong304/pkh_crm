@@ -212,18 +212,17 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
             data: {zone:$scope.zone,shift:$scope.shift,deliveryDate:$scope.deliveryDate}
         }).success(function (res) {
 
-         
 
-            if(res.countInDataMart>0) {
+            if(res['0'].countInDataMart>0) {
 
-                var reject = res['3'].countInDataMart;
+                //var reject = res['3'].countInDataMart;
 
-                var pending = res['1'].countInDataMart;
+                //var pending = res['1'].countInDataMart;
 
                 var version = res['0'].countInDataMart;
 
                 bootbox.dialog({
-                    message: reject+"張單被拒絕,處理完才可產生<br>"+pending+"張單等待批刻,處理完才可產生<br>"+version+"張單還沒產生備貨單,處理完才可產生",
+                    message: version+"張單還沒產生備貨單,處理完才可產生",
                     title: "警告!!!",
                     buttons: {
                         success: {

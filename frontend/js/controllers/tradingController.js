@@ -379,6 +379,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
                         $scope.product[i].unitName = item.unitName;
                         $scope.product[i].itemdiscount =0;
                         $scope.productCode[i] = item.productId;
+                        $scope.product[i].code = item.productId;
                         $scope.product[i].name = item.product.productName_chi;
                         $scope.product[i].spec = '(' + item.product.productPacking_carton + '*' + item.product.productPacking_inner + '*' + item.product.productPacking_unit + '*' + item.product.productPacking_size + ')';
 

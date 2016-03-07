@@ -71,229 +71,212 @@ class TradingOrderController extends BaseController
             $this->invoiceId = $order['invoiceId'];
         }
 
+        $orderrules = [
+            'clientId' => ['required', 'exists:Customer,customerId'],
+            'invoiceDate' => ['required'],
+            'deliveryDate' => ['required'],
+            'dueDate' => ['required'],
+            'status' => [''],
+            'referenceNumber' => [''],
+            'zoneId' => ['numeric'],
+            'route' => ['numeric'],
+            'address' => ['required'],
+        ];
 
-
-        // Create the invoice
-        $ci = new InvoiceManipulation($order['invoiceId']);
-        $ci->setInvoice($order);
-
-
-        $new_item = false;
-        $ii=0;
-        $j=0;
-
-
-        foreach ($product as $k => &$p) {
-            if($p['productLocation'] == ''){
-                unset($product[$k]);
-            }else{
-
-                if ($p['dbid'] != '' && $p['deleted'] == 0 && $p['qty'] != 0) //old item
-                    $itemIds[] = $p['dbid'];
-
-                if ($p['dbid'] == '' && $p['code'] != '' && $p['deleted'] == 0 && $p['qty'] != 0){ //new item
-                    $new_item = true;
-                }
-
-                if ($p['deleted'] == 0 && $p['qty'] > 0)
-                    $ii++;
-
-
-                if ($p['deleted'] == 0 && $p['qty'] < 0)
-                    $j++;
-
-            }
+        $orderValidation = Validator::make($order, $orderrules);
+        if ($orderValidation->fails()) {
+            // if invoice is problematic, kill the user
+            $this->status = false;
+            $this->message = $orderValidation->messages()->first();
         }
 
-        if (count($itemIds) == 0 && !$new_item)
-            return [
-                'result' => false,
-                'status' => 0,
-                'invoiceNumber' => $order['invoiceId'],
-                'invoiceItemIds' => 0,
-                'message' => '未有下單貨品(Error:001)',
+        $this->temp_invoice_information = $order;
+        unset($product[0]);
+
+
+        foreach($product as $p){
+            $this->products[] = $p['code'];
+        };
+
+
+        $raw = Product::wherein('productId', $this->products)->get();
+        $products = [];
+        foreach ($raw as $p) {
+            $products[$p->productId] = $p;
+        }
+//pd($product);
+        foreach ($product as $p) {
+
+            $product = $products[$p['code']];
+
+            $this->items[] = [
+                'dbid' => $p['dbid'],
+                'productId' => $p['code'],
+                'productPrice' => $p['unitprice'],
+                'productQtyUnit' => $p['unit'],
+                'productLocation' => $p['productLocation'],
+                'productQty' => $p['qty'],
+                'productDiscount' => $p['itemdiscount'],
+                'productRemark' => $p['remark'],
+                'deleted' => $p['deleted'],
+                'productUnitName' =>$p['unitName'],
+                'productStandardPrice' => $product['productStdPrice_' . strtolower($p['unit'])],
             ];
 
-        if($order['status'] == 98){
-            if($ii > 0){
-                return [
-                    'result' => false,
-                    'status' => 0,
-                    'invoiceNumber' => '',
-                    'invoiceItemIds' => 0,
-                    'message' => '退貨單不能有正數貨品',
-                ];
-            }
         }
 
+        $this->__prepareInvoices();
+        $this->saveInvoice();
 
-        if($order['status'] == 97){
-            if($ii < 1 || $j < 1){
-                return [
-                    'result' => false,
-                    'status' => 0,
-                    'invoiceNumber' => '',
-                    'invoiceItemIds' => 0,
-                    'message' => '此單未完成',
-                ];
-            }
-        }
+     // pd($this->items);
 
+        foreach ($this->items as $i) {
 
-      foreach ($product as $p) {
-
-            if($p['qty'] == 0)
-                return [
-                    'result' => false,
-                    'status' => 0,
-                    'invoiceNumber' => $order['invoiceId'],
-                    'invoiceItemIds' => 0,
-                    'message' => $p['code'].':貨品數量不能等於零',
-                ];
-
-
-             if ($p['deleted'] == 0 && $p['qty'] != 0){
-
-                 $dirty = false;
-
-                     if ($p['dbid']) {
-
-                         $item = InvoiceItem::where('invoiceItemId', $p['dbid'])->first();
-
-                         $item->productId = $p['code'];
-                         $item->productUnitName = trim($p['unit']['label']);
-                         $item->productQty = $p['qty'];
-
-                         if ($item->isDirty()) {
-
-                             foreach ($item->getDirty() as $attribute => $value) {
-                                 if (!in_array($attribute, array('backgroundcode'))) {
-                                     $dirtyItem[] = [
-                                        'invoiceItemId'=> $item->getOriginal('invoiceItemId'),
-                                        'productId' => $item->getOriginal('productId')
-                                     ];
-
-                                     if ($order['status'] != '96' && $order['status'] != '97') { //back to stock for qty changed items
-                                         $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId',$item->getOriginal('invoiceItemId'))->where('productId', $item->getOriginal('productId'))->get();
-                                         if (count($invoiceitembatchs) > 0)
-                                             foreach ($invoiceitembatchs as $k1 => $v1) {
-                                                 $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
-                                                 $receivings->good_qty += $v1->unit;
-                                                 $receivings->save();
-                                                 $v1->delete();
-                                             }
-                                     }
-
-                                    $dirty = true;
-                                 }
-                             }
-                         }
-                     }
-
-
-                     if ($dirty || !$p['dbid']) {
-                         $receivings = Receiving::where('productId', $p['code'])->where('good_qty', '>=', $this->normalizedUnit($p))->first();
-                         if (count($receivings) == null) {
-
-                             if ($order['status'] != '96' && $order['status'] != '97') {
-                                 if(count($dirtyItem)>0)
-                                     foreach($dirtyItem as $v){
-                                         $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $v['invoiceItemId'])->where('productId', $v['productId'])->onlyTrashed()->get();
-                                         if (count($invoiceitembatchs) > 0)
-                                             foreach ($invoiceitembatchs as $k1 => $v1) {
-                                                 $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
-                                                 $receivings->good_qty -= $v1->unit;
-                                                 $receivings->save();
-                                                 $v1->restore();
-                                             }
-                                     }
-                             }
-
-                             return [
-                                 'result' => false,
-                                 'status' => 0,
-                                 'invoiceNumber' => '',
-                                 'invoiceItemIds' => 0,
-                                 'message' => $p['code'].$p['name']. '沒有足夠的存貨',
-                             ];
-                         }
-                     }
-
-             }
-        }
-
-
-
-        if ($order['invoiceId'] != '') {
-
-
-            $invoice= Invoice::where('invoiceId', $order['invoiceId'])->firstOrFail();
-           if (count($itemIds) == 0){
-               if($invoice->version >0)
-                    InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
-                    $i = InvoiceItem::where('invoiceId', $order['invoiceId'])->with('productDetail'); //if all old items are deleted
-
-
-
-            }else{
-               if($invoice->version >0)
-                    InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail')->onlyTrashed()->update(['new_added'=>0]);
-                    $i = InvoiceItem::whereNotIn('invoiceItemId', $itemIds)->where('invoiceId', $order['invoiceId'])->with('productDetail'); //if the old items are deleted
-
+            if ($i['dbid']) {
+                $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
+            } else {
+                $item = new InvoiceItem();
             }
 
-            $deletedItemFromDB = $i->get();
+            $item->invoiceId = $this->invoiceId;
+            $item->productId = $i['productId'];
+            $item->productQtyUnit = $i['productQtyUnit'];
+            $item->productLocation = $i['productLocation'];
+            $item->productQty = $i['productQty'];
+            $item->productPrice = $i['productPrice'];
+            $item->productDiscount = $i['productDiscount'];
+            $item->productRemark = $i['productRemark'];
+            $item->productStandardPrice = $i['productStandardPrice'];
+            $item->productUnitName = trim($i['productUnitName']);
+            $item->approvedSupervisorId = '27';
 
-            if($invoice->version >0 || $invoice->revised==1)
-            $i->update(['new_added'=>3]);
-
-            if($order['status'] != 97 && $order['status'] != 96)
-                $this->backToStock($deletedItemFromDB); //back to stock for deleted items
-
-            $i->delete();
-
-            foreach ($deletedItemFromDB as $v) {
-                $sql = "SELECT * FROM Invoice i LEFT JOIN InvoiceItem ii ON i.invoiceId=ii.invoiceId WHERE invoiceStatus not in ('98','96','99','97') and ii.created_at != '' and ii.deleted_at is null and customerId = '" . $order['clientId'] . "' AND ii.productId = '" . $v->productId . "' order by ii.updated_at desc limit 1";
-                $item = DB::select(DB::raw($sql));
-
-                if (count($item) > 0) {
-                    $lastitem = lastitem::where('customerId', $order['clientId'])->where('productId', $item[0]->productId)->first();
-                    $lastitem->unit_level = $item[0]->productQtyUnit;
-                    $lastitem->unit_text = $item[0]->productUnitName;
-                    $lastitem->price = $item[0]->productPrice;
-                    $lastitem->qty = $item[0]->productQty;
-                    $lastitem->discount = $item[0]->productDiscount;
-                    $lastitem->deliveryDate = date('Y-m-d',$item[0]->deliveryDate);
-                    $lastitem->updated_at = $item[0]->updated_at;
-                    $lastitem->save();
-                } else
-                    lastitem::where('customerId', $order['clientId'])->where('productId', $v->productId)->delete();
-
+            if ($i['dbid']) { //dirty check for qty and price changed
+                if ($item->isDirty()) {
+                    foreach ($item->getDirty() as $attribute => $value) {
+                        if (!in_array($attribute, array('backgroundcode'))) {
+                            $item->delete();
+                            $item = new InvoiceItem();
+                            $item->invoiceId = $this->invoiceId;
+                            $item->productId = $i['productId'];
+                            $item->productQtyUnit = $i['productQtyUnit']['value'];
+                            $item->productLocation = $i['productLocation'];
+                            $item->productQty = $i['productQty'];
+                            $item->productPrice = $i['productPrice'];
+                            $item->productDiscount = $i['productDiscount'];
+                            $item->productRemark = $i['productRemark'];
+                            $item->productStandardPrice = $i['productStandardPrice'];
+                            $item->productUnitName = trim($i['productUnitName']);
+                            $item->approvedSupervisorId = $i['approvedSupervisorId'];
+                        }
+                    }
+                }
             }
 
-
-
+            if ($i['deleted'] == '0' && $i['productQty'] != 0)
+                $item->save();
         }
 
-        foreach ($product as $p) {
-            $ci->setItem($p['dbid'], $p['code'], $p['unitprice'], $p['unit'], $p['productLocation'], $p['qty'], $p['itemdiscount'], $p['remark'], $p['deleted'],$p['productPacking']);
+
+        return $this->invoiceId;
+
+    }
+
+    private function __standardizeDateYmdTOUnix($date)
+    {
+        $date = explode('-', $date);
+        $date = strtotime($date[2] . '-' . $date[1] . '-' . $date[0]);
+        return $date;
+    }
+
+
+    private function __prepareInvoices()
+    {
+        if ($this->action == 'create') {
+            Customer::where('customerId', $this->temp_invoice_information['clientId'])->update(['unlock' => 0]);
+
+            if (isset($this->temp_invoice_information['invoiceNumber']))
+                $this->invoiceId = $this->temp_invoice_information['invoiceNumber'];
+            else
+                $this->generateInvoiceId();
+
+
+            $this->im->invoiceId = $this->invoiceId;
+            $this->im->invoiceType = 'Salesman';
+            $this->im->zoneId = $this->temp_invoice_information['zoneId'];
+            $this->im->receiveMoneyZone = $this->temp_invoice_information['zoneId'];
+            $this->im->customerId = $this->temp_invoice_information['clientId'];
+            $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
+            $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
+            $this->im->deliveryTruckId = 0;
+            $this->im->invoiceCurrency = 'HKD';
+            $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
+            $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
+            $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
+            $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
+            $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
+            $this->im->shift = $this->temp_invoice_information['shift'];
+            $this->im->created_by = Auth::user()->id;
+            $this->im->updated_by = Auth::user()->id;
+            $this->im->invoiceStatus = '2';
+            $this->im->invoiceDiscount = @$this->temp_invoice_information['discount'];
+            $this->im->amount = $this->temp_invoice_information['amount'];
+            $this->im->created_at = time();
+            $this->im->updated_at = time();
+        } elseif ($this->action == 'update') {
+            $this->im->zoneId = $this->temp_invoice_information['zoneId'];
+            $this->im->receiveMoneyZone = $this->temp_invoice_information['zoneId'];
+            $this->im->customerId = $this->temp_invoice_information['clientId'];
+            $this->im->routePlanningPriority = $this->temp_invoice_information['route'];
+            $this->im->invoiceDiscount = $this->temp_invoice_information['discount'];
+            $this->im->invoiceRemark = $this->temp_invoice_information['invoiceRemark'];
+            $this->im->shift = $this->temp_invoice_information['shift'];
+            $this->im->paymentTerms = $this->temp_invoice_information['paymentTerms'];
+            $this->im->customerRef = $this->temp_invoice_information['referenceNumber'];
+            $this->im->invoiceDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
+            $this->im->deliveryDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['deliveryDate']);
+            $this->im->dueDate = $this->__standardizeDateYmdTOUnix($this->temp_invoice_information['dueDate']);
+            $this->im->invoiceStatus = '2';
+            $this->im->updated_by = Auth::user()->id;
+            $this->im->amount = $this->temp_invoice_information['amount'];
+
         }
-        $result = $ci->save();
-
-        // Update performance log
-            $perf = new InvoiceUserPerformance();
-            $perf->invoiceId = $result['invoiceNumber'];
-            $perf->userid = Auth::user()->id;
-            $perf->timestampe = time();
-            $perf->start = $timer['start'];
-            $perf->submit = $timer['submit'];
-            $perf->select_client = $timer['selected_client'];
-            $perf->drilldown = json_encode($timer['product']);
-            $perf->save();
+    }
 
 
-        return Response::json($result);
+    public function generateInvoiceId()
+    {
+        $invoiceLength = 6;
 
+        $prefix = date("\Iym-");
+        $lastInvoice = Invoice::withTrashed()->where('invoiceId', 'like', $prefix . '%')->limit(1)->orderBy('invoiceId', 'Desc')->first();
+
+        if (count($lastInvoice) > 0) {
+            // extract latter part
+            $i = explode('-', $lastInvoice->invoiceId);
+            $nextId = (int)$i[1] + 1;
+            $nextInvoiceDate = $prefix . str_pad($nextId, $invoiceLength, '0', STR_PAD_LEFT);
+        } else {
+            $nextInvoiceDate = $prefix . str_pad('1', $invoiceLength, '0', STR_PAD_LEFT);
+        }
+
+        $this->invoiceId = $nextInvoiceDate;
+
+        return $this;
+    }
+
+
+    public function saveInvoice()
+    {
+        try {
+            $this->im->save();
+        } catch (Illuminate\Database\QueryException $e) {
+            $debugs = new debug();
+            $debugs->content = $this->temp_invoice_information['clientId'];
+            $debugs->save();
+            $this->generateInvoiceId();
+            $this->im->invoiceId = $this->invoiceId;
+            $this->saveInvoice();
+        }
     }
 
     public function normalizedUnit($i){
