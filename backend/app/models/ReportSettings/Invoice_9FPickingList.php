@@ -642,6 +642,7 @@ class Invoice_9FPickingList {
             }
         }
 
+
         foreach($ninefproducts as $index=>$order)
         {
 
@@ -720,6 +721,10 @@ class Invoice_9FPickingList {
                         // $pdf->setXY($base_x + 120, $y);
                         // $pdf->Cell(0, 0, "    $" . $item['stdPrice'], 0, 0, 'L');
 
+                        if($item['unit']=='carton'){
+                            $item['counts'] = SystemController::NormalizedUnit($item['productId'],$item['counts'],$item['unit']);
+                            $item['unit_txt'] = $item['productPackingName_unit'];
+                        }
                         $pdf->setXY($base_x + 70, $y);
                         $pdf->Cell(20, 0, "    " . sprintf("%s%s", $item['counts'],$item['unit_txt']), 0, 0, 'R');
 
