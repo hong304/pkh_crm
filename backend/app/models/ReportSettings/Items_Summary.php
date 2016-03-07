@@ -57,7 +57,7 @@ class Items_Summary {
 
         if(!$empty){
 
-        $invoicesQuery = Invoice::select('invoiceStatus','invoice.invoiceId')->whereIn('invoiceStatus',['1','2','20','30','98'])
+        $invoicesQuery = Invoice::select('invoiceStatus','invoice.invoiceId')->whereIn('invoiceStatus',['1','2','20','30','96','97','98'])
             ->leftJoin('Customer', function($join) {
                 $join->on('Customer.customerId', '=', 'Invoice.customerId');
             }) ->leftJoin('Invoiceitem', function($join) {

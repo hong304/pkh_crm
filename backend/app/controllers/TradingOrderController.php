@@ -38,6 +38,8 @@ class TradingOrderController extends BaseController
         $product = Input::get('product');
         $order = Input::get('order');
 
+
+
        /* if(isset($order['invoiceNumber']) and $order['invoiceId'] == ''){
 
             $invoiceId = invoice::where('invoiceId',$order['invoiceNumber'])->first();
@@ -201,7 +203,7 @@ class TradingOrderController extends BaseController
 
 
             $this->im->invoiceId = $this->invoiceId;
-            $this->im->invoiceType = 'Salesman';
+            $this->im->invoiceType = $this->temp_invoice_information['tradingCompany'];
             $this->im->zoneId = $this->temp_invoice_information['zoneId'];
             $this->im->receiveMoneyZone = $this->temp_invoice_information['zoneId'];
             $this->im->customerId = $this->temp_invoice_information['clientId'];

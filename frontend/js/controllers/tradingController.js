@@ -51,7 +51,8 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
         invoiceId	:	'',
         print : 1,
         shift : '',
-        amount: 0
+        amount: 0,
+        tradingCompany : 'PKH'
     };
 
     var target = endpoint + '/getHoliday.json';

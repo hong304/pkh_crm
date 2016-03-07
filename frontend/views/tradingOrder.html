@@ -264,7 +264,25 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-12">
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label" style="text-align:left;">
+                                            貿易公司
+                                        </label>
+
+                                        <div class="col-md-8">
+                                            <select class="form-control"
+                                                    ng-model="order.tradingCompany"
+                                                    class="form-control" id="tradingCompany">
+                                                <option value="PKH" selected>炳記行貿易有限公司</option>
+                                                <option value="ABC">ABC Company</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-9">
                                     <div class="form-group">
                                         <label class="col-md-1 control-label" style="text-align:left;">
                                             送貨地址
