@@ -69,7 +69,7 @@ class rePackController extends BaseController {
                     $join->on('purchaseorders.poCode', '=', 'receivings.poCode');
                 })->with(['purchaseorder'=>function($q){
                 $q->with('supplier');
-            }]);
+            }])->with('product');
 
             if($filter['supplier']!='')
                 $receivings->where('purchaseorders.supplierCode', '=', $filter['supplier']);

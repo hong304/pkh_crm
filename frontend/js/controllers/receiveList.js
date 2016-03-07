@@ -40,6 +40,7 @@ app.controller('receiveList', function($rootScope, $scope, $http, $timeout, Shar
         productId:'',
         products:'',
         poCode : '',
+        supplierCode : '',
     };
 
     var fetchDataDelay = 500;   // milliseconds
@@ -186,9 +187,11 @@ $scope.findDate = function(){
                         { "data": "purchaseorder.supplier.countryId" ,"width": "5%"},
                         { "data": "poCode","width": "6%" },
                         { "data": "shippingId","width": "8%" },
-                        { "data": "containerId" ,"width": "15%"},
+                        { "data": "containerId" ,"width": "10%"},
                         { "data": "receiving_date","width": "8%" },
                         { "data": "productId","width": "5%" },
+                        { "data": "product.productName_chi","width": "10%" },
+                        { "data": "unit_cost","width": "5%" },
                         { "data": "rec_good_qty","width": "5%" },
                         { "data": "expiry_date","width": "8%" },
 
