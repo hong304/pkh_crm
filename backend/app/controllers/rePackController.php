@@ -85,6 +85,8 @@ class rePackController extends BaseController {
                     return '$'.number_format($p->unit_cost,2,'.',',');
                 })  ->editColumn('rec_good_qty', function ($p) {
                     return $p->rec_good_qty.$p->product->productPackingName_unit;
+                })->addColumn('lineAmount',function($p){
+                    return '$'.number_format($p->rec_receiveQty*$p->rec_receivePrice,2,'.',',');
                 })
                 ->make(true);
         }

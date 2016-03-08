@@ -63,7 +63,8 @@ class ReceiveMan
              'carton_cost' => $cartonCost,
              'bin_location' => $bin_location,
              'deleted' => $deleted,
-             'rec_receiveQty'=> $rec_qty,
+             'rec_receiveQty'=> $good_qty+$damage_qty+$on_hold_qty,
+             'rec_receivePrice' =>$unit_cost,
              'supplier_interval'=>$unitlevel,
              'supplier_unitName'=>$unitName,
              'receivedQty' => $good_qty+$damage_qty+$on_hold_qty

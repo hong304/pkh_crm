@@ -193,6 +193,7 @@ $scope.findDate = function(){
                         { "data": "product.productName_chi","width": "10%" },
                         { "data": "unit_cost","width": "5%" },
                         { "data": "rec_good_qty","width": "5%" },
+                        { "data": "lineAmount","width": "6%" },
                         { "data": "expiry_date","width": "8%" },
 
                     ],
