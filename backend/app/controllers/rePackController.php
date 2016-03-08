@@ -80,7 +80,13 @@ class rePackController extends BaseController {
                 if($filter['poCode']!='')
                     $receivings->where('receivings.poCode', 'LIKE', $filter['poCode'] . '%');
             $receivings = $receivings->orderby('receivings.poCode','desc');
-            return Datatables::of($receivings)->make(true);
+            return Datatables::of($receivings)
+                ->editColumn('unit_cost', function ($p) {
+                    return '$'.number_format($p->unit_cost,2,'.',',');
+                })  ->editColumn('rec_good_qty', function ($p) {
+                    return $p->rec_good_qty.$p->product->productPackingName_unit;
+                })
+                ->make(true);
         }
     }
 
