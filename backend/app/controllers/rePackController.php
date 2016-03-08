@@ -87,7 +87,13 @@ class rePackController extends BaseController {
                     return $p->rec_good_qty.$p->product->productPackingName_unit;
                 })->addColumn('lineAmount',function($p){
                     return '$'.number_format($p->rec_receiveQty*$p->rec_receivePrice,2,'.',',');
+                })->editColumn('supplierName',function($p){
+                    return isset($p->purchaseorder->supplier->supplierName)?$p->purchaseorder->supplier->supplierName:'';
+                })->editColumn('countryId',function($p){
+                    return isset($p->purchaseorder->supplier->countryId)?$p->purchaseorder->supplier->countryId:'';
                 })
+
+
                 ->make(true);
         }
     }

@@ -33,10 +33,10 @@ class TradingOrderController extends BaseController
 
 
 
-        $itemIds = [];
-        $dirtyItem = [];
+
         $product = Input::get('product');
         $order = Input::get('order');
+        $this->trade_way = ($order['tradingCompany']=='PKH')?1:2;
 
 
 
@@ -62,7 +62,12 @@ class TradingOrderController extends BaseController
             $this->action = 'create';
 
         if ($this->action == 'create') {
-            $this->im = new Invoice();
+            if($this->trade_way == 1)
+                $this->im = new Invoice();
+            else
+                $this->im = new invoiceTrading();
+
+
         } elseif ($this->action == 'update') {
             // check if this invoice exists
             $this->im = Invoice::where('invoiceId', $order['invoiceId'])->firstOrFail();
@@ -93,6 +98,7 @@ class TradingOrderController extends BaseController
         }
 
         $this->temp_invoice_information = $order;
+
         unset($product[0]);
 
 
@@ -135,9 +141,16 @@ class TradingOrderController extends BaseController
         foreach ($this->items as $i) {
 
             if ($i['dbid']) {
-                $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
+                if($this->trade_way == 1)
+                    $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
+                else
+                    $item = invoiceitemTrading::where('invoiceItemId', $i['dbid'])->first();
             } else {
-                $item = new InvoiceItem();
+                if($this->trade_way == 1)
+                    $item = new InvoiceItem();
+                else
+                    $item = new invoiceitemTrading();
+
             }
 
             $item->invoiceId = $this->invoiceId;
@@ -157,7 +170,11 @@ class TradingOrderController extends BaseController
                     foreach ($item->getDirty() as $attribute => $value) {
                         if (!in_array($attribute, array('backgroundcode'))) {
                             $item->delete();
-                            $item = new InvoiceItem();
+                            if($this->trade_way == 1)
+                                $item = new InvoiceItem();
+                            else
+                                $item = new invoiceitemTrading();
+
                             $item->invoiceId = $this->invoiceId;
                             $item->productId = $i['productId'];
                             $item->productQtyUnit = $i['productQtyUnit']['value'];
@@ -250,7 +267,10 @@ class TradingOrderController extends BaseController
         $invoiceLength = 6;
 
         $prefix = date("\Iym-");
-        $lastInvoice = Invoice::withTrashed()->where('invoiceId', 'like', $prefix . '%')->limit(1)->orderBy('invoiceId', 'Desc')->first();
+        if($this->trade_way == 1)
+            $lastInvoice = Invoice::withTrashed()->where('invoiceId', 'like', $prefix . '%')->limit(1)->orderBy('invoiceId', 'Desc')->first();
+        else
+            $lastInvoice = invoiceTrading::withTrashed()->where('invoiceId', 'like', $prefix . '%')->limit(1)->orderBy('invoiceId', 'Desc')->first();
 
         if (count($lastInvoice) > 0) {
             // extract latter part
@@ -271,6 +291,7 @@ class TradingOrderController extends BaseController
     {
         try {
             $this->im->save();
+            container::where('id',$this->temp_invoice_information['container_id'])->update(['trade_way'=>$this->trade_way,'invoiceId'=>$this->invoiceId]);
         } catch (Illuminate\Database\QueryException $e) {
             $debugs = new debug();
             $debugs->content = $this->temp_invoice_information['clientId'];

@@ -108,8 +108,11 @@ $scope.findDate = function(){
 
     $scope.clearSearch = function()
     {
-        $scope.filterData.supplier = "";
-        $scope.filterData.supplierCode = '';
+        $scope.filterData.supplier = '';
+        $scope.filterData.productId= '';
+        $scope.filterData.poCode= '';
+        $scope.filterData.supplierCode= '';
+
         $scope.updateDataSet();
     }
 
@@ -183,8 +186,8 @@ $scope.findDate = function(){
 
 
                         { "data": "receivingId" ,"width": "5%"},
-                        { "data": "purchaseorder.supplier.supplierName","width": "15%" },
-                        { "data": "purchaseorder.supplier.countryId" ,"width": "5%"},
+                        { "data": "supplierName","width": "15%" },
+                        { "data": "countryId" ,"width": "5%"},
                         { "data": "poCode","width": "6%" },
                         { "data": "shippingId","width": "8%" },
                         { "data": "containerId" ,"width": "10%"},
