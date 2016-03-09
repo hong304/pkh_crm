@@ -177,6 +177,7 @@ class VanSellController extends BaseController
                                 'productId' => $v->productId,
                                 'productlevel' => $v->productlevel,
                                 'unit'=>$v->unit,
+                                'name'=>$v->name,
                                 'qty' => (isset($merge[$v->productId][$v->productlevel]) ? $merge[$v->productId][$v->productlevel]['qty'] : 0) + $v->qty,
                             ];
                         }
@@ -196,6 +197,7 @@ class VanSellController extends BaseController
                                     $savevansell->productId=$v1['productId'];
                                     $savevansell->productlevel=$v1['productlevel'];
                                     $savevansell->unit=$v1['unit'];
+                                    $savevansell->name=$v1['name'];
                                 }
                                 $savevansell->qty = $v1['qty'];
                                 $savevansell->save();
