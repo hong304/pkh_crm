@@ -141,6 +141,11 @@ $scope.totalline = 0;
     }
 
     $scope.finalsubmitnextvanqty=function(){
+
+        if(!$scope.prepareforreport){
+            alert('請先按提交');
+            return false;
+        }
         $http.post(querytarget, {output: "vanPost", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine}) //getVansellreport.json
             .success(function(res){
 
@@ -154,7 +159,6 @@ $scope.totalline = 0;
                 return false;
             $scope.allowSubmission=false;
         }
-
         $scope.prepareforreport = true;
     	$http.post(querytarget, {output: "preview", filterData: $scope.filterData, mode: i}) //getVansellreport.json
             .success(function(res){
