@@ -589,7 +589,7 @@ class Invoice_9FPickingList {
 //end of show carton summary on last page*/
 
 // handle groceries goods
-
+/*
         $ninef1 = $this->data['groceries'];
         $newway1 = [];
 
@@ -686,14 +686,14 @@ class Invoice_9FPickingList {
             // define left right position coordinate x differences
             $y = 55;
             $base_x = 10;
-            /*  if($index % 2 == 0)
-              {
-                  $base_x = 5;
-              }
-              else
-              {
-                  $base_x = 110;
-              }*/
+            // if($index % 2 == 0)
+             // {
+             //     $base_x = 5;
+             // }
+             // else
+             // {
+             //     $base_x = 110;
+             // }
 
             foreach($order as $o)
             {
@@ -748,6 +748,8 @@ class Invoice_9FPickingList {
                 //  $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
             }
         }
+
+        */
 // handle groceries goods
 
        // $pdf->Output('', 'I');
