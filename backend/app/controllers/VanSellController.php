@@ -190,7 +190,6 @@ class VanSellController extends BaseController
                                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('productId',$v1['productId'])->first();
                                 if(count($savevansell)==0){
                                     $savevansell = new vansell();
-                                    $savevansell->self_define=1;
                                     $savevansell->zoneId=$this->_zone;
                                     $savevansell->date=$this->_date;
                                     $savevansell->shift=$this->_shift;
