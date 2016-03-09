@@ -4,6 +4,7 @@ app.controller('reportvansellCtrl', function($scope, $http, SharedService, $time
 
 	var querytarget = endpoint + "/getVansellreport.json";
     $scope.allowSubmission = true;
+    $scope.prepareforreport = false;
 
 	$scope.report = "";
 	$scope.filterData = {
@@ -140,18 +141,6 @@ $scope.totalline = 0;
         $scope.show = $scope.setting.shift[$scope.filterData.zone.value];
     }
 
-    $scope.finalsubmitnextvanqty=function(){
-
-        if(!$scope.prepareforreport){
-            alert('請先按提交');
-            return false;
-        }
-        $http.post(querytarget, {output: "vanPost", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine}) //getVansellreport.json
-            .success(function(res){
-
-            });
-    }
-
     $scope.loadReport = function(i)
     {
         if(i==0){
@@ -159,7 +148,7 @@ $scope.totalline = 0;
                 return false;
             $scope.allowSubmission=false;
         }
-        $scope.prepareforreport = true;
+
     	$http.post(querytarget, {output: "preview", filterData: $scope.filterData, mode: i}) //getVansellreport.json
             .success(function(res){
 
@@ -168,7 +157,6 @@ $scope.totalline = 0;
             $scope.report_selfdefine = res.selfdefine;
             $scope.preload_check = res.preload_check;
 
-                console.log(res.selfdefine);
 
            $scope.info = [];
                 var i = 0;
@@ -224,6 +212,8 @@ $scope.totalline = 0;
                 });
                 $scope.initline = j;
                 $scope.totalline = $scope.initline;
+
+              //  $scope.prepareforreport = true;
     		    Metronic.unblockUI();
     	});
     }

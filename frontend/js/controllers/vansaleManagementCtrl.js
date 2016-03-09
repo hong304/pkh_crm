@@ -4,7 +4,7 @@ app.controller('vansaleManagementCtrl', function($scope, $http, SharedService, $
 
 	var querytarget = endpoint + "/getVansellreport.json";
     $scope.allowSubmission = true;
-
+$scope.prepareforreport = false;
 	$scope.report = "";
 	$scope.filterData = {
 			'shift' : '1',
@@ -190,6 +190,12 @@ $scope.totalline = 0;
     }
 
     $scope.finalsubmitnextvanqty=function(){
+
+        if(!$scope.prepareforreport){
+            alert('請按提交,再產生PDF');
+            return false;
+        }
+
         $http.post(querytarget, {output: "vanPost", filterData: $scope.filterData,data:$scope.info,selfdefine:$scope.selfdefine}) //getVansellreport.json
             .success(function(res){
                 $scope.preload_check = res.preload_check;
@@ -214,7 +220,7 @@ $scope.totalline = 0;
 
         }
 
-        $scope.prepareforreport = true;
+
     	$http.post(querytarget, {output: "preview", filterData: $scope.filterData, mode: i,data:$scope.info,selfdefine:$scope.selfdefine}) //getVansellreport.json
             .success(function(res){
 
@@ -286,6 +292,7 @@ $scope.totalline = 0;
                 });
                 $scope.initline = j;
                 $scope.totalline = $scope.initline;
+                $scope.prepareforreport = true;
     		    Metronic.unblockUI();
     	});
     }
