@@ -176,6 +176,7 @@ class VanSellController extends BaseController
                             $merge[$v->productId][$v->productlevel] = [
                                 'productId' => $v->productId,
                                 'productlevel' => $v->productlevel,
+                                'unit'=>$v->unit,
                                 'qty' => (isset($merge[$v->productId][$v->productlevel]) ? $merge[$v->productId][$v->productlevel]['qty'] : 0) + $v->qty,
                             ];
                         }
@@ -187,6 +188,15 @@ class VanSellController extends BaseController
                         foreach ($merge as $v) {
                             foreach($v as $v1){
                                 $savevansell = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->where('productId',$v1['productId'])->first();
+                                if(count($savevansell)==0){
+                                    $savevansell->self_define=1;
+                                    $savevansell->zoneId=$this->_zone;
+                                    $savevansell->date=$this->_date;
+                                    $savevansell->shift=$this->_shift;
+                                    $savevansell->productId=$v1['productId'];
+                                    $savevansell->productlevel=$v1['productlevel'];
+                                    $savevansell->unit=$v1['unit'];
+                                }
                                 $savevansell->qty = $v1['qty'];
                                 $savevansell->save();
                             }
