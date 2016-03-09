@@ -96,7 +96,10 @@ class VanSellController extends BaseController
         }
 
         if($this->_output =='unlock'){
-            vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'1']);
+            $v = vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->first();
+            $v->status = '1';
+            $v->save();
+
             $van_exist = vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->lists('status');
             $this->_data['preload_check'] = $van_exist[0];
             return Response::json($this->_data);
@@ -194,7 +197,9 @@ class VanSellController extends BaseController
                // pd($merge);
 
             }else if(Input::get('mode')=='1'){ //double confirm
-                vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->update(['status'=>'11']);
+                $v = vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->first();
+                $v->status = '11';
+                $v->save();
 
                 $this->updateSelfDefine();
 
