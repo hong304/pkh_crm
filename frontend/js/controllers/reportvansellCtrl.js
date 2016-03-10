@@ -213,7 +213,7 @@ $scope.totalline = 0;
                 $scope.initline = j;
                 $scope.totalline = $scope.initline;
 
-              //  $scope.prepareforreport = true;
+                $scope.prepareforreport = true;
     		    Metronic.unblockUI();
     	});
     }
