@@ -63,6 +63,9 @@ class inventoryController extends BaseController {
         if($mode == 'collection')
         {
 
+            if(!Auth::user()->can('view_inventoryHistory')){
+                return Response::json('Permission Denied');
+            }
 
             $adjusts = Adjust::with('receiving');
 

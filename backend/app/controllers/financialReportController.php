@@ -5,6 +5,12 @@ class financialReportController extends BaseController
 
     private $_date,$_date2,$_unPaid = '';
 
+    public function __construct(){
+        if(!Auth::user()->can('view_financialReport')){
+            return Response::json('Permission Denied');
+        }
+    }
+
     public function getYearEndReport(){
 
         ini_set('memory_limit', '-1');
@@ -702,12 +708,6 @@ class financialReportController extends BaseController
         }
     }
 
-
-
-
-
-
-    
     public function outputCashAndCredit()
     {
         $filter = Input::get('filterData');
