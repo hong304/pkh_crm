@@ -220,7 +220,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
      });
      }*/
 
-    $scope.getLastItem = function (productId, clientId, i, q) {
+   /* $scope.getLastItem = function (productId, clientId, i, q) {
 
         var target = endpoint + '/getLastItem.json';
         $http.post(target, {productId: productId})
@@ -245,7 +245,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
                     }
                 });
 
-    }
+    }*/
 
     $scope.updateDiscount = function ()
     {
@@ -657,7 +657,7 @@ app.controller('PoMain', function ($rootScope, $scope, $http, $timeout, SharedSe
             $scope.updateStandardPrice(i);
 
             if (flag != 'unload')
-                $scope.getLastItem(code, $scope.order.clientId, i, 0);
+               // $scope.getLastItem(code, $scope.order.clientId, i, 0);
 
             // console.log($scope.lastitem);
 

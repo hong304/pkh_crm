@@ -178,6 +178,11 @@ class ReceiveMan
 
                  $products = Product::where('productId',$i['productId'])->first();
                  $products->productCost_unit = $i['carton_cost'];
+                 if($i['supplier_interval']=='inner'){
+                     $products->supplierStdPrice_inner = $i['rec_receivePrice'];
+                 }else if ($i['supplier_interval']=='unit'){
+                     $products->supplierStdPrice_unit = $i['rec_receivePrice'];
+                 }
                  $products->timestamps = false;
                  $products->save();
                }
