@@ -34,20 +34,25 @@
 			</div>
 		</div>
 
-        <!--Invoice No.-->
+
 		<div class="portlet light">
-			<div class="portlet-title">
-				<div class="caption">
-					<i class="fa fa-cogs font-green-sharp"></i>
-					<span class="caption-subject font-green-sharp bold uppercase">船務編號</span>
-				</div>				
-			</div>
-			
-			<div class="portlet-body">				
+
+			<div class="portlet-body">
 				<div class="md-col-12" style="margin-bottom:15px;">
-					<input type="text" id="poCode" ng-model="keywordship.shippingId" ng-change="updateStatus();" class="form-control" placeholder="">
+					<input type="text" id="poCode" ng-model="keywordship.shippingId" ng-change="updateStatus();" class="form-control" placeholder="shippping ID">
+				</div>
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="containerNo" ng-model="keywordship.containerNo" ng-change="updateStatus();" class="form-control" placeholder="Container No.">
+				</div>
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="productName" ng-model="keywordship.productName" ng-change="updateStatus();" class="form-control" placeholder="Product Name">
+				</div>
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="original" ng-model="keywordship.original" ng-change="updateStatus();" class="form-control" placeholder="original">
 				</div>
 			</div>
+
+
 		</div>
 
 		<!-- Status -->

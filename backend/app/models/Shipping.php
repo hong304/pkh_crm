@@ -2,6 +2,21 @@
 
 class Shipping extends Eloquent  {
 
+    public function containers() //containers
+    {
+        return $this->hasMany('container', 'shippingId', 'shippingId');
+    }
+
+    public function Supplier()
+    {
+        return $this->hasOne('Supplier', 'supplierCode', 'supplierCode');
+    }
+
+    public function purchaseOrder()
+    {
+        return $this->hasOne('Purchaseorder', 'poCode', 'poCode');
+    }
+
     public static function getFullShippment($ele)
     {
         $shippings = $ele;
@@ -25,20 +40,7 @@ class Shipping extends Eloquent  {
 
     }
     
-    public function containers() //containers
-    {
-	    return $this->hasMany('container', 'shippingId', 'shippingId');
-    }
-	
-	public function Supplier()
-	{
-            return $this->hasOne('Supplier', 'supplierCode', 'supplierCode');
-	}
-        
-        public function purchaseOrder()
-        {
-            return $this->hasOne('Purchaseorder', 'poCode', 'poCode');
-        }
+
         
   
 }

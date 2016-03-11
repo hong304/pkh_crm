@@ -2,10 +2,6 @@
 
 class Container extends Eloquent  {
     
-    public function productDetail()
-    {
-        return $this->hasOne('Product', 'productId', 'productId');
-    }
 
     public function containerproduct(){
         return $this->hasMany('containerproduct');

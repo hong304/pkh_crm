@@ -277,7 +277,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
         // initialize core components
         Metronic.initAjax();
 
-    if($location.search().container_id)
+    if($location.search().container_id || $location.search().invoiceId)
         {
 
 
@@ -296,7 +296,7 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
             // get full invoice information
             var target = endpoint + '/getfullContainerInfo.json';
 
-            $http.post(target, {container_id:$location.search().container_id})
+            $http.post(target, {container_id:$location.search().container_id,invoiceId:$location.search().invoiceId})
                 .success(function(res, status, headers, config){
 
 
@@ -310,7 +310,6 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
                     var i = 1;
                     res.containerproduct.forEach(function(item) {
                         $scope.product[i] = $.extend(true, {}, $scope.productStructure);
-                        $scope.product[i].itemdiscount = item.itemdiscount;
                         $scope.product[i].productPacking = item.productPacking;
                         $scope.product[i].qty = item.qty;
                         $scope.product[i].unit = item.unit;
@@ -335,6 +334,142 @@ app.controller('tradingController', function($rootScope, $scope, $http, $timeout
 
         }
 
+
+        if($location.search().invoiceId)
+        {
+
+            // get full invoice information
+            var target = endpoint + '/getSingleInvoice.json';
+
+            $http.post(target, {invoiceId: $location.search().invoiceId})
+                .success(function(data, status, headers, config){
+
+                    var date1 = new Date(data.workingDay);
+
+
+
+                    var res = data.invoice.client;
+                    var inf = data.invoice;
+
+                    console.log(inf.invoice_item);
+
+                    if (Date.parse(date1)/1000 > inf.deliveryDate)
+                        $scope.disAllowsubmit = true;
+
+                    // set client information
+                    $scope.order.zoneId = inf.zoneId;
+
+                    var zoneDB = $scope.systeminfo.availableZone;
+                    var pos = zoneDB.map(function(e) {
+                        return e.zoneId;
+                    }).indexOf(parseInt(inf.zoneId));
+
+                    if(typeof zoneDB[pos] == 'undefined'){
+                        $scope.allowSubmission = false;
+                        return false;
+                    }
+
+                    if($scope.systeminfo.user.id!=46){
+
+                        if(inf.lock == 1){
+                            Metronic.blockUI({
+                                target: '#orderportletbody',
+                                boxed: true,
+                                message: '你沒有權限修改此訂單'
+                            });
+                            $scope.allowSubmission = false;
+                            return false;
+                        }
+
+
+                        if((!$scope.systeminfo.permission.sa_up && (inf.invoiceStatus > 3 || inf.printed==1)) || (inf.invoiceStatus == 30 && $scope.disAllowsubmit) ){
+
+                            Metronic.blockUI({
+                                target: '#orderportletbody',
+                                boxed: true,
+                                message: '你沒有權限修改此訂單'
+                            });
+
+                            $scope.allowSubmission = false;
+                            return false;
+                        }
+                    }
+
+                    $scope.order.clientId = res.customerId;
+                    $scope.order.clientName = res.customerName_chi;
+                    $scope.order.address = res.address_chi;
+
+                    $scope.order.deliveryDate = inf.deliveryDate_date;
+                    $scope.order.dueDate = inf.dueDateDate;
+                    $scope.order.status = inf.invoiceStatus;
+
+
+
+
+                    $scope.order.zoneName = data.entrieinfo;
+                    $scope.order.route = res.routePlanningPriority;
+                    $scope.order.discount = inf.invoiceDiscount;
+                    $scope.displayName = $scope.order.clientId + " (" + $scope.order.clientName + ")";
+                    $scope.order.paymentTerms = inf.paymentTerms;
+                    $scope.order.shift = inf.shift;
+                    $scope.order.update = true;
+                    $scope.order.invoiceNumber = inf.invoiceId;
+                    $scope.order.invoiceId = inf.invoiceId;
+                    $scope.order.invoiceRemark = inf.invoiceRemark;
+                    $scope.order.referenceNumber = inf.customerRef;
+
+                   // $scope.updatePaymentTerms();
+                   // $scope.getAllLastItemPrice($scope.order.clientId);
+                    if(res.paymentTermId == 1)
+                    {
+
+                        $("#paymentTerms").attr('disabled', 'true');
+                        $("#duedatepicker").datepicker('remove');
+                    }
+                    else
+                    {
+                        $("#paymentTerms").removeAttr('disabled');
+                        $("#duedatepicker").datepicker({
+                            rtl: Metronic.isRTL(),
+                            orientation: "left",
+                            autoclose: true
+                        });
+                    }
+
+                    if(inf.invoiceStatus == 99)
+                    {
+                        $scope.allowSubmission = false;
+                    }
+                    else
+                    {
+                        // load customer product, first load full db, second load invoice-items
+                        //$scope.loadProduct($scope.order.clientId, inf.invoice_item);
+
+                        //console.log($scope.product);
+                        var i = 1;
+                        inf.invoice_item.forEach(function(item) {
+                           // console.log($scope.product[i]);
+                            $scope.product[i]['itemdiscount'] = item.productDiscount;
+                            $scope.product[i]['unitprice'] = item.productPrice;
+                            $scope.product[i]['dbid'] = item.invoiceItemId;
+                            i++;
+                           // $scope.itemlist.push(i);
+                        });
+
+
+
+                        Metronic.unblockUI();
+                    }
+
+
+
+
+                    $timeout(function(){
+                        //$(".productCodeField").inputmask("*");
+                    }, 2000);
+                });
+
+        }
 
 
     });
@@ -455,7 +590,7 @@ console.log($scope.order);
 
 
             $http.post(
-                endpoint + '/placeTradingOrder.json', {
+                endpoint + '/placeTradingOrder.json', { //placeTradingOrder
                     product : $scope.product,
                     order : $scope.order,
                 }).

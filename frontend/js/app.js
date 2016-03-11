@@ -1730,6 +1730,36 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }
         })
 
+        .state('shippingListing', {
+            url: "/shippingListing",
+            templateUrl: "views/shippingListing.html",
+            data: {pageTitle: '搜尋貨櫃', pageSubTitle: ''},
+
+            controller: "shippingListing",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootstrap-datepicker/css/datepicker3.css',
+                            assets + '/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+
+
+                            assets + '/css/dataTable/style.css',
+                            assets + '/global/plugins/datatables/all.min.js',
+                            assets + '/global/scripts/datatable.js',
+
+                            'js/controllers/shippingListing.js',
+                            'js/controllers/selectSupplierControl.js',
+                            //  'js/controllers/selectPoControl.js',
+                            //      'js/controllers/selectProductCtrl.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
         .state('ships', {
         url: "/ships",
         templateUrl: "views/shippingSchedule.html",            

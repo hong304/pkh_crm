@@ -1,0 +1,124 @@
+<style>
+    .dataTables_filter
+    {
+        display:none;
+    }
+</style>
+
+<form class="form-horizontal" role="form" id="queryInfo" data-ng-init="">
+
+    <div class="col-md-2">
+
+		<div class="portlet light">
+
+			<div class="portlet-body">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="poCode" ng-model="filterData.shippingId" ng-change="updateStatus();" class="form-control" placeholder="shippping ID">
+				</div>
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="containerNo" ng-model="filterData.containerNo" ng-change="updateStatus();" class="form-control" placeholder="Container No.">
+				</div>
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="productName" ng-model="filterData.productName" ng-change="updateStatus();" class="form-control" placeholder="Product Name">
+				</div>
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<input type="text" id="original" ng-model="filterData.original" ng-change="updateStatus();" class="form-control" placeholder="original">
+				</div>
+			</div>
+
+
+		</div>
+
+
+		<!-- ETA -->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-cogs font-green-sharp"></i>
+					<span class="caption-subject font-green-sharp bold uppercase">ETA</span>
+				</div>
+
+			</div>
+
+			<div class="portlet-body">
+				<div class="md-col-12" style="margin-bottom:15px;">
+					<div class="input-group  date " id="etaDate" data-date-format="yyyy-mm-dd" data-date-start-date="">
+						<input type="text" class="form-control" readonly ng-model="filterData.etaDate">
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+					</div>
+					至
+					<div class="input-group  date " id="etaDate2" data-date-format="yyyy-mm-dd" data-date-start-date="">
+						<input type="text" class="form-control" readonly ng-model="filterData.etaDate2">
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="portlet-body">
+				<div class="md-col-12">
+					<button type="button" ng-click="updateDataSet();" id="submitbutton" class="btn blue">提交</button>
+				</div>
+			</div>
+
+		</div>
+
+
+		<!-- Delivery Date -->
+
+
+
+
+		
+	</div>
+
+	<div class="col-md-10">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs font-green-sharp"></i>
+							<span class="caption-subject font-green-sharp bold uppercase">搜索結果</span>
+						</div>
+						
+					</div>
+					<div class="portlet-body">
+
+						<table class="table table-striped table-bordered table-hover" id="datatable_ajax">
+						<thead>
+							<tr role="row" class="heading">
+
+                                                                <th id="shippings.poCode" ng-click="click($event);">Supplier</th>
+                                                                <th ng-click="click($event);">Trading Term</th>
+																	<th>ETD</th>
+                                                                <th id="shippings.vesel" ng-click="click($event);">ETA</th>
+                                                                <th>Vessel</th>
+                                                                <th id="carrier" ng-click="click($event);">Container No.</th>
+								<th>Product ID</th>
+                                                                <th>Product name</th>
+																<th>Qty</th>
+								<th>Amount</th>
+
+
+							</tr>
+							
+						</thead>
+						<tbody>
+						</tbody>
+					</table>						
+					</div>
+				</div>
+				<!-- END EXAMPLE TABLE PORTLET-->
+			</div>
+		</div>
+    </div>
+</form>
+<!-- Select Client Modal -->
+<div ng-include="'/views/model_ship.html'"></div>
+
+<div ng-include="'/views/model_selectsupplier.html'"></div>

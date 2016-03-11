@@ -78,6 +78,8 @@ class TradingOrderController extends BaseController
             $this->invoiceId = $order['invoiceId'];
         }
 
+
+
         $orderrules = [
             'clientId' => ['required', 'exists:Customer,customerId'],
             'invoiceDate' => ['required'],
@@ -112,7 +114,7 @@ class TradingOrderController extends BaseController
         foreach ($raw as $p) {
             $products[$p->productId] = $p;
         }
-//pd($product);
+
         foreach ($product as $p) {
 
             $product = $products[$p['code']];
@@ -136,7 +138,7 @@ class TradingOrderController extends BaseController
         $this->__prepareInvoices();
         $this->saveInvoice();
 
-     // pd($this->items);
+
 
         foreach ($this->items as $i) {
 
@@ -145,6 +147,9 @@ class TradingOrderController extends BaseController
                     $item = InvoiceItem::where('invoiceItemId', $i['dbid'])->first();
                 else
                     $item = invoiceitemTrading::where('invoiceItemId', $i['dbid'])->first();
+
+
+
             } else {
                 if($this->trade_way == 1)
                     $item = new InvoiceItem();
@@ -152,6 +157,8 @@ class TradingOrderController extends BaseController
                     $item = new invoiceitemTrading();
 
             }
+
+
 
             $item->invoiceId = $this->invoiceId;
             $item->productId = $i['productId'];
@@ -177,7 +184,7 @@ class TradingOrderController extends BaseController
 
                             $item->invoiceId = $this->invoiceId;
                             $item->productId = $i['productId'];
-                            $item->productQtyUnit = $i['productQtyUnit']['value'];
+                            $item->productQtyUnit = $i['productQtyUnit'];
                             $item->productLocation = $i['productLocation'];
                             $item->productQty = $i['productQty'];
                             $item->productPrice = $i['productPrice'];
@@ -185,7 +192,7 @@ class TradingOrderController extends BaseController
                             $item->productRemark = $i['productRemark'];
                             $item->productStandardPrice = $i['productStandardPrice'];
                             $item->productUnitName = trim($i['productUnitName']);
-                            $item->approvedSupervisorId = $i['approvedSupervisorId'];
+                            $item->approvedSupervisorId = 27;
                         }
                     }
                 }
@@ -242,6 +249,7 @@ class TradingOrderController extends BaseController
             $this->im->created_at = time();
             $this->im->updated_at = time();
         } elseif ($this->action == 'update') {
+            $this->im->invoiceType = $this->temp_invoice_information['tradingCompany'];
             $this->im->zoneId = $this->temp_invoice_information['zoneId'];
             $this->im->receiveMoneyZone = $this->temp_invoice_information['zoneId'];
             $this->im->customerId = $this->temp_invoice_information['clientId'];
