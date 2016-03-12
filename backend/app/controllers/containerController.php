@@ -57,6 +57,8 @@ class containerController extends BaseController {
                 $shippingitems->where('supplierName',$filter['supplierName']);
             }
 
+
+
             $shippingitems->wherebetween('shippings.etaDate',[$filter['etaDate'],$filter['etaDate2']])->orderby($sorting, $current_sorting);
 
             //Dont add get() here

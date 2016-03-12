@@ -17,13 +17,16 @@ app.controller('shippingListing', function ($scope, $rootScope, $http, SharedSer
     
     $scope.filterData = {
         supplierName: '',
-        containerId:'',
         shippingId:'',
         status:'',
         etaDate:'',
         etaDate2: '',
         sorting: '',
         current_sorting: 'desc',
+        containerId:'',
+        original:'',
+        productName:''
+
     };
     
     $scope.shipInfo = {
