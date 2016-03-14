@@ -446,7 +446,7 @@ class InvoiceManipulation
 
                                 $dirty = true;
 
-                            }else if (!$dirty && $this->im->version >0){
+                            }else if (!$dirty && $this->im->version >0 && $this->im->version !=100){
                                 $item->new_added = null;
                             }
                         }
@@ -521,7 +521,9 @@ class InvoiceManipulation
             }
 
             if ($this->im->version > 0)
-                Invoice::where('invoiceId', $this->invoiceId)->update(['f9_picking_dl' => 0, 'revised' => 1, 'version' => 0]);
+                Invoice::where('invoiceId', $this->invoiceId)->update(['f9_picking_dl' => 0, 'version' => 0]);
+            if ($this->im->version !=100 && $this->im->version > 0)
+                Invoice::where('invoiceId', $this->invoiceId)->update(['f9_picking_dl' => 0, 'revised' => 1]);
 
             // $in = Invoice::where('invoiceId',$this->invoiceId)->with('invoiceItem')->first();
             //  $in->amount = $in->invoiceTotalAmount;
