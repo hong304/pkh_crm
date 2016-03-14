@@ -180,34 +180,30 @@ class OrderController extends BaseController
 
                      if ($dirty || !$p['dbid']) {
 
+                             if ($order['status'] != '96' && $order['status'] != '97'){
+                                 $receivings = Receiving::where('productId', $p['code'])->where('good_qty', '>=', $this->normalizedUnit($p))->first();
+                                 if (count($receivings) == null) {
+                                     if (count($dirtyItem) > 0)
+                                         foreach ($dirtyItem as $v) {
+                                             $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $v['invoiceItemId'])->where('productId', $v['productId'])->onlyTrashed()->get();
+                                             if (count($invoiceitembatchs) > 0)
+                                                 foreach ($invoiceitembatchs as $k1 => $v1) {
+                                                     $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
+                                                     $receivings->good_qty -= $v1->unit;
+                                                     $receivings->save();
+                                                     $v1->restore();
+                                                 }
+                                         }
+                                     return [
+                                         'result' => false,
+                                         'status' => 0,
+                                         'invoiceNumber' => '',
+                                         'invoiceItemIds' => 0,
+                                         'message' => $p['code'] . $p['name'] . '沒有足夠的存貨',
+                                     ];
+                                 }
 
-                         $receivings = Receiving::where('productId', $p['code'])->where('good_qty', '>=', $this->normalizedUnit($p))->first();
-                            if (count($receivings) == null) {
-
-                            if ($order['status'] != '96' && $order['status'] != '97') {
-                                 if(count($dirtyItem)>0)
-                                     foreach($dirtyItem as $v){
-                                         $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $v['invoiceItemId'])->where('productId', $v['productId'])->onlyTrashed()->get();
-                                         if (count($invoiceitembatchs) > 0)
-                                             foreach ($invoiceitembatchs as $k1 => $v1) {
-                                                 $receivings = Receiving::where('productId', $v1->productId)->where('receivingId', $v1->receivingId)->first();
-                                                 $receivings->good_qty -= $v1->unit;
-                                                 $receivings->save();
-                                                 $v1->restore();
-                                             }
-                                     }
-                             }
-
-                             return [
-                                 'result' => false,
-                                 'status' => 0,
-                                 'invoiceNumber' => '',
-                                 'invoiceItemIds' => 0,
-                                 'message' => $p['code'].$p['name']. '沒有足夠的存貨',
-                             ];
                          }
-
-
                      }
 
              }
