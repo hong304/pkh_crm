@@ -179,10 +179,12 @@ class OrderController extends BaseController
 
 
                      if ($dirty || !$p['dbid']) {
-                         $receivings = Receiving::where('productId', $p['code'])->where('good_qty', '>=', $this->normalizedUnit($p))->first();
-                         if (count($receivings) == null) {
+                         if ($order['status'] != '96' && $order['status'] != '97') {
 
-                             if ($order['status'] != '96' && $order['status'] != '97') {
+                         $receivings = Receiving::where('productId', $p['code'])->where('good_qty', '>=', $this->normalizedUnit($p))->first();
+                            if (count($receivings) == null) {
+
+
                                  if(count($dirtyItem)>0)
                                      foreach($dirtyItem as $v){
                                          $invoiceitembatchs = invoiceitemBatch::where('invoiceItemId', $v['invoiceItemId'])->where('productId', $v['productId'])->onlyTrashed()->get();
@@ -204,6 +206,8 @@ class OrderController extends BaseController
                                  'message' => $p['code'].$p['name']. '沒有足夠的存貨',
                              ];
                          }
+
+
                      }
 
              }
