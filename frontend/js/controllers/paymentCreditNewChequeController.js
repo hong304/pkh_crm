@@ -252,7 +252,7 @@ var fetchDataTimer = '';
         }
 
         if(!$scope.filterData.discount)
-            if($scope.totalAmount != $scope.filterData.amount) {
+            if($scope.totalAmount != Number($scope.filterData.amount).toFixed(2)) {
                 alert('需付金額不等於支票銀碼');
                 return false;
             }

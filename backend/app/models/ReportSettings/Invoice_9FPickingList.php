@@ -589,7 +589,7 @@ class Invoice_9FPickingList {
 //end of show carton summary on last page*/
 
 // handle groceries goods
-
+if($this->_shift == 2){
         $ninef1 = $this->data['groceries'];
         $newway1 = [];
 
@@ -749,7 +749,7 @@ class Invoice_9FPickingList {
             }
         }
 
-     
+}
 // handle groceries goods
 
        // $pdf->Output('', 'I');
