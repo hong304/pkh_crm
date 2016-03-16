@@ -1316,7 +1316,7 @@ SystemController::reportRecord($this->outputPDF());
                 $i->date = $this->_date;
                 $i->shift = $this->_shift;
                 $i->return_qty = isset($d['return_qty'])?$d['return_qty']:0;
-                $i->return_qty = isset($d['preload'])?$d['preload']:0;
+                $i->preload = isset($d['preload'])?$d['preload']:0;
                 $i->self_define = 1;
                 $i->save();
             }
