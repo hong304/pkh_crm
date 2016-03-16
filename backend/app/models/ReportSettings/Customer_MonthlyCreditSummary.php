@@ -1077,6 +1077,10 @@ for($start = 0;$start < count($dateRange);$start++)
                     $ref = ($v['customerRef'] != '') ? $v['customerRef'] : '';
                     $ref = ($ref != '') ? ' (' . $ref . ')' : '';
 
+                    if (substr($ref, 0, 2) == "CN" || substr($ref, 0, 2) == "DN") {
+                        $v['invoice'] = '';
+                    }
+
                     $pdf->setXY(40, $y);
                     $pdf->Cell(0, 0, $v['invoice'] . $ref, 0, 0, "L");
 

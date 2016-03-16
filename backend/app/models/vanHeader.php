@@ -14,6 +14,8 @@ class vanHeader extends Eloquent
                 $original= $model->getOriginal($attribute);
                 $x = new vanHeaderAudit();
                 $x->attribute = $attribute;
+                $x->zoneId = $model->zoneId;
+                $x->shift = $model->shift;
                 $x->data_from = $original;
                 $x->data_to = $value;
                 $x->created_by = Auth::user()->id;
