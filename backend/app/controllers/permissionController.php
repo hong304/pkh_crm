@@ -17,7 +17,7 @@ class permissionController extends Controller {
             exit;
         }
 
-        $roles = role::get();
+        $roles = role::orderby('order','asc')->get();
         foreach($roles as $pg)
         {
             $userGroup[] = [
