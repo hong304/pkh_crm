@@ -100,6 +100,26 @@ class inventoryController extends BaseController {
                 ON t.productId = t1.productId
                 SET total_qty=tqty');*/
 
+            $products = receiving::groupBy('productId')
+                ->selectRaw('sum(good_qty) as sum, productId')
+                ->lists('sum','productId');
+
+            $productId = receiving::groupBy('productId')
+                ->lists('productId');
+
+           /* DB::transaction(function() use ($products)
+            {
+                foreach ($products as $productId => $productValue) {
+                    DB::table('product')
+                        ->where('productId', $productId)
+                        ->update(array('total_good_qty' => $productValue));
+                }
+            });*/
+
+           // product::whereIn('productId',$productId)->update(['total_good_qty' => $products[]);
+          //  pd($products);
+          //  DB::update("UPDATE product SET total_good_qty = ((SELECT SUM(good_qty) FROM receivings WHERE receivings.productId = product.productId GROUP BY productId)/productPacking_inner/productPacking_unit)");
+
             $filter = Input::get('filterData');
 
             $receivings = Receiving::select('receivings.updated_at','poCode','productPackingName_carton','productPacking_unit','productPacking_inner','productPackingName_unit','id','receivings.productId','productName_chi','good_qty','total_qty','damage_qty','expiry_date','receivings.updated_by','receivings.updated_at','bin_location','on_hold_qty')->leftJoin('product','receivings.productId','=','product.productId');

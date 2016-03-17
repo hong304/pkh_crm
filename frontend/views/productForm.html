@@ -9,6 +9,24 @@
             </div>
 
 			<div class="modal-body">
+
+
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a data-target="#tab_general" data-toggle="tab">
+							基本設定 </a>
+					</li>
+					<li>
+						<a data-target="#tab_inventory" data-toggle="tab">
+							倉存設定 </a>
+					</li>
+				</ul>
+
+				<div class="tab-content no-space">
+
+
+					<div class="tab-pane active" id="tab_general">
+
 				<form action="javascript:;" class="form-horizontal">
 					<div class="form-body">
 
@@ -67,19 +85,6 @@
 
 						
 						<div class="form-group">
-							<label class="col-md-2 control-label">貨品位置 * (1/9)</label>
-							<div class="col-md-10">
-								
-								<select class="form-control" 
-										id="info.productLocation" 
-										ng-model="info.productLocation" 
-										data-ng-options="x.label for x in floorcat track by x.value" >
-									
-								</select>
-							</div>
-						</div>
-						
-						<div class="form-group">
 							<label class="col-md-2 control-label">售賣狀態*</label>
 							<div class="col-md-10">
 								
@@ -92,20 +97,7 @@
 							</div>
 						</div>
 
-						<div class="form-group">
-							<label class="col-md-2 control-label">購買狀態*</label>
-							<div class="col-md-10">
 
-								<select class="form-control"
-										id="info.supplierProductStatus"
-										ng-model="info.supplierProductStatus"
-										data-ng-options="x.label for x in supplierProductStatus track by x.value" >
-
-								</select>
-							</div>
-						</div>
-
-						
 						<div class="form-group">
 							<label class="col-md-2 control-label">包裝</label>
 							<div class="col-md-10">
@@ -113,13 +105,6 @@
 							</div>
 						</div>
 						
-						<div class="form-group" ng-if="systeminfo.permission.view_product_cost == true">
-							<label class="col-md-2 control-label">成本</label>
-							<div class="col-md-10">
-								<label class="control-label">${{info.productCost_unit}}/{{info.productPackingName_carton}}, ${{info.productCost_unit/info.productPacking_inner|number:2}}/{{info.productPackingName_inner}}, ${{info.productCost_unit/info.productPacking_inner/info.productPacking_unit|number:2}}/{{info.productPackingName_unit}}</label>
-							</div>
-						</div>
-
                         <div class="form-group">
                             <label class="col-md-2 control-label">佣金</label>
                             <div class="col-md-10">
@@ -208,7 +193,78 @@
 						
 					</div>
 				</form>
-				
+
+						</div>
+					<div class="tab-pane" id="tab_inventory">
+						<form action="javascript:;" class="form-horizontal">
+							<div class="form-body">
+
+								<div class="form-group">
+									<label class="col-md-2 control-label">產品編號</label>
+									<div class="col-md-10">
+										<label class="control-label"><span> {{info.productId}}</span></label>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-md-2 control-label">貨品位置 * (1/9)</label>
+									<div class="col-md-10">
+
+										<select class="form-control"
+												id="info.productLocation"
+												ng-model="info.productLocation"
+												data-ng-options="x.label for x in floorcat track by x.value" >
+
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-md-2 control-label">購買狀態*</label>
+									<div class="col-md-10">
+
+										<select class="form-control"
+												id="info.supplierProductStatus"
+												ng-model="info.supplierProductStatus"
+												data-ng-options="x.label for x in supplierProductStatus track by x.value" >
+
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group" ng-if="systeminfo.permission.view_product_cost == true">
+									<label class="col-md-2 control-label">成本</label>
+									<div class="col-md-10">
+										<label class="control-label">${{info.productCost_unit}}/{{info.productPackingName_carton}}, ${{info.productCost_unit/info.productPacking_inner|number:2}}/{{info.productPackingName_inner}}, ${{info.productCost_unit/info.productPacking_inner/info.productPacking_unit|number:2}}/{{info.productPackingName_unit}}</label>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-md-2 control-label">Max ({{info.productPackingName_carton}})</label>
+									<div class="col-md-10">
+										<input type="text" ng-model="info.max_level" class="form-control" placeholder="Enter number">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-md-2 control-label">Reorder ({{info.productPackingName_carton}})</label>
+									<div class="col-md-10">
+										<input type="text" ng-model="info.reorder_level" class="form-control" placeholder="Enter number">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-md-2 control-label">Min ({{info.productPackingName_carton}})</label>
+									<div class="col-md-10">
+										<input type="text" ng-model="info.min_level" class="form-control" placeholder="Enter number">
+									</div>
+								</div>
+
+								</div>
+							</form>
+						</div>
+
+				</div>
 			</div>
 			<div class="modal-footer">
 					<h2>{{newId}}</h2>
