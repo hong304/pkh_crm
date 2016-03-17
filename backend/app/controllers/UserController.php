@@ -198,14 +198,16 @@ class UserController extends BaseController {
         $user->disabled = $account['status']['value'];
 	    if(isset($account['password']))
 	    {
-	        $user->password = $account['password'];
+			if(Auth::user()->role[0]->level>=$account['roles']['level'])
+	        	$user->password = $account['password'];
 	    }
 	    $user->save();
 
         //pd(Input::all());
 
 	    // update role
-	    $user->roles()->sync(array($account['roles']['id']));
+		if(Auth::user()->role[0]->level>=$account['roles']['level'])
+	    	$user->roles()->sync(array($account['roles']['id']));
 	    
 	    
 	    // update zone
