@@ -48,7 +48,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'group'	:	'',
 			'keyword'	:	'',
             'status' : '',
-            'productLocation' : ''
+            'productLocation' : '',
+            'level' : ''
 		};
 
     $scope.hasCommission = '';
