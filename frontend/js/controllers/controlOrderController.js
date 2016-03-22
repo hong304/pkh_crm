@@ -382,7 +382,15 @@ else{
         // initialize core components
         Metronic.initAjax();
 
-
+        if(!$scope.systeminfo.permission.add_invoice){
+            Metronic.blockUI({
+                target: '#orderportletbody',
+                boxed: true,
+                message: '你沒有權限開新訂單'
+            });
+            $scope.allowSubmission = false;
+            return false;
+        }
 
         if($stateParams.action == 'success') {
             if($stateParams.instatus=='2'){
