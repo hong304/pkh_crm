@@ -88,7 +88,12 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
             'allowNegativePrice' : '',
             'allowSeparate' : '',
             'commissiongroup' : '',
-            'vansale' : ''
+            'vansale' : '',
+            'max_level' :'',
+            'reorder_level' : '',
+            'min_level' : ''
+
+
 	};
 	
 	$scope.submitbtn = true;
