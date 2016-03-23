@@ -607,7 +607,7 @@ class financialReportController extends BaseController
                         $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount'] = 0;
 
                     $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone] = [
-                        'totalAmount' => $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount'] += (($invoiceQ->invoiceStatus == '98')? -$invoiceQ->amount:$invoiceQ->amount),
+                        'totalAmount' => $info[$invoiceQ->paymentTerms][$invoiceQ->receiveMoneyZone]['totalAmount'] += $invoiceQ->amount,
                     ];
 
                 }

@@ -513,6 +513,8 @@ class Invoice_9FPickingList {
             }
               // pd($ninefproducts1);
 
+            $ii = 1;
+
             foreach($ninefproducts1 as $index=>$order)
             {
 
@@ -525,7 +527,7 @@ class Invoice_9FPickingList {
                 $this->generateHeader($pdf,'箱頭總匯');
 
                 $pdf->SetFont('chi','',11);
-                $pdf->setXY(105, 47);
+                $pdf->setXY(113, 47);
                 $pdf->Cell(0, 0, sprintf("%s     %s", '9樓負責人','1樓負責人', 0, 0, "L"));
 
                 $pdf->SetFont('chi','',10);
@@ -562,9 +564,13 @@ class Invoice_9FPickingList {
                 {
                     foreach($oo['items'] as $o){
 
+                                        $pdf->SetFont('chi','',12);
 
                                         $pdf->setXY($base_x + 0, $y);
-                                        $pdf->SetFont('chi','',12);
+                                        $pdf->Cell(0, 0, $ii, 0, 0, 'L');
+
+
+                                        $pdf->setXY($base_x + 10, $y);
                                         $pdf->Cell(0, 0, sprintf("%s - %s", $oo['productDetail']['productId'],$oo['productDetail']['productName_chi'], 0, 0, "L"));
 
 
@@ -574,13 +580,15 @@ class Invoice_9FPickingList {
 
 
                                         $pdf->SetFont('chi','',14);
-                                        $pdf->setXY($base_x + 100, $y);
+                                        $pdf->setXY($base_x + 108, $y);
                                         $pdf->Cell(0, 0, "[    ]        [    ]", 0, 0, 'L');
 
                                         $y += 10;
 
                                         $pdf->SetDash(1, 1);
-                                        $pdf->Line($base_x + 2, $y-5, $base_x + 200, $y-5);
+                                        $pdf->Line($base_x + 2, $y-5, $base_x + 190, $y-5);
+
+                        $ii++;
                     }
                 }
 
