@@ -163,6 +163,7 @@ class VanSellController extends BaseController
                     $vanheader->deliveryDate = $this->deliveryDate;
                     $vanheader->status = '1';
                     $vanheader->shift = $this->_shift;
+                    $vanheader->updated_by = Auth::user()->id;
                     $vanheader->save();
                 }
 
@@ -210,6 +211,7 @@ class VanSellController extends BaseController
 
             }else if(Input::get('mode')=='1'){ //double confirm
                 $v = vanHeader::where('zoneId', $this->_zone)->where('deliveryDate', $this->deliveryDate)->where('shift', $this->_shift)->first();
+                $v->updated_by = Auth::user()->id;
                 $v->status = '11';
                 $v->save();
 
@@ -257,13 +259,13 @@ $this->updateVanQty();
 
             $this->compileResults();
 
-SystemController::reportRecord($this->outputPDF());
+            SystemController::reportRecord($this->outputPDF());
 
 
             exit;
         }
 
-        if($this->_output == 'discrepancyPDF') {
+        if($this->_output == 'discrepancyPDF' || $this->_output == 'auditPdf') {
 
             if ($this->_shift == '-1')
                 $vansales = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->where('shift', $this->_shift)->with('products')->orderby('productId', 'asc')->get();
@@ -271,7 +273,7 @@ SystemController::reportRecord($this->outputPDF());
                 $vansales = vansell::where('zoneId', $this->_zone)->where('date', $this->_date)->whereIn('shift', [1, 2])->with('products')->orderby('productId', 'asc')->get();
 
             //pd($vansales);
-            $this->_reportTitle = '總匯對算表';
+
 
             foreach ($vansales as $v) {
                 $this->audit[$v['productId']][$v['productlevel']] = [
@@ -283,42 +285,20 @@ SystemController::reportRecord($this->outputPDF());
                     'qty' => (isset($this->audit[$v['productId']][$v['productlevel']]['qty']) ? $this->audit[$v['productId']][$v['productlevel']]['qty'] : 0) + $v->qty,
                     'org_qty' => (isset($this->audit[$v['productId']][$v['productlevel']]['org_qty']) ? $this->audit[$v['productId']][$v['productlevel']]['org_qty'] : 0) + $v->org_qty,
                     'return_qty' => (isset($this->audit[$v['productId']][$v['productlevel']]['return_qty']) ? $this->audit[$v['productId']][$v['productlevel']]['return_qty'] : 0) + $v->return_qty,
+                    'neg_qty' => (isset( $this->audit[$v['productId']][$v['productlevel']]['neg_qty']) ?  $this->audit[$v['productId']][$v['productlevel']]['neg_qty'] : 0) + $v->neg_qty,
                 ];
             }
-            SystemController::reportRecord($this->outputPDFAdiscrepancy());
-
+            if($this->_output == 'discrepancyPDF'){
+                $this->_reportTitle = '總匯對算表';
+                SystemController::reportRecord($this->outputPDFAdiscrepancy());
+            }else if ($this->_output == 'auditPdf'){
+                $this->_reportTitle = '回貨對算表';
+                $this->next_working_day = date('d/m',strtotime(Input::get('filterData.next_working_day')));
+                SystemController::reportRecord($this->outputPDFAudit());
+            }
 
         }
 
-        if($this->_output == 'auditPdf'){
-
-            if($this->_shift == '-1')
-                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->where('shift',$this->_shift)->with('products')->orderby('productId','asc')->get();
-            else
-                $vansales = vansell::where('zoneId',$this->_zone)->where('date',$this->_date)->whereIn('shift',[1,2])->with('products')->orderby('productId','asc')->get();
-
-            //pd($vansales);
-            $this->_reportTitle = '回貨對算表';
-
-            foreach($vansales as $v){
-                $this->audit[$v['productId']][$v['productlevel']] = [
-                    'productId' => $v->productId,
-                    'name' => $v->products->productName_chi,
-                    'unit' => $v['productlevel'],
-                    'unit_txt' => $v['unit'],
-                    'van_qty' => (isset( $this->audit[$v['productId']][$v['productlevel']]['van_qty']) ?  $this->audit[$v['productId']][$v['productlevel']]['van_qty'] : 0) + $v->van_qty,
-                    'qty' => (isset( $this->audit[$v['productId']][$v['productlevel']]['qty']) ?  $this->audit[$v['productId']][$v['productlevel']]['qty'] : 0) + $v->qty,
-                    'org_qty' => (isset( $this->audit[$v['productId']][$v['productlevel']]['org_qty']) ?  $this->audit[$v['productId']][$v['productlevel']]['org_qty'] : 0) + $v->org_qty,
-                ];
-            }
-
-
-
-            $this->next_working_day = date('d/m',strtotime(Input::get('filterData.next_working_day')));
-            SystemController::reportRecord($this->outputPDFAudit());
-
-
-        }
 
 
     }
@@ -364,7 +344,14 @@ SystemController::reportRecord($this->outputPDF());
             foreach ($invoiceQ['invoiceItem'] as $item) {
                 // determin its product location
 
+
                 if($item->productQty > 0){
+                    $pqty = $item->productQty;
+                    $nqty = 0;
+                }else if($item->productQty < 0){
+                    $nqty = $item->productQty*-1;
+                    $pqty = 0;
+                }
                     $productId = $item->productId;
 
                     //  $productDetail = $products[$productId];
@@ -376,13 +363,16 @@ SystemController::reportRecord($this->outputPDF());
                             'name' => $item->productDetail->productName_chi,
                             'unit' => $unit,
                             'unit_txt' => $item->productUnitName,
-                            'counts' => (isset($this->goods['1F'][$productId][$unit]) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $item->productQty,
+                            'counts' => (isset($this->goods['1F'][$productId][$unit]['counts']) ? $this->goods['1F'][$productId][$unit]['counts'] : 0) + $pqty,
+                            'neg_qty' => (isset($this->goods['1F'][$productId][$unit]['neg_qty']) ? $this->goods['1F'][$productId][$unit]['neg_qty'] : 0) + $nqty,
                             'van_qty' => 0,
                         ];
                     }
-                }
+
             }
         }
+
+
 
         if($this->_shift != '2'){ // if is not shift 2 , don't need copy preload qty to vansale list
 
@@ -396,6 +386,7 @@ SystemController::reportRecord($this->outputPDF());
                     'unit_txt' => $v['unit'],
                     'van_qty' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['van_qty'] : 0) + $v->van_qty,
                     'counts' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['counts'] : 0),
+                    'neg_qty' => (isset($this->goods['1F'][$v['productId']][$v['productlevel']]) ? $this->goods['1F'][$v['productId']][$v['productlevel']]['neg_qty'] : 0)
                 ];
             }
         }else{
@@ -417,9 +408,10 @@ SystemController::reportRecord($this->outputPDF());
 
         $this->_data = $this->goods['1F'];
 
-        $vansell_query = vansell::select('productId', 'productlevel','org_qty','van_qty')->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->get()->toArray();
+        $vansell_query = vansell::select('productId', 'productlevel','org_qty','van_qty','neg_qty')->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->get()->toArray();
         //$van_query = van::select('productId', 'productlevel','van_qty')->where('zoneId', $this->_zone)->where('deliveryDate', date('Y-m-d', $this->_date))->get()->toArray();
 
+//pd($this->_data);
 
         $allIds = [];
         $create = [];
@@ -439,7 +431,7 @@ SystemController::reportRecord($this->outputPDF());
 
                 foreach ($vansell_query as $k1 => $v1){ //vansale table data
                     if ($v1['productId'] == $v['productId'] && $v1['productlevel'] == $v['unit']) {
-                        if($v1['van_qty'] != $v['van_qty'] || $v1['org_qty']!=$v['counts'] || isset($this->shift1[$v['productId']][$v['unit']]['shift1'])){
+                        if($v1['van_qty'] != $v['van_qty'] || $v1['org_qty']!=$v['counts'] || $v1['neg_qty']!=$v['neg_qty'] || isset($this->shift1[$v['productId']][$v['unit']]['shift1'])){
                             $vansell = vansell::where('productId', $v['productId'])->where('productlevel', $v['unit'])->where('date', $this->_date)->where('shift', $this->_shift)->where('zoneId', $zone)->where('self_define', false)->first();
 
                             // if there is not self enter, qty will be updated auto from invoice qty
@@ -447,6 +439,7 @@ SystemController::reportRecord($this->outputPDF());
                            //    $vansell->qty = $v['counts'];
                             $vansell->org_qty = $v['counts'];
                             $vansell->van_qty = $v['van_qty'];
+                            $vansell->neg_qty = $v['neg_qty'];
                             if($this->_shift == '2'){
                                 $vansell->shift1_preload = isset($this->shift1[$v['productId']][$v['unit']]['shift1_preload'])?$this->shift1[$v['productId']][$v['unit']]['shift1_preload']:0;
                                 $vansell->shift1 = isset($this->shift1[$v['productId']][$v['unit']]['shift1'])?$this->shift1[$v['productId']][$v['unit']]['shift1']:0;
@@ -463,6 +456,7 @@ SystemController::reportRecord($this->outputPDF());
                     $create[$index]['name'] = $v['name'];
                     $create[$index]['unit'] = $v['unit_txt'];
                     $create[$index]['org_qty'] = $v['counts'];
+                    $create[$index]['neg_qty'] = $v['neg_qty'];
                     $create[$index]['productlevel'] = $v['unit'];
                     $create[$index]['van_qty'] = $v['van_qty'];
                     $create[$index]['date'] = $this->_date;
@@ -663,7 +657,7 @@ SystemController::reportRecord($this->outputPDF());
 
         foreach($this->audit as $k=> &$v){
             foreach($v as $k1=> &$u) {
-                if (($u['van_qty']+$u['qty']) - $u['org_qty'] - $u['return_qty'] == 0) {
+                if (($u['van_qty']+$u['qty']+$u['neg_qty']) - $u['org_qty'] - $u['return_qty'] == 0) {
                     unset($this->audit[$k][$k1]);
                 }
             }
@@ -751,7 +745,7 @@ SystemController::reportRecord($this->outputPDF());
 
                     $pdf->setXY(120, $y);
                     $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, sprintf('%s',$v1['org_qty']), 0, 0, "L");
+                    $pdf->Cell(0, 0, sprintf('%s',$v1['org_qty']-$v1['neg_qty']), 0, 0, "L");
 
                     $pdf->setXY(150, $y);
                     $pdf->SetFont('chi', '', 13);
@@ -759,7 +753,7 @@ SystemController::reportRecord($this->outputPDF());
 
                     $pdf->setXY(180, $y);
                     $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty']) - $v1['org_qty']-$v1['return_qty'],$v1['unit_txt']), 0, 0, "L");
+                    $pdf->Cell(0, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty'] + $v1['neg_qty']) - $v1['org_qty']-$v1['return_qty'],$v1['unit_txt']), 0, 0, "L");
 
 
 
@@ -807,7 +801,7 @@ SystemController::reportRecord($this->outputPDF());
 
         foreach($this->audit as $k=> &$v){
             foreach($v as $k1=> &$u) {
-                if ($u['van_qty'] + $u['qty'] - $u['org_qty'] == 0) {
+                if ($u['van_qty'] + $u['qty'] + $u['neg_qty'] - $u['org_qty'] == 0) {
                     unset($this->audit[$k][$k1]);
                 }
             }
@@ -889,7 +883,7 @@ SystemController::reportRecord($this->outputPDF());
 
                         $pdf->setXY(100, $y);
                         $pdf->SetFont('chi', '', 13);
-                        $pdf->Cell(10, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty']) - $v1['org_qty'],$v1['unit_txt']), 0, 0, "R");
+                        $pdf->Cell(10, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty'] + $v1['neg_qty']) - $v1['org_qty'],$v1['unit_txt']), 0, 0, "R");
 
                         $pdf->setXY(130, $y);
                         $pdf->SetFont('chi', '', 13);
