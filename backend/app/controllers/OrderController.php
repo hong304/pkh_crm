@@ -623,7 +623,7 @@ class OrderController extends BaseController
         $returnInformation = [
             'invoice' => array_values($invoice['categorized'])[0]['invoices'][0],
             'entrieinfo' => array_values($invoice['categorized'])[0]['zoneName'],
-            'workingDay' => SystemController::getPreviousDay(5),
+            //'workingDay' => SystemController::getPreviousDay(5),
         ];
         return Response::json($returnInformation);
     }

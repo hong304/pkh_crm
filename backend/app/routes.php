@@ -837,8 +837,8 @@ Route::get('cron/completeOrder',function(){
     $accurage_date = date('Y-m-d', strtotime('-'.$count.' days', strtotime($days_ago)));
 
 
-    Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',1)->where('invoiceStatus',2)->where('discount',0)->update(['invoiceStatus'=>'30','paid'=>DB::raw('amount')]);
-    Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',1)->update(['lock'=>1]);
+    Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',1)->where('invoiceStatus',2)->where('discount',0)->update(['invoiceStatus'=>'30','paid'=>DB::raw('amount')]); //Auto complete all COD normal invoice
+    Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',1)->update(['lock'=>1]); //All COD invoices
     Invoice::where('deliveryDate','<=',strtotime($accurage_date))->where('paymentTerms',2)->where('invoiceStatus',2)->update(['invoiceStatus'=>'20']);
 
     $accurage_date = '\''.$accurage_date.'\'';
