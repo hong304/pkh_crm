@@ -47,7 +47,7 @@
 										<label>{{invoiceinfo.invoiceRemark}}</label>
 									</div>
 								</div>
-								
+
 								<div class="row">
 									<div class="col-md-2">
 										<label>車號／車站</label>
@@ -56,12 +56,29 @@
 										<label>{{invoiceinfo.zoneId}} / {{invoiceinfo.routePlanningPriority}}</label>
 									</div>
 									<div class="col-md-2">
-										<label>下單員工</label>
+										<label>參考編號</label>
 									</div>
 									<div class="col-md-4">
-										<label>{{invoiceinfo.staff.name}}</label>
+										<label>{{invoiceinfo.customerRef}}</label>
 									</div>
 								</div>
+
+										<div class="row">
+											<div class="col-md-2">
+												<label>付款方式</label>
+											</div>
+											<div class="col-md-4">
+												<label>{{invoiceinfo.paymentTermsText}}</label>
+											</div>
+
+
+											<div class="col-md-2">
+												<label>下單員工</label>
+											</div>
+											<div class="col-md-4">
+												<label>{{invoiceinfo.staff.name}}</label>
+											</div>
+										</div>
 							</div>
 						</div>
 					
