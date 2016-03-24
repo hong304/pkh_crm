@@ -347,7 +347,7 @@ class PaymentController extends BaseController
             $sum = 0;
 
             //  $invoice_info = Invoice::whereBetween('deliveryDate',[$start_date,$end_date])->wherein('invoiceStatus',[2,20,98])->where('amount','!=',DB::raw('paid*-1'))->where('discount',0)->whereIn('customerId',$customerId)->with('client')->get();
-            $invoice_info = Invoice::whereBetween('deliveryDate', [$start_date, $end_date])->whereIn('customerId', $customerId)->wherein('invoiceStatus', [2, 20, 98])->where('manual_complete',false)->where('amount', '!=', DB::raw('paid*-1'))->where('discount', 0)->OrderBy('customerId', 'asc')->orderBy('deliveryDate')->get();
+            $invoice_info = Invoice::whereBetween('deliveryDate', [$start_date, $end_date])->where('paymentTerms',2)->whereIn('customerId', $customerId)->wherein('invoiceStatus', [2, 20, 98])->where('manual_complete',false)->where('amount', '!=', DB::raw('paid*-1'))->where('discount', 0)->OrderBy('customerId', 'asc')->orderBy('deliveryDate')->get();
 
             $discount = Customer::select('discount')->whereIn('customerId', $customerId)->first();
             foreach ($invoice_info as $v) {
