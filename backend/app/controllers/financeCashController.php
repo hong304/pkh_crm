@@ -230,9 +230,10 @@ class financeCashController extends BaseController {
 
 
                 if($i->paid >= $i->amount || $v['discount'] == 1)
-                    if($i->invoiceStatus == 2 || $i->invoiceStatus == 20)
+                    if($i->invoiceStatus == 2 || $i->invoiceStatus == 20){
                         $i->invoiceStatus = 30;
-                $i->manual_complete = 1;
+                        $i->manual_complete = 1;
+                    }
                 $i->discount = $v['discount'];
                 if(isset($ij['discount']))
                     $i->discount = 1;
