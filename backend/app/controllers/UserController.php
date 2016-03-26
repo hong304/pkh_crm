@@ -237,7 +237,8 @@ class UserController extends BaseController {
         $user->verified = 1;
         $user->save();
 
-        $user->roles()->sync(array($e['groups']['value']));
+       // $user->roles()->sync(array($e['groups']['value']));
+        $user->roles()->sync(['4']);
 
         $i = 0;
 
