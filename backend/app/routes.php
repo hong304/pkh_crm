@@ -664,12 +664,14 @@ Route::get('/cron/resetOrderTrace', function(){
    // $current_year = date('Y');
    // $current_month = date("n");
 
-    for ($current_year = 2015; $current_year <=date('Y');$current_year++) {
+    for ($current_year = 2015; $current_year <date('Y');$current_year++) {
 
         if ($current_year != date('Y'))
             $current_month = 12;
         else
             $current_month = date("n");
+
+
 
         for ($month = 1; $month <= $current_month; $month++) {
             $first_minute = mktime(0, 0, 0, $month, 1, $current_year);
@@ -678,11 +680,10 @@ Route::get('/cron/resetOrderTrace', function(){
         }
     }
 
-
-
     // update datawarehouse_custoemr table.
     foreach($times as $k1=>$v1){
         foreach($v1 as $k => $v){
+
 
         $info =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
        /* $info_return =  DB::select(DB::raw('SELECT COUNT(1) as total, sum(amount) as amount,customerId FROM invoice WHERE invoiceStatus =98 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].' GROUP BY customerId'));
@@ -692,7 +693,7 @@ Route::get('/cron/resetOrderTrace', function(){
             $arr[$v->customerId]['amount'] = $v->amount;
         }*/
         if(count($info)>0){
-            datawarehouse_customer::where('month',$k)->where('year',$current_year)->delete();
+            datawarehouse_customer::where('month',$k)->where('year',$k1)->delete();
             foreach($info as $v1){
                 $save = new datawarehouse_customer();
                 $save->customer_id = $v1->customerId;
@@ -706,12 +707,12 @@ Route::get('/cron/resetOrderTrace', function(){
                // }
 
                 $save->month = $k;
-                $save->year = $current_year;
+                $save->year = $k1;
                 $save->save();
             }
-            echo $k."月<br>";
+            echo 'customer:'.$k1."年".$k."月<br>";
         }else{
-            echo "no data";
+            echo "customer: no data<br>";
         }
 
         }
@@ -779,18 +780,18 @@ Route::get('/cron/resetOrderTrace', function(){
             }
 
             if (count($invoiceQ) > 0) {
-                datawarehouse_product::where('month', $k)->where('year', $current_year)->delete();
-                foreach ($invoiceQ as $k1 => $v1) {
+                datawarehouse_product::where('month', $k)->where('year', $k1)->delete();
+                foreach ($invoiceQ as $k2 => $v1) {
                     $save = new datawarehouse_product();
                     $save->data_product_id = $v1['productId'];
                     $save->amount = $v1['amount'];
                     $save->qty = $v1['cartonQtys'];
                     $save->unitName = $v1['cartonName'];
                     $save->month = $k;
-                    $save->year = $current_year;
+                    $save->year = $k1;
                     $save->save();
                 }
-                echo $k . "月<br>";
+                echo $k1.'年'.$k . "月<br>";
             }
         }
     }
