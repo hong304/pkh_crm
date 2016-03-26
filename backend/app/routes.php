@@ -664,7 +664,7 @@ Route::get('/cron/resetOrderTrace', function(){
    // $current_year = date('Y');
    // $current_month = date("n");
 
-    for ($current_year = 2015; $current_year <date('Y');$current_year++) {
+    for ($current_year = 2015; $current_year <=date('Y');$current_year++) {
 
         if ($current_year != date('Y'))
             $current_month = 12;
@@ -723,7 +723,7 @@ Route::get('/cron/resetOrderTrace', function(){
 
 // update datawarehouse_product table;
     foreach($times as $k1=>$v1){
-        foreach($v1 as $k => $v) {
+        foreach($v1 as $k => $time_period) {
             $invoiceQ = [];
             // $info =  DB::select(DB::raw('SELECT SUM(productQty) as total, sum(productQty*productPrice) as amount,productId FROM invoiceitem WHERE invoiceId IN (SELECT invoiceId FROM invoice WHERE invoiceStatus !=99 and invoiceStatus !=98 and invoiceStatus !=97 and invoiceStatus !=96 and deliveryDate BETWEEN '.$v[0].' AND '.$v[1].') GROUP BY productId'));
 
@@ -742,7 +742,7 @@ Route::get('/cron/resetOrderTrace', function(){
                 })
                 ->leftJoin('Invoice', function ($join) {
                     $join->on('invoiceitem.invoiceId', '=', 'Invoice.invoiceId');
-                })->whereNotIn('invoiceStatus', [97, 96, 99])->wherebetween('deliveryDate', [$v[0], $v[1]])
+                })->whereNotIn('invoiceStatus', [97, 96, 99])->wherebetween('deliveryDate', [$time_period[0], $time_period[1]])
                 ->orderBy('deliveryDate')
                 ->get();
 
