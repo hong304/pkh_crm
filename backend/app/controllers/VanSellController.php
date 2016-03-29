@@ -290,7 +290,7 @@ $this->updateVanQty();
             }
             if($this->_output == 'discrepancyPDF'){
                 $this->_reportTitle = '總匯對算表';
-                SystemController::reportRecord($this->outputPDFAdiscrepancy());
+                SystemController::reportRecord($this->outputPDFdiscrepancy());
             }else if ($this->_output == 'auditPdf'){
                 $this->_reportTitle = '回貨對算表';
                 $this->next_working_day = date('d/m',strtotime(Input::get('filterData.next_working_day')));
@@ -647,7 +647,7 @@ $this->updateVanQty();
 
 
 
-    public function outputPDFAdiscrepancy()
+    public function outputPDFdiscrepancy()
     {
 
         $pdf = new PDF();
@@ -751,9 +751,21 @@ $this->updateVanQty();
                     $pdf->SetFont('chi', '', 13);
                     $pdf->Cell(0, 0, sprintf('%s',$v1['return_qty']), 0, 0, "L");
 
-                    $pdf->setXY(180, $y);
-                    $pdf->SetFont('chi', '', 13);
-                    $pdf->Cell(0, 0, sprintf('%s%s', ($v1['van_qty'] + $v1['qty'] + $v1['neg_qty']) - $v1['org_qty']-$v1['return_qty'],$v1['unit_txt']), 0, 0, "L");
+
+
+                    if ( ($v1['van_qty'] + $v1['qty'] + $v1['neg_qty']) - $v1['org_qty']-$v1['return_qty'] < 0){
+                        $discrepancy = (($v1['van_qty'] + $v1['qty'] + $v1['neg_qty']) - $v1['org_qty']-$v1['return_qty'])*-1;
+                        $discrepancy_text = '多';
+                    }else {
+                        $discrepancy = (($v1['van_qty'] + $v1['qty'] + $v1['neg_qty']) - $v1['org_qty'] - $v1['return_qty']);
+                        $discrepancy_text = '少';
+                    }
+
+                  //  $pdf->setXY(170, $y);
+                  //  $pdf->Cell(0, 0, sprintf('%s',$discrepancy_text), 0, 0, "L");
+
+                    $pdf->setXY(190, $y);
+                    $pdf->Cell(1, 0, sprintf('%s %s %s',$discrepancy_text,$discrepancy ,$v1['unit_txt']), 0, 0, "R");
 
 
 
