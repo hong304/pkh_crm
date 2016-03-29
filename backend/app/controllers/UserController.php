@@ -206,7 +206,8 @@ class UserController extends BaseController {
         //pd(Input::all());
 
 	    // update role
-		if(Auth::user()->role[0]->level>=$account['roles']['level'])
+        // level 8 = Sales Manager
+		if(Auth::user()->role[0]->level>=8)
 	    	$user->roles()->sync(array($account['roles']['id']));
 	    
 	    
@@ -236,7 +237,8 @@ class UserController extends BaseController {
         $user->verified = 1;
         $user->save();
 
-        $user->roles()->sync(array($e['groups']['value']));
+       // $user->roles()->sync(array($e['groups']['value']));
+        $user->roles()->sync(['4']);
 
         $i = 0;
 
