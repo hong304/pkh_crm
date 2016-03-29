@@ -146,7 +146,9 @@ $scope.totalline = 0;
         $scope.allowSubmission = true;
         $scope.show = $scope.setting.shift[$scope.filterData.zone.value];
 
-
+        if($scope.show != 2){
+            $scope.filterData.shift = 1;
+        }
 
 
 
