@@ -17,23 +17,37 @@ class receiveController extends BaseController {
                                 $query->where('supplierCode', 'LIKE', '%' . $filterData['supplierCode'] . '%');
                             if (isset($filterData['supplierName']))
                                 $query->where('supplierName', 'LIKE', '%' . $filterData['supplierName'] . '%');
-                            if (isset($filterData['phone_1']))
+                           /* if (isset($filterData['phone_1']))
                                 $query->orwhere('phone_1', 'LIKE', '%' . $filterData['phone'] . '%');
                             if (isset($filterData['phone_2']))
-                                $query->orwhere('phone_2', 'LIKE', '%' . $filterData['phone'] . '%');
+                                $query->orwhere('phone_2', 'LIKE', '%' . $filterData['phone'] . '%');*/
                             if (isset($filterData['country']['countryId']))
                                 $query->where('suppliers.countryId', 'LIKE', '%' . $filterData['country']['countryId'] . '%');
                         })->get();
         return Response::json($supplier);
     }
 
-    public function searchPo() {
-        $id = Input::get('poCode');
+    public function searchPo()
+    {
+        $id = Input::get('supplierCode');
         $location = 1;
-        if (Input ::get('location') != '') {
-            $location = Input ::get('location');
+        if (Input::get('location') != '') {
+            $location = Input::get('location');
         }
-        $po = Purchaseorder::select('poCode', 'suppliers.supplierName', 'poDate', 'etaDate', 'phone_1', 'suppliers.status')->where('suppliers.supplierCode', $id)->where('suppliers.location', $location)->where('poStatus', '=','1')
+        $po = Purchaseorder::select('poCode', 'suppliers.supplierName', 'poDate', 'etaDate', 'phone_1', 'suppliers.status');
+
+
+      //  pd(Input::all());
+
+            if (Input::get('poCode') != '') {
+
+                $poCode = Input::get('poCode');
+                $po=$po->where('poCode',$poCode);
+            }else{
+                $po = $po->where('suppliers.supplierCode', $id)->where('suppliers.location', $location);
+            }
+
+        $po =$po->where('poStatus', '=','1')
                 ->leftJoin('suppliers', function($join) {
                     $join->on('suppliers.supplierCode', '=', 'purchaseorders.supplierCode');
                 })

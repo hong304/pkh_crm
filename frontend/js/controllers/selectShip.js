@@ -64,16 +64,18 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
         supplierName : '',
         phone :'',
         country:'',
+        poCode : ''
     }
 
     $scope.filterSupplier = function()
-    {  
+    {
         $scope.filterData.supplierCode = $scope.keyword.id;
         $scope.filterData.supplierName = $scope.keyword.name;
-        $scope.filterData.phone = $scope.keyword.phone;
+        //$scope.filterData.phone = $scope.keyword.phone;
         $scope.filterData.country = $scope.keyword.country;
-        console.log($scope.filterData);
-          var ta = endpoint + '/searchSupplier.json';
+
+        var ta = endpoint + '/searchSupplier.json';
+
            $http.post(ta, {filterData: $scope.filterData,location:$scope.orders.location})
            .success(function (res, status, headers, config) {
                 for(var i = 0;i<res.length;i++)
@@ -86,10 +88,15 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                         res[i].statusWord = "暫停";
                     }
                 }
-                $scope.putSupplier = res;
-                $scope.purchaseorderDetails = "";
+
+
+
+                   $scope.putSupplier = res;
+                   $scope.purchaseorderDetails = "";
+
+
                 $scope.shippingContainer = "";
-           });  
+           });
     }
     $scope.disableValue = 0;
     $scope.openLocal = function()
@@ -111,6 +118,34 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
         SharedService.setValue('location', '2', 'handleShippingUpdate');
         
     }
+
+    var fetchDataTimer;
+
+    $scope.selectPoCode = function(){
+
+        $timeout.cancel(fetchDataTimer);
+        fetchDataTimer = $timeout(function () {
+
+
+        $scope.filterData.poCode = $scope.keyword.poCode;
+        var ta = endpoint + '/searchPoBySupplier.json';
+        $http.post(ta, {poCode: $scope.filterData.poCode ,location:$scope.orders.location })
+            .success(function (res, status, headers, config) {
+                for(var i = 0;i<res.length;i++)
+                {
+                    if(res[i].status == 1)
+                    {
+                        res[i].statusWord = "正常";
+                    }else
+                    {
+                        res[i].statusWord = "暫停";
+                    }
+                }
+                $scope.purchaseorderDetails = res;
+
+            });
+        }, 500);
+    }
     
     $scope.selectTheSupplier = function(supplierEle)
     {
@@ -123,7 +158,7 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
         SharedService.setValue('countryName', supplierEle.countryName, 'handleShippingUpdate');
         SharedService.setValue('currencyName', supplierEle.currencyName, 'handleShippingUpdate');
         SharedService.setValue('currencyId', supplierEle.currencyId, 'handleShippingUpdate');
-            $http.post(ta, {poCode: $scope.storePo ,location:$scope.orders.location })
+            $http.post(ta, {supplierCode: $scope.storePo ,location:$scope.orders.location })
             .success(function (res, status, headers, config) {
                  for(var i = 0;i<res.length;i++)
                 {

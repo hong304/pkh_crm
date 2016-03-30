@@ -23,7 +23,8 @@ class ReceiveMan
      {
          $newContainerCode = "R";
          $suffix = 10000;
-         $re = Receiving :: select('*')->where('receivingId', 'LIKE',  'R' . '%')->orderby('receivingId','desc')->first();
+         $re = Receiving ::where('receivingId', 'LIKE',  'R' . '%')->orderby('receivingId','desc')->first()->lists('receivingId');
+         pd($re);
          if(count($re) == 0)
          {
              $this->newContainerCode = $newContainerCode . $suffix;
@@ -183,6 +184,7 @@ class ReceiveMan
                  }else if ($i['supplier_interval']=='unit'){
                      $products->supplierStdPrice_unit = $i['rec_receivePrice'];
                  }
+                 $products->total_good_qty += $i['good_qty'];
                  $products->timestamps = false;
                  $products->save();
                }
