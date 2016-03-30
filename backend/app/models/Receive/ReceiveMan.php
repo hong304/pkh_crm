@@ -23,14 +23,14 @@ class ReceiveMan
      {
          $newContainerCode = "R";
          $suffix = 10000;
-         $re = Receiving ::where('receivingId', 'LIKE',  'R' . '%')->orderby('receivingId','desc')->first()->lists('receivingId');
-         pd($re);
+         $re = Receiving ::where('receivingId', 'LIKE',  'R' . '%')->orderby('id','desc')->first()->toArray();
+
          if(count($re) == 0)
          {
              $this->newContainerCode = $newContainerCode . $suffix;
          }else
          {
-             $b = str_replace("R", "", $re->toArray()['receivingId']);
+             $b = str_replace("R", "", $re['receivingId']);
              $newCode = (int)$b +1;
              $this->newContainerCode = $newContainerCode . $newCode;
          }
