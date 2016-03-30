@@ -26,6 +26,7 @@ class inventoryController extends BaseController {
             $adjusts->save();
 
             $receivings = Receiving::where('id',$info['id'])->first();
+            $difference = $info['adjusted_good_qty']-$receivings->good_qty;
             $receivings->good_qty =$info['adjusted_good_qty'];
             $receivings->damage_qty =$info['adjusted_damage_qty'];
             $receivings->expiry_date = $date;
@@ -47,6 +48,7 @@ class inventoryController extends BaseController {
             $adjusts->adjustType = '3';
             $adjusts->save();
 
+            $difference = $info['return_good_qty'];
             $receivings->good_qty += $info['return_good_qty'];
             $receivings->damage_qty += $info['return_damage_qty'];
             $receivings->updated_by = Auth::user()->id;
@@ -54,6 +56,11 @@ class inventoryController extends BaseController {
             $receivings->save();
 
         }
+
+        $product = Product::where('productId',$info['productId'])->first();
+        $product->total_good_qty += $difference;
+        $product->timestamps = false;
+        $product->save();
     }
 
     public function queryInventoryHistory(){

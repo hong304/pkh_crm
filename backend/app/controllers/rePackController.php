@@ -156,6 +156,12 @@ class rePackController extends BaseController {
                     $receiving->good_qty -= $actual_deduct_qty;
                     $receiving->save();
 
+
+                    $product = Product::where('productId',$outProduct['productId'])->first();
+                    $product->total_good_qty -= $actual_deduct_qty;
+                    $product->timestamps = false;
+                    $product->save();
+
                     // Raw source deduction
                     $adjustsRaw = new adjust();
                     $adjustsRaw->receivingId = $receiving->receivingId;
@@ -197,6 +203,11 @@ class rePackController extends BaseController {
                     $new_receiving->save();
 
                     $adjusts->save();
+
+                    $product = Product::where('productId',$v['productId'])->first();
+                    $product->total_good_qty += $ava_qty;
+                    $product->timestamps = false;
+                    $product->save();
                 }
             }
         }
