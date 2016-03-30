@@ -22,11 +22,6 @@ class InvoiceItem extends Eloquent  {
          InvoiceItem::updated(function($model)
         {
 
-        /*  if($model->isDirty()){
-                p($model->getDirty());
-                pd($model->getOriginal());
-           }
-
             foreach($model->getDirty() as $attribute => $value){
                 $original= $model->getOriginal($attribute);
                 //echo "Changed $attribute from '$original' to '$value'<br/>";
@@ -42,7 +37,7 @@ class InvoiceItem extends Eloquent  {
                     $x->save();
                 }
 
-	    }*/
+	    }
 
     });
 	    
