@@ -143,6 +143,13 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                 }
                 $scope.purchaseorderDetails = res;
 
+                SharedService.setValue('supplierCode', res[0].supplierCode, 'handleShippingUpdate');
+                SharedService.setValue('supplierName',  res[0].supplierName, 'handleShippingUpdate');
+                SharedService.setValue('countryId',  res[0].countryId, 'handleShippingUpdate');
+                SharedService.setValue('countryName',  res[0].countryName, 'handleShippingUpdate');
+
+
+
             });
         }, 500);
     }
@@ -157,7 +164,8 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
         SharedService.setValue('countryId', supplierEle.countryId, 'handleShippingUpdate');
         SharedService.setValue('countryName', supplierEle.countryName, 'handleShippingUpdate');
         SharedService.setValue('currencyName', supplierEle.currencyName, 'handleShippingUpdate');
-        SharedService.setValue('currencyId', supplierEle.currencyId, 'handleShippingUpdate');
+
+
             $http.post(ta, {supplierCode: $scope.storePo ,location:$scope.orders.location })
             .success(function (res, status, headers, config) {
                  for(var i = 0;i<res.length;i++)
@@ -171,7 +179,7 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                     }
                 }
                 $scope.purchaseorderDetails = res;
-              
+
             });
         
     }
@@ -252,7 +260,7 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                      
                         i++; 
                     }
-                    console.log(res);
+
                     if(res.length > 0)
                     {
                          SharedService.setValue('items', res, 'handleShippingUpdate');

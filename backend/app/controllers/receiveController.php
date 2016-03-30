@@ -34,7 +34,7 @@ class receiveController extends BaseController {
         if (Input::get('location') != '') {
             $location = Input::get('location');
         }
-        $po = Purchaseorder::select('poCode', 'suppliers.supplierName', 'poDate', 'etaDate', 'phone_1', 'suppliers.status');
+        $po = Purchaseorder::select('poCode', 'suppliers.supplierName','suppliers.supplierCode','countries.countryId','countries.countryName', 'poDate', 'etaDate', 'phone_1', 'suppliers.status');
 
 
       //  pd(Input::all());
@@ -50,8 +50,11 @@ class receiveController extends BaseController {
         $po =$po->where('poStatus', '=','1')
                 ->leftJoin('suppliers', function($join) {
                     $join->on('suppliers.supplierCode', '=', 'purchaseorders.supplierCode');
-                })
+                })->leftJoin('countries', function($join) {
+                    $join->on('suppliers.countryId', '=', 'countries.countryId');
+                 })
                 ->get();
+
         return Response::json($po);
     }
 
