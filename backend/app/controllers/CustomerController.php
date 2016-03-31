@@ -31,7 +31,7 @@ class CustomerController extends BaseController
                 $keyword['zone']['zoneId'] = '';
 
             // $keyword = str_replace(array('?', '*'), '%', $keyword);
-            $clientArray = Customer::select('deliveryZone', 'phone_1', 'customerName_chi', 'customerId', 'address_chi', 'routePlanningPriority', 'remark', 'paymentTermId', 'shift', 'invoiceDiscount')
+            $clientArray = Customer::select('deliveryZone', 'phone_1', 'phone_2', 'customerName_chi', 'customerId', 'address_chi', 'routePlanningPriority', 'remark', 'paymentTermId', 'shift', 'invoiceDiscount')
                 ->where('status', '1')
                 ->where(function ($query) use ($keyword) {
                     if ($keyword['keyword'] != '' && $keyword['id'] != '') {
@@ -87,7 +87,7 @@ class CustomerController extends BaseController
 
         $id = Input::get('customerId');
 
-        $clientArray = Customer::select('customerId', 'customerName_chi', 'address_chi', 'remark', 'deliveryZone', 'phone_1', 'routePlanningPriority', 'paymentTermId', 'discount')
+        $clientArray = Customer::select('customerId', 'customerName_chi', 'address_chi', 'remark', 'deliveryZone', 'phone_1','phone_2', 'routePlanningPriority', 'paymentTermId', 'discount')
             ->where('customerId', $id)->with('Zone')
             ->first();
 
