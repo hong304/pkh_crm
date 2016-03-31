@@ -506,7 +506,7 @@ class ProductController extends BaseController {
             if($filter['productLocation'])
                 $product->where('productLocation', $filter['productLocation']);
 
-            if($filter['level']!=''){
+           /* if($filter['level']!=''){
                 DB::update('UPDATE receivings AS t
                 INNER JOIN
                 (SELECT productId,SUM(good_qty) tqty FROM receivings GROUP BY productId) t1
@@ -514,7 +514,7 @@ class ProductController extends BaseController {
                 SET total_qty=tqty');
 
                 DB::update('UPDATE product SET total_good_qty = (SELECT total_qty FROM receivings WHERE receivings.productId = product.productId LIMIT 1) WHERE productStatus = \'o\'');
-            }
+            }*/
             if($filter['level']=='max')
                 $product->where('max_level','<', DB::raw("total_good_qty/productPacking_inner/productPacking_unit"));
             if($filter['level']=='reorder')
