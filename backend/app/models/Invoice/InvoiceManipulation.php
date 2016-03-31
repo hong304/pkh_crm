@@ -171,8 +171,9 @@ class InvoiceManipulation
                 // we might need approval. check if this item has been approved before
                 // system (id = 27) approved indicate it is an automatic approve.
                 // in any circumstance we need to validate it again
-                if(!$skip)
-                    if ((!Auth::user()->can('allow_by_pass_invoice_approval')) AND ($selling_price < $standard_price) AND $i['deleted'] == '0') {
+
+                if(!$skip) //waiting approval or by pass approval
+                    if ((!Auth::user()->can('allow_by_pass_invoice_approval')) AND ($selling_price < $standard_price) AND $i['deleted'] == '0') { //change to waiting approval
 
                         // approved before?
                        /* if (isset($invitem[$i['dbid']]) AND $invitem[$i['dbid']]['approvedSupervisorId'] != 0) {
@@ -187,7 +188,7 @@ class InvoiceManipulation
                             $this->approval = true;
                             $i['approvedSupervisorId'] = 0;
                        // }
-                    } else {
+                    } else { //by pass approval
                             $i['approvedSupervisorId'] = 27;
                     }
 
@@ -424,6 +425,11 @@ class InvoiceManipulation
                                             $receivings->good_qty += $v1->unit;
                                             $receivings->save();
                                             $v1->delete();
+
+                                            $inventoryProduct = Product::where('productId',$v1->productId)->first();
+                                            $inventoryProduct->total_good_qty += $v1->unit;
+                                            $inventoryProduct->timestamps = false;
+                                            $inventoryProduct->save();
                                         }
                                 }
 
@@ -467,7 +473,7 @@ class InvoiceManipulation
                             $normalizedUnit = $this->normalizedUnit($i);
                             $packingSize = $this->packingSize($i,$this->product[$i['productId']]['productPackingInterval_carton']);
                             $undeductUnit = $normalizedUnit;
-
+                        $total_deductUnit = 0;
                             if ($undeductUnit < 0) {
                                 $receivings = Receiving::where('productId', $i['productId'])->orderBy('expiry_date', 'desc')->first();
                                 $receivings->good_qty -= $undeductUnit;
@@ -478,6 +484,7 @@ class InvoiceManipulation
                                 $invoiceitembatchs->productId = $i['productId'];
                                 $invoiceitembatchs->receivingId = $receivings->receivingId;
                                 $invoiceitembatchs->save();
+                                $total_deductUnit = $undeductUnit;
                             }
 
 
@@ -502,6 +509,8 @@ class InvoiceManipulation
                                     $invoiceitembatchs->productId = $i['productId'];
                                     $invoiceitembatchs->receivingId = $receivings->receivingId;
                                     $invoiceitembatchs->save();
+                                    $total_deductUnit += $ava_qty;
+
                                 }else{
                                     return [
                                         'result' => false,
@@ -513,6 +522,13 @@ class InvoiceManipulation
 
                                 }
                             }
+
+
+                        $productinventory = Product::where('productId',$i['productId'])->first();
+                        $productinventory->total_good_qty -= $total_deductUnit;
+                        $productinventory->timestamps = false;
+                        $productinventory->save();
+
                     }
                 }
 

@@ -168,6 +168,11 @@ class OrderController extends BaseController
                                                  $receivings->good_qty += $v1->unit;
                                                  $receivings->save();
                                                  $v1->delete();
+
+                                                 $inventoryProduct = Product::where('productId',$v1->productId)->first();
+                                                 $inventoryProduct->total_good_qty += $v1->unit;
+                                                 $inventoryProduct->timestamps = false;
+                                                 $inventoryProduct->save();
                                              }
                                      }
 
@@ -192,6 +197,11 @@ class OrderController extends BaseController
                                                      $receivings->good_qty -= $v1->unit;
                                                      $receivings->save();
                                                      $v1->restore();
+
+                                                     $inventoryProduct = Product::where('productId',$v1->productId)->first();
+                                                     $inventoryProduct->total_good_qty -= $v1->unit;
+                                                     $inventoryProduct->timestamps = false;
+                                                     $inventoryProduct->save();
                                                  }
                                          }
                                      return [
@@ -717,6 +727,11 @@ class OrderController extends BaseController
                     $receivings->good_qty += $v1->unit;
                     $receivings->save();
                     $v1->delete();
+
+                    $inventoryProduct = Product::where('productId',$v1->productId)->first();
+                    $inventoryProduct->total_good_qty += $v1->unit;
+                    $inventoryProduct->timestamps = false;
+                    $inventoryProduct->save();
                 }
         }
     }
