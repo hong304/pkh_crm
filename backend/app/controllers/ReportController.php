@@ -212,7 +212,7 @@ public function loadvanSellReport(){
 
 
         $invoiceDetails = Invoice::where('invoiceId',Input::get('invoiceId'))->with(['invoiceItem'=>function($query){
-            $query->with('productDetail');
+            $query->with('productDetail')->orderby('productId','ASC');
         }])->with('client')->first()->toArray();
 
     //    pd($invoiceDetails);
@@ -266,13 +266,22 @@ public function loadvanSellReport(){
 
                 $pdf->SetFont('chi', '', 11);
                 $pdf->setXY(100, 50);
-                $pdf->Cell(0, 0, "客戶名稱: " . $invoiceDetails['client']['customerName_chi'], 0, 2, "L");
+                $pdf->Cell(0, 0, "客戶名稱: " . $invoiceDetails['client']['customerName_chi'] .'('.$invoiceDetails['client']['customerId'].')', 0, 2, "L");
                 $pdf->setXY(100, 58);
                 $pdf->Cell(0, 0, "地址: " . $invoiceDetails['client']['address_chi'], 0, 2, "L");
-                $pdf->setXY(100, 66);
-                $pdf->Cell(0, 0, "備註: " . $invoiceDetails['invoiceRemark'], 0, 2, "L");
 
 
+                $remark = explode("\n", $invoiceDetails['invoiceRemark']);
+
+                $ij = 66;
+                foreach ($remark as $k => $v){
+                         $pdf->setXY(100, $ij);
+                    if($k>0){
+                        $pdf->Cell(0, 0, "        " . $remark[$k], 0, 2, "L");
+                    }else
+                         $pdf->Cell(0, 0, "備註: " . $remark[$k], 0, 2, "L");
+                        $ij+=5;
+                }
 
 $y = 80;
 
@@ -298,11 +307,17 @@ $y = 80;
                 $y += 10;
 
                 foreach ($f as $u) {
+
                     $pdf->setXY(10, $y);
                     $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
 
+                    if($u['productRemark'] != ''){
+                        $hyphen = ' - ';
+                    }else
+                        $hyphen = '';
+
                     $pdf->setXY(50, $y);
-                    $pdf->Cell(0, 0, $u['product_detail']['productName_chi'], 0, 0, "L");
+                    $pdf->Cell(0, 0, sprintf("%s%s%s",$u['product_detail']['productName_chi'],$hyphen,$u['productRemark']), 0, 0, "L");
 
                     $pdf->setXY(120, $y);
                     $pdf->Cell(10, 0, number_format($u['productQty'], 1, '.', ',').$u['productUnitName'], 0, 0, "R");
