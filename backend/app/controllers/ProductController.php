@@ -513,14 +513,14 @@ class ProductController extends BaseController {
                 ON t.productId = t1.productId
                 SET total_qty=tqty');
 
-                DB::update('UPDATE product SET total_good_qty = (SELECT total_qty FROM receivings WHERE receivings.productId = product.productId LIMIT 1)/productPacking_inner/productPacking_unit WHERE productStatus = \'o\'');
+                DB::update('UPDATE product SET total_good_qty = (SELECT total_qty FROM receivings WHERE receivings.productId = product.productId LIMIT 1) WHERE productStatus = \'o\'');
             }
             if($filter['level']=='max')
-                $product->where('max_level','<', DB::raw("total_good_qty"));
+                $product->where('max_level','<', DB::raw("total_good_qty/productPacking_inner/productPacking_unit"));
             if($filter['level']=='reorder')
-                $product->where('reorder_level','>', DB::raw("total_good_qty"));
+                $product->where('reorder_level','>', DB::raw("total_good_qty/productPacking_inner/productPacking_unit"));
             if($filter['level']=='min')
-                $product->where('min_level','>', DB::raw("total_good_qty"));
+                $product->where('min_level','>', DB::raw("total_good_qty/productPacking_inner/productPacking_unit"));
 
           //  $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
             $product = $product->orderBy('updated_at','desc');
@@ -566,6 +566,8 @@ class ProductController extends BaseController {
                     return $p->productStdPrice_inner .' / '. $p->productPackingName_inner;
                 })->editColumn('productStdPrice_unit', function ($p) {
                     return $p->productStdPrice_unit .' / '. $p->productPackingName_unit;
+                })->editColumn('total_good_qty', function ($p) {
+                    return number_format($p->total_good_qty/$p->productPacking_inner/$p->productPacking_unit,1).$p->productPackingName_carton;
                 })
                 ->make(true);
 
