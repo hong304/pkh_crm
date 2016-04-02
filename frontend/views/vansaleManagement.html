@@ -169,7 +169,7 @@
                                 <td><input type="text"  class="form-control" data-ng-model="selfdefine[k]['preload']" data-ng-disabled="preload_check==30" select-on-click></td>
                                 <td>
 
-                                    <select data-ng-disabled="preload_check>1" ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value">
+                                    <select data-ng-disabled="preload_check==30" ng-model="selfdefine[k]['unit']" class="form-control" data-ng-options="x.label for x in selfdefine[k]['availableunit'] track by x.value">
                                     </select>
                                 </td>
                                 <td>
