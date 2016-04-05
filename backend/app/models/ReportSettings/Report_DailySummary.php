@@ -232,7 +232,7 @@ class Report_DailySummary
             $this->data['items'] = $z;
         else
             $this->data['items'] = [];
-        //   pd($this->data['items']);
+
         // $this->data['returnitems'] =  isset($this->returnGoods)?$this->returnGoods:'';
 
 //pd($this->data);
@@ -423,7 +423,18 @@ class Report_DailySummary
 
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
         // handle 1F goods
-        $good = array_chunk($this->data['items'], 32, true);
+
+        foreach($this->data['items'] as $k => $ff){
+            if(strpos($ff['productId'], '(退貨)') || strpos($ff['productId'], '(換貨-)')) {
+                $return_goods[] = $ff;
+            }else{
+                $normal_goods[] = $ff;
+            }
+        }
+
+
+
+        $good = array_chunk($normal_goods, 30, true);
         // $returngood = array_chunk($this->data['returnitems'], 30, true);
         // pd($this->data);
 
@@ -534,6 +545,29 @@ class Report_DailySummary
 
         if ($i === $numItems) {
 
+            $pdf->Line(10, $y , 190, $y);
+            foreach ($return_goods as $u) {
+
+
+
+                $y += 6;
+
+                $pdf->setXY(10, $y);
+                $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
+
+                $pdf->setXY(50, $y);
+                $pdf->Cell(0, 0, $u['name'], 0, 0, "L");
+
+                $pdf->setXY(168, $y);
+                $pdf->Cell(0, 0, sprintf("%s", $u['counts']), 0, 0, "L");
+
+                $pdf->setXY(180, $y);
+                $pdf->Cell(0, 0, str_replace(' ', '', $u['unit_txt']), 0, 0, "L");
+
+
+            }
+
+
             $pdf->Line(10, $y + 5, 190, $y + 5);
 
             $pdf->setXY(10, $y + 10);
@@ -560,10 +594,10 @@ class Report_DailySummary
             $pdf->setXY(30, $y + 22);
             $pdf->Cell(0, 0, $this->data['countcodreturn'] . "單", 0, 0, "L");
 
-            $pdf->setXY(10, $y + 28);
+            $pdf->setXY(50, $y + 22);
             $pdf->Cell(0, 0, "現金補貨單:", 0, 0, "L");
 
-            $pdf->setXY(30, $y + 28);
+            $pdf->setXY(70, $y + 22);
             $pdf->Cell(0, 0, $this->data['countcodreplace'] . "單", 0, 0, "L");
 
         }
