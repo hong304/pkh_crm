@@ -167,6 +167,7 @@ class ReportFactory{
     private function _prepareMenuFilter()
     {
         $mod = $this->_module;
+
         if(method_exists($mod, "registerFilter"))
         {
             $this->_filter = $mod->registerFilter();

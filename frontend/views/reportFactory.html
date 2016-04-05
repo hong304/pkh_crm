@@ -201,6 +201,8 @@
 				</div>
 			</div>
 
+
+
             <div class="portlet-body" id="shift" data-ng-if="f.type1 == 'shift'">
                 <div class="md-col-12">
                     <select class="form-control"
@@ -211,6 +213,18 @@
                 </div>
             </div>
 
+
+            <!--  version-dropdown -->
+            <div class="portlet-body" data-ng-if="f.type == 'version-dropdown'">
+                <div class="md-col-12" style="margin-bottom:15px;">
+                    <div class="input-group">
+                        <select class="form-control"
+                                ng-model="filterData[f.model]"
+                                data-ng-options="x.label for x in f.optionList track by x.value" >
+                        </select>
+                    </div>
+                </div>
+            </div>
 
             <!-- date-picker -->
             <div class="portlet-body" data-ng-if="f.type == 'date-picker'">

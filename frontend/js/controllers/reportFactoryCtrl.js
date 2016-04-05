@@ -169,8 +169,18 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
                 $http.post(querytarget, {reportId: $location.search().id, filterData: $scope.filterData, output: "setting"})
                     .success(function(res, status, headers, config){
-                        $scope.setting.title = res.title;
+                        $scope.setting = res;
+                        res.filterOptions.forEach(function(options){
+                            if (options.type == "version-dropdown")
+                            {
+                                var pos = options.optionList.map(function(e) {
+                                    return e.value;
+                                }).indexOf(options.defaultValue);
+                                $scope.filterData[options.model] = options.optionList[pos];
+                            }
+                        });
                     });
+
 
 
     	});

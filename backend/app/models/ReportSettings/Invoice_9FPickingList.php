@@ -44,7 +44,10 @@ class Invoice_9FPickingList {
 
         //  $lastid = @explode('-', $lastid->id);
 
+
         $this->_version = isset($lastid->f9_version) ? $lastid->f9_version : '1';
+
+        $this->_version =  (isset($indata['filterData']['version']['value']))?$indata['filterData']['version']['value']:$this->_version;
 
         $this->_uniqueid = sprintf("%s-%s-9", $this->_uniqueid, $this->_version);
 
@@ -405,6 +408,21 @@ class Invoice_9FPickingList {
             ];
         }
 
+        $lastid = pickingListVersionControl::where('zone',$this->_zone)->where('date',date("Y-m-d",$this->_date))->where('shift',$this->_shift)->first();
+        $availableversion =[];
+        if(count($lastid)>0)
+            $cv = $lastid->f9_version;
+        else
+            $cv = 1;
+
+        for($ii=1;$ii<=$cv; $ii++){
+            $availableversion[] = [
+                'value' => $ii,
+                'label' => 'v'.$ii,
+            ];
+
+        }
+
         $ashift =[['value'=>'1','label'=>'早班'],['value'=>'2','label'=>'晚班']];
 
 
@@ -422,6 +440,16 @@ class Invoice_9FPickingList {
                 'optionList1' => $ashift,
                 'defaultValue1' => $this->_shift,
             ],
+
+            [
+                'id' => 'versionId',
+                'type' => 'version-dropdown',
+                'label' => '版本',
+                'model' => 'version',
+                'optionList' => $availableversion,
+                'defaultValue' => $this->_version,
+            ],
+
             [
                 'id' => 'deliveryDate',
                 'type' => 'date-picker',
