@@ -49,7 +49,9 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
 			'keyword'	:	'',
             'status' : '',
             'productLocation' : '',
-            'level' : ''
+            'level' : '',
+             'sorting' : 'updated_at',
+             'current_sorting' : 'desc'
 		};
 
     $scope.hasCommission = '';
@@ -91,7 +93,8 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
             'vansale' : '',
             'max_level' :'',
             'reorder_level' : '',
-            'min_level' : ''
+            'min_level' : '',
+
 
 
 	};
@@ -364,6 +367,20 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
     	fetchDataTimer = $timeout(function () {
     		$scope.updateDataSet();
     	}, fetchDataDelay);
+    }
+
+    $scope.click = function (event)
+    {
+
+        $scope.filterData.sorting = event.target.id;
+
+        if ($scope.filterData.current_sorting == 'asc') {
+            $scope.filterData.current_sorting = 'desc';
+        } else {
+            $scope.filterData.current_sorting = 'asc';
+        }
+
+        $scope.updateDataSet();
     }
     
     $scope.updateDataSet = function()

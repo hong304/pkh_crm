@@ -468,6 +468,8 @@ class ProductController extends BaseController {
     {
         $mode = Input::get('mode');
 
+
+
         if($mode == 'commissiongroup'){
             $product['commissiongroup'] = commissiongroup::get();
             return Response::json($product);
@@ -475,6 +477,11 @@ class ProductController extends BaseController {
         if($mode == 'collection')
         {
             $filter = Input::get('filterData');
+
+            $current_sorting = $filter['current_sorting'];
+            if (!$filter['sorting'] == '') {
+                $sorting = $filter['sorting'];
+            }
 
           //  Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
             $product = Product::where('deleted',false);
@@ -506,7 +513,7 @@ class ProductController extends BaseController {
             if($filter['productLocation'])
                 $product->where('productLocation', $filter['productLocation']);
 
-            if($filter['level']!=''){
+           /* if($filter['level']!=''){
                 DB::update('UPDATE receivings AS t
                 INNER JOIN
                 (SELECT productId,SUM(good_qty) tqty FROM receivings GROUP BY productId) t1
@@ -514,7 +521,8 @@ class ProductController extends BaseController {
                 SET total_qty=tqty');
 
                 DB::update('UPDATE product SET total_good_qty = (SELECT total_qty FROM receivings WHERE receivings.productId = product.productId LIMIT 1) WHERE productStatus = \'o\'');
-            }
+            }*/
+
             if($filter['level']=='max')
                 $product->where('max_level','<', DB::raw("total_good_qty/productPacking_inner/productPacking_unit"));
             if($filter['level']=='reorder')
@@ -523,7 +531,7 @@ class ProductController extends BaseController {
                 $product->where('min_level','>', DB::raw("total_good_qty/productPacking_inner/productPacking_unit"));
 
           //  $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
-            $product = $product->orderBy('updated_at','desc');
+            $product = $product->orderby($sorting, $current_sorting);
 
           /*  foreach($product['data'] as $c)
             {
