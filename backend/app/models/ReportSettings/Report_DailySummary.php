@@ -545,7 +545,9 @@ class Report_DailySummary
 
         if ($i === $numItems) {
 
+
             $pdf->Line(10, $y , 190, $y);
+            if(isset($return_goods)){
             foreach ($return_goods as $u) {
 
 
@@ -566,10 +568,9 @@ class Report_DailySummary
 
 
             }
-
-
+           
             $pdf->Line(10, $y + 5, 190, $y + 5);
-
+            }
             $pdf->setXY(10, $y + 10);
             $pdf->Cell(0, 0, "現金總數:", 0, 0, "L");
 
