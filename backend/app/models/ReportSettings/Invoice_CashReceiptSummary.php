@@ -60,6 +60,9 @@ class Invoice_CashReceiptSummary {
         $date = $this->_date;
         $zone = $this->_zone;
 
+
+
+
         //當天單,不是當天收錢
         $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
         if($this->_shift != '-1')
@@ -120,6 +123,18 @@ class Invoice_CashReceiptSummary {
             $invoiceId = $invoiceQ->invoiceId;
             $invoices[$invoiceId] = $invoiceQ;
             $client = $invoiceQ['client'];
+
+
+            // 98 invoices
+            if($invoiceQ->invoiceStatus == 98) {
+                $this->_returnInvoices[] = [
+                    'customerId' => $client->customerId,
+                    'name' => $client->customerName_chi,
+                    'invoiceNumber' => $invoiceId,
+                    'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
+                    'amount' => number_format($invoiceQ->amount, 2, '.', ','),
+                ];
+            }
 
             if($invoiceQ->invoiceStatus == 20 || $invoiceQ->invoiceStatus == 30){
                 $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
@@ -532,6 +547,9 @@ class Invoice_CashReceiptSummary {
 
     }
 
+    /**
+     * @return array
+     */
     public function outputPDF()
     {
 
@@ -602,6 +620,54 @@ class Invoice_CashReceiptSummary {
 
 
         $y = 80;
+
+        //98
+        $pdf->SetFont('chi','',12);
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0,'退貨單', 0, 0, "L");
+
+        $pdf->SetFont('chi','',10);
+        $y += 6;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, "訂單編號", 0, 0, "L");
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, "客戶", 0, 0, "L");
+
+        $pdf->setXY($last3, $y);
+        $pdf->Cell(0, 0, "送貨日期", 0, 0, "L");
+
+        $pdf->setXY($last2, $y);
+        $pdf->Cell(1, 0, "收回金額", 0, 0, "R");
+
+        $pdf->Line(10, $y+4, 200, $y+4);
+
+        $y += 8;
+
+
+        foreach($this->_returnInvoices as $k => $v){
+
+            $pdf->setXY(10, $y);
+            $pdf->Cell(0, 0, $v['invoiceNumber'], 0, 0, "L");
+
+            $pdf->setXY(40, $y);
+            $pdf->Cell(0, 0, $v['name'], 0, 0, "L");
+
+            $pdf->setXY($last3, $y);
+            $pdf->Cell(0, 0, $v['deliveryDate'], 0, 0, "L");
+
+            $pdf->setXY($last2, $y);
+            $pdf->Cell(1, 0, $v['amount'], 0, 0, "R");
+
+            $y += 5;
+
+        }
+
+        $pdf->Line(10, $y, 200, $y);
+        $y+=10;
+        // 98
+
+
 
         //補收+代收
         $pdf->SetFont('chi','',12);
@@ -791,7 +857,7 @@ class Invoice_CashReceiptSummary {
 //未收款項完
 
         //支票
-        if(count($this->_paidInvoice)+count($this->_backaccount)+count($this->_paidInvoice_cheque) > 20){
+        if(count($this->_returnInvoices) + count($this->_paidInvoice)+count($this->_backaccount)+count($this->_paidInvoice_cheque) > 20){
             $pdf->AddPage();
             $this->generateHeader($pdf);
             $y=55;
