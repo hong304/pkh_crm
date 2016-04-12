@@ -568,7 +568,7 @@ class Report_DailySummary
 
 
             }
-           
+
             $pdf->Line(10, $y + 5, 190, $y + 5);
             }
             $pdf->setXY(10, $y + 10);
