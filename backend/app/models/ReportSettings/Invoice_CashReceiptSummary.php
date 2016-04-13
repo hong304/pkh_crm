@@ -622,6 +622,7 @@ class Invoice_CashReceiptSummary {
         $y = 80;
 
         //98
+        if(count($this->_returnInvoices) > 0){
         $pdf->SetFont('chi','',12);
         $pdf->setXY(10, $y);
         $pdf->Cell(0, 0,'退貨單', 0, 0, "L");
@@ -665,6 +666,7 @@ class Invoice_CashReceiptSummary {
 
         $pdf->Line(10, $y, 200, $y);
         $y+=10;
+        }
         // 98
 
 
