@@ -187,6 +187,7 @@ class PrintQueueController extends BaseController
 
 
         if ($mode == '96-98') {
+
             foreach (explode(',', $this->zone) as $k => $v) {
                 $result = PrintQueue::select('Invoice.invoiceId')->where('target_path', $v)->wherein('status', ['queued', 'fast-track'])
                     ->leftJoin('Invoice', function ($join) {
@@ -203,8 +204,8 @@ class PrintQueueController extends BaseController
 
                 if ($result)
                     $this->mergeImageOthers($result);
-                else
-                    pd('PDF已產生,請查看列印記錄/沒有新訂單');
+               // else
+               //     pd('PDF已產生,請查看列印記錄/沒有新訂單');
             }
 
         }

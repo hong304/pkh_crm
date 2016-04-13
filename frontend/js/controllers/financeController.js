@@ -51,7 +51,16 @@ function delCheque(id)
 
 app.controller('financeController', function($scope, $rootScope, $http, SharedService, $location, $timeout, $interval,$state,$stateParams) {
 
+    $(document).ready(function(){
 
+        $('#queryInfo').keydown(function (e) {
+            if (e.keyCode == 13) {
+                $scope.getChequeList();
+            }
+
+        });
+
+    });
 
     var intarget = endpoint + '/addCheque.json';
     var query = endpoint + '/querryClientClearance.json';
@@ -373,22 +382,6 @@ $scope.updateDiscount = function(){
         $scope.getChequeList();
     }
 
-    $scope.updateGroupName = function(){
-    fetchDataTimer = $timeout(function () {
-        $scope.getChequeList();
-    }, 500);
-
-}
-
-    $scope.updateStatus = function()
-    {
-        $scope.getChequeList();
-    }
-
-    $scope.updateChequeNumber = function()
-    {
-        $scope.getChequeList();
-    }
 
 
     $scope.clearCustomerSearch = function()
