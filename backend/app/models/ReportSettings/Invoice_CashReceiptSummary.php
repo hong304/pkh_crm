@@ -14,6 +14,7 @@ class Invoice_CashReceiptSummary {
     private $_paidInvoice = [];
     private $_paidInvoice_cheque =[];
     private $_expenses = [];
+    private $_returnInvoices = [];
     private $_uniqueid = "";
 
     public function __construct($indata)
