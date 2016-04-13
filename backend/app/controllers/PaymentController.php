@@ -164,7 +164,7 @@ class PaymentController extends BaseController
                     $i->payment()->attach($payment->id, ['amount' => $i->amount, 'paid' => $paidinfo['paid'], 'discount_taken' => $discount_taken]);
                 } else
                     $i->payment()->attach($payment->id, ['amount' => $i->amount, 'paid' => $paidinfo['paid']]);
-            } else if ($paidinfo['cashAmount'] != 0) {
+            } else if ($paidinfo['cashAmount'] != 0 || Input::get('special_discount') == 1) {
                 $payment1 = new Payment();
                 $payment1->paymentType = 'COD';
                 $payment1->bankCode = 'cash';
