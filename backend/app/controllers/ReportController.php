@@ -38,6 +38,9 @@ class ReportController extends BaseController {
         if(Auth::user()->can('view_itemssummary'))
         array_push($filter,'itemssummary');
 
+        if(Auth::user()->can('view_itemssummarysales'))
+            array_push($filter,'itemssummarysales');
+
         if(Auth::user()->can('view_productReport'))
         array_push($filter,'productReport');
 
@@ -46,8 +49,6 @@ class ReportController extends BaseController {
 
       //  if(Auth::user()->can('view_vanselllist'))
        //     array_push($filter,'vanselllist');
-
-
 
 
 
