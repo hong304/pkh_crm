@@ -390,7 +390,7 @@ $this->updateVanQty();
                 ];
             }
         }else{
-            $vansell_query = vansell::where('date', $this->_date)->where('shift', '1')->where('zoneId', $zone)->where('self_define', false)->with('products')->get();
+            $vansell_query = vansell::where('date', $this->_date)->where('shift', '1')->where('zoneId', $zone)->with('products')->get();
             foreach($vansell_query as $v){
                 $this->shift1[$v['productId']][$v['productlevel']] = [
                     'productId' => $v->productId,

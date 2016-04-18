@@ -94,6 +94,7 @@ app.controller('productMaintenanceCtrl', function($scope, $rootScope, $http, Sha
             'max_level' :'',
             'reorder_level' : '',
             'min_level' : '',
+        'barcode' : ''
 
 
 

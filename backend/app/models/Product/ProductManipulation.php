@@ -104,7 +104,7 @@ class ProductManipulation {
 
         $pieces = explode("-", $info['group']['groupid']);
 
-	    $fields = ['productPacking_carton', 'productCost_unit', 'productPacking_inner', 'productPacking_unit','productPacking_size','productPackingName_carton','productPackingName_inner','productPackingName_unit','productPackingInterval_carton','productPackingInterval_inner','productPackingInterval_unit','productStdPrice_carton','productStdPrice_inner','productStdPrice_unit','productMinPrice_carton','productMinPrice_inner','productMinPrice_unit','productName_chi','productName_eng','hasCommission','allowNegativePrice','allowSeparate','vansale','max_level','reorder_level','min_level'];
+	    $fields = ['productPacking_carton', 'productCost_unit', 'productPacking_inner', 'productPacking_unit','productPacking_size','productPackingName_carton','productPackingName_inner','productPackingName_unit','productPackingInterval_carton','productPackingInterval_inner','productPackingInterval_unit','productStdPrice_carton','productStdPrice_inner','productStdPrice_unit','productMinPrice_carton','productMinPrice_inner','productMinPrice_unit','productName_chi','productName_eng','hasCommission','allowNegativePrice','allowSeparate','vansale','barcode','max_level','reorder_level','min_level'];
 	    
 	    foreach($fields as $f)
 	    {
