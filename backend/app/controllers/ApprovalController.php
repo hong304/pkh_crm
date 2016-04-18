@@ -11,7 +11,7 @@ class ApprovalController extends BaseController {
         $invoices = Invoice::with(['invoiceItem'=>function($q) {
             $q->with('productDetail');
         }])->with('customer')->
-        where('invoiceStatus','1')->get()->toArray();
+        where('invoiceStatus','1')->orderBy('zoneId')->get();
         return Response::json($invoices);
     }
 

@@ -116,7 +116,7 @@
                                         <td>{{items.customer.customerName_chi}}</td>
                                         <td>{{items.zoneId}}</td>
                                         <td><a ng-click="viewInvoice(items.invoiceId,items.invoiceStatus)">檢視</a></td>
-                                    <td  align="right"><input type="checkbox" data-ng-model="checkid[items.invoiceId]" /></td>
+                                    <td colspan="2"  align="right"><input type="checkbox" data-ng-model="checkid[items.invoiceId]" /></td>
                                     </tr>
 
                                     <tbody>
@@ -126,6 +126,7 @@
                                         <th width="5%">Product Qty</th>
                                         <th width="5%">Product Unit Name</th>
                                         <th width="5%">Selling Price</th>
+                                        <th width="5%">Standard Selling Price</th>
 
                                     </tr>
 
@@ -139,6 +140,7 @@
                                         <td>{{k.productQty}}</td>
                                         <td>{{k.productUnitName}}</td>
                                         <td>${{k.productPrice}}</td>
+                                        <td>${{k.productStandardPrice}}</td>
 
                                     <tr>
 
