@@ -196,7 +196,12 @@ class Invoice extends Eloquent  {
 	{
 	    return $this->hasOne('Customer', 'customerId', 'customerId');
 	}
-	
+
+	public function customer()
+	{
+		return $this->hasOne('Customer', 'customerId', 'customerId');
+	}
+
 	public function products()
 	{
 	    return $this->belongsToMany('Product', 'InvoiceItem', 'invoiceId', 'productId');
