@@ -116,6 +116,8 @@ app.controller('batchApproval', function($scope, $http, $rootScope,SharedService
             $scope.updateApprovalList();
         });
 
+        $("#productDetails").modal('toggle');
+
     }
 
     $scope.generalOtherInvoices = function(){
