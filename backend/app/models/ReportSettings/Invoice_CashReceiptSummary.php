@@ -16,6 +16,9 @@ class Invoice_CashReceiptSummary {
     private $_expenses = [];
     private $_returnInvoices = [];
     private $_uniqueid = "";
+    private $cash = 0;
+    private $coins = 0;
+    private $summary=[];
 
     public function __construct($indata)
     {
@@ -268,6 +271,18 @@ class Invoice_CashReceiptSummary {
         }
         //補收+代收+所有當天支票
 
+
+        $incomes = income::where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
+
+        if(count($incomes)>0){
+            $this->cash = $incomes->notes;
+            $this->coins = $incomes->coins;
+        }
+
+        $sql = 'select count(CASE WHEN paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN paymentTerms = 2 THEN amount END) AS amount_credit, count(CASE WHEN paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN paymentTerms = 1 THEN amount END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30,1,97,96) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
+        $cod = DB::select(DB::raw($sql));
+        foreach($cod as $v)
+            $this->summary =  (array) $v;
 
         $this->_expenses = expense::select('*')->where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
         if(isset($this->_expenses))
@@ -526,7 +541,7 @@ class Invoice_CashReceiptSummary {
 
     public function outputPreview()
     {
-        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->with('backaccount',$this->_backaccount)->with('expenses',$this->_expenses)->render();
+        return View::make('reports/CashReceiptSummary')->with('summary',$this->summary)->with('coins',$this->coins)->with('cash',$this->cash)->with('account', $this->_account)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->with('backaccount',$this->_backaccount)->with('expenses',$this->_expenses)->render();
     }
 
 
@@ -584,40 +599,27 @@ class Invoice_CashReceiptSummary {
         $pdf->setXY(10, $y);
         $pdf->Cell(0, 0, '實收現金:', 0, 0, "L");
 
-        $incomes = income::where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
-
-        $cash = 0;
-        $coins =0;
-
-        if(count($incomes)>0){
-            $cash = $incomes->notes;
-            $coins = $incomes->coins;
-        }
-
-        $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($cash,2,'.',','),number_format($coins,2,'.',','), number_format($coins+$cash,2,'.',',')), 0, 0, "L");
+           $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($this->cash,2,'.',','),number_format($this->coins,2,'.',','), number_format($this->coins+$this->cash,2,'.',',')), 0, 0, "L");
 
 
-        $sql = 'select count(CASE WHEN paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN paymentTerms = 2 THEN amount END) AS amount_credit, count(CASE WHEN paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN paymentTerms = 1 THEN amount END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30,1,97,96) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
-        $cod = DB::select(DB::raw($sql));
-        foreach($cod as $v)
-            $summary =  (array) $v;
+
 
 
 
         $y+=5;
         $pdf->setXY(10, $y);
-        $pdf->Cell(0, 0, sprintf('月結單數:%s',$summary['count_credit']), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('月結單數:%s',$this->summary['count_credit']), 0, 0, "L");
 
         $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_credit'],2,'.',',')), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($this->summary['amount_credit'],2,'.',',')), 0, 0, "L");
 
         $y+=5;
         $pdf->setXY(10, $y);
-        $pdf->Cell(0, 0, sprintf('現金單數:%s',$summary['count_cod']), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('現金單數:%s',$this->summary['count_cod']), 0, 0, "L");
 
         $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_cod'],2,'.',',')), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($this->summary['amount_cod'],2,'.',',')), 0, 0, "L");
 
 
         $y = 80;

@@ -15,7 +15,7 @@
         </tr>
     </thead>
     <tbody>
-        <?php foreach($data as $row):?> 
+        <?php foreach($account as $row):?>
             <tr>
                 <td><?php echo $row['invoiceNumber']; ?></td>
                 <td><?php echo $row['name']; ?></td>
@@ -26,7 +26,7 @@
          <?php endforeach; ?>.
          <tr>
             <td colspan="6" style="text-align:right;">
-                <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo end($data)['accumulator']; ?></span>
+                <span style="font-weight:bold;font-size:15px;">總計: HK$<?php echo end($account)['accumulator']; ?></span>
             </td>
          <tr>
     </tbody>
@@ -172,4 +172,16 @@
         </td>
     <tr>
     </tbody>
+</table>
+
+<table class="table table-bordered table-hover" style="font-size:15px;">
+    <tr><td>應收現金:</td><td><?php
+            echo sprintf("$%s + $%s - $%s = $%s",number_format(end($account)['accumulator'],2,'.',','),number_format(end($paidInvoice)['accumulator'],2,'.',','), ($expenses['amount']<0)?"(".number_format($expenses['amount']*-1,2,'.',',').")":$expenses['amount'] , number_format(end($paidInvoice)['accumulator']+end($account)['accumulator']-$expenses['amount'],2,'.',','));
+            ?></td></tr>
+
+    <tr><td>實收現金:</td><td><?php
+            echo sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($cash,2,'.',','),number_format($coins,2,'.',','), number_format($coins+$cash,2,'.',','));?></td></tr>
+
+    <tr><td><?php echo sprintf('月結單數:%s',$summary['count_credit'])?></td><td><?php echo sprintf('金額:$%s',number_format($summary['amount_credit'],2,'.',','))?></td></tr>
+    <tr><td><?php echo sprintf('現金單數:%s',$summary['count_cod'])?></td><td><?php echo sprintf('金額:$%s',number_format($summary['amount_cod'],2,'.',','))?></td></tr>
 </table>
