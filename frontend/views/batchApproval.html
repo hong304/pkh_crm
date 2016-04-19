@@ -100,8 +100,9 @@
                                     <tr><td>{{items.invoiceId}}</td>
                                         <td>{{items.customer.customerName_chi}}</td>
                                         <td>{{items.zoneId}}</td>
+                                        <td>{{items.deliveryDate_date}}</td>
                                         <td><a ng-click="viewInvoice(items.invoiceId,items.invoiceStatus)">檢視</a></td>
-                                    <td colspan="2"  align="right"><input type="checkbox" data-ng-model="checkid[items.invoiceId]" /></td>
+                                    <td align="right"><input type="checkbox" data-ng-model="checkid[items.invoiceId]" /></td>
                                     </tr>
 
                                     <tbody>
