@@ -2,16 +2,18 @@
 
 class ApprovalController extends BaseController {
 
-    public function logBatchStatement($functionName, $startTime, $endTime, $timeUsed)
-    {
-        
-    }
-
     public function getApprovalList(){
         $invoices = Invoice::with(['invoiceItem'=>function($q) {
             $q->with('productDetail');
         }])->with('customer')->
-        where('invoiceStatus','1')->orderBy('zoneId')->get();
+        where('invoiceStatus','1')->orderBy('zoneId');
+
+        if(Input::get('zone')!=''){
+            $invoices->where('zoneId',Input::get('zone')['zoneId']);
+        }
+
+        $invoices->where('shift',Input::get('shift'));
+        $invoices = $invoices->get();
         return Response::json($invoices);
     }
 
@@ -33,11 +35,7 @@ class ApprovalController extends BaseController {
             }
         }
 
-
-
         $invoicess = Invoice::wherein('invoiceId', array_keys($invoiceids))->with('invoiceItem')->get();
-
-
 
 
         foreach($invoicess as $i)
@@ -77,24 +75,5 @@ class ApprovalController extends BaseController {
      * Run: everyday 00:00
      */
 
-    public function batchSendInvoiceToPrinter()
-    {
-        echo date("Y-m-d H:i:s", time());
-        
-        PrintQueue::select('job_id')->wherenull('complete_time')->where('target_time', '<', time())->chunk(50, function($q)
-        {
-            foreach($q as $invoice)
-            {
-
-                $ids[] = $invoice->job_id;
-            }
-            
-            $printer = new InvoicePrinter();
-            $printer->sendJobToPrinter($ids);
-        });
-        
-
-    }
-    
     
 }

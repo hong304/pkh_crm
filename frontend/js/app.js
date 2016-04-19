@@ -1072,6 +1072,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
                         files: [
                             assets + '/global/plugins/bootbox/bootbox.min.js',
                             'js/controllers/batchApproval.js',
+                            'js/controllers/queryInvoice.js',
                         ]
                     });
                 }]

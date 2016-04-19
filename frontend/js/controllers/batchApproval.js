@@ -8,6 +8,14 @@ function viewInvoice(invoiceId,invoiceStatus)
     });
 }
 
+function goEdit(invoiceId)
+{
+    var scope = angular.element(document.getElementById("queryInfo")).scope();
+    scope.$apply(function () {
+        scope.goEdit(invoiceId);
+    });
+}
+
 app.controller('batchApproval', function($scope, $http, SharedService, $timeout, $location, $interval) {
 	
 	var querytarget = endpoint + "/getApprovalList.json";
@@ -58,7 +66,7 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
             });
     }
 
-    $scope.manipulate = function()
+    $scope.batchApproval = function()
     {
         var approvalJson = $scope.endpoint + "/batchApproval.json";
 
@@ -71,9 +79,27 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
         });
     }
 
-    $scope.$on('$destroy', function () {
-    	//$interval.cancel(intervalPromise);
-    });
+
+    $scope.goEdit = function(invoiceId)
+    {
+        $location.url("/editOrder?invoiceId=" + invoiceId);
+    }
+
+    $scope.manipulate = function(action, invoiceId)
+    {
+        var approvalJson = $scope.endpoint + "/manipulateInvoiceStatus.json";
+
+        $http.post(approvalJson, {
+            action: "approval",
+            status:	action,
+            target:	invoiceId
+        }).success(function(data) {
+            $("#invoiceNumber_" + invoiceId).remove();
+            $scope.updateDataSet();
+        });
+
+        $("#productDetails").modal('toggle');
+    }
 
     $scope.generalOtherInvoices = function(){
 
@@ -290,8 +316,7 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
     }*/
 
     $scope.updateZone = function(){
-        $scope.updatePrintQueue();
-        $scope.allowSubmission = true;
+        $scope.updateApprovalList();
     }
 
  /*   $scope.updateGroup = function(){
@@ -299,8 +324,7 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
     }*/
 
     $scope.updateShift = function(){
-        $scope.updatePrintQueue();
-        $scope.allowSubmission = true;
+        $scope.updateApprovalList();
     }
 
     $scope.updateApprovalList = function()
