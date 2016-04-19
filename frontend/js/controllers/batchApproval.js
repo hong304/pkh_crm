@@ -113,11 +113,9 @@ app.controller('batchApproval', function($scope, $http, $rootScope,SharedService
             status:	action,
             target:	invoiceId
         }).success(function(data) {
-            $("#invoiceNumber_" + invoiceId).remove();
-            $scope.updateDataSet();
+            $scope.updateApprovalList();
         });
 
-        $("#productDetails").modal('toggle');
     }
 
     $scope.generalOtherInvoices = function(){

@@ -17,7 +17,7 @@ class ApprovalController extends BaseController {
         } elseif (Input::get('orderbatch') == '2') {
             $invoices->where('deliveryDate', '<', strtotime("today 00:00"));
         }
-        
+
         $invoices = $invoices->get();
         return Response::json($invoices);
     }
