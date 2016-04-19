@@ -8,8 +8,8 @@ class ApprovalController extends BaseController {
         }])->with('customer')->
         where('invoiceStatus','1')->orderBy('zoneId');
 
-        if(Input::get('zone')!=''){
-            $invoices->where('zoneId',Input::get('zone')['zoneId']);
+        if(Input::get('zoneId')!=''){
+            $invoices->where('zoneId',Input::get('zoneId'));
         }
 
         if (Input::get('orderbatch') == '1') {
@@ -17,8 +17,7 @@ class ApprovalController extends BaseController {
         } elseif (Input::get('orderbatch') == '2') {
             $invoices->where('deliveryDate', '<', strtotime("today 00:00"));
         }
-
-        $invoices->where('shift',Input::get('shift'));
+        
         $invoices = $invoices->get();
         return Response::json($invoices);
     }

@@ -530,7 +530,7 @@ class Invoice_9FPickingList {
 
                 // we can have 40 items as most per section
                 $ninefproducts1[$j][] = $nf;
-                if($consec > 20)
+                if($consec > 18)
                 {
                     array_pop($ninefproducts1[$j]);
                     $nf['acccon'] = 1;

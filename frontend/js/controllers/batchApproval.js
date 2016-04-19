@@ -16,7 +16,7 @@ function goEdit(invoiceId)
     });
 }
 
-app.controller('batchApproval', function($scope, $http, SharedService, $timeout, $location, $interval) {
+app.controller('batchApproval', function($scope, $http, $rootScope,SharedService, $timeout, $location, $interval) {
 	
 	var querytarget = endpoint + "/getApprovalList.json";
     var checkstatus = endpoint + "/getInvoiceStatusMatchPrint.json";
@@ -24,21 +24,25 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
 
 
 
-    $scope.allowSubmission = true;
-
-    $scope.prints = {
-        'collect' : ''
-    }
+    $scope.systeminfo = $rootScope.systeminfo;
 
     $scope.zone = '';
     $scope.group = '';
-    $scope.shift = '1';
     $scope.orderbatch = '1';
     $scope.checkid = {};
 
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         Metronic.initAjax();
+
+        if($location.search().date != '')
+            $scope.orderbatch = $location.search().date;
+
+        if($location.search().zone != '') {
+            var zone = $location.search().zone;
+           $scope.zoneId = parseInt(zone);
+        }
+
         $scope.updateApprovalList();
          /* var intervalPromise = $interval(function(){
                        $scope.updatePrintQueue();
@@ -46,6 +50,20 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
 
     });
 
+    $rootScope.$on('$locationChangeSuccess', function(){
+        $scope.checkParm();
+        $scope.updateApprovalList();
+
+    });
+
+    $scope.checkParm = function()
+    {
+        if($location.search().date != '')
+            $scope.orderbatch = $location.search().date;
+
+        if($location.search().zone != '')
+            $scope.zoneId = $location.search().zone;
+    }
 
     $scope.viewInvoice = function(invoiceId,invoiceStatus)
     {
@@ -317,6 +335,7 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
     }*/
 
     $scope.updateZone = function(){
+        $scope.zoneId = $scope.zone.zoneId;
         $scope.updateApprovalList();
     }
 
@@ -337,7 +356,7 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
         $http({
             method: 'POST',
             url: querytarget,
-            data: {zone:$scope.zone,shift:$scope.shift,orderbatch:$scope.orderbatch}
+            data: {zoneId:$scope.zoneId,orderbatch:$scope.orderbatch}
         }).success(function(res){
     		$scope.invoices = res;
             console.log($scope.invoices);
