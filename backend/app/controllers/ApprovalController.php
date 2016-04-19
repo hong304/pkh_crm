@@ -12,6 +12,12 @@ class ApprovalController extends BaseController {
             $invoices->where('zoneId',Input::get('zone')['zoneId']);
         }
 
+        if (Input::get('orderbatch') == '1') {
+            $invoices->where('deliveryDate', '>=', strtotime("today 00:00"));
+        } elseif (Input::get('orderbatch') == '2') {
+            $invoices->where('deliveryDate', '<', strtotime("today 00:00"));
+        }
+
         $invoices->where('shift',Input::get('shift'));
         $invoices = $invoices->get();
         return Response::json($invoices);

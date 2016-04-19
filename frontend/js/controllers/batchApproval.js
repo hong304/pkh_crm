@@ -33,6 +33,7 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
     $scope.zone = '';
     $scope.group = '';
     $scope.shift = '1';
+    $scope.orderbatch = '1';
     $scope.checkid = {};
 
     $scope.$on('$viewContentLoaded', function() {
@@ -327,12 +328,16 @@ app.controller('batchApproval', function($scope, $http, SharedService, $timeout,
         $scope.updateApprovalList();
     }
 
+    $scope.updateOrder = function(){
+        $scope.updateApprovalList();
+    }
+
     $scope.updateApprovalList = function()
     {
         $http({
             method: 'POST',
             url: querytarget,
-            data: {zone:$scope.zone,shift:$scope.shift}
+            data: {zone:$scope.zone,shift:$scope.shift,orderbatch:$scope.orderbatch}
         }).success(function(res){
     		$scope.invoices = res;
             console.log($scope.invoices);

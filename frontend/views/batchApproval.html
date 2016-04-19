@@ -48,6 +48,18 @@
                         </div>
                     </div>
 
+                    <div class="actions">
+
+                        <div class="btn-group">
+                            <select class="form-control"
+                                    ng-model="orderbatch"
+                                    data-ng-change="updateOrder();">
+                                <option value='1'>Normal</option>
+                                <option value='2'>Backday</option>
+                            </select>
+                        </div>
+                    </div>
+
                    <!-- <div class="actions" data-ng-if="systemInfo.permission.staff_maintenance == true">
                         <div class="btn-group">
                             <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="printGroup();">
@@ -66,15 +78,15 @@
                                     Normal Orders </a>
                             </li>
 
-                            <li>
-                                <a data-target="#tab_job9698" data-toggle="tab">
-                                    Back day Orders </a>
-                            </li>
+                            <!-- <li>
+                                 <a data-target="#tab_job9698" data-toggle="tab">
+                                     Back day Orders </a>
+                             </li>
 
-                            <!--<li>
-                                <a data-target="#tab_loginrecord" data-toggle="tab">
-                                    已列印 </a>
-                            </li>-->
+                             <!--<li>
+                                 <a data-target="#tab_loginrecord" data-toggle="tab">
+                                     已列印 </a>
+                             </li>-->
                         </ul>
                         <div class="tab-content no-space">
 
