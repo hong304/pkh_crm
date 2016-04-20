@@ -18,7 +18,7 @@ class ApprovalController extends BaseController {
             $invoices->where('deliveryDate', '<', strtotime("today 00:00"));
         }
 
-        $invoices = $invoices->get();
+        $invoices = $invoices->where('updated_by','!=',Auth::user()->id)->get();
         return Response::json($invoices);
     }
 
