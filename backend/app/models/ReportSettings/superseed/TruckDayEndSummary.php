@@ -151,7 +151,7 @@ class TruckDayEndSummary extends Report{
     {
 
         $pdf->SetFont('j','',18);
-        $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
+        $pdf->Cell(0, 10,"炳記行貿易國際有限公司",0,1,"C");
         $pdf->SetFont('j','U',16);
         $pdf->Cell(0, 10,$this->reportTitle,0,1,"C");
         $pdf->SetFont('j','U',13);

@@ -910,7 +910,7 @@ $i=3;
     {
         $shift = ($this->_shift== 1)?'早班':'晚班';
         $pdf->SetFont('chi','',18);
-        $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
+        $pdf->Cell(0, 10,"炳記行貿易國際有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
         if($title!=false)
             $this->_reportTitle = sprintf("%s - v%s", $title,  $this->_version);

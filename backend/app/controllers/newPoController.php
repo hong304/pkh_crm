@@ -270,7 +270,7 @@ class newPoController extends BaseController {
         
         $pdf->SetFont('chi','',12);
         $pdf->setXY(10, 40);
-        $pdf->Cell(0, 0,"炳 記 行 貿 易 有 限 公 司",0,1,"L");
+        $pdf->Cell(0, 0,"炳 記 行 貿 易 國 際 有 限 公 司",0,1,"L");
 
 
         $pdf->SetFont('chi','',9);
@@ -796,7 +796,7 @@ class newPoController extends BaseController {
     {
         $pdf->SetFont('chi','',12);
         $pdf->setXY(10, 40);
-        $pdf->Cell(0, 0,"炳 記 行 貿 易 有 限 公 司",0,1,"L");
+        $pdf->Cell(0, 0,"炳 記 行 貿 易 國 際 有 限 公 司",0,1,"L");
 
 
         $pdf->SetFont('chi','',9);
@@ -932,7 +932,7 @@ class newPoController extends BaseController {
         
         $pdf->SetFont('chi','',12);
         $pdf->setXY(10, 40);
-        $pdf->Cell(0, 0,"炳 記 行 貿 易 有 限 公 司",0,1,"L");
+        $pdf->Cell(0, 0,"炳 記 行 貿 易 國 際 有 限 公 司",0,1,"L");
 
 
         $pdf->SetFont('chi','',9);
@@ -1103,11 +1103,11 @@ class newPoController extends BaseController {
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
         $pdf->SetFont('chi','',15);
         $pdf->setXY(10, 40);
-        $pdf->Cell(0, 0,"炳 記 行 貿 易 有 限 公 司",0,1,"L");
+        $pdf->Cell(0, 0,"炳 記 行 貿 易 國 際 有 限 公 司",0,1,"L");
         
         $pdf->SetFont('chi','',15);
         $pdf->setXY(10, 47);
-        $pdf->Cell(0, 0,"PING KEE HONG TRADING CO., LTD",0,1,"L");
+        $pdf->Cell(0, 0,"PING KEE HONG TRADING INTERNATIONAL LIMITED",0,1,"L");
 
 
         $pdf->SetFont('chi','',8);

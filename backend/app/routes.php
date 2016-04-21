@@ -461,7 +461,7 @@ for ($i = 0; $i <22; $i++){
             $pdf->AddFont('chi','','LiHeiProPC.ttf',true);
             $pdf->SetFont('chi','',14);
             $pdf->setXY(10, 2);
-            $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
+            $pdf->Cell(0, 10,"炳記行貿易國際有限公司",0,1,"C");
             $pdf->setXY(10, 10);
             $pdf->SetFont('chi','U',12);
             $pdf->Cell(0, 10,'帳齡分析搞要(應收)',0,1,"C");

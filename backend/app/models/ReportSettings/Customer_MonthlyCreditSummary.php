@@ -632,7 +632,7 @@ for($start = 0;$start < count($dateRange);$start++)
         $pdf->AddFont('chi', '', 'LiHeiProPC.ttf', true);
         $pdf->SetFont('chi', '', 14);
         $pdf->setXY(10, 2);
-        $pdf->Cell(0, 10, "炳記行貿易有限公司", 0, 1, "C");
+        $pdf->Cell(0, 10, "炳記行貿易國際有限公司", 0, 1, "C");
         $pdf->setXY(10, 10);
         $pdf->SetFont('chi', 'U', 12);
         $pdf->Cell(0, 10, '帳齡分析搞要(應收)', 0, 1, "C");
@@ -910,7 +910,7 @@ for($start = 0;$start < count($dateRange);$start++)
 
       public function generateExcelHeader($excel) {
         $today = date("Y-m-d");
-        $excel->getActiveSheet()->setCellValue('A1', 'PING KEE HONG TRADING COMPANY LTD.');
+        $excel->getActiveSheet()->setCellValue('A1', 'PING KEE HONG TRADING INTERNATIONAL LTD.');
         $excel->getActiveSheet()->mergeCells('A1:F1');
         $excel->getActiveSheet()->setCellValue('A2', 'Accounts Receivable Aging Report(Cash sales)');
         $excel->getActiveSheet()->mergeCells('A2:F2');
@@ -922,11 +922,11 @@ for($start = 0;$start < count($dateRange);$start++)
 
         $pdf->SetFont('chi', '', 18);
         $pdf->setXY(45, 10);
-        $pdf->Cell(0, 0, "炳 記 行 貿 易 有 限 公 司", 0, 1, "L");
+        $pdf->Cell(0, 0, "炳 記 行 貿 易 國 際 有 限 公 司", 0, 1, "L");
 
         $pdf->SetFont('chi', '', 18);
         $pdf->setXY(45, 18);
-        $pdf->Cell(0, 0, "PING KEE HONG TRADING COMPANY LTD.", 0, 1, "L");
+        $pdf->Cell(0, 0, "PING KEE HONG TRADING INTERNATIONAL LTD.", 0, 1, "L");
 
         $pdf->SetFont('chi', '', 9);
         $pdf->setXY(45, 25);

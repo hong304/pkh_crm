@@ -85,7 +85,7 @@ class financialReportController extends BaseController
         $objPHPExcel = new PHPExcel();
 
 
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', '炳 記 行 貿 易 有 限 公 司');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '炳 記 行 貿 易 國 際 有 限 公 司');
         $objPHPExcel->getActiveSheet()->mergeCells('A1:D1');
         $objPHPExcel->getActiveSheet()->setCellValue('A2', 'Monthly Sales Status');
         $objPHPExcel->getActiveSheet()->mergeCells('A2:E2');
@@ -235,7 +235,7 @@ class financialReportController extends BaseController
         $objPHPExcel = new PHPExcel();
 
 
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', '炳 記 行 貿 易 有 限 公 司');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', '炳 記 行 貿 易 國 際 有 限 公 司');
         $objPHPExcel->getActiveSheet()->mergeCells('A1:D1');
         $objPHPExcel->getActiveSheet()->setCellValue('A2', '帳齡分析搞要(應收)');
         $objPHPExcel->getActiveSheet()->mergeCells('A2:E2');
@@ -457,7 +457,7 @@ class financialReportController extends BaseController
         $objPHPExcel = new PHPExcel ();
 
 
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Ping Kee Hong Trading Company Limited');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Ping Kee Hong Trading International Limited');
         $objPHPExcel->getActiveSheet()->mergeCells('A1:C1');
         $objPHPExcel->getActiveSheet()->setCellValue('A2', 'Daily sales summary');
         $objPHPExcel->getActiveSheet()->mergeCells('A2:C2');
@@ -624,7 +624,7 @@ class financialReportController extends BaseController
             $objPHPExcel = new PHPExcel ();
 
 
-            $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Ping Kee Hong Trading Company Limited');
+            $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Ping Kee Hong Trading International Limited');
             $objPHPExcel->getActiveSheet()->mergeCells('A1:C1');
             $objPHPExcel->getActiveSheet()->setCellValue('A2', 'Daily sales summary');
             $objPHPExcel->getActiveSheet()->mergeCells('A2:C2');
@@ -952,7 +952,7 @@ class financialReportController extends BaseController
     
     public function generateExcelHeader($excel) {
         $today = date("Y-m-d");
-        $excel->getActiveSheet()->setCellValue('A1', 'PING KEE HONG TRADING COMPANY LTD.');
+        $excel->getActiveSheet()->setCellValue('A1', 'PING KEE HONG TRADING INTERNATIONAL LTD.');
         $excel->getActiveSheet()->mergeCells('A1:F1');
         $excel->getActiveSheet()->setCellValue('A2', 'Accounts Receivable Aging Report');
         $excel->getActiveSheet()->mergeCells('A2:F2');

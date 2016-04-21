@@ -615,7 +615,7 @@ $this->updateVanQty();
             $shift = '全部';
 
         $pdf->SetFont('chi', '', 18);
-        $pdf->Cell(0, 10, "炳記行貿易有限公司", 0, 1, "C");
+        $pdf->Cell(0, 10, "炳記行貿易國際有限公司", 0, 1, "C");
         $pdf->SetFont('chi', 'U', 16);
         $pdf->Cell(0, 10, $this->_reportTitle, 0, 1, "C");
         $pdf->SetFont('chi', 'U', 13);
@@ -632,7 +632,7 @@ $this->updateVanQty();
     public function generateHeaderAudit($pdf)
     {
         $pdf->SetFont('chi', '', 18);
-        $pdf->Cell(0, 10, "炳記行貿易有限公司", 0, 1, "C");
+        $pdf->Cell(0, 10, "炳記行貿易國際有限公司", 0, 1, "C");
         $pdf->SetFont('chi', 'U', 16);
         $pdf->Cell(0, 10, $this->_reportTitle, 0, 1, "C");
         $pdf->SetFont('chi', 'U', 13);
