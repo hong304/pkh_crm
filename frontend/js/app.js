@@ -1057,8 +1057,28 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             }]
         }
     })
-    
-    
+
+
+        .state('batchApproval', {
+            url: "/batchApproval",
+            templateUrl: "views/batchApproval.html",
+            data: {pageTitle: '批量批核', pageSubTitle: ''},
+            controller: "batchApproval",
+            resolve: {
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'app',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            assets + '/global/plugins/bootbox/bootbox.min.js',
+                            'js/controllers/batchApproval.js',
+                            'js/controllers/queryInvoice.js',
+                        ]
+                    });
+                }]
+            }
+        })
+
     .state('customerMaintenance', {
         url: "/customerMaintenance",
         templateUrl: "views/customerListing.html",            

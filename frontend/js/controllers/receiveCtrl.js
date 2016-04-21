@@ -400,7 +400,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
          label: "確定",
          className: "red",
          callback: function() {*/
-        if(!$scope.disAllowsubmit)
+        //if(!$scope.disAllowsubmit)
             $scope.submitOrder(v);
         /*  }
          }

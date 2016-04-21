@@ -44,7 +44,7 @@
 </script>
 
 <div class="col-md-12">
-    <span style="font-size:25px;">炳記行貿易有限公司</span>
+    <span style="font-size:25px;">炳記行貿易國際有限公司</span>
 
     <div class="portlet light">
 

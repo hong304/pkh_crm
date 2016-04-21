@@ -70,8 +70,9 @@ app.controller('expensesController', function($scope, $rootScope, $http, SharedS
     $scope.$on('$viewContentLoaded', function() {
         Metronic.initAjax();
         $scope.systeminfo = $rootScope.systeminfo;
+        console.log($scope.systeminfo);
         $scope.updateDataSet();
-       // console.log($scope.filterData);
+
    });
 
     $scope.$watch(function() {
@@ -203,12 +204,12 @@ $scope.submitExpensesForm = function(){
                     { "data": "cost1", "width":"5%" },
                     { "data": "cost2",  "width":"5%"},
                     { "data": "cost3", "width":"5%" },
-                    { "data": "cost3_remark", "width":"20%" },
+                    { "data": "cost3_remark", "width":"15%" },
                     { "data": "cost4", "width":"6%" },
                     { "data": "cost4_remark", "width":"20%" },
                     { "data": "cost5", "width":"6%" },
                     { "data": "cost5_remark", "width":"20%" },
-                    { "data": "updated_by_text", "width":"5%" },
+                    { "data": "updated_by_text", "width":"10%" },
                     { "data": "link", "width":"3%" }
 
                 ],

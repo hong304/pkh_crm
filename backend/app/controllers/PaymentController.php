@@ -164,7 +164,7 @@ class PaymentController extends BaseController
                     $i->payment()->attach($payment->id, ['amount' => $i->amount, 'paid' => $paidinfo['paid'], 'discount_taken' => $discount_taken]);
                 } else
                     $i->payment()->attach($payment->id, ['amount' => $i->amount, 'paid' => $paidinfo['paid']]);
-            } else if ($paidinfo['cashAmount'] != 0) {
+            } else if ($paidinfo['cashAmount'] != 0 || Input::get('special_discount') == 1) {
                 $payment1 = new Payment();
                 $payment1->paymentType = 'COD';
                 $payment1->bankCode = 'cash';
@@ -250,9 +250,10 @@ class PaymentController extends BaseController
 
             if($filter['discountStatus'] !=''){
                 if($filter['discountStatus'] == 'overpaid')
-                    $invoice->where('discount_taken','<',0);
+                    $invoice->whereRaw('amount<paid');
                 elseif($filter['discountStatus'] == 'underpaid')
-                    $invoice->where('discount_taken','>',0);
+                  $invoice->whereRaw('amount>paid')->where('paid','!=',0);
+
             }
 
             $invoices = $invoice->orderby('deliveryDate', 'asc');
@@ -531,7 +532,7 @@ class PaymentController extends BaseController
     public function generateHeader($pdf)
     {
         $pdf->SetFont('chi', '', 18);
-        $pdf->Cell(0, 10, "炳記行貿易有限公司", 0, 1, "C");
+        $pdf->Cell(0, 10, "炳記行貿易國際有限公司", 0, 1, "C");
         $pdf->SetFont('chi', 'U', 16);
         $pdf->Cell(0, 10, '結帳列表(應收)', 0, 1, "C");
         $pdf->SetFont('chi', 'U', 12);

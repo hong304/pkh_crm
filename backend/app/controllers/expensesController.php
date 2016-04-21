@@ -9,6 +9,12 @@ class expensesController extends BaseController {
 
         $filter = Input::get('filterData');
 
+        $system = new SystemController();
+
+        if (strtotime($filter['deliveryDate'])<=strtotime($system->getPreviousDay(5))){
+            return 'error code: 1986-Ax';
+        }
+
         if($filter['id']!=''){
             $expenses = expense::where('id',$filter['id'])->first();
         }else{
@@ -60,9 +66,11 @@ class expensesController extends BaseController {
             $expenses->whereBetween('deliveryDate',[date('Y-m-d',strtotime($filter['deliverydate'])),date('Y-m-d',strtotime($filter['deliverydate2']))])->orderby('deliveryDate','desc')->orderby('zoneId','asc');
 
 
+            $system = new SystemController();
+
             return Datatables::of($expenses)
-                ->addColumn('link', function ($expense) {
-                    if (Auth::user()->can('edit_expenses'))
+                ->addColumn('link', function ($expense) use ($system) {
+                    if (Auth::user()->can('edit_expenses') && strtotime($expense->deliveryDate) > strtotime($system->getPreviousDay(5)) )
                         return '<span onclick="editExpenses(\'' . $expense->id . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                     else
                         return '';

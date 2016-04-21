@@ -530,7 +530,7 @@ class Invoice_9FPickingList {
 
                 // we can have 40 items as most per section
                 $ninefproducts1[$j][] = $nf;
-                if($consec > 20)
+                if($consec > 18)
                 {
                     array_pop($ninefproducts1[$j]);
                     $nf['acccon'] = 1;
@@ -555,7 +555,7 @@ class Invoice_9FPickingList {
                 $this->generateHeader($pdf,'箱頭總匯');
 
                 $pdf->SetFont('chi','',11);
-                $pdf->setXY(113, 47);
+                $pdf->setXY(115, 47);
                 $pdf->Cell(0, 0, sprintf("%s     %s", '9樓負責人','1樓負責人', 0, 0, "L"));
 
                 $pdf->SetFont('chi','',10);
@@ -603,12 +603,12 @@ class Invoice_9FPickingList {
 
 
 
-                                        $pdf->setXY($base_x + 70, $y);
+                                        $pdf->setXY($base_x + 85, $y);
                                         $pdf->Cell(0, 0, "    " . sprintf("%s %s", $o['counts'],$o['unit_txt']), 0, 0, 'L');
 
 
                                         $pdf->SetFont('chi','',14);
-                                        $pdf->setXY($base_x + 108, $y);
+                                        $pdf->setXY($base_x + 110, $y);
                                         $pdf->Cell(0, 0, "[    ]        [    ]", 0, 0, 'L');
 
                                         $y += 10;
@@ -910,7 +910,7 @@ $i=3;
     {
         $shift = ($this->_shift== 1)?'早班':'晚班';
         $pdf->SetFont('chi','',18);
-        $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
+        $pdf->Cell(0, 10,"炳記行貿易國際有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
         if($title!=false)
             $this->_reportTitle = sprintf("%s - v%s", $title,  $this->_version);

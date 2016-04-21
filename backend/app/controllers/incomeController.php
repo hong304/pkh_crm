@@ -9,6 +9,12 @@ class incomeController extends BaseController {
 
         $filter = Input::get('filterData');
 
+        $system = new SystemController();
+
+        if (strtotime($filter['deliveryDate'])<=strtotime($system->getPreviousDay(5))){
+            return 'error code: 1987-Ax';
+        }
+
         if($filter['id']!=''){
             $expenses = income::where('id',$filter['id'])->first();
         }else{
@@ -53,10 +59,11 @@ class incomeController extends BaseController {
 
             $expenses->whereBetween('deliveryDate',[date('Y-m-d',strtotime($filter['deliverydate'])),date('Y-m-d',strtotime($filter['deliverydate2']))])->orderby('deliveryDate','desc')->orderby('zoneId','asc');
 
+            $system = New SystemController();
 
             return Datatables::of($expenses)
-                ->addColumn('link', function ($expense) {
-                    if (Auth::user()->can('edit_income'))
+                ->addColumn('link', function ($expense) use ($system) {
+                    if (Auth::user()->can('edit_income') && strtotime($expense->deliveryDate) > strtotime($system->getPreviousDay(5)) )
                         return '<span onclick="editIncome(\'' . $expense->id . '\')" class="btn btn-xs default"><i class="fa fa-search"></i> 修改</span>';
                     else
                         return '';

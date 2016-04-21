@@ -1,5 +1,5 @@
 <!--financeController-->
-<form class="form-horizontal" role="form" id="queryInfo">
+<div class="form-horizontal" role="form" id="queryInfo">
     <div class="col-md-2">
 
 
@@ -58,7 +58,7 @@
 
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
-                    <input type="text" id="groupName" ng-model="filterData.groupName" ng-change="updateGroupName();" class="form-control" placeholder="">
+                    <input type="text" id="groupName" ng-model="filterData.groupName"  class="form-control" placeholder="">
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
 
             <div class="portlet-body">
                 <div class="md-col-12" style="margin-bottom:15px;">
-                    <input type="text" id="invoiceNumber" ng-model="filterData.ChequeNumber" ng-change="updateChequeNumber();" class="form-control" placeholder="">
+                    <input type="text" id="invoiceNumber" ng-model="filterData.ChequeNumber"  class="form-control" placeholder="">
                 </div>
             </div>
         </div>
@@ -143,6 +143,14 @@
                 </div>
             </div>
 
+            <div class="portlet light">
+                <div class="portlet-body">
+                    <div class="md-col-12">
+                        <button type="button" ng-click="getChequeList();" id="submitbutton" class="btn blue">提交</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -194,7 +202,7 @@
         </div>
 
 </div>
-</form>
+</div>
     <!-- Select Client Modal -->
     <div ng-include="'/views/model_selectclient.html'"></div>
 

@@ -169,16 +169,64 @@ app.controller('reportFactoryCtrl', function($scope, $http, SharedService, $time
 
                 $http.post(querytarget, {reportId: $location.search().id, filterData: $scope.filterData, output: "setting"})
                     .success(function(res, status, headers, config){
+
+
+
+
+
                         $scope.setting = res;
-                        res.filterOptions.forEach(function(options){
-                            if (options.type == "version-dropdown")
-                            {
-                                var pos = options.optionList.map(function(e) {
-                                    return e.value;
-                                }).indexOf(options.defaultValue);
-                                $scope.filterData[options.model] = options.optionList[pos];
-                            }
+                        Metronic.unblockUI();
+                        $timeout(function(){
+
+
+                            res.filterOptions.forEach(function(options){
+                                if(options.type == "date-picker")
+                                {
+                                    $("#" + options.id).datepicker({
+                                        rtl: Metronic.isRTL(),
+                                        orientation: "left",
+                                        autoclose: true
+                                    });
+
+                                }
+
+                                if(options.type == "date-picker1")
+                                {
+
+                                    $("#" + options.id).datepicker({
+                                        rtl: Metronic.isRTL(),
+                                        orientation: "left",
+                                        autoclose: true
+                                    });
+
+
+                                    $("#" + options.id1).datepicker({
+                                        rtl: Metronic.isRTL(),
+                                        orientation: "left",
+                                        autoclose: true
+                                    });
+
+
+                                }
+
+                                if (options.type == "version-dropdown")
+                                {
+                                    var pos = options.optionList.map(function(e) {
+                                        return e.value;
+                                    }).indexOf(options.defaultValue);
+                                    $scope.filterData[options.model] = options.optionList[pos];
+                                }
+
+
+                            });
                         });
+
+
+
+
+
+
+
                     });
 
 

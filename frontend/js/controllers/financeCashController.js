@@ -58,7 +58,8 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         'paid' : '0',
         'no' : '',
         'remain' : 0,
-        discountStatus : ''
+        discountStatus : '',
+        'discount' : ''
     };
 
 
@@ -198,6 +199,7 @@ app.controller('financeCashController', function($scope, $rootScope, $http, Shar
         $scope.filterData.amount = '0';
         $scope.filterData.paid = '0';
         $scope.filterData.no = '';
+        $scope.filterData.discount = '';
 
 
         document.getElementById('no').readOnly=false;
@@ -306,9 +308,6 @@ console.log(res);
 
     $scope.autoPostCod = function(){
 
-
-
-
         var owe = 0;
         $scope.paymentDetails.forEach(function(item) {
             if(item.invoiceId==$scope.filterData.invoiceId)
@@ -319,6 +318,8 @@ console.log(res);
             $scope.filterData.amount = owe;
             $scope.filterData.paid = owe;
         }
+
+
 
         if($scope.filterData.amount>owe||$scope.filterData.cashAmount>owe){
             bootbox.dialog({
@@ -446,7 +447,28 @@ console.log(res);
                 }
             }
         });
-}else if($scope.filterData.paid==0 && $scope.filterData.cashAmount ==0){
+}else if($scope.filterData.paid==0 && $scope.filterData.cashAmount ==0 && $scope.filterData.discount == 1){
+            $http({
+                method: 'POST',
+                url: query,
+                data: {paidinfo:$scope.filterData,mode:'posting',paymentStatus:'30',discount:owe,special_discount:1}
+            }).success(function () {
+                $('#invoicePayment').modal('hide');
+                Metronic.alert({
+                    container: '#firstContainer', // alerts parent container(by default placed after the page breadcrumbs)
+                    place: 'prepend', // append or prepent in container
+                    type: 'success',  // alert's type
+                    message: '<span style="font-size:16px;">餘額已轉為折扣</span>',  // alert's message
+                    close: true, // make alert closable
+                    reset: true, // close all previouse alerts first
+                    focus: true, // auto scroll to the alert after shown
+                    closeInSeconds: 0, // auto close after defined seconds
+                    icon: 'warning' // put icon before the message
+                });
+                $scope.updateDataSet();
+            });
+
+   }else if($scope.filterData.paid==0 && $scope.filterData.cashAmount ==0){
 
     $http({
         method: 'POST',
@@ -476,6 +498,7 @@ console.log(res);
         $scope.updateDataSet();
     });
 }else{
+
     $http({
         method: 'POST',
         url: query,

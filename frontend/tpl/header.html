@@ -11,7 +11,7 @@
 		<div class="page-logo">
 			<!-- <a href="#"><img src="/assets/admin/layout3/img/logo-default.png" alt="logo" class="logo-default"></a> -->
             <a href="#/salesPanel"><img src="/assets/admin/layout3/img/logo-default.png" alt="logo" class="logo-default"></a>
-			<span style="font-size:25px;">炳記行貿易有限公司</span>
+			<span style="font-size:25px;">炳記行貿易國際有限公司</span>
 		</div>
 		<!-- END LOGO -->
 		<!-- BEGIN RESPONSIVE MENU TOGGLER -->
@@ -43,12 +43,12 @@
 						<ul class="dropdown-menu">
 							<li class="external">
 								<h3>共有<strong>{{notification.1today.countInDataMart}} 張</strong> 訂單需要批核</h3>
-								<a href="/#/pendingInvoice?scope=pendingOrder&date=today">檢視待批核的訂單</a>
+								<a href="/#/batchApproval?date=1">檢視待批核的訂單</a>
 							</li>
 							<li>
 								<ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
 									<li data-ng-repeat="c in notification.1today.breakdown">
-										<a href="/#/pendingInvoice?scope=pendingOrder&date=today&zone={{c.zoneId}}">
+										<a href="/#/batchApproval?date=1&zone={{c.zoneId}}">
 										<!-- <span class="time">{{c.lastload}}</span> -->
 										<span class="details">
 											<span class="label label-sm label-icon label-success">
@@ -70,12 +70,12 @@
                     <ul class="dropdown-menu">
                         <li class="external">
                             <h3>共有<strong>{{notification.1yesterday.countInDataMart}} 張</strong> 訂單需要批核</h3>
-                            <a href="/#/pendingInvoice?scope=pendingOrder&date=yesterday">檢視待批核的訂單</a>
+                            <a href="/#/batchApproval?date=2">檢視待批核的訂單</a>
                         </li>
                         <li>
                             <ul class="dropdown-menu-list scroller" style="min-height: 250px;" data-handle-color="#637283">
                                 <li data-ng-repeat="c in notification.1yesterday.breakdown">
-                                    <a href="/#/pendingInvoice?scope=pendingOrder&date=yesterday&zone={{c.zoneId}}">
+                                    <a href="/#/batchApproval?date=2&zone={{c.zoneId}}">
                                         <!-- <span class="time">{{c.lastload}}</span> -->
 										<span class="details">
 											<span class="label label-sm label-icon label-success">

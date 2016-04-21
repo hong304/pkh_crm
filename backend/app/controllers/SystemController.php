@@ -75,6 +75,31 @@ class SystemController extends BaseController {
             $v = $m.'-'.$d;
         }
 
+        if(date('w', strtotime(date('Y-m-d'))) == 1 ||date('w', strtotime(date('Y-m-d'))) == 2 ||date('w', strtotime(date('Y-m-d'))) == 3)
+            $days_ago = date('Y-m-d', strtotime('-6 days', strtotime(date('Y-m-d'))));
+        else
+            $days_ago = date('Y-m-d', strtotime('-5 days', strtotime(date('Y-m-d'))));
+
+        function check_in_range2($start_date, $end_date, $date_from_user)
+        {
+            // Convert to timestamp
+            $start_ts = strtotime($start_date);
+            $end_ts = strtotime($end_date);
+            $user_ts = strtotime($date_from_user);
+
+            // Check that user date is between start & end
+            return (($user_ts >= $start_ts) && ($user_ts <= $end_ts));
+        }
+
+        $count = 0;
+        foreach($h_array as $g){
+            if(check_in_range2($days_ago, date('Y-m-d'), $g))
+                $count++;
+        }
+
+        $accurage_date = date('Y-m-d', strtotime('-'.$count.' days', strtotime($days_ago)));
+
+
        $broadcastMessages = broadcastMessage::whereHas("broadcastMessageRead", function($q) {
             $q->where('user_id',Auth::user()->id);
         }, '<', 1)->get();
@@ -92,6 +117,7 @@ class SystemController extends BaseController {
             'customerGroup' => $c,
             'holiday' => $h_array,
             'broadcastMessage' => $broadcastMessages,
+            'accurage_date' => $accurage_date,
           //'invoiceStatus' => Config::get('invoiceStatus'),
          ];
 
@@ -244,7 +270,7 @@ class SystemController extends BaseController {
         return $return;
     }
 
-    public static function getPreviousDay($day){
+    public function getPreviousDay($day){
         $holidays =  holiday::where('year',date("Y"))->first();
 
         $h_array = explode(",", $holidays->date);
@@ -266,20 +292,8 @@ class SystemController extends BaseController {
             }
         }
 
-        function check_in_range($start_date, $end_date, $date_from_user)
-        {
-            // Convert to timestamp
-            $start_ts = strtotime($start_date);
-            $end_ts = strtotime($end_date);
-            $user_ts = strtotime($date_from_user);
-
-            // Check that user date is between start & end
-            return (($user_ts >= $start_ts) && ($user_ts <= $end_ts));
-        }
-
-
         foreach($h_array as $g){
-            if(check_in_range($days_ago, date('Y-m-d'), $g))
+            if($this->check_in_range($days_ago, date('Y-m-d'), $g))
                 $count++;
         }
 
@@ -317,4 +331,17 @@ class SystemController extends BaseController {
         $pdf->Output($path, "IF");
 
     }
+
+
+    function check_in_range($start_date, $end_date, $date_from_user)
+    {
+        // Convert to timestamp
+        $start_ts = strtotime($start_date);
+        $end_ts = strtotime($end_date);
+        $user_ts = strtotime($date_from_user);
+
+        // Check that user date is between start & end
+        return (($user_ts >= $start_ts) && ($user_ts <= $end_ts));
+    }
+
 }

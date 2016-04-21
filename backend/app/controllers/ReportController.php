@@ -38,6 +38,9 @@ class ReportController extends BaseController {
         if(Auth::user()->can('view_itemssummary'))
         array_push($filter,'itemssummary');
 
+        if(Auth::user()->can('view_itemssummarysales'))
+            array_push($filter,'itemssummarysales');
+
         if(Auth::user()->can('view_productReport'))
         array_push($filter,'productReport');
 
@@ -46,8 +49,6 @@ class ReportController extends BaseController {
 
       //  if(Auth::user()->can('view_vanselllist'))
        //     array_push($filter,'vanselllist');
-
-
 
 
 
@@ -234,11 +235,11 @@ public function loadvanSellReport(){
 
                 $pdf->SetFont('chi','',18);
                 $pdf->setXY(45, 10);
-                $pdf->Cell(0, 0,"炳 記 行 貿 易 有 限 公 司",0,1,"L");
+                $pdf->Cell(0, 0,"炳 記 行 貿 易 國 際 有 限 公 司",0,1,"L");
 
                 $pdf->SetFont('chi','',18);
                 $pdf->setXY(45, 18);
-                $pdf->Cell(0, 0,"PING KEE HONG TRADING COMPANY LTD.",0,1,"L");
+                $pdf->Cell(0, 0,"PING KEE HONG TRADING INTERNATIONAL LTD.",0,1,"L");
 
                 $pdf->SetFont('chi','',9);
                 $pdf->setXY(45, 25);

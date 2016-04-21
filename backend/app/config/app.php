@@ -12,7 +12,7 @@ return array(
     
     'assetlocation' => '//frontend.pingkeehong.com/assets',
     
-    'companyname' => 'Ping Kee Hong Trading Company Ltd', 
+    'companyname' => 'Ping Kee Hong Trading International Ltd',
 
 	/*
 	|--------------------------------------------------------------------------

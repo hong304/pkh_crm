@@ -480,7 +480,10 @@ class ProductController extends BaseController {
 
             $current_sorting = $filter['current_sorting'];
             if (!$filter['sorting'] == '') {
-                $sorting = $filter['sorting'];
+                if($filter['sorting'] == 'total_good_qty')
+                    $sorting = DB::raw('total_good_qty/productPacking_inner/productPacking_unit');
+                else
+                    $sorting = $filter['sorting'];
             }
 
           //  Paginator::setCurrentPage((Input::get('start')+10) / Input::get('length'));
@@ -523,6 +526,7 @@ class ProductController extends BaseController {
                 DB::update('UPDATE product SET total_good_qty = (SELECT total_qty FROM receivings WHERE receivings.productId = product.productId LIMIT 1) WHERE productStatus = \'o\'');
             }*/
 
+
             if($filter['level']=='max')
                 $product->where('max_level','<', DB::raw("total_good_qty/productPacking_inner/productPacking_unit"));
             if($filter['level']=='reorder')
@@ -532,6 +536,8 @@ class ProductController extends BaseController {
 
           //  $page_length = Input::get('length') <= 50 ? Input::get('length') : 50;
             $product = $product->orderby($sorting, $current_sorting);
+          //  $product = $product->orderBy();
+
 
           /*  foreach($product['data'] as $c)
             {

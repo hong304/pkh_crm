@@ -1,0 +1,250 @@
+<div class="row" ng-init="">
+    <div class="col-md-12">
+        <form class="form-horizontal form-row-seperated" action="javascript:;" id="printArea">
+
+
+            <div class="portlet light">
+
+
+
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs font-green-sharp"></i>
+                        <span class="caption-subject font-green-sharp bold uppercase">Batch approval</span>
+                    </div>
+
+                   <!-- <div class="actions">
+                        <div class="btn-group">
+                            <select class="form-control"
+                                    ng-model="group"
+                                    data-ng-options="x.name for x in systeminfo.customerGroup track by x.id"
+                                    data-ng-change="updateGroup();">
+                                <option value=''>檢視全部</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                            <div class="btn-group">
+                                <select class="form-control"
+                                        ng-model="zone"
+                                        data-ng-options="x.zoneName for x in systeminfo.availableZone track by x.zoneId"
+                                        data-ng-change="updateZone();">
+                                    <option value=''>檢視全部</option>
+                                </select>
+                            </div>
+                     </div>
+
+
+                    <div class="actions">
+
+                        <div class="btn-group">
+                            <select class="form-control"
+                                    ng-model="shift"
+                                    data-ng-change="updateShift();">
+                                <option value='1'>早班</option>
+                                <option value='2'>晚班</option>
+                            </select>
+                        </div>
+                    </div>-->
+
+                    <div class="actions">
+
+                        <div class="btn-group">
+                            <select class="form-control"
+                                    ng-model="orderbatch"
+                                    data-ng-change="updateOrder();">
+                                <option value='1'>Normal</option>
+                                <option value='2'>Backday</option>
+                            </select>
+                        </div>
+                    </div>
+
+                   <!-- <div class="actions" data-ng-if="systemInfo.permission.staff_maintenance == true">
+                        <div class="btn-group">
+                            <a href="javascript:;" class="btn btn-circle red-sunglo btn-sm" data-ng-click="printGroup();">
+                                <i class="fa fa-print"></i> 列印已選集團 </a>&nbsp;
+                        </div>
+                    </div>-->
+
+                </div>
+
+
+                <div class="portlet-body" >
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a data-target="#tab_general" data-toggle="tab">
+                                    Normal Orders </a>
+                            </li>
+
+                            <!-- <li>
+                                 <a data-target="#tab_job9698" data-toggle="tab">
+                                     Back day Orders </a>
+                             </li>
+
+                             <!--<li>
+                                 <a data-target="#tab_loginrecord" data-toggle="tab">
+                                     已列印 </a>
+                             </li>-->
+                        </ul>
+                        <div class="tab-content no-space">
+
+                            <div class="tab-pane active" id="tab_general">
+                                <div class="row">
+                                    <div id="tab_images_uploader_filelist" class="col-md-6 col-sm-12">
+                                    </div>
+                                </div>
+                                <table class="table table-bordered table-hover" style="font-size:15px;" data-ng-repeat="items in invoices">
+
+                                    <tr><td>{{items.invoiceId}}</td>
+                                        <td>{{items.customer.customerName_chi}}</td>
+                                        <td>{{items.zoneId}}</td>
+                                        <td>{{items.deliveryDate_date}}</td>
+                                        <td><a ng-click="viewInvoice(items.invoiceId,items.invoiceStatus)">檢視</a></td>
+                                    <td align="right"><input type="checkbox" data-ng-model="checkid[items.invoiceId]" /></td>
+                                    </tr>
+
+                                    <tbody>
+                                    <tr role="row" class="heading">
+                                        <th width="5%">Product ID</th>
+                                        <th width="5%">Product Name</th>
+                                        <th width="5%">Product Qty</th>
+                                        <th width="5%">Product Unit Name</th>
+                                        <th width="5%">Selling Price</th>
+                                        <th width="5%">Standard Selling Price</th>
+
+                                    </tr>
+
+
+
+
+                                    <tr data-ng-repeat="k in items.invoice_item" ng-if="k.approvedSupervisorId == '0'" style="background: #FC7E8B">
+
+                                        <td>{{k.productId}}</td>
+                                        <td>{{k.product_detail.productName_chi}}</td>
+                                        <td>{{k.productQty}}</td>
+                                        <td>{{k.productUnitName}}</td>
+                                        <td>${{k.productPrice}}</td>
+                                        <td>${{k.productStandardPrice}}</td>
+
+                                    <tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <button type="button" class="btn blue" data-ng-click="batchApproval();">批核</button>
+
+                            <div class="tab-pane" id="tab_job9698">
+                                <div class="row">
+                                    <div id="tab_images_uploader_filelist2" class="col-md-6 col-sm-12">
+                                    </div>
+                                </div>
+                                <table class="table table-bordered table-hover" style="font-size:15px;">
+                                    <thead>
+                                    <tr role="row" class="heading">
+                                        <th width="5%">#</th>
+                                        <th width="10%">訂單編號</th>
+                                        <th width="15%">客戶名稱</th>
+                                        <th width="5%">車號</th>
+                                        <th width="5%">車線</th>
+                                        <th width="15%">建立時間</th>
+                                        <th width="10%">送貨日期</th>
+                                        <th width="10%">用戶</th>
+                                        <th width="20%">現時狀態</th>
+                                        <th width="5%">選取</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr data-ng-repeat="(k,q) in job9698">
+                                        <td>{{q.job_id}}</td>
+                                        <td>{{q.invoiceId}}</td>
+                                        <td>{{q.customerName_chi}}</td>
+                                        <td>{{q.zoneId}}</td>
+                                        <td>{{q.routePlanningPriority}}</td>
+                                        <td>{{q.updated_at}}</td>
+                                        <td>{{q.deliveryDate * 1000 | date: 'yyyy.MM.dd'}}</td>
+                                        <td>{{q.name}}</td>
+                                        <td>
+                                                        <span data-ng-if="q.status == 'downloaded;passive'">
+                                                            已下載至列印伺服器
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'dead:regenerated'">
+                                                            被取代
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'dead:pending'">
+                                                            等待批刻(不會列印)
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'queued'">
+                                                            等待下載
+                                                        </span>
+                                        </td>
+                                        <td><input type="checkbox" data-ng-model="checkid[q.job_id]['collect']"  /></td>
+                                    <tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <!--<div class="tab-pane" id="tab_loginrecord">
+                                <div class="row">
+                                    <div id="tab_images_uploader_filelist1" class="col-md-6 col-sm-12">
+                                    </div>
+                                </div>
+                                <table class="table table-bordered table-hover" style="font-size:15px;">
+                                    <thead>
+                                    <tr role="row" class="heading">
+                                        <th width="5%">#</th>
+                                        <th width="10%">訂單編號</th>
+                                        <th width="15%">客戶名稱</th>
+                                        <th width="5%">車號</th>
+                                        <th width="5%">車線</th>
+                                        <th width="15%">列印時間</th>
+                                        <th width="10%">送貨日期</th>
+
+                                        <th width="10%">用戶</th>
+                                        <th width="20%">現時狀態</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr data-ng-repeat="q in printed">
+                                        <td>{{q.job_id}}</td>
+                                        <td>{{q.invoiceId}}</td>
+                                        <td>{{q.customerName_chi}}</td>
+                                        <td>{{q.zoneId}}</td>
+                                        <td>{{q.routePlanningPriority}}</td>
+                                        <td>{{q.updated_at}}</td>
+                                        <td>{{q.deliveryDate * 1000 | date: 'yyyy.MM.dd'}}</td>
+                                        <td>{{q.name}}</td>
+                                        <td>
+                                                        <span data-ng-if="q.status == 'downloaded;passive'">
+                                                            已下載至列印伺服器
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'dead:regenerated'">
+                                                            被取代
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'dead:pending'">
+                                                            等待批刻(不會列印)
+                                                        </span>
+                                                        <span data-ng-if="q.status == 'queued'">
+                                                            等待下載
+                                                        </span>
+                                        </td>
+                                    <tr>
+
+                                    </tbody>
+                                </table>
+                            </div>-->
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div data-ng-include="'views/model_viewinvoice.html'"> </div>

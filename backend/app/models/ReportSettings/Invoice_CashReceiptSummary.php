@@ -14,7 +14,11 @@ class Invoice_CashReceiptSummary {
     private $_paidInvoice = [];
     private $_paidInvoice_cheque =[];
     private $_expenses = [];
+    private $_returnInvoices = [];
     private $_uniqueid = "";
+    private $cash = 0;
+    private $coins = 0;
+    private $summary=[];
 
     public function __construct($indata)
     {
@@ -59,6 +63,9 @@ class Invoice_CashReceiptSummary {
 
         $date = $this->_date;
         $zone = $this->_zone;
+
+
+
 
         //當天單,不是當天收錢
         $invoicesQuery = Invoice::select('invoiceId','invoice_payment.paid')->whereIn('invoiceStatus',['1','2','20','30','98','97','96'])->where('paymentTerms',1)->where('receiveMoneyZone', $zone);
@@ -120,6 +127,18 @@ class Invoice_CashReceiptSummary {
             $invoiceId = $invoiceQ->invoiceId;
             $invoices[$invoiceId] = $invoiceQ;
             $client = $invoiceQ['client'];
+
+
+            // 98 invoices
+            if($invoiceQ->invoiceStatus == 98) {
+                $this->_returnInvoices[] = [
+                    'customerId' => $client->customerId,
+                    'name' => $client->customerName_chi,
+                    'invoiceNumber' => $invoiceId,
+                    'deliveryDate' => date('Y-m-d',$invoiceQ->deliveryDate),
+                    'amount' => number_format($invoiceQ->amount, 2, '.', ','),
+                ];
+            }
 
             if($invoiceQ->invoiceStatus == 20 || $invoiceQ->invoiceStatus == 30){
                 $paid = $invoiceQ->paid - (isset($uncheque[$invoiceQ->invoiceId])?$uncheque[$invoiceQ->invoiceId]:0) - (isset($SameDayCollectCheque[$invoiceQ->invoiceId])?$SameDayCollectCheque[$invoiceQ->invoiceId]:0 );
@@ -252,6 +271,18 @@ class Invoice_CashReceiptSummary {
         }
         //補收+代收+所有當天支票
 
+
+        $incomes = income::where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
+
+        if(count($incomes)>0){
+            $this->cash = $incomes->notes;
+            $this->coins = $incomes->coins;
+        }
+
+        $sql = 'select count(CASE WHEN paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN paymentTerms = 2 THEN amount END) AS amount_credit, count(CASE WHEN paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN paymentTerms = 1 THEN amount END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30,1,97,96) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
+        $cod = DB::select(DB::raw($sql));
+        foreach($cod as $v)
+            $this->summary =  (array) $v;
 
         $this->_expenses = expense::select('*')->where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
         if(isset($this->_expenses))
@@ -510,7 +541,7 @@ class Invoice_CashReceiptSummary {
 
     public function outputPreview()
     {
-        return View::make('reports/CashReceiptSummary')->with('data', $this->_account)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->with('backaccount',$this->_backaccount)->with('expenses',$this->_expenses)->render();
+        return View::make('reports/CashReceiptSummary')->with('summary',$this->summary)->with('coins',$this->coins)->with('cash',$this->cash)->with('account', $this->_account)->with('paidInvoice',$this->_paidInvoice)->with('paidInvoiceCheque',$this->_paidInvoice_cheque)->with('backaccount',$this->_backaccount)->with('expenses',$this->_expenses)->render();
     }
 
 
@@ -519,7 +550,7 @@ class Invoice_CashReceiptSummary {
     {
 
         $pdf->SetFont('chi','',18);
-        $pdf->Cell(0, 10,"炳記行貿易有限公司",0,1,"C");
+        $pdf->Cell(0, 10,"炳記行貿易國際有限公司",0,1,"C");
         $pdf->SetFont('chi','U',16);
         $pdf->Cell(0, 10,$this->_reportTitle,0,1,"C");
         $pdf->SetFont('chi','U',13);
@@ -532,6 +563,9 @@ class Invoice_CashReceiptSummary {
 
     }
 
+    /**
+     * @return array
+     */
     public function outputPDF()
     {
 
@@ -565,43 +599,80 @@ class Invoice_CashReceiptSummary {
         $pdf->setXY(10, $y);
         $pdf->Cell(0, 0, '實收現金:', 0, 0, "L");
 
-        $incomes = income::where('deliveryDate',date('Y-m-d',$this->_date))->where('zoneId',$this->_zone)->first();
-
-        $cash = 0;
-        $coins =0;
-
-        if(count($incomes)>0){
-            $cash = $incomes->notes;
-            $coins = $incomes->coins;
-        }
-
-        $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($cash,2,'.',','),number_format($coins,2,'.',','), number_format($coins+$cash,2,'.',',')), 0, 0, "L");
+           $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, sprintf("紙幣:$%s  硬幣:$%s  總數:$%s", number_format($this->cash,2,'.',','),number_format($this->coins,2,'.',','), number_format($this->coins+$this->cash,2,'.',',')), 0, 0, "L");
 
 
-        $sql = 'select count(CASE WHEN paymentTerms = 2 THEN 1 end) as count_credit,SUM(CASE WHEN paymentTerms = 2 THEN amount END) AS amount_credit, count(CASE WHEN paymentTerms = 1 THEN 1 end) as count_cod,SUM(CASE WHEN paymentTerms = 1 THEN amount END) AS amount_cod from invoice where invoiceStatus in (98,2,20,30,1,97,96) and zoneId='.$this->_zone.' and deliveryDate = '.$this->_date;
-        $cod = DB::select(DB::raw($sql));
-        foreach($cod as $v)
-            $summary =  (array) $v;
+
 
 
 
         $y+=5;
         $pdf->setXY(10, $y);
-        $pdf->Cell(0, 0, sprintf('月結單數:%s',$summary['count_credit']), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('月結單數:%s',$this->summary['count_credit']), 0, 0, "L");
 
         $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_credit'],2,'.',',')), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($this->summary['amount_credit'],2,'.',',')), 0, 0, "L");
 
         $y+=5;
         $pdf->setXY(10, $y);
-        $pdf->Cell(0, 0, sprintf('現金單數:%s',$summary['count_cod']), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('現金單數:%s',$this->summary['count_cod']), 0, 0, "L");
 
         $pdf->setXY(40, $y);
-        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($summary['amount_cod'],2,'.',',')), 0, 0, "L");
+        $pdf->Cell(0, 0, sprintf('金額:$%s',number_format($this->summary['amount_cod'],2,'.',',')), 0, 0, "L");
 
 
         $y = 80;
+
+        //98
+        if(count($this->_returnInvoices) > 0){
+        $pdf->SetFont('chi','',12);
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0,'退貨單', 0, 0, "L");
+
+        $pdf->SetFont('chi','',10);
+        $y += 6;
+        $pdf->setXY(10, $y);
+        $pdf->Cell(0, 0, "訂單編號", 0, 0, "L");
+
+        $pdf->setXY(40, $y);
+        $pdf->Cell(0, 0, "客戶", 0, 0, "L");
+
+        $pdf->setXY($last3, $y);
+        $pdf->Cell(0, 0, "送貨日期", 0, 0, "L");
+
+        $pdf->setXY($last2, $y);
+        $pdf->Cell(1, 0, "收回金額", 0, 0, "R");
+
+        $pdf->Line(10, $y+4, 200, $y+4);
+
+        $y += 8;
+
+
+        foreach($this->_returnInvoices as $k => $v){
+
+            $pdf->setXY(10, $y);
+            $pdf->Cell(0, 0, $v['invoiceNumber'], 0, 0, "L");
+
+            $pdf->setXY(40, $y);
+            $pdf->Cell(0, 0, $v['name'], 0, 0, "L");
+
+            $pdf->setXY($last3, $y);
+            $pdf->Cell(0, 0, $v['deliveryDate'], 0, 0, "L");
+
+            $pdf->setXY($last2, $y);
+            $pdf->Cell(1, 0, $v['amount'], 0, 0, "R");
+
+            $y += 5;
+
+        }
+
+        $pdf->Line(10, $y, 200, $y);
+        $y+=10;
+        }
+        // 98
+
+
 
         //補收+代收
         $pdf->SetFont('chi','',12);
@@ -791,7 +862,7 @@ class Invoice_CashReceiptSummary {
 //未收款項完
 
         //支票
-        if(count($this->_paidInvoice)+count($this->_backaccount)+count($this->_paidInvoice_cheque) > 20){
+        if(count($this->_returnInvoices) + count($this->_paidInvoice)+count($this->_backaccount)+count($this->_paidInvoice_cheque) > 20){
             $pdf->AddPage();
             $this->generateHeader($pdf);
             $y=55;
