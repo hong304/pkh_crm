@@ -193,15 +193,13 @@ class ReceiveMan
                  $products->timestamps = false;
                  $products->save();
 
-                 $this->poCode = $i['poCode'];
-
                  $this->cost_info[$i['productId']] = [
                      'productId' => $i['productId'],
                      'total_qty' => (isset($this->cost_info[$i['productId']]['total_qty'])?$this->cost_info[$i['productId']]['total_qty']:0) + $i['good_qty']
                  ];
                }
 
-             $poitems_cost = Poitem::where('poCode',$this->poCode)->with('productDetail')->get()->toArray();
+             $poitems_cost = Poitem::where('poCode',$this->items[0]['poCode'])->with('productDetail')->get()->toArray();
 
              foreach ($poitems_cost as $v){
                  $this->cost_info[$v['productId']] = [
@@ -219,13 +217,17 @@ class ReceiveMan
                 $po->save();
 
 
-                $discount_rate =  1-(($po->poAmount*(100-$po->discount_1)/100*(100-$po->discount_2)/100+$po->allowance_1+$po->allowance_2)/$po->poAmount/100);
+                $discount_rate =  ($po->poAmount*(100-$po->discount_1)/100*(100-$po->discount_2)/100+$po->allowance_1+$po->allowance_2)/$po->poAmount;
+
+
 
              foreach ($this->cost_info as $v){
                      $products = Product::where('productId',$v['productId'])->first();
                      $products->productCost_unit = $this->cost_info[$v['productId']]['line_amount']*$discount_rate/$this->cost_info[$v['productId']]['total_qty']*$this->cost_info[$v['productId']]['pack_size'];
                      $products->timestamps = false;
                      $products->save();
+
+                 Receiving::where('poCode',$this->items[0]['poCode'])->where('productId',$v['productId'])->update(['unit_cost'=>$this->cost_info[$v['productId']]['line_amount']*$discount_rate/$this->cost_info[$v['productId']]['total_qty']]);
              }
 
             // pd($this->cost_info);
