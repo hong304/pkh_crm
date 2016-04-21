@@ -217,6 +217,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                     // addUnit(item, i);
                     $scope.product[i]['unit_cost'] = item.unitprice;
                     $scope.product[i]['expiryDate'] = next_year + '-' + twodigital_month + '-' + yday;
+                    $scope.product[i]['bin_location'] = '9F';
 
                     if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
                         $scope.orgqty[$scope.product[i].productId]=0;
