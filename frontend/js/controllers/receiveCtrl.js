@@ -39,6 +39,9 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
     var yyear = start_date.getFullYear();
     var yday = start_date.getDate();
 
+    var next_year = start_date.getFullYear()+1;
+    var twodigital_month = ("0" + (start_date.getMonth() + 1)).slice(-2);
+
 
    $("#deliverydate").datepicker({
         rtl: Metronic.isRTL(),
@@ -213,7 +216,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                      $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;*/
                     // addUnit(item, i);
                     $scope.product[i]['unit_cost'] = item.unitprice;
-
+                    $scope.product[i]['expiryDate'] = next_year + '-' + twodigital_month + '-' + yday;
 
                     if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')
                         $scope.orgqty[$scope.product[i].productId]=0;
