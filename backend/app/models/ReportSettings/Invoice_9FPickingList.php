@@ -595,7 +595,7 @@ class Invoice_9FPickingList {
                                         $pdf->SetFont('chi','',12);
 
                                         $pdf->setXY($base_x + 0, $y);
-                                        $pdf->Cell(0, 0, $ii, 0, 0, 'L');
+                                        $pdf->Cell(0, 0, sprintf('%s',$ii), 0, 0, 'L');
 
 
                                         $pdf->setXY($base_x + 10, $y);

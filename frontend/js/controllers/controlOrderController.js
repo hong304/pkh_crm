@@ -872,6 +872,7 @@ else{
         var unit = $scope.product[i]['unit'].value;
 
 
+
         if($scope.order.status == '97' || $scope.order.status == '96'){
             $scope.product[i]['unitprice'] = 0;
         }else{
@@ -917,6 +918,12 @@ else{
         if((isNaN($scope.product[i]['unitprice']) || $scope.product[i]['unitprice'] < 0 ) && item.allowNegativePrice != '1')
         {
             $scope.product[i]['unitprice'] = stdprice;
+        }
+
+        if(code=='Z002'){
+            if($scope.product[i]['unitprice']>0){
+                $scope.product[i]['unitprice'] *= -1;
+            }
         }
 
         $("#requireapprove_" + i).remove();
@@ -1005,6 +1012,8 @@ else{
                 if(item.deleted == 0)
                 {
                     $scope.product[i].unitprice = 0;
+                    if($scope.product[i].qty<0)
+                        $scope.product[i].qty *= -1;
                 }
                 $("#unitprice_" + i).attr('disabled', 'true');
                 i++;

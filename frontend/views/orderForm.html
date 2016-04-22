@@ -396,7 +396,8 @@
                                                 <input type="tel" onClick="this.select();" id="qty_{{i}}"
                                                        class="spinner-input form-control" maxlength="5"
                                                        ng-model="product[i]['qty']" ng-change="updateQty(i);"
-                                                       ng-blur="checkQtyInterval(i);">
+                                                       ng-blur="checkQtyInterval(i);"
+                                                       data-ng-disabled="productCode[i]=='Z002'">
 
                                             </div>
                                         </div>
@@ -409,7 +410,8 @@
                                                 id="unit_{{i}}"
                                                 ng-model="product[i]['unit']"
                                                 data-ng-options="x.label for x in product[i]['availableunit'] track by x.value"
-                                                data-ng-change="updateUnit(i);">
+                                                data-ng-change="updateUnit(i);"
+                                                 data-ng-disabled="productCode[i]=='Z002'">
                                         </select>
                                     </label>
 
@@ -431,7 +433,8 @@
                                             <input onClick="this.select();" type="tel" id="discount_{{i}}"
                                                    ng-model="product[i]['itemdiscount']"
                                                    value="{{product[i]['itemdiscount']}}" data-ng-change="checkPrice(i)"
-                                                   class="form-control" name="product[i]['discount']">
+                                                   class="form-control" name="product[i]['discount']"
+                                                   data-ng-disabled="productCode[i]=='Z002'">
                                             <span class="input-group-addon">% OFF</span>
                                         </div>
                                     </div>
