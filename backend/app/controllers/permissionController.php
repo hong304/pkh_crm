@@ -49,7 +49,7 @@ class permissionController extends Controller {
 
 $role_id = Input::get('roleId')['id'];
 
-        $list1 = permission::whereNotNull('nameGroup')->get();
+        $list1 = permission::whereNotNull('nameGroup')->orderBy('order','asc')->get();
         foreach ($list1 as $k => $v){
             $lists[$v->permissionGroup]['name']=$v->nameGroup;
             $lists[$v->permissionGroup]['roleId']=$role_id;
@@ -60,13 +60,14 @@ $role_id = Input::get('roleId')['id'];
         $list = permission::leftJoin('permission_role','permissions.id','=','permission_role.permission_id')->where('role_id',$role_id)->whereNotNull('nameGroup')->get();
 
 
-foreach($list as $k =>$v){
+foreach($list as $k =>$v) {
     $lists[$v->permissionGroup]['action'][$v->name] = $v->role_id;
 }
-
         foreach ($lists as $k1 => $v1){
             $arr[] = $v1;
         }
+
+
 
       return Response::json($arr);
     }
