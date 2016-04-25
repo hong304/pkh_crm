@@ -160,7 +160,7 @@ app.controller('financeCashGetClearanceController', function($scope, $rootScope,
             if(res.length > 0)
                 alert(res);
             else
-                $location.url("/customerCashListing?action=success");
+                $location.url("/financeCashListing?action=success");
         });
 
     }

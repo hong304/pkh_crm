@@ -126,6 +126,7 @@ app.controller('queryPOCtrl', function($scope, $rootScope, $http, SharedService,
     {
         $scope.keywordpo.supplier = "";
         $scope.keywordpo.supplierName = '';
+        $scope.keywordpo.poCode = '';
         $scope.updateDataSet();
     }
 
