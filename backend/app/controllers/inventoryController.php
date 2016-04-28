@@ -105,7 +105,7 @@ class inventoryController extends BaseController {
                 INNER JOIN
                 (SELECT productId,SUM(good_qty) tqty FROM receivings GROUP BY productId) t1
                 ON t.productId = t1.productId
-                SET total_qty=tqty');*/
+                SET total_qty=tqty');
 
             $products = receiving::groupBy('productId')
                 ->selectRaw('sum(good_qty) as sum, productId')
@@ -114,7 +114,7 @@ class inventoryController extends BaseController {
             $productId = receiving::groupBy('productId')
                 ->lists('productId');
 
-           /* DB::transaction(function() use ($products)
+          DB::transaction(function() use ($products)
             {
                 foreach ($products as $productId => $productValue) {
                     DB::table('product')
