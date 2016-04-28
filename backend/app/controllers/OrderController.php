@@ -396,7 +396,7 @@ class OrderController extends BaseController
 
     public function jsonGetNotification()
     {
-        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'), 'deliveryDate')
+        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
             ->wherein('invoiceStatus', ['1', '3'])
             ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
             ->where('deliveryDate', '>=', strtotime("today 00:00"))
@@ -414,7 +414,7 @@ class OrderController extends BaseController
         }
 
 
-        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'), 'deliveryDate')
+        $invoices = Invoice::select(DB::raw('zoneId, invoiceStatus, count(invoiceId) AS counts'))
             ->wherein('invoiceStatus', ['1', '3'])
             ->wherein('zoneId', explode(',', Auth::user()->temp_zone))
             ->where('deliveryDate', '<', strtotime("today 00:00"))
