@@ -93,7 +93,7 @@ class CommissionController extends BaseController
 
             $invoiceQ = [];
 
-            $invoices = invoiceitem::leftJoin('invoice', function ($join) {
+            $invoices = InvoiceItem::leftJoin('invoice', function ($join) {
                 $join->on('Invoice.invoiceId', '=', 'InvoiceItem.invoiceId');
             })->leftJoin('Product', function ($join) {
                 $join->on('InvoiceItem.productId', '=', 'Product.productId');
