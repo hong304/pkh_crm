@@ -181,12 +181,12 @@ class financialReportController extends BaseController
 
             foreach ($time_interval as $v) {
                 if ($first) {
-                    $time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime($ymd . "-" . $v[0] . " month"));
-                    $time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime($ymd . "-" . $v[1] . " month"));
+                    $time[date("Y-m", strtotime("-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime("-" . $v[0] . " month"));
+                    $time[date("Y-m", strtotime("-" . $v[1] . " month"))][1] = date("Y-m-d", strtotime("-" . $v[1] . " month"));
                     $first = false;
                 } else {
-                    $time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][0] = date("Y-m-01", strtotime($ymd . "-" . $v[0] . " month"));
-                    $time[date("Y-m", strtotime($ymd . "-" . $v[1] . " month"))][1] = date("Y-m-t", strtotime($ymd . "-" . $v[1] . " month"));
+                    $time[date("Y-m", strtotime("last day of -".$v[1]." month"))][0] = date("Y-m-01", strtotime("last day of -".$v[0]." month"));
+                    $time[date("Y-m", strtotime("last day of -".$v[1]." month"))][1] = date("Y-m-t", strtotime("last day of -".$v[1]." month"));
                 }
             }
 

@@ -633,7 +633,7 @@ class InvoiceImage
             // $filenames[$page]['fullpath'] = $fullpath;
 
             if ($_SERVER['env'] == 'uat') {
-                $public_path = 'C:\xampp\htdocs\pkh_crm\backend\public/';
+                $public_path = 'var/www/html/pkh_crm/backend/public/';
             } else {
                 $public_path = public_path();
             }

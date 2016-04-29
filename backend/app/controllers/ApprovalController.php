@@ -40,7 +40,7 @@ class ApprovalController extends BaseController {
             }
         }
 
-        $invoicess = Invoice::wherein('invoiceId', array_keys($invoiceids))->with('invoiceItem')->get();
+        $invoicess = Invoice::wherein('invoiceId', array_keys($invoiceids))->with('invoiceItem')->where('updated_by','!=',Auth::user()->id)->get();
 
 
         foreach($invoicess as $i)
