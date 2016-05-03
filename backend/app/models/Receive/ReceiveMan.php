@@ -176,7 +176,7 @@ class ReceiveMan
                                $item->$k = $v;
                        }
 
-                 $poitems = poItem::where('poCode',$i['poCode'])->where('productId',$i['productId'])->where('productQtyUnit',$i['supplier_interval'])->first();
+                 $poitems = Poitem::where('poCode',$i['poCode'])->where('productId',$i['productId'])->where('productQtyUnit',$i['supplier_interval'])->first();
                  $poitems->receivedQty += $i['receivedQty'];
                  $poitems->save();
 
