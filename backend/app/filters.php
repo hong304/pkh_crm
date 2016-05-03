@@ -29,11 +29,11 @@ App::before(function($request)
         $_SERVER['env'] = 'production';
         $_SERVER['frontend'] = 'http://frontend.pingkeehong.com';
         $_SERVER['backend'] = 'http://backend.pingkeehong.com';
-    }elseif($_SERVER['HTTP_HOST'] == 'pkh-b.sylam.net'){
-        @header('Access-Control-Allow-Origin: http://pkh-f.sylam.net');
+    }elseif($_SERVER['HTTP_HOST'] == 'uat-b.pinekeehong.com'){
+        @header('Access-Control-Allow-Origin: http://uat-f.pinekeehong.com');
         $_SERVER['env'] = 'uat';
-        $_SERVER['frontend'] = 'http://pkh-f.sylam.net';
-        $_SERVER['backend'] = 'http://pkh-b.sylam.net';
+        $_SERVER['frontend'] = 'http://uat-f.pinekeehong.com';
+        $_SERVER['backend'] = 'http://uat-b.pinekeehong.com';
     }
 	else
 	{
