@@ -17,12 +17,12 @@ App::before(function($request)
 	$uri = Request::path();
 	
 	//dd($_SERVER);
-	if($_SERVER['HTTP_HOST'] == 'b.pingkeehong.com')
+	if($_SERVER['HTTP_HOST'] == 'b1.pingkeehong.com')
 	{
-        @header('Access-Control-Allow-Origin: http://f.pingkeehong.com');
+        @header('Access-Control-Allow-Origin: http://f1.pingkeehong.com');
         $_SERVER['env'] = 'private_production';
-        $_SERVER['frontend'] = 'http://f.pingkeehong.com';
-        $_SERVER['backend'] = 'http://b.pingkeehong.com';
+        $_SERVER['frontend'] = 'http://f1.pingkeehong.com';
+        $_SERVER['backend'] = 'http://b1.pingkeehong.com';
 	}
     elseif($_SERVER['HTTP_HOST'] == 'backend.pingkeehong.com'){
         @header('Access-Control-Allow-Origin: http://frontend.pingkeehong.com');

@@ -14,8 +14,8 @@ else if(window.location.hostname == "frontend.pingkeehong.com")
     var endpoint = '//uat-b.pinekeehong.com/';
     var assets = '//uat-f.pinekeehong.com/assets';
 }else{
-    var endpoint = '//b.pingkeehong.com/';
-    var assets = '//f.pingkeehong.com/assets';
+    var endpoint = '//b1.pingkeehong.com/';
+    var assets = '//f1.pingkeehong.com/assets';
 }
 
 var appname = 'Web Application';

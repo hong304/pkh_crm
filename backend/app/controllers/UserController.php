@@ -57,7 +57,7 @@ class UserController extends BaseController {
     	            $user->temp_zone = implode(',', $zones);
                     $user->logintime = Session::get('logintime');
 
-                    if(User::where('id',Auth::user()->id)->with('role')->first()->role[0]->id != 3 && $_SERVER['HTTP_HOST'] != 'b.pingkeehong.com' && $_SERVER['HTTP_HOST'] != 'uat-b.pinekeehong.com')
+                    if(User::where('id',Auth::user()->id)->with('role')->first()->role[0]->id != 3 && $_SERVER['HTTP_HOST'] != 'b1.pingkeehong.com' && $_SERVER['HTTP_HOST'] != 'uat-b.pinekeehong.com')
                         $user->disabled = 1;
                     if(User::where('id',Auth::user()->id)->with('role')->first()->role[0]->id == 1)
                         $user->disabled = 0;
