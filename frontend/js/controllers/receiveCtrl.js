@@ -41,6 +41,8 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
 
     var next_year = start_date.getFullYear()+1;
     var twodigital_month = ("0" + (start_date.getMonth() + 1)).slice(-2);
+    var twodigital_day = ("0" + (start_date.getDate() + 1)).slice(-2);
+
 
 
    $("#deliverydate").datepicker({
@@ -216,7 +218,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                      $scope.product[i]['unit_cost'] = item.product_detail.supplierStdPrice_unit;*/
                     // addUnit(item, i);
                     $scope.product[i]['unit_cost'] = item.unitprice;
-                    $scope.product[i]['expiryDate'] = next_year + '-' + twodigital_month + '-' + yday;
+                    $scope.product[i]['expiryDate'] = next_year + '-' + twodigital_month + '-' + twodigital_day;
                     $scope.product[i]['bin_location'] = '9F';
 
                     if(typeof $scope.orgqty[$scope.product[i].productId] == 'undefined')

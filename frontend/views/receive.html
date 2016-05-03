@@ -277,10 +277,10 @@
                                         </div>
                                     </td>
                                     <td style="line-height:35px;font-size:15px;">
-                                        <div class="input-group date " id="deliverydate{{i}}" data-date-format="yyyy-mm-dd" data-date-start-date="">
+                                        <div class="input-group date" id="deliverydate{{i}}">
                                             <!--<input type="text" class="form-control ng-pristine ng-valid" readonly="" ng-model="product[i]['expiryDate']" > -->
 
-                                            <input type="date" class="form-control" datepicker-popup ng-model="product[i]['expiryDate']"  is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                                            <input type="date" class="form-control" datepicker-popup ng-model="product[i]['expiryDate']" data-date-format="yyyy-MM-dd"  is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
 
 
                                         </div>
