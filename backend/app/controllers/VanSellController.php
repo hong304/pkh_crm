@@ -951,7 +951,7 @@ $this->updateVanQty();
 
             $y +=10;
 
-            $products = product::where('vansale',1)->orderBy('productId')->get();
+            $products = Product::where('vansale',1)->orderBy('productId')->get();
 
             foreach($products as $v){
                 $pdf->setXY(10, $y);

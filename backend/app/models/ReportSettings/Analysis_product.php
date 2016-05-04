@@ -47,7 +47,7 @@ class Analysis_product {
                 ->orWhere('year', date('Y')-1);
         })->get();
 
-        $products = product::where('productId',$this->_product_id)->first()->toArray();
+        $products = Product::where('productId',$this->_product_id)->first()->toArray();
 
 
 
