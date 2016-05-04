@@ -312,7 +312,7 @@ class PaymentController extends BaseController
         $customer = [];
         $customer2 = [];
         if ($filter['customer_group_id'] != '')
-            $customer = customer::leftJoin('customer_groups', function ($join) {
+            $customer = Customer::leftJoin('customer_groups', function ($join) {
                 $join->on('customer_groups.id', '=', 'customer.customer_group_id');
             })->where('customer_group_id', $filter['customer_group_id'])->lists('customerId');
 
@@ -386,9 +386,9 @@ class PaymentController extends BaseController
 
             $c = explode(',', $vv->customerId);
             if ($vv->groupId != 0)
-                $cc = customer::whereIn('customerId', $c)->orwhere('customer_group_id', $vv->groupId)->get();
+                $cc = Customer::whereIn('customerId', $c)->orwhere('customer_group_id', $vv->groupId)->get();
             else
-                $cc = customer::whereIn('customerId', $c)->get();
+                $cc = Customer::whereIn('customerId', $c)->get();
 
             $final['payment'] = $payment;
             $final['customer'] = $cc;
@@ -467,7 +467,7 @@ class PaymentController extends BaseController
                     $arr1[$vv->id] = '';
 
                 $c = explode(',', $vv->customerId);
-                $cc = customer::whereIn('customerId', $c)->get();
+                $cc = Customer::whereIn('customerId', $c)->get();
 
                 if (count($cc) < 1) {
                     $arr[$vv->id] = '';
@@ -579,7 +579,7 @@ class PaymentController extends BaseController
                  $arr1[$vv->id] = '';*/
 
             $c = explode(',', $vv['customerId']);
-            $cc = customer::whereIn('customerId', $c)->get();
+            $cc = Customer::whereIn('customerId', $c)->get();
 
             /*    if(count($cc) < 1){
                     $arr[$vv->id] ='';
