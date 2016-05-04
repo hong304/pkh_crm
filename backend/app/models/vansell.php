@@ -3,6 +3,6 @@
 class vansell extends Eloquent  {
     public function products()
     {
-        return $this->hasOne('product', 'productId', 'productId');
+        return $this->hasOne('Product', 'productId', 'productId');
     }
 }
