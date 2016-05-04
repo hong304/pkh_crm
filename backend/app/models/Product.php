@@ -29,7 +29,7 @@ class Product extends Eloquent  {
                 if(!in_array($attribute, array('created_by', 'created_at'))) {
                     $x = new TableAudit();
                     $x->referenceKey = $model->productId;
-                    $x->table = "Product";
+                    $x->table = "product";
                     $x->attribute = $attribute;
                     $x->data_from = $original;
                     $x->data_to = $value;
