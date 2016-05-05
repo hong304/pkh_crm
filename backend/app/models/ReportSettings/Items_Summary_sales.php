@@ -16,7 +16,7 @@ class Items_Summary_Sales {
     
     public function __construct($indata)
     {
-        if(!Auth::user()->can('view_itemssummary'))
+        if(!Auth::user()->can('view_itemssummarysales'))
             pd('Permission Denied');
 
         $report = Report::where('id', $indata['reportId'])->first();
