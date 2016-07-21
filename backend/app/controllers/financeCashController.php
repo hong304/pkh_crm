@@ -42,9 +42,21 @@ class financeCashController extends BaseController {
         $this->_date1 = (isset($filter['deliverydate2']) ? strtotime($filter['deliverydate2']) : strtotime("today"));
         $this->_status = $filter['status'];
 
+	if(isset($filter['zone']['zoneId'])) {
+            $this->_zone = explode(',', $filter['zone']['zoneId']);
+        }
+        else
+        {
+            $this->_zone = '';
+        }
+
         $invoice = Invoice::select('invoiceId','amount','paid','invoice.zoneId','deliveryDate','invoiceStatus','invoice.customerId','paymentTerms')
             ->whereBetween('invoice.deliverydate', [$this->_date, $this->_date1]);
-
+	
+	if($this->_zone != '') {
+		$invoice->where('invoice.zoneId', $this->_zone);
+	}
+	$invoice->where('invoice.paymentTerms',1);
 
         if($this->_status == 30){
             $invoice->where('invoiceStatus',$this->_status)->where('manual_complete',1);

@@ -473,7 +473,7 @@ class PrintQueueController extends BaseController
         $ftp_user_name = 'pkh';
         $ftp_user_pass = 'pkh2015';
 
-        $ftp_server = '192.168.1.47';
+        $ftp_server = '192.168.1.168';
         $conn_id = ftp_connect($ftp_server);
         if (!$conn_id) {
             $debug = new Debug();
@@ -571,7 +571,7 @@ class PrintQueueController extends BaseController
         $ftp_user_name = 'pkh';
         $ftp_user_pass = 'pkh2015';
 
-        $ftp_server = '192.168.1.47';
+        $ftp_server = '192.168.1.168';
         $conn_id = ftp_connect($ftp_server);
         if (!$conn_id) {
             $debug = new Debug();

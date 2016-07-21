@@ -395,6 +395,7 @@ class financialReportController extends BaseController
 
 
             $NoOfInvoices = [];
+	    
             foreach ($invoices as $invoiceQ){
 
                 if($invoiceQ->paymentTerms == 1){
@@ -449,6 +450,55 @@ class financialReportController extends BaseController
         ksort($info[1]);
         ksort($info[2]);
 
+
+	for($zid=0; $zid<=22; $zid++){
+
+            if(!isset($info[1][$zid])) {
+
+                $info[1][$zid] = [
+
+                    'truck' => $zid,
+
+                    'noOfInvoices' => 0,
+
+                    'balanceBf' => isset($balance_bf[$zid])?$balance_bf[$zid]:0,
+
+                    'totalAmount' => 0,
+
+                    'previous_cash'=>isset($previous[$zid]['cash'])?$previous[$zid]['cash']:0,
+
+                    'previous_cheque'=>isset($previous[$zid]['cheque'])?$previous[$zid]['cheque']:0,
+
+                    'receiveTodaySales_cheque'=>isset($today[$zid]['cheque'])?$today[$zid]['cheque']:0,
+
+                    'receiveTodaySales' => 0,
+
+                    'expenses' =>  isset($expenses_amount[$zid])?$expenses_amount[$zid]:0,
+
+                ];
+
+            }
+
+        }
+
+	for($zid=0; $zid<=22; $zid++){
+
+            if(!isset($info[2][$zid])) {
+
+                $info[2][$zid] = [
+
+                    'noOfInvoices' => 0,
+
+                    'totalAmount' => 0,
+
+                ];
+
+            }
+
+        }	
+
+	ksort($info[1]);
+        ksort($info[2]);
 
         require_once './Classes/PHPExcel/IOFactory.php';
         require_once './Classes/PHPExcel.php';

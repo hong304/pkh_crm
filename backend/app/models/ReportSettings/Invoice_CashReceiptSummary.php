@@ -862,7 +862,7 @@ class Invoice_CashReceiptSummary {
 //未收款項完
 
         //支票
-        if(count($this->_returnInvoices) + count($this->_paidInvoice)+count($this->_backaccount)+count($this->_paidInvoice_cheque) > 20){
+        if(count($this->_returnInvoices) + count($this->_paidInvoice)+count($this->_backaccount)+count($this->_paidInvoice_cheque) > 19){
             $pdf->AddPage();
             $this->generateHeader($pdf);
             $y=55;

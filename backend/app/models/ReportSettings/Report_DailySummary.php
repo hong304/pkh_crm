@@ -439,8 +439,14 @@ class Report_DailySummary
         // pd($this->data);
 
         $numItems = count($good);
-        //  $numItems += count($returngood);
-        $i = 0;
+        //  $numItems += count($returngood); 
+	if(isset($return_goods))
+	if(count($return_goods)>2)
+            $numItems ++;
+
+	$i = 0;
+
+	$lineNum = 0;
 
         foreach ($good as $ij => $f) {
             $i++;
@@ -466,8 +472,11 @@ class Report_DailySummary
             $pdf->setXY(500, $pdf->h - 30);
             $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, $numItems), 0, 0, "R");
 
+	    $lineNum = 0;
 
             foreach ($f as $u) {
+		
+		$lineNum++;
                 $pdf->setXY(10, $y);
                 $pdf->Cell(0, 0, $u['productId'], 0, 0, "L");
 
@@ -543,14 +552,42 @@ class Report_DailySummary
            }*/
 
 
-        if ($i === $numItems) {
+       //if ($i === $numItems) {
 
+	    $lineNum_return = 0;
 
             $pdf->Line(10, $y , 190, $y);
             if(isset($return_goods)){
             foreach ($return_goods as $u) {
 
+		$lineNum_return ++;
+		if($lineNum + count($return_goods) > 32 && $lineNum_return == 3)
+                {
+                    $i++;
+                    $pdf->AddPage();
 
+                    $this->generateHeader($pdf);
+
+                    $pdf->SetFont('chi', '', 10);
+
+                    $pdf->setXY(10, 50);
+                    $pdf->Cell(0, 0, "編號", 0, 0, "L");
+
+                    $pdf->setXY(50, 50);
+                    $pdf->Cell(0, 0, "貨品說明", 0, 0, "L");
+
+                    $pdf->setXY(168, 50);
+                    $pdf->Cell(0, 0, "發表出貨量", 0, 0, "L");
+
+
+                    $pdf->Line(10, 53, 190, 53);
+
+                    $y = 54;
+
+                    $pdf->setXY(500, $pdf->h - 30);
+                    $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i, $numItems), 0, 0, "R");
+
+                }
 
                 $y += 6;
 
@@ -601,7 +638,7 @@ class Report_DailySummary
             $pdf->setXY(70, $y + 22);
             $pdf->Cell(0, 0, $this->data['countcodreplace'] . "單", 0, 0, "L");
 
-        }
+        //}
 
         // handle 9F goods
         /*

@@ -352,7 +352,7 @@
                                     <th width="7%">單價</th>
                                     <th width="12%">採購折扣</th>
                                     <th width="7%">現金折扣</th>
-                                    <th width="12%">金額 ({{moneyCount}} $ {{totalAmount |number:2}})</th>
+                                    <th width="12%">金額 ({{moneyCount}} $ {{totalAmount |number:3}})</th>
                                     <th width="10%"></th>
                                 </tr>
                             </thead>
@@ -422,7 +422,7 @@
                                         </div>
                                     </td>
                                     <td style="line-height:35px;font-size:15px;">
-                                        {{moneyCount}}${{(product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['discount_1'])/100 * (100-product[i]['discount_2'])/100 * (100-product[i]['discount_3'])/100) - product[i]['allowance_1'] - product[i]['allowance_2'] - product[i]['allowance_3']| number : 2}}
+                                        {{moneyCount}}${{(product[i]['qty'] * product[i]['unitprice'] * (100-product[i]['discount_1'])/100 * (100-product[i]['discount_2'])/100 * (100-product[i]['discount_3'])/100) - product[i]['allowance_1'] - product[i]['allowance_2'] - product[i]['allowance_3']| number:3}}
                                   
                                     </td>
                                     <td style="line-height:35px;font-size:15px;">

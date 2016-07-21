@@ -138,7 +138,7 @@
                                                                                 <span>{{i.productUnitName}}</span>
                                                                             </td>
                                                                             <td>
-                                                                                {{i.unitprice| number : 1}}
+                                                                                {{i.unitprice| number : 3}}
                             
                                                                             </td>
                                                                             <td>
@@ -154,35 +154,35 @@
                                                                             </td>-->
                                                                            <td>
                                                                                <ul style="margin-left: -13px;">
-                                                                                <li>${{i.allowance_1 | number : 2}}</li>
+                                                                                <li>${{i.allowance_1 | number : 3}}</li>
                                       
-                                                                                <li>${{i.allowance_2 | number : 2}}</li>
+                                                                                <li>${{i.allowance_2 | number : 3}}</li>
                       
-                                                                                <li>${{i.allowance_3 | number : 2}}</li>
+                                                                                <li>${{i.allowance_3 | number : 3}}</li>
                                                                                 </ul>
                                                                            </td>                                                
                                                                             <td>
-                                                                                ${{i.productQty * i.unitprice - (i.productQty * i.unitprice * i.discount_1/100) - (i.productQty * i.unitprice * i.discount_2/100) - (i.productQty * i.unitprice * i.discount_3/100) - i.allowance_1 - i.allowance_2 - i.allowance_3 | number:2 }}
+                                                                                ${{i.productQty * i.unitprice - (i.productQty * i.unitprice * i.discount_1/100) - (i.productQty * i.unitprice * i.discount_2/100) - (i.productQty * i.unitprice * i.discount_3/100) - i.allowance_1 - i.allowance_2 - i.allowance_3 | number:3 }}
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">總和: HK${{invoiceinfo.totalsAmount|number:2}}</td>
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">總和: HK${{invoiceinfo.totalsAmount|number:3}}</td>
                    
                                                                         </tr>
                                                                         <tr ng-if="invoiceinfo.discount_1 != 0">
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">採購單折扣1 ({{invoiceinfo.discount_1}}%off): HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) | number:2}} </td>                                                                
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">採購單折扣1 ({{invoiceinfo.discount_1}}%off): HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) | number:3}} </td>                                                                
                                                                         </tr>
                                                                          <tr ng-if="invoiceinfo.discount_2 != 0">
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">採購單折扣2 ({{invoiceinfo.discount_2}}%off): HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) -  (invoiceinfo.totalsAmount * invoiceinfo.discount_2 /100) | number:2}} </td>                                                                
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">採購單折扣2 ({{invoiceinfo.discount_2}}%off): HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) -  (invoiceinfo.totalsAmount * invoiceinfo.discount_2 /100) | number:3}} </td>                                                                
                                                                         </tr>
                                                                          <tr ng-if="invoiceinfo.allowance_1 != 0">
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">現金折扣1 (${{invoiceinfo.allowance_1}}): HK${{invoiceinfo.allowance_1 | number:2}} </td>                                                                
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">現金折扣1 (${{invoiceinfo.allowance_1}}): HK${{invoiceinfo.allowance_1 | number:3}} </td>                                                                
                                                                         </tr>
                                                                         <tr ng-if="invoiceinfo.allowance_2 != 0">
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">現金折扣2 (${{invoiceinfo.allowance_2}}) : ${{invoiceinfo.allowance_2 | number:2}} </td>                                                                
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">現金折扣2 (${{invoiceinfo.allowance_2}}) : ${{invoiceinfo.allowance_2 | number:3}} </td>                                                                
                                                                         </tr>
                                                                          <tr>
-                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">應交款項: HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) -  (invoiceinfo.totalsAmount * invoiceinfo.discount_2 /100) - invoiceinfo.allowance_1 - invoiceinfo.allowance_2 | number:2}} </td>                                                                
+                                                                            <td colspan="10"style="line-height:35px;font-size:15px;font-weight:bold;text-align:right;">應交款項: HK${{invoiceinfo.totalsAmount - (invoiceinfo.totalsAmount * invoiceinfo.discount_1 /100) -  (invoiceinfo.totalsAmount * invoiceinfo.discount_2 /100) - invoiceinfo.allowance_1 - invoiceinfo.allowance_2 | number:3}} </td>                                                                
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>

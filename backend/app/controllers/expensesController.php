@@ -21,6 +21,8 @@ class expensesController extends BaseController {
             $expenses = expense::where('deliveryDate',date('Y-m-d',strtotime($filter['deliveryDate'])))->where('zoneId',$filter['zone']['zoneId'])->first();
             if(count($expenses) == null)
                 $expenses = new expense();
+	    else
+		return 'error code:1986-Ax';
         }
         $expenses->zoneId = $filter['zone']['zoneId'];
         $expenses->deliveryDate = date('Y-m-d',strtotime($filter['deliveryDate']));

@@ -48,12 +48,12 @@ class Items_Summary {
         $invoiceitems = [];
         $filter = $this->_indata['filterData'];
 
-        if(strlen($this->_group) < 2 && strlen($filter['name']) < 4 && strlen($filter['phone']) < 4 && strlen($filter['customerId']) < 3 && $this->productId=='' && $this->productName==''){
-            $empty = true;
-            $this->data=[];
-        }else{
+//        if(strlen($this->_group) < 2 && strlen($filter['name']) < 4 && strlen($filter['phone']) < 4 && strlen($filter['customerId']) < 3 && $this->productId=='' && $this->productName==''){
+//            $empty = true;
+//            $this->data=[];
+//        }else{
             $empty = false;
-        }
+//        }
 
         if(!$empty){
 
@@ -130,6 +130,34 @@ if(count($normal_goods)>0){
         }
     }
     
+ public function outputCsv(){
+
+        $csv = '貨品,名稱,累計,單位,總額,平均' . "\r\n";
+        $totalinvoice = count($this->data)+1;
+        $ii = 2;
+        foreach ($this->data as $o) {
+            $csv .= '"' . $o['productId'] . '",';
+            $csv .= '"' . $o['productName_chi'] . '",';
+            $csv .= '"' . $o['productQtys'] . '",';
+            $csv .= '"' . $o['productUnitName'] . '",';
+            $csv .=  '"' .$o['productAmount'] . '",';
+            $csv .= '"' . $o['productAmount']/$o['productQtys'] . '",';
+            $csv .= "\r\n";
+            $ii++;
+        }
+
+        echo "\xEF\xBB\xBF";
+
+        $headers = array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="ItemSummary.csv"',
+        );
+
+        return Response::make(rtrim($csv, "\n"), 200, $headers);
+
+    }
+
+
     public function registerFilter()
     {       
        /*
@@ -208,6 +236,11 @@ if(count($normal_goods)>0){
                 'name' => '列印  PDF 版本',
                 'warning'   =>  false,
             ],
+	    [
+                'type' => 'csv',
+                'name' => '匯出  Excel 版本',
+                'warning'   =>  false,
+            ],
         ];
         
         return $downloadSetting;
@@ -270,29 +303,34 @@ if(count($normal_goods)>0){
             $pdf->SetFont('chi','',10);   
         
             $pdf->setXY(10, 50);
-            $pdf->Cell(0, 0, "訂單編號", 0, 0, "L");
+            $pdf->Cell(0, 0, "貨品", 0, 0, "L");
         
-            $pdf->setXY(40, 50);
-            $pdf->Cell(0, 0, "客戶", 0, 0, "L");
+            $pdf->setXY(30, 50);
+            $pdf->Cell(0, 0, "名稱", 0, 0, "L");
         
-            $pdf->setXY(130, 50);
-            $pdf->Cell(0, 0, "應收金額", 0, 0, "L");
+            $pdf->setXY(100, 50);
+            $pdf->Cell(0, 0, "累計數量", 0, 0, "L");
         
-            $pdf->setXY(160, 50);
-            $pdf->Cell(0, 0, "累計", 0, 0, "L");
+            $pdf->setXY(120, 50);
+            $pdf->Cell(0, 0, "單位", 0, 0, "L");
                 
+	    $pdf->setXY(140, 50);
+            $pdf->Cell(0, 0, "總額", 0, 0, "L");
+
+            $pdf->setXY(160, 50);
+            $pdf->Cell(0, 0, "平均", 0, 0, "L");
             $pdf->Line(10, 53, 190, 53);
         
             $y = 60;
         
-            $pdf->setXY(10, $pdf->h-30);
-            $pdf->Cell(0, 0, "收帳人", 0, 0, "L");
+            //$pdf->setXY(10, $pdf->h-30);
+            //$pdf->Cell(0, 0, "收帳人", 0, 0, "L");
         
-            $pdf->setXY(60, $pdf->h-30);
-            $pdf->Cell(0, 0, "核數人", 0, 0, "L");
+            //$pdf->setXY(60, $pdf->h-30);
+            //$pdf->Cell(0, 0, "核數人", 0, 0, "L");
         
-            $pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
-            $pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
+            //$pdf->Line(10, $pdf->h-35, 50, $pdf->h-35);
+            //$pdf->Line(60, $pdf->h-35, 100, $pdf->h-35);
         
             $pdf->setXY(500, $pdf->h-30);
             $pdf->Cell(0, 0, sprintf("頁數: %s / %s", $i+1, count($datamart)) , 0, 0, "R");
@@ -302,17 +340,23 @@ if(count($normal_goods)>0){
             {
        
                 $pdf->setXY(10, $y);
-                $pdf->Cell(0, 0, $e['invoiceNumber'], 0, 0, "L");
+                $pdf->Cell(0, 0, $e['productId'], 0, 0, "L");
     
-                $pdf->setXY(40, $y);
-                $pdf->Cell(0, 0, $e['name'], 0, 0, "L");
+                $pdf->setXY(30, $y);
+                $pdf->Cell(0, 0, $e['productName_chi'], 0, 0, "L");
     
-                $pdf->setXY(130, $y);
-                $pdf->Cell(0, 0, sprintf("HK$ %s", $e['amount']), 0, 0, "L");
+		$pdf->setXY(100, $y);
+                $pdf->Cell(0, 0, $e['productQtys'], 0, 0, "L");
+                
+		$pdf->setXY(120, $y);
+                $pdf->Cell(0, 0, $e['productUnitName'], 0, 0, "L");
+                
+		$pdf->setXY(140, $y);
+                $pdf->Cell(0, 0, sprintf("HK$ %s", $e['productAmount']), 0, 0, "L");
     
                 $pdf->setXY(160, $y);
-                $pdf->Cell(0, 0, sprintf("HK$ %s", $e['accumulator']), 0, 0, "L");
-                $lt = $e['accumulator'];
+                $pdf->Cell(0, 0, sprintf("HK$ %s", $e['productAmount']/$e['productQtys']), 0, 0, "L");
+                //$lt = $e['productAmount'];
                 $y += 6;
                
             }
@@ -325,11 +369,13 @@ if(count($normal_goods)>0){
         }
         $pdf->Line(10, $y, 190, $y);
         $pdf->setXY(152, $y+6);
-        $pdf->Cell(0, 0, sprintf("總數 HK$ %s", $lt), 0, 0, "L");
+        //$pdf->Cell(0, 0, sprintf("總數 HK$ %s", $lt), 0, 0, "L");
         // output
         return [
             'pdf' => $pdf,
-            'remark' => sprintf("Cash Receipt Summary Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
+	    'remark' => sprintf("Item Summary Archive for Zone %s, DeliveryDate between %s and %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date1), date("Y-m-d", $this->_date2), Auth::user()->username, date("r")),
+
+            //'remark' => sprintf("Item Summary Archive for Zone %s, DeliveryDate = %s created by %s on %s", $this->_zone, date("Y-m-d", $this->_date), Auth::user()->username, date("r")),
             'associates' => json_encode($this->_invoices),
             'uniqueId' => $this->_uniqueid,
         ];

@@ -625,7 +625,7 @@ class Invoice_9FPickingList {
 //end of show carton summary on last page*/
 
 // handle groceries goods
-if($this->_shift == 2 || in_array($this->_zone, ['4','5','7','11','14','18','19','20'])){
+if($this->_shift == 2 || in_array($this->_zone, ['4','5','7','11','14','18','19','20','1','2','3','10','15','17'])){
         $ninef1 = $this->data['groceries'];
         $newway1 = [];
 

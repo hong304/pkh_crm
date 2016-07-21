@@ -21,6 +21,8 @@ class incomeController extends BaseController {
             $expenses = income::where('deliveryDate',$filter['deliveryDate'])->where('zoneId',$filter['zone']['zoneId'])->first();
             if(count($expenses) == null)
                 $expenses = new income();
+	    else
+		return 'error code: 1987-Ax';
         }
         $expenses->zoneId = $filter['zone']['zoneId'];
         $expenses->deliveryDate = $filter['deliveryDate'];
