@@ -132,7 +132,7 @@ class Report_DailySummary
                     } else {
                         $this->_invoices[] = $invoiceQ->invoiceId;
 
-                        if ($invoiceQ['client']->paymentTermId == 2 && $invoiceQ->paymentTerms == 2) {
+                        if ($invoiceQ->paymentTerms == 2) {
                             $this->_sumcredit += $invoiceQ->amount;
                             $this->_countcredit += 1;
                         } else {
