@@ -36,7 +36,7 @@ class containerController extends BaseController {
 
         if ($mode == 'collection') {
 
-            $shippingitems= container::select('shippings.etdDate','unitprice','containers.id','shippings.shippingId','poTradeTerm','sale_method','supplierName','container_size','carrier','vessel','containerId','containerproducts.productId','productName_chi','qty','container_actualDate','shippings.etaDate','fsp')
+            $shippingitems= Container::select('shippings.etdDate','unitprice','containers.id','shippings.shippingId','poTradeTerm','sale_method','supplierName','container_size','carrier','vessel','containerId','containerproducts.productId','productName_chi','qty','container_actualDate','shippings.etaDate','fsp')
                 ->leftJoin('shippings','shippings.shippingId','=','containers.shippingId')
                 ->leftJoin('suppliers','suppliers.supplierCode','=','shippings.supplierCode')
                 ->leftJoin('containerproducts','containerproducts.container_id','=','containers.id')
