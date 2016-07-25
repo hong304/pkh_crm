@@ -4,7 +4,7 @@ class Shipping extends Eloquent  {
 
     public function containers() //containers
     {
-        return $this->hasMany('container', 'shippingId', 'shippingId');
+        return $this->hasMany('Container', 'shippingId', 'shippingId');
     }
 
     public function Supplier()
