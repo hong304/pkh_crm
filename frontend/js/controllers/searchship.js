@@ -149,7 +149,6 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
     }
     
 
-
     
     $scope.viewShippment = function (shippingId) {
 
