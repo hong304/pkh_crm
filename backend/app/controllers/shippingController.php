@@ -206,9 +206,9 @@ foreach($k['containerProductDetails'] as $vk){
 
         $first_date = date("Y/m/d");
 
-        $s = shipping::where('actualDate', '!=', '')->with('Supplier', 'Shippingitem')->where('status', '!=', 99)->get();
+        $s = shipping::where('actualDate', '!=', '')->with('Supplier', 'containers')->where('status', '!=', 99)->get();
 
-        $eta = shipping::whereNull('actualDate')->with('Supplier', 'Shippingitem')->where('status', '!=', 99)->get();
+        $eta = shipping::whereNull('actualDate')->with('Supplier', 'containers')->where('status', '!=', 99)->get();
 
         $sfsp = shipping::Select('fsp', 'actualDate', 'shippingId', 'supplierCode', 'poCode')->with('Supplier')->where('actualDate', '!=', '')->where('fsp', '>', 0)->where('status', '!=', 99)->get();
 
@@ -318,12 +318,12 @@ foreach($k['containerProductDetails'] as $vk){
         $weekArray = $this->createWeek($today);
         foreach ($weekArray as $k => $v) {
             if ($k !== "last_last_week") {
-                $s[$k] = shipping::where('actualDate', '!=', '')->whereBetween('actualDate', array($v[1], $v[0]))->with('Shippingitem')->where('status', '!=', 99)->get()->toArray();
-                $eta[$k] = shipping::whereNull('actualDate')->whereBetween('etaDate', array($v[1], $v[0]))->with('Shippingitem')->where('status', '!=', 99)->get()->toArray();
+                $s[$k] = shipping::where('actualDate', '!=', '')->whereBetween('actualDate', array($v[1], $v[0]))->with('containers')->where('status', '!=', 99)->get()->toArray();
+                $eta[$k] = shipping::whereNull('actualDate')->whereBetween('etaDate', array($v[1], $v[0]))->with('containers')->where('status', '!=', 99)->get()->toArray();
             } else {
-                $s[$k] = shipping::where('actualDate', '!=', '')->where('actualDate', '<=', $v[0])->with('Shippingitem')->where('status', '!=', 99)->get()->toArray();
+                $s[$k] = shipping::where('actualDate', '!=', '')->where('actualDate', '<=', $v[0])->with('containers')->where('status', '!=', 99)->get()->toArray();
 
-                $eta[$k] = shipping::whereNull('actualDate')->where('etaDate', '<=', $v[0])->with('Shippingitem')->where('status', '!=', 99)->get()->toArray();
+                $eta[$k] = shipping::whereNull('actualDate')->where('etaDate', '<=', $v[0])->with('containers')->where('status', '!=', 99)->get()->toArray();
             }
         }
 

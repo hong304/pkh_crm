@@ -146,6 +146,7 @@ app.controller('shippingListing', function ($scope, $rootScope, $http, SharedSer
                     {"data": "productName_chi", "width": "10%"},
                     {"data": "qty", "width": "10%"},
                     {"data": "amount", "width": "10%"},
+                    {"data": "link", "width": "10%"},
 
 
                 ]
