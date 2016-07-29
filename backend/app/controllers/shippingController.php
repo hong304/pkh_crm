@@ -27,6 +27,7 @@ class shippingController extends BaseController {
         $this->sh->setShip($shipment);
 
 
+
         $have_item = false;    //fOR UPDATE
         $itemIds = [];
         foreach ($shipItem as $k => &$p) {
@@ -74,25 +75,9 @@ class shippingController extends BaseController {
                 $cost_07 = (isset($k['cost']['cost_07'])) ? $k['cost']['cost_07'] : 0;
                 $cost_08 = (isset($k['cost']['cost_08'])) ? $k['cost']['cost_08'] : 0;
                 $cost_09 = (isset($k['cost']['cost_09'])) ? $k['cost']['cost_09'] : 0;
-if($k['containerProductDetails'] != '' && $k['defaultContainerProduct'] == 0)
-foreach($k['containerProductDetails'] as $vk){
 
 
-    if((isset($vk['productName']) || isset($vk['id']) and $vk['deleted']==0 )) {
-
-       $containerproduct = new containerproduct();
-        $containerproduct->container_id = $k['dbid'];
-        $containerproduct->productId = $vk['productId'];
-        $containerproduct->qty = $vk['qty'];
-        $containerproduct->unit = $vk['unit']['value'];
-        $containerproduct->unitName = $vk['unit']['label'];
-        $containerproduct->save();
-
-    }
-
-}
-
-                $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'], $k['sale_method'], $cost_00, $cost_01, $cost_02, $cost_03, $cost_04, $cost_05, $cost_06, $cost_07, $cost_08, $cost_09);
+                $this->sh->setItems($k['dbid'], $k['containerId'], $k['serial_no'], $k['container_size'], $k['container_Num'], $k['container_weight'], $k['container_capacity'], $k['remark'], $k['deleted'], $k['sale_method'], $cost_00, $cost_01, $cost_02, $cost_03, $cost_04, $cost_05, $cost_06, $cost_07, $cost_08, $cost_09,$k['containerProductDetails']);
             }// clear the deleted record      
         }
 

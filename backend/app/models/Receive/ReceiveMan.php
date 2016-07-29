@@ -219,7 +219,7 @@ class ReceiveMan
 
                 $discount_rate =  ($po->poAmount*(100-$po->discount_1)/100*(100-$po->discount_2)/100+$po->allowance_1+$po->allowance_2)/$po->poAmount;
 
-
+pd($this->cost_info);
 
              foreach ($this->cost_info as $v){
                      $products = Product::where('productId',$v['productId'])->first();

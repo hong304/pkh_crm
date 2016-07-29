@@ -406,7 +406,7 @@
                                     <div class="col-md-12">
                                         <ul class="mega-menu-submenu">
                                             <li>
-                                                <a href="/#/shipping" class="iconify" data-ng-if="systemInfo.permission.view_shipping == true">
+                                                <a href="/#/shipping" class="iconify" data-ng-if="systemInfo.permission.view_shipping == true" ng-click="$state.go('shipping', {}, {reload: true});">
                                                     <i class="icon-home"></i>
                                                     增加船務</a>
                                             </li>

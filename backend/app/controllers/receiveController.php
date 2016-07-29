@@ -60,16 +60,16 @@ class receiveController extends BaseController {
 
     public function searchShipping() {
         $id = Input::get('poCode');
-        $shipping = Shipping :: select('shippingId')->with('Shippingitem')->where('poCode', $id)->where('status', '!=', '99')->get();
+        $shipping = Shipping :: select('shippingId')->with('containers')->where('poCode', $id)->where('status', '!=', '99')->get();
         $formatShipping = $shipping->toArray();
         $countCount = 0;
         $storeShip = "";
         for ($g = 0; $g < count($formatShipping); $g++) {
-            for ($start = 0; $start < count($formatShipping[$g]['shippingitem']); $start++) {
+            for ($start = 0; $start < count($formatShipping[$g]['containers']); $start++) {
 
                 $storeShip[$countCount]['shippingId'] = $formatShipping[$g]['shippingId'];
-                $storeShip[$countCount]['containerId'] = $formatShipping[$g]['shippingitem'][$start]['containerId'];
-                $storeShip[$countCount]['dbid'] = $formatShipping[$g]['shippingitem'][$start]['id'];
+                $storeShip[$countCount]['containerId'] = $formatShipping[$g]['containers'][$start]['containerId'];
+                $storeShip[$countCount]['dbid'] = $formatShipping[$g]['containers'][$start]['id'];
                 $countCount++;
             }
         }
@@ -127,7 +127,7 @@ class receiveController extends BaseController {
                     $input = Input :: get('shippingdbid');
                     $shippingId = Input::get('order')['shippingId'];
 
-                    //Insert the details into shippingitems
+                    //Insert the details into container
                     $this->re = new shippingMan($shippingId);
 
                     if (isset($input)) {
@@ -161,6 +161,8 @@ class receiveController extends BaseController {
                     //If there is no shippingId, not only the records deleted in ui but also records in db will be deleted.
                 }
 
+              //  pd($product);
+
                 //Insert records into receiving tables
                 $this->new = new ReceiveMan($receiveId);
                 if ($location == 2) {
@@ -169,8 +171,6 @@ class receiveController extends BaseController {
                             $this->new->setItemss($v['dbid'], $object['poCode'], $object['shippingId'], $object['containerId'], $object['receivingId'], $v['productId'], $v['good_qty'], $v['damage_qty'], $v['on_hold_qty'], date('Y-m-d', strtotime($v['expiryDate'])), $v['good_qty'], $v['damage_qty'], $object['receiveDate'], $v['unit_cost'], $v['bin_location'], $v['deleted'], $v['unit']['value'],$v['qty'],$v['unit']['label']);
                     }
                 }else if ($location == 1) {
-
-
                     foreach ($product as $k => $v) {
                         if ($v['deleted'] == 0 && isset($v['productId']) && $v['productId'] !== "" && isset($v['unit']['value'])) {
                             $this->new->setItemss($v['dbid'], $object['poCode'], "", "", $object['receivingId'], $v['productId'], $v['good_qty'], $v['damage_qty'], $v['on_hold_qty'], date('Y-m-d', strtotime($v['expiryDate'])), $v['good_qty'], $v['damage_qty'], $object['receiveDate'], $v['unit_cost'], $v['bin_location'], $v['deleted'], $v['unit']['value'],$v['qty'],$v['unit']['label']);
@@ -210,17 +210,28 @@ class receiveController extends BaseController {
 
     public function getProductCost() {
         $containerId = Input :: get('containerId');
-        $shippingItem = Shippingitem :: where('containerId', $containerId)->first();
+        $shippingItem = Shippingitem :: where('container_id', $containerId)->first();
         return Response::json($shippingItem);
     }
 
+
     public function addProductContainer() {
+
         $containerId = Input :: get('containerId');
-        $containerProduct = containerproduct :: where('containerId', $containerId)
-                ->leftJoin('product', function($join) {
-                    $join->on('product.productId', '=', 'containerproducts.productId');
-                })
+        $containerProduct = containerproduct :: where('container_id', $containerId)
+                ->leftJoin('product','product.productId', '=', 'containerproducts.productId')
+            ->leftJoin('containers','containers.id','=','containerproducts.container_id')
+                ->leftJoin('shippings','shippings.shippingId','=','containers.shippingId')
+            ->join('poitems', function($join)
+            {
+                $join->on('poitems.poCode','=','shippings.poCode');
+                $join->on('poitems.productId', '=', 'containerproducts.productId');
+            })
+
                 ->get();
+
+
+
         return Response::json($containerProduct);
     }
 

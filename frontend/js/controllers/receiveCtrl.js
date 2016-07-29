@@ -1,7 +1,7 @@
 'use strict';
 
 Metronic.unblockUI();
-
+//related to selectShip.js
 
 
 app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, SharedService, $location, $interval, $window, $state, $stateParams) {
@@ -145,10 +145,8 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
 
     });
 
-
+    //load products to pending receive lists
     $scope.$on('doneShippingUpdate', function () {
-
-        console.log($scope.items);
 
         if ($scope.countryDataList !== undefined)
         {
@@ -176,6 +174,8 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
         if (typeof $scope.items != 'undefined')
         {
 
+            console.log($scope.items);
+            
             var i = 1;
             if ($scope.orders.location == 2)
             {
@@ -185,6 +185,8 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
                     $scope.product[i].productName = item.productName_chi;
                     $scope.product[i].qty = item.qty;
                     $scope.product[i]['good_qty'] = item.qty;
+                    $scope.product[i]['expiryDate'] = next_year + '-' + twodigital_month + '-' + twodigital_day;
+                    $scope.product[i]['bin_location'] = '1F';
                     /* if (item.unit == 'carton')
                      $scope.product[i]['unit_cost'] = item.productCost_unit;
                      else if (item.unit == 'inner')
@@ -389,7 +391,7 @@ app.controller('receiveCtrl', function ($rootScope, $scope, $http, $timeout, Sha
 
 
 
-    $scope.preSubmitOrder = function (v) {
+    $scope.ReceivePreSubmitOrder = function (v) {
 
         /*    bootbox.dialog({
          message: '是否確定輸入無誤?',

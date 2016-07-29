@@ -775,8 +775,8 @@ var j = 0;
         {
            $http.post(target, {poCode : $scope.shipping.poCode})
            .success(function (res, status, headers, config) {
-         
-            
+
+
            /* if(res[0]['poitem'] != undefined)
             {
                 var k = 1;
@@ -807,7 +807,7 @@ var j = 0;
         $("#containerProduct").modal('hide');
         $scope.product[$scope.editable_rowProduct].containerProductDetails = $scope.selfdefine;
         $scope.product[$scope.editable_rowProduct].defaultContainerProduct = 0;
-        //console.log($scope.product[$scope.editable_rowProduct].containerProductDetails);
+       console.log($scope.product);
        /* $scope.product[$scope.editable_rowProduct].containerProductDetails.productId =  $scope.selfdefine.productId;
         $scope.product[$scope.editable_rowProduct].containerProductDetails.productName =  $scope.selfdefine.productName;
         $scope.product[$scope.editable_rowProduct].containerProductDetails.qty =  $scope.selfdefine.qty;
@@ -816,7 +816,7 @@ var j = 0;
     }
     
     
-     function addUnit(item,i)
+    /* function addUnit(item,i)
         {
             var availableunit = [];
             var storeUnit = [];
@@ -840,7 +840,7 @@ var j = 0;
         }
 
     
-
+*/
     
 
     $scope.totalline = 1;

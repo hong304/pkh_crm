@@ -130,7 +130,7 @@ class shippingMan
         if(count($this->items) > 0)
         {
             $this->sh->save();
-     
+
             foreach($this->items as $i)
     	    {
                 if($i['dbid'])
@@ -139,12 +139,17 @@ class shippingMan
     	            $item->updated_at = time();
                     $item->updated_by = Auth::user()->id;
 
+                    $containerproduct = containerproduct::where('container_id',$i['dbid'])->first();
+                    $item->id = $i['dbid'];
     	        }
     	        else
     	        {
     	            $item = new Container();
     	            $item->created_at = $item->updated_at = time();
                     $item->updated_by = $item->created_by = Auth::user()->id;
+
+                    $containerproduct = new containerproduct();
+
     	        }
     	        
     	        $item->created_at = $item->updated_at = time();
@@ -168,8 +173,9 @@ class shippingMan
                 $item->cost_07 = $i['cost_07'];
                 $item->cost_08 = $i['cost_08'];
                 $item->cost_09 = $i['cost_09'];
-              
-                
+
+
+
             
     	    //    $item->productStandardPrice = $i['productStandardPrice'];
     	    //    $item->productUnitName = $i['productUnitName'];
@@ -179,7 +185,20 @@ class shippingMan
     	        {
     	            $item->save();
     	        }
-    	    }
+
+
+                if($i['containerProductDetails'] != '')
+                    foreach($i['containerProductDetails'] as $vk){
+                        if((isset($vk['productName']) || isset($vk['id']) and $vk['deleted']==0 )) {
+                            $containerproduct->container_id = $item->id;
+                            $containerproduct->productId = $vk['productId'];
+                            $containerproduct->qty = $vk['qty'];
+                            $containerproduct->unit = $vk['unit']['value'];
+                            $containerproduct->unitName = $vk['unit']['label'];
+                            $containerproduct->save();
+                        }
+                    }
+    	      }
 
       //      $in = Purchaseorder ::where('poCode',$this->poCode)->with('invoiceItem')->first();
          //   $in->amount = $in->invoiceTotalAmount;
@@ -202,7 +221,7 @@ class shippingMan
     
     
     //make an array
-    public function setItems($dbid,$containerId,$serial_no,$container_size,$container_Num,$container_weight,$container_capacity,$remark,$deleted,$sale_method,$cost_00,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09)
+    public function setItems($dbid,$containerId,$serial_no,$container_size,$container_Num,$container_weight,$container_capacity,$remark,$deleted,$sale_method,$cost_00,$cost_01,$cost_02,$cost_03,$cost_04,$cost_05,$cost_06,$cost_07,$cost_08,$cost_09,$containerProductDetails)
     {
          $this->items[] = [
                 'dbid' => $dbid,
@@ -225,7 +244,8 @@ class shippingMan
                 'cost_07' => $cost_07,
                 'cost_08' => $cost_08,
                 'cost_09' => $cost_09,
-                
+                'containerProductDetails' =>$containerProductDetails,
+
          ];
 	    return $this->items;
     }

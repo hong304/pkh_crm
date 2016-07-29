@@ -202,7 +202,7 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
                     $scope.shippingContainer = res;
                 });
             }
-            
+
          
         }else if($scope.orders.location == '1')
         {
@@ -214,7 +214,7 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
 
                     if(res.length > 0)
                     {
-                         SharedService.setValue('items', res[0].poitem, 'handleShippingUpdate');
+                        SharedService.setValue('items', res[0].poitem, 'handleShippingUpdate');
                         SharedService.setValue('supplierSelectionCompleted', true, 'doneShippingUpdate');
                     }
 
@@ -234,9 +234,13 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
           var searchContainer = endpoint + '/addProductContainer.json';
             if(container.containerId != "")
             {
+
                 var i = 1;
-                 $http.post(searchContainer, {containerId:  container.containerId })
-                .success(function (res, status, headers, config) {      
+                 $http.post(searchContainer, {containerId:  container.dbid })
+                .success(function (res, status, headers, config) {
+
+                    console.log(res)
+
                     for(var items in res)
                     {
                         $scope.product[i].productId = res[items].productId;
@@ -263,7 +267,8 @@ app.controller('selectShip', function($rootScope, $scope, $http, $timeout, Share
 
                     if(res.length > 0)
                     {
-                         SharedService.setValue('items', res, 'handleShippingUpdate');
+                        SharedService.setValue('items', res, 'handleShippingUpdate');
+                        SharedService.setValue('supplierSelectionCompleted', true, 'doneShippingUpdate');
                     }
                 });
             }

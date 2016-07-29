@@ -19,7 +19,7 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
         supplierName:'',
         supplier:'',
         shippingId:'',
-        status:'',
+        status:'1',
         etaDate:'',  
         sorting: '',
         current_sorting: 'desc',
@@ -33,6 +33,11 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
         status:'',
         carrier:'',
     };
+
+    $scope.invoicepaid= [];
+    $scope.invoiceStructure = {
+        'paid' : ''
+    }
     
  $scope.$on('$viewContentLoaded', function () {
         // initialize core components
@@ -43,6 +48,10 @@ app.controller('searchship', function ($scope, $rootScope, $http, SharedService,
 
 
     $scope.updateDataSet = function () {
+
+        $scope.invoicepaid[0] = $.extend(true, {}, $scope.invoiceStructure);
+        $scope.invoicepaid[0]['paid'] = 0;
+        
 
         $(document).ready(function() {
             if (!$scope.firstload)

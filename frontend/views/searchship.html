@@ -39,7 +39,7 @@
 
 			<div class="portlet-body">
 				<div class="md-col-12" style="margin-bottom:15px;">
-					<input type="text" id="poCode" ng-model="keywordship.shippingId" ng-change="updateStatus();" class="form-control" placeholder="shippping ID">
+					<input type="text" id="poCode" ng-model="keywordship.shippingId" ng-change="updateStatus();" class="form-control" placeholder="Shippping ID">
 				</div>
 				<div class="md-col-12" style="margin-bottom:15px;">
 					<input type="text" id="containerNo" ng-model="keywordship.containerNo" ng-change="updateStatus();" class="form-control" placeholder="Container No.">
@@ -48,7 +48,7 @@
 					<input type="text" id="productName" ng-model="keywordship.productName" ng-change="updateStatus();" class="form-control" placeholder="Product Name">
 				</div>
 				<div class="md-col-12" style="margin-bottom:15px;">
-					<input type="text" id="original" ng-model="keywordship.original" ng-change="updateStatus();" class="form-control" placeholder="original">
+					<input type="text" id="original" ng-model="keywordship.original" ng-change="updateStatus();" class="form-control" placeholder="Original">
 				</div>
 			</div>
 
@@ -69,10 +69,10 @@
 
 
 
-					<div  class="radio-list"> 
+					<div data-ng-repeat="(k,i) in invoicepaid" class="radio-list">
 						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status0" ng-value="0"> 全部</label>
-						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status1" ng-value="1" value="1"> 正常</label>
-                                                <label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status30" ng-value="30" value="30"> 已完成 </label>
+						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status1" ng-value="1" value="1" > 正常</label>
+                        <label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status30" ng-value="30" value="30"> 已完成 </label>
 						<label><input ng-model="keywordship.status" ng-change="updateRadio();" type="radio" name="status" id="status99" ng-value="99" value="99"> 已刪除 </label>
 					</div>
 

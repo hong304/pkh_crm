@@ -271,7 +271,7 @@ Route::group(array('before' => 'auth'), function()
     
     //Add products into container
     Route::post('/getProductCost.json','receiveController@getProductCost');
-    Route::post('/addProductContainer.json','receiveController@addProductContainer');
+    Route::any('/addProductContainer.json','receiveController@addProductContainer');
 
     //commission group
     Route::post('/querycommissiongroup.json','commissiongroupController@querycommissiongroup');
