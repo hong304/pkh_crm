@@ -74,7 +74,7 @@ class inventoryController extends BaseController {
                 return Response::json('Permission Denied');
             }
 
-            $adjusts = adjust::with('receiving');
+            $adjusts = adjust::with('Receiving');
 
      if($filterData['keyword'] != '')
          $adjusts->where('productId',$filterData['keyword']);
