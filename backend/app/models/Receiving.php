@@ -9,7 +9,7 @@ class Receiving extends Eloquent {
     {
         parent::boot();
 
-        receiving::updated(function($model)
+        Receiving::updated(function($model)
         {
             foreach($model->getDirty() as $attribute => $value){
                 $original= $model->getOriginal($attribute);
