@@ -20,7 +20,7 @@ class adjust extends Eloquent  {
     }
 
     public function receiving(){
-        return $this->belongsTo('receiving','receivingId','receivingId');
+        return $this->belongsTo('Receiving','receivingId','receivingId');
     }
 
     public function getUpdatedByAttribute($attr) {
