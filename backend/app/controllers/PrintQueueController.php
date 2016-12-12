@@ -29,7 +29,7 @@ class PrintQueueController extends BaseController
             $this->deliveryDate = strtotime('00:00:00');
 
         if ($_SERVER['env'] == 'uat') {
-            $this->public_path = 'var/www/html/pkh_crm/backend/public/';
+            $this->public_path = 'home/pkh/crm/backend/public/';
         } else {
             $this->public_path = public_path();
         }
