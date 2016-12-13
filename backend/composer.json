@@ -4,11 +4,13 @@
   "require" : {
     "laravel/framework" : "=v4.2.16",
     "toddish/verify" : "=v2.4.1",
-    "anouar/fpdf" : "1.0.1",
+    "anouar/fpdf" : "dev-master",
     "shpasser/gae-support" : "=1.0.8",
     "intervention/image" : "2.1.1",
     "intervention/imagecache" : "=2.1.1",
-    "yajra/laravel-datatables-oracle": "~3.0"
+    "yajra/laravel-datatables-oracle": "~3.0",
+    "maknz/slack-laravel": "^1.0",
+    "maknz/slack": "^1.7"
   },
   "scripts" : {
     "post-install-cmd" : [ "php artisan optimize" ],

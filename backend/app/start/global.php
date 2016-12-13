@@ -54,6 +54,14 @@ $monolog->pushHandler(
 
 App::error(function(Exception $exception, $code)
 {
+    $client = new Maknz\Slack\Client('https://hooks.slack.com/services/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');
+
+    if (strpos($code, '404') !== false) {
+
+    }else{
+        $client->send($exception->getMessage());
+    }
+
 	Log::error($exception);
 });
 

@@ -30,10 +30,15 @@ App::before(function($request)
         $_SERVER['frontend'] = 'http://frontend.pingkeehong.com';
         $_SERVER['backend'] = 'http://backend.pingkeehong.com';
     }elseif($_SERVER['HTTP_HOST'] == 'uat-b.pinekeehong.com'){
-        @header('Access-Control-Allow-Origin: http://uat-f.pinekeehong.com');
+        @header('Access-Control-Allow-Origin: http://uat-f.pingkeehong.com');
         $_SERVER['env'] = 'uat';
-        $_SERVER['frontend'] = 'http://uat-f.pinekeehong.com';
-        $_SERVER['backend'] = 'http://uat-b.pinekeehong.com';
+        $_SERVER['frontend'] = 'http://uat-f.pingkeehong.com';
+        $_SERVER['backend'] = 'http://uat-b.pingkeehong.com';
+    }elseif($_SERVER['HTTP_HOST'] == 'live-b.pingkeehong.com'){
+        @header('Access-Control-Allow-Origin: http://live-f.pingkeehong.com');
+        $_SERVER['env'] = 'uat';
+        $_SERVER['frontend'] = 'http://live-f.pingkeehong.com';
+        $_SERVER['backend'] = 'http://live-b.pingkeehong.com';
     }
 	else
 	{

@@ -11,9 +11,15 @@
 |
 */
 
+
+
 # Global Pattern
 Route::pattern('id', '[0-9]+');
 Route::pattern('sid', '[a-zA-Z0-9]+');
+
+Route::get('/slack', function(){
+
+});
 
 # Require Authentication
 Route::group(array('before' => 'auth'), function()

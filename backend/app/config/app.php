@@ -121,7 +121,8 @@ return array(
 	    'Intervention\Image\ImageServiceProvider',
 	    'Anouar\Fpdf\FpdfServiceProvider',
 	    'Shpasser\GaeSupport\GaeSupportServiceProvider',
-        'yajra\Datatables\DatatablesServiceProvider'
+        'yajra\Datatables\DatatablesServiceProvider',
+        'Maknz\Slack\Laravel\ServiceProvider',
 	),
 
 	/*
@@ -191,6 +192,7 @@ return array(
 	    'Image'           => 'Intervention\Image\Facades\Image',
 	    'Fpdf'            => 'Anouar\Fpdf\Fpdf',
         'Datatables' => 'yajra\Datatables\Datatables',
+        'Slack' => 'Maknz\Slack\Laravel\Facade',
 
 	),
 

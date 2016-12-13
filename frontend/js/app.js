@@ -9,10 +9,14 @@ else if(window.location.hostname == "frontend.pingkeehong.com")
 {
 	var endpoint = '//backend.pingkeehong.com/';
 	var assets = '//frontend.pingkeehong.com/assets';
-}else if(window.location.hostname == "uat-f.pinekeehong.com")
+}else if(window.location.hostname == "uat-f.pingkeehong.com")
 {
-    var endpoint = '//uat-b.pinekeehong.com/';
-    var assets = '//uat-f.pinekeehong.com/assets';
+    var endpoint = '//uat-b.pingkeehong.com/';
+    var assets = '//uat-f.pingkeehong.com/assets';
+}else if(window.location.hostname == "live-f.pingkeehong.com")
+{
+    var endpoint = '//live-b.pingkeehong.com/';
+    var assets = '//live-f.pingkeehong.com/assets';
 }else{
     var endpoint = '//b1.pingkeehong.com/';
     var assets = '//f1.pingkeehong.com/assets';
